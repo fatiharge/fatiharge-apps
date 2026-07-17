@@ -1,0 +1,8 @@
+*.gem
+*.rbc
+/.config
+/.idea
+/coverage/
+/.fvm/
+.DS_Store
+melos_modular.iml

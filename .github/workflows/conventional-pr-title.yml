@@ -1,0 +1,48 @@
+name: Conventional PR Title
+
+# Validates the PR title against Conventional Commits rules.
+# With squash-merge, the merge commit is built from the PR title,
+# so enforcing the title is sufficient.
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+permissions:
+  pull-requests: read
+
+jobs:
+  validate-title:
+    name: Validate PR title
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check title against Conventional Commits
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          types="feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert"
+          pattern="^(${types})(\([a-z0-9._-]+\))?(!)?: .+"
+
+          echo "PR title: $PR_TITLE"
+
+          if echo "$PR_TITLE" | grep -Eq "$pattern"; then
+            echo "OK: title follows Conventional Commits."
+            exit 0
+          fi
+
+          echo "::error::PR title does not follow Conventional Commits."
+          {
+            echo "### ❌ PR title is not a valid Conventional Commit"
+            echo ""
+            echo "**Got:** \`$PR_TITLE\`"
+            echo ""
+            echo "**Expected:** \`<type>(<scope>)?: <description>\`"
+            echo ""
+            echo "**Allowed types:** ${types//|/, }"
+            echo ""
+            echo "**Examples:**"
+            echo '- `feat: add user login`'
+            echo '- `fix(auth): refresh token bug`'
+            echo '- `chore(deps): bump dependencies`'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit 1
