@@ -1,0 +1,17 @@
+name: package
+description: Scaffold a new workspace package (lib/src + barrel + analysis_options + test).
+version: 0.1.0
+
+environment:
+  mason: ">=0.1.0 <1.0.0"
+
+vars:
+  name:
+    type: string
+    description: Package name in snake_case.
+    prompt: Package name (snake_case)?
+  description:
+    type: string
+    description: One-line package description.
+    prompt: Short description?
+    default: A Fatiharge monorepo package.
