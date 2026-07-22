@@ -1,0 +1,17 @@
+include: package:very_good_analysis/analysis_options.yaml
+
+analyzer:
+  exclude:
+    - "**/*.g.dart" # freezed / json_serializable / easy_localization
+    - "**/*.freezed.dart" # freezed
+    - "**/*.gr.dart" # auto_route
+    - "**/*.config.dart" # injectable
+    - "**/generated/**" # flutter_gen (assets.gen.dart, locale_keys.g.dart)
+    - "**/*.md"
+
+linter:
+  rules:
+    # Packages in this repo are internal; public API docs are not required.
+    public_member_api_docs: false
+    # We group pubspec dependencies semantically (sdk / local / pub).
+    sort_pub_dependencies: false
