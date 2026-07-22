@@ -15,3 +15,7 @@ linter:
     public_member_api_docs: false
     # We group pubspec dependencies semantically (sdk / local / pub).
     sort_pub_dependencies: false
+    # Enforce our monorepo conventions on top of very_good_analysis.
+    require_trailing_commas: true
+    prefer_single_quotes: true
+    directives_ordering: true
