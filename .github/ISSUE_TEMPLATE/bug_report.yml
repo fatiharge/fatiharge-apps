@@ -1,0 +1,32 @@
+name: Bug report
+description: Report something that is broken or behaves unexpectedly.
+labels: [bug]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear description of the bug and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Go to ...
+        2. Tap ...
+        3. See error
+    validations:
+      required: true
+  - type: input
+    id: package
+    attributes:
+      label: Affected package / app
+      placeholder: e.g. ui_kit, apps/<app>
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Flutter/Dart version, device/OS, flavor.
+      placeholder: Flutter 3.44.7, iOS 18, dev flavor
