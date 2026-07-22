@@ -1,8 +1,21 @@
-*.gem
-*.rbc
-/.config
+# Dart / Flutter
+.dart_tool/
+.packages
+build/
+**/doc/api/
+coverage/
+*.log
+
+# FVM (keep .fvmrc, ignore the local SDK symlink/cache)
+.fvm/
+
+# IDE
 /.idea
-/coverage/
-/.fvm/
+*.iml
+.vscode/
+
+# OS
 .DS_Store
-melos_modular.iml
+
+# Misc
+/.config

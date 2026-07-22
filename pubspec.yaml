@@ -1,0 +1,43 @@
+name: fatiharge_apps
+description: Fatiharge Flutter monorepo (workspace root — not a publishable package).
+publish_to: none
+
+environment:
+  sdk: ^3.12.0
+
+# Dart native pub workspace. Every app/package below shares one resolution.
+# Add new members here (and set `resolution: workspace` in their pubspec).
+workspace:
+  - packages/lint_kit
+
+dev_dependencies:
+  melos: ^8.2.0
+  lint_kit:
+    path: packages/lint_kit
+
+melos:
+  command:
+    bootstrap:
+      # After every `melos bootstrap`, point Git at the versioned hooks dir.
+      # This makes the Conventional Commit hook active without a manual step.
+      hooks:
+        post: git config core.hooksPath .githooks
+
+  scripts:
+    analyze:
+      description: Run static analysis in every package.
+      exec: flutter analyze .
+
+    format:
+      description: Verify formatting in every package (fails on diff).
+      exec: dart format --set-exit-if-changed .
+
+    format:fix:
+      description: Apply formatting in every package.
+      exec: dart format .
+
+    test:
+      description: Run tests in every package that has a test/ directory.
+      exec: flutter test
+      packageFilters:
+        dirExists: test
