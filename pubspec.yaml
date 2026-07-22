@@ -16,12 +16,20 @@ dev_dependencies:
     path: packages/lint_kit
 
 melos:
+  repository: https://github.com/fatiharge/fatiharge-apps
+
   command:
     bootstrap:
       # After every `melos bootstrap`, point Git at the versioned hooks dir.
       # This makes the Conventional Commit hook active without a manual step.
       hooks:
         post: git config core.hooksPath .githooks
+
+    version:
+      # Derive version bumps + CHANGELOGs from Conventional Commits.
+      linkToCommits: true
+      workspaceChangelog: true
+      branch: main
 
   scripts:
     analyze:
@@ -41,3 +49,15 @@ melos:
       exec: flutter test
       packageFilters:
         dirExists: test
+
+    coverage:
+      description: Run tests with coverage in every package that has tests.
+      exec: flutter test --coverage
+      packageFilters:
+        dirExists: test
+
+    generate:
+      description: Run build_runner in every package that depends on it.
+      exec: dart run build_runner build --delete-conflicting-outputs
+      packageFilters:
+        dependsOn: build_runner
