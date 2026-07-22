@@ -1,0 +1,11 @@
+name: lint_kit
+description: Shared analyzer and lint configuration for all packages in the Fatiharge monorepo.
+version: 0.0.1
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.12.0
+
+dependencies:
+  very_good_analysis: 10.3.0

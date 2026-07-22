@@ -1,5 +1,7 @@
 # Git Workflow
 
+> 🇹🇷 Türkçe için: [git-workflow.tr.md](git-workflow.tr.md)
+
 This document describes how we branch, commit, and merge in this Flutter monorepo.
 
 - Commit rules and allowed types: [CONTRIBUTING.md](../CONTRIBUTING.md)

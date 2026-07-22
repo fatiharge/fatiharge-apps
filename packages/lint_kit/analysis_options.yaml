@@ -1,0 +1,2 @@
+# Lint lint_kit itself with the very config it ships.
+include: package:very_good_analysis/analysis_options.yaml
