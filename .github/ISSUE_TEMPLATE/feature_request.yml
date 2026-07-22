@@ -1,0 +1,23 @@
+name: Feature request
+description: Suggest a new capability or improvement.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / motivation
+      description: What need does this address?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: What would you like to happen?
+    validations:
+      required: true
+  - type: input
+    id: scope
+    attributes:
+      label: Target package / app
+      placeholder: e.g. new packages/notifications

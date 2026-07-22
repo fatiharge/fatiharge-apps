@@ -1,0 +1,8 @@
+# Default owners for everything in the repo.
+# Replace with a GitHub team (e.g. @fatiharge/mobile) as the team grows.
+*                       @fatiharge
+
+# Governance & CI — keep an eye on changes here.
+/.github/               @fatiharge
+/.githooks/             @fatiharge
+/architecture/          @fatiharge
