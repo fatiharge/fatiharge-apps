@@ -10,6 +10,7 @@ environment:
 workspace:
   - packages/lint_kit
   - packages/utility_kit
+  - packages/bootstrap_kit
 
 dev_dependencies:
   melos: ^8.2.0
