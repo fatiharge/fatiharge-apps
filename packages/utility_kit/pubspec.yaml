@@ -1,6 +1,6 @@
 name: utility_kit
 description: Shared, framework-level utility helpers for the Fatiharge monorepo.
-version: 0.0.1
+version: 0.0.2
 publish_to: none
 resolution: workspace
 
