@@ -23,6 +23,3 @@ mason-lock.json
 
 # Misc
 /.config
-
-# Personal local git helper (not part of the repo)
-/scripts/gitp.py
