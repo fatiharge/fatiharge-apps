@@ -17,9 +17,5 @@ coverage/
 # OS
 .DS_Store
 
-# Mason — lock file pins local-path bricks by ABSOLUTE path (machine-specific),
-# so it is not portable across machines/CI. Do not commit it.
-mason-lock.json
-
 # Misc
 /.config

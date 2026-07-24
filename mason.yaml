@@ -1,5 +1,0 @@
-# Mason brick registry. Install the CLI once: `dart pub global activate mason_cli`
-# Then: `mason get` and `mason make package -o packages`
-bricks:
-  package:
-    path: bricks/package
