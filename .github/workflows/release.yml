@@ -1,0 +1,70 @@
+name: Release
+
+# Manually cut a release: melos reads Conventional Commits since the last tag,
+# bumps versions, writes CHANGELOGs, tags, and pushes the result back to main.
+#
+# ── One-time setup ────────────────────────────────────────────────────────────
+# 1. Create a GitHub App (org or personal) with repository permissions:
+#      Contents: Read & write   (+ Metadata: Read-only, added automatically)
+#    Install it on this repository and generate a private key.
+# 2. Add its credentials to the repo:
+#      - Variable  RELEASE_APP_ID            = the App's ID
+#      - Secret    RELEASE_APP_PRIVATE_KEY   = the App's .pem private key
+# 3. In branch protection for `main`, add the App to the bypass lists:
+#      "Allow specified actors to bypass required pull requests" AND the
+#      required status checks bypass — so it can push the release commit + tags.
+# ──────────────────────────────────────────────────────────────────────────────
+#
+# Run it from the Actions tab → Release → "Run workflow".
+
+on:
+  workflow_dispatch:
+
+concurrency: release
+
+jobs:
+  release:
+    name: Version & changelog
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+
+      # Full history + tags are required to compute the changelog since last release.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Read Flutter version from .fvmrc
+        id: fvm
+        run: echo "version=$(jq -r .flutter .fvmrc)" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Flutter ${{ steps.fvm.outputs.version }}
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ steps.fvm.outputs.version }}
+          channel: stable
+          cache: true
+
+      - name: Activate Melos
+        run: dart pub global activate melos
+
+      # Author the release commit as the App's bot identity.
+      - name: Configure git identity
+        run: |
+          git config user.name "${{ steps.app-token.outputs.app-slug }}[bot]"
+          git config user.email "${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com"
+
+      # --all includes private (publish_to: none) packages; --yes skips the prompt.
+      # No `melos bootstrap` on purpose: keep the tree clean and avoid wiring the
+      # local commit hook onto melos's own release commit.
+      - name: Version packages & update changelogs
+        run: melos version --all --yes
+
+      - name: Push release commit and tags
+        run: git push --follow-tags origin HEAD:main
