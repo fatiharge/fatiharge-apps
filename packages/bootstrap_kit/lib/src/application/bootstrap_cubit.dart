@@ -10,7 +10,7 @@ import 'package:bootstrap_kit/src/domain/bootstrap_port.dart';
 /// failure that can be retried from where it left off.
 class BootstrapCubit extends Cubit<BootstrapState> {
   BootstrapCubit(this._port)
-      : super(const BootstrapRunning(completed: 0, total: 0));
+    : super(const BootstrapRunning(completed: 0, total: 0));
 
   final BootstrapPort _port;
 
