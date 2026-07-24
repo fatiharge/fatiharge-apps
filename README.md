@@ -18,6 +18,10 @@ After cloning, enable the local commit hook once:
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the full rules, allowed types, and examples.
 
+## Packages
+
+Packages live in [`packages/`](packages/); each ships its own README.
+
 ## Getting started
 
 > The monorepo structure (packages, apps, tooling) will be added as the project grows.

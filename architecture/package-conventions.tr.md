@@ -76,17 +76,11 @@ packages/ui_kit/lib/src/
 └─ side_effect/   # toast, dialog, haptik
 ```
 
-**`utility_kit`** — framework'ten bağımsız yardımcılar:
+**`utility_kit`** — framework'ten bağımsız, **bağımlılık-hafif** yardımcılar. Minimal tut: kodu ancak gerçek bir tüketici ihtiyaç duyunca ekle ve ağır bağımlılıkları dışarıda bırak — UI/layout yardımcıları `ui_kit`'e, güvenli storage/kripto bir `storage_kit`'e, localization loader'ları kendi l10n paketine ait.
 
 ```
 packages/utility_kit/lib/src/
-├─ base/          # base sınıflar (örn. base cubit/state, failure)
-├─ exception/
-├─ extension/
-├─ localization/
-├─ service/
-├─ storage/
-└─ util/
+└─ base/          # UI-bağımsız base sözleşmeler (örn. EffectBloc)
 ```
 
 **`lint_kit`** — paylaşılan analyzer config'ini `lib/analysis_options.yaml`'da sunar (`very_good_analysis` tabanlı). Bir `dev_dependency`'dir ve diğer her paketin `analysis_options.yaml`'ı tarafından referans alınır.
@@ -132,13 +126,22 @@ Kilit nokta: **somut adapter'ları yalnızca uygulama bilir.** Feature/domain pa
 - `domain` ve `application`'ı (saf, hızlı) yoğun test etmeyi tercih et; `presentation`'ı değdiği yerde widget-test et.
 - `melos run test`, `test/` dizini olan her paketi çalıştırır.
 
+## Dokümantasyon
+
+Elle yazılan dokümanı yavaş değişen seviyede tut; geri kalan her şeyi ürettir. Anti-drift stratejisinin tamamı budur — bir aracın zaten ürettiği şeyi elle sürdürme.
+
+- **Paket `README.md` (+ `README.tr.md`)** — ince ve **sabit**: paket ne işe yarar, tek kısa kullanım örneği, `CHANGELOG.md` ve `architecture/`'a linkler. Bu bir changelog *değildir*; yalnızca public API değişince dokun. Repo'nun geri kalanı gibi iki dilli: üstte çapraz-link başlığıyla `.md` / `.tr.md` çiftini birlikte tut. İnce tutmak, iki dosyanın bakımını ucuz tutan şeydir.
+- **`CHANGELOG.md`** — `melos version` tarafından Conventional Commits'ten üretilir. **Asla elle düzenleme.** Değişim geçmişin commit'lerindir.
+- **API referansı** — `lib/src/**` içindeki `///` doc-comment'lerden gelir, `dart doc` ile üretilir. Public tipleri ve üyeleri belgele; yorum kodun yanında yaşadığı için drift edemez.
+- **Kök README** — paketleri listelemez; `packages/`'a işaret eder. Dizinin kendisi index'tir, senkronlanacak bir şey yoktur.
+
 ## Ne zaman yeni paket açılır
 
 Kod **feature/uygulamalar arasında yeniden kullanılıyorsa**, **bağımsız bir yaşam döngüsü/versiyonlama** gerekiyorsa ya da **zorlanan bir sınırdan** faydalanıyorsa (feature A'nın feature B'nin iç detayına uzanmasını derleyicinin durdurmasını istiyorsan) paket oluştur. Aksi halde mevcut bir paket içinde bir klasör yeterlidir — fazla parçalama.
 
 ## Yeni paket için kontrol listesi
 
-1. `pubspec.yaml` (`resolution: workspace`), barrel `lib/<name>.dart`, tek satırlık `analysis_options.yaml` içeren `packages/<name>/`.
+1. `pubspec.yaml` (`resolution: workspace`), barrel `lib/<name>.dart`, tek satırlık `analysis_options.yaml` ve ince `README.md` + `README.tr.md` içeren `packages/<name>/`.
 2. `<name>`'i kök `pubspec.yaml`'daki `workspace:` listesine ekle.
 3. `melos bootstrap`, ardından `melos run analyze` ve `melos run test`.
 4. `feature/*` veya `chore/*` branch'inde Conventional Commit ile commit'le.
