@@ -9,6 +9,7 @@ environment:
 # Add new members here (and set `resolution: workspace` in their pubspec).
 workspace:
   - packages/lint_kit
+  - packages/utility_kit
 
 dev_dependencies:
   melos: ^8.2.0
