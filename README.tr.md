@@ -18,6 +18,10 @@ Klonladıktan sonra yerel commit hook'unu bir kez etkinleştir:
 
 Tüm kurallar, izinli türler ve örnekler için [CONTRIBUTING.tr.md](CONTRIBUTING.tr.md) dosyasına bak.
 
+## Paketler
+
+Paketler [`packages/`](packages/) altında yaşar; her biri kendi README'sini taşır.
+
 ## Başlangıç
 
 > Monorepo yapısı (paketler, uygulamalar, araçlar) proje büyüdükçe eklenecek.
