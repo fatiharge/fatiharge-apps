@@ -42,7 +42,7 @@ void main() {
 
     test('an overall budget counts every expense', () {
       final summary = summaryOf([
-        expenseOf(6000, category: 'food'),
+        expenseOf(6000),
         expenseOf(4000, category: 'rent'),
       ]);
 
@@ -127,7 +127,7 @@ void main() {
     test('income does not consume a budget', () {
       final statuses = BudgetEvaluator.evaluate(
         budgets: [budgetOf(10000)],
-        summary: summaryOf([incomeOf(50000, category: 'salary')]),
+        summary: summaryOf([incomeOf(50000)]),
       );
 
       expect(statuses.single.spent, const Money.zero(try_));

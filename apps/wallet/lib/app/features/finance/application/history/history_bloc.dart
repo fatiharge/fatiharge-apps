@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bloc/bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:utility_kit/utility_kit.dart';
 import 'package:wallet/app/features/finance/application/history/history_effect.dart';
@@ -7,6 +8,7 @@ import 'package:wallet/app/features/finance/application/history/history_event.da
 import 'package:wallet/app/features/finance/application/history/history_state.dart';
 import 'package:wallet/app/features/finance/domain/repository/category_repository.dart';
 import 'package:wallet/app/features/finance/domain/repository/transaction_repository.dart';
+import 'package:wallet/app/features/finance/domain/rules/transaction_filter.dart';
 
 /// The transaction history: filtering, and delete with undo.
 ///
@@ -14,7 +16,8 @@ import 'package:wallet/app/features/finance/domain/repository/transaction_reposi
 /// away) and fire a one-shot action (show the undo snackbar). Putting the
 /// snackbar in state would re-show it on every rebuild.
 @injectable
-class HistoryBloc extends EffectBloc<HistoryEvent, HistoryState, HistoryEffect> {
+class HistoryBloc
+    extends EffectBloc<HistoryEvent, HistoryState, HistoryEffect> {
   HistoryBloc(this._transactions, this._categories)
     : super(const HistoryState()) {
     on<HistoryStarted>(_onStarted);

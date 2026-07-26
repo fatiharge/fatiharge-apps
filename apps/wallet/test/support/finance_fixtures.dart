@@ -5,9 +5,13 @@ import 'package:wallet/app/features/finance/domain/models/money.dart';
 import 'package:wallet/app/features/finance/domain/models/money_transaction.dart';
 
 /// Shorthand builders so tests read as data, not as constructor noise.
+///
+/// The default categories are deliberately meaningless (`misc`): a test that
+/// cares which category a transaction lands in has to say so, and the linter
+/// will not strip an argument that differs from the default.
 MoneyTransaction expenseOf(
   int amountMinor, {
-  String category = 'food',
+  String category = 'misc',
   DateTime? on,
   Currency currency = Currency.turkishLira,
   String? id,
@@ -23,7 +27,7 @@ MoneyTransaction expenseOf(
 
 MoneyTransaction incomeOf(
   int amountMinor, {
-  String category = 'salary',
+  String category = 'misc_income',
   DateTime? on,
   Currency currency = Currency.turkishLira,
   String? id,
@@ -41,7 +45,7 @@ Budget budgetOf(
   int limitMinor, {
   String? category,
   Currency currency = Currency.turkishLira,
-  String id = 'b1',
+  String id = 'budget',
 }) => Budget(
   id: id,
   limit: Money(limitMinor, currency),

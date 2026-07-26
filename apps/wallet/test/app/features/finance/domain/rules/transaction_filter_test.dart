@@ -10,7 +10,7 @@ void main() {
   final transactions = [
     expenseOf(1000, category: 'food', on: DateTime(2026, 7, 2), note: 'Lunch'),
     expenseOf(2000, category: 'rent', on: DateTime(2026, 7, 5)),
-    incomeOf(90000, category: 'salary', on: DateTime(2026, 7, 1)),
+    incomeOf(90000, category: 'salary', on: DateTime(2026, 7)),
     expenseOf(
       3000,
       category: 'food',
@@ -71,7 +71,11 @@ void main() {
       const filter = TransactionFilter(period: MonthPeriod(2026, 7));
 
       final dates = filter.apply(transactions).map((t) => t.date).toList();
-      expect(dates, [DateTime(2026, 7, 5), DateTime(2026, 7, 2), DateTime(2026, 7)]);
+      expect(dates, [
+        DateTime(2026, 7, 5),
+        DateTime(2026, 7, 2),
+        DateTime(2026, 7),
+      ]);
     });
 
     test('copyWith can clear a field as well as set it', () {

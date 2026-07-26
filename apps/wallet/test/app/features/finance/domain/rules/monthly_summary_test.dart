@@ -24,7 +24,7 @@ void main() {
   group('MonthlySummary', () {
     test('totals income and expense separately', () {
       final summary = summarise([
-        incomeOf(500000, on: DateTime(2026, 7, 1)),
+        incomeOf(500000, on: DateTime(2026, 7)),
         expenseOf(12000, on: DateTime(2026, 7, 3)),
         expenseOf(8000, on: DateTime(2026, 7, 9)),
       ]);
@@ -82,7 +82,7 @@ void main() {
     });
 
     test('spentOn returns zero for an untouched category', () {
-      final summary = summarise([expenseOf(1000, category: 'food')]);
+      final summary = summarise([expenseOf(1000)]);
 
       expect(summary.spentOn('travel'), const Money.zero(try_));
     });

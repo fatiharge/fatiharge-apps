@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show immutable, listEquals, mapEquals;
 import 'package:wallet/app/features/finance/domain/models/category.dart';
 import 'package:wallet/app/features/finance/domain/models/currency.dart';
 import 'package:wallet/app/features/finance/domain/rules/budget_evaluator.dart';
@@ -15,8 +15,7 @@ class BudgetState {
     this.loading = true,
   });
 
-  BudgetState.initial()
-    : this(period: MonthPeriod.of(DateTime.now()));
+  BudgetState.initial() : this(period: MonthPeriod.of(DateTime.now()));
 
   final MonthPeriod period;
   final Currency currency;

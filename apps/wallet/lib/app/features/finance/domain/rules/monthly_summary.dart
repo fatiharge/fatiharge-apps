@@ -32,6 +32,7 @@ class CategoryTotal {
 /// Scoped to a single [currency] on purpose. Summing across currencies would
 /// require exchange rates, which the app does not have; the dashboard instead
 /// shows one currency at a time and lets the user switch.
+@immutable
 class MonthlySummary {
   MonthlySummary._({
     required this.period,
@@ -122,4 +123,39 @@ class MonthlySummary {
   /// What was spent in [categoryId], or zero when nothing was.
   Money spentOn(String categoryId) =>
       expenseByCategory[categoryId] ?? Money.zero(currency);
+
+  // Value equality so that a Cubit holding a summary can tell "the numbers
+  // changed" from "the same numbers were recomputed".
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MonthlySummary &&
+          other.period == period &&
+          other.currency == currency &&
+          other.income == income &&
+          other.expense == expense &&
+          _sameTotals(other.expenseByCategory, expenseByCategory) &&
+          _sameTotals(other.incomeByCategory, incomeByCategory);
+
+  @override
+  int get hashCode => Object.hash(
+    period,
+    currency,
+    income,
+    expense,
+    Object.hashAllUnordered(
+      expenseByCategory.entries.map((e) => Object.hash(e.key, e.value)),
+    ),
+    Object.hashAllUnordered(
+      incomeByCategory.entries.map((e) => Object.hash(e.key, e.value)),
+    ),
+  );
+
+  static bool _sameTotals(Map<String, Money> a, Map<String, Money> b) {
+    if (a.length != b.length) return false;
+    for (final entry in a.entries) {
+      if (b[entry.key] != entry.value) return false;
+    }
+    return true;
+  }
 }

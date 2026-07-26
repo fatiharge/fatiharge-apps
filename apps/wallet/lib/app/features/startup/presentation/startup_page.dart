@@ -4,7 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:wallet/app/infrastructure/adapter/bootstrap/bootstrap_adapter.dart';
 
-/// The first route: runs the startup jobs and hands over to [MainRoute].
+/// The first route: runs the startup jobs and hands over to the main tabs.
 ///
 /// All of the orchestration lives in `bootstrap_kit`; this page only supplies
 /// the port and the localized failure screen.

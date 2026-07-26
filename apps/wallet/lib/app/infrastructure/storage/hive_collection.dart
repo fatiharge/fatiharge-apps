@@ -27,8 +27,9 @@ class HiveCollection<T> {
     yield* box.watch().map((_) => readAll());
   }
 
-  List<T> readAll() =>
-      box.values.map((record) => decode(record.cast<String, dynamic>())).toList();
+  List<T> readAll() => box.values
+      .map((record) => decode(record.cast<String, dynamic>()))
+      .toList();
 
   T? read(String id) {
     final record = box.get(id);

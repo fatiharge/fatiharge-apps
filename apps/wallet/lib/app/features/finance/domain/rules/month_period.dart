@@ -29,8 +29,7 @@ class MonthPeriod implements Comparable<MonthPeriod> {
 
   MonthPeriod get previous => MonthPeriod.of(DateTime(year, month - 1));
 
-  bool contains(DateTime date) =>
-      !date.isBefore(start) && date.isBefore(end);
+  bool contains(DateTime date) => !date.isBefore(start) && date.isBefore(end);
 
   @override
   int compareTo(MonthPeriod other) => start.compareTo(other.start);

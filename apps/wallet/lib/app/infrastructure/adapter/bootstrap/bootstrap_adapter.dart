@@ -24,7 +24,7 @@ class BootstrapAdapter implements BootstrapPort {
     ),
 
     // Opens the boxes (@preResolve) and registers the repositories.
-    BootstrapJob(
+    const BootstrapJob(
       'dependencies',
       configureDependencies,
       errorPolicy: BootstrapErrorPolicy.restart,

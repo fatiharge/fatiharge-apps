@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show immutable, listEquals;
 import 'package:wallet/app/features/finance/domain/models/category.dart';
 import 'package:wallet/app/features/finance/domain/models/currency.dart';
 import 'package:wallet/app/features/finance/domain/models/money.dart';

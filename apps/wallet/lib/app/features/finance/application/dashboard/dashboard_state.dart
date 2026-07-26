@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show immutable, listEquals, mapEquals;
 import 'package:wallet/app/features/finance/domain/models/category.dart';
 import 'package:wallet/app/features/finance/domain/models/currency.dart';
 import 'package:wallet/app/features/finance/domain/rules/budget_evaluator.dart';
@@ -19,6 +19,7 @@ class DashboardLoading extends DashboardState {
 }
 
 /// Everything the dashboard draws, recomputed on every underlying change.
+@immutable
 class DashboardReady extends DashboardState {
   const DashboardReady({
     required this.period,
@@ -71,6 +72,8 @@ class DashboardReady extends DashboardState {
     summary,
     Object.hashAll(availableCurrencies),
     Object.hashAll(budgetStatuses),
-    Object.hashAllUnordered(categories.entries.map((e) => Object.hash(e.key, e.value))),
+    Object.hashAllUnordered(
+      categories.entries.map((e) => Object.hash(e.key, e.value)),
+    ),
   );
 }

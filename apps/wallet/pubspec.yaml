@@ -21,6 +21,8 @@ dependencies:
 
   # State, DI, routing.
   auto_route: ^10.2.0
+  # bloc is used directly by cubits/blocs; flutter_bloc only by the widgets.
+  bloc: ^9.0.0
   flutter_bloc: ^9.1.1
   get_it: ^8.2.0
   injectable: ^2.5.2
@@ -29,6 +31,7 @@ dependencies:
   easy_localization: ^3.0.8
   freezed_annotation: ^3.1.0
   intl: any
+  meta: any
 
   # Local storage & charts.
   fl_chart: ^1.2.0

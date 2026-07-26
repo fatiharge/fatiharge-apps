@@ -23,7 +23,7 @@ class EntryCubit extends Cubit<EntryState> {
   StreamSubscription<void>? _categorySubscription;
 
   /// Loads categories and, when [existing] is given, the values being edited.
-  Future<void> start({MoneyTransaction? existing}) async {
+  void start({MoneyTransaction? existing}) {
     if (existing != null) {
       emit(
         state.copyWith(
@@ -54,8 +54,7 @@ class EntryCubit extends Cubit<EntryState> {
     });
   }
 
-  void amountChanged(String value) =>
-      emit(state.copyWith(amountText: value));
+  void amountChanged(String value) => emit(state.copyWith(amountText: value));
 
   void typeChanged(TransactionType type) => emit(state.copyWith(type: type));
 

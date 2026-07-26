@@ -1,3 +1,4 @@
+import 'package:meta/meta.dart';
 import 'package:wallet/app/features/finance/domain/models/budget.dart';
 import 'package:wallet/app/features/finance/domain/models/money.dart';
 import 'package:wallet/app/features/finance/domain/rules/monthly_summary.dart';
@@ -15,6 +16,7 @@ enum BudgetHealth {
 }
 
 /// A budget paired with what has actually been spent against it.
+@immutable
 class BudgetStatus {
   const BudgetStatus({required this.budget, required this.spent});
 
@@ -39,6 +41,14 @@ class BudgetStatus {
   }
 
   bool get isExceeded => health == BudgetHealth.exceeded;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is BudgetStatus && other.budget == budget && other.spent == spent;
+
+  @override
+  int get hashCode => Object.hash(budget, spent);
 }
 
 /// Compares budgets against a month's actual spending.
@@ -59,18 +69,19 @@ abstract final class BudgetEvaluator {
     required Iterable<Budget> budgets,
     required MonthlySummary summary,
   }) {
-    final statuses = budgets
-        .where((budget) => budget.currency == summary.currency)
-        .map(
-          (budget) => BudgetStatus(
-            budget: budget,
-            spent: budget.isOverall
-                ? summary.expense
-                : summary.spentOn(budget.categoryId!),
-          ),
-        )
-        .toList()
-      ..sort((a, b) => b.ratio.compareTo(a.ratio));
+    final statuses =
+        budgets
+            .where((budget) => budget.currency == summary.currency)
+            .map(
+              (budget) => BudgetStatus(
+                budget: budget,
+                spent: budget.isOverall
+                    ? summary.expense
+                    : summary.spentOn(budget.categoryId!),
+              ),
+            )
+            .toList()
+          ..sort((a, b) => b.ratio.compareTo(a.ratio));
     return statuses;
   }
 
