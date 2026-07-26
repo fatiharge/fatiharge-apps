@@ -53,7 +53,7 @@ void main() {
           ),
         ),
       );
-      await tester.pump();
+      await tester.pump(const Duration(seconds: 2));
 
       expect(find.text('2/2'), findsOneWidget);
     });

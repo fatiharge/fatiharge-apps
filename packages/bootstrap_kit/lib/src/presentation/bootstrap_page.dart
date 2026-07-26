@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bootstrap_kit/src/application/bootstrap_cubit.dart';
 import 'package:bootstrap_kit/src/application/bootstrap_state.dart';
 import 'package:bootstrap_kit/src/domain/bootstrap_port.dart';
@@ -59,12 +61,12 @@ class _BootstrapPageState extends State<BootstrapPage> {
   void initState() {
     super.initState();
     // Not awaited: the stream below is what drives the UI.
-    _cubit.start();
+    unawaited(_cubit.start());
   }
 
   @override
   void dispose() {
-    _cubit.close();
+    unawaited(_cubit.close());
     super.dispose();
   }
 
@@ -80,14 +82,14 @@ class _BootstrapPageState extends State<BootstrapPage> {
               widget.port.bootstrapView,
         BootstrapFailed() =>
           widget.errorBuilder?.call(
-            context,
-            state,
-            state.canRetry ? _cubit.retry : null,
-          ) ??
-          _DefaultBootstrapError(
-            state: state,
-            onRetry: state.canRetry ? _cubit.retry : null,
-          ),
+                context,
+                state,
+                state.canRetry ? _cubit.retry : null,
+              ) ??
+              _DefaultBootstrapError(
+                state: state,
+                onRetry: state.canRetry ? _cubit.retry : null,
+              ),
       };
     },
   );
