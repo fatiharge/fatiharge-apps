@@ -10,6 +10,7 @@ import 'package:wallet/app/features/finance/domain/models/currency.dart';
 import 'package:wallet/app/features/finance/domain/models/money_transaction.dart';
 import 'package:wallet/app/features/finance/presentation/format/category_icons.dart';
 import 'package:wallet/app/features/finance/presentation/format/money_format.dart';
+import 'package:wallet/generated/locale_keys.g.dart';
 
 /// Add or edit a transaction.
 @RoutePage()
@@ -76,8 +77,8 @@ class _EntryFormState extends State<_EntryForm> {
             children: [
               Text(
                 state.isEditing
-                    ? 'entry.edit_title'.tr()
-                    : 'entry.add_title'.tr(),
+                    ? LocaleKeys.entry_edit_title.tr()
+                    : LocaleKeys.entry_add_title.tr(),
                 style: theme.textTheme.titleLarge,
               ),
               const SizedBox(height: 20),
@@ -94,7 +95,7 @@ class _EntryFormState extends State<_EntryForm> {
               ),
               const SizedBox(height: 20),
               Text(
-                'entry.category'.tr(),
+                LocaleKeys.entry_category.tr(),
                 style: theme.textTheme.labelLarge,
               ),
               const SizedBox(height: 8),
@@ -113,7 +114,7 @@ class _EntryFormState extends State<_EntryForm> {
                 onChanged: cubit.noteChanged,
                 textCapitalization: TextCapitalization.sentences,
                 decoration: InputDecoration(
-                  labelText: 'entry.note'.tr(),
+                  labelText: LocaleKeys.entry_note.tr(),
                   prefixIcon: const Icon(Icons.notes_outlined),
                 ),
               ),
@@ -125,7 +126,7 @@ class _EntryFormState extends State<_EntryForm> {
                         dimension: 20,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : Text('common.save'.tr()),
+                    : Text(LocaleKeys.common_save.tr()),
               ),
             ],
           ),
@@ -185,11 +186,12 @@ class _AmountField extends StatelessWidget {
     ],
     style: Theme.of(context).textTheme.headlineSmall,
     decoration: InputDecoration(
-      labelText: 'entry.amount'.tr(),
+      labelText: LocaleKeys.entry_amount.tr(),
       errorText: switch (state.visibleError) {
-        EntryError.amountMissing => 'entry.error_amount_missing'.tr(),
-        EntryError.amountInvalid => 'entry.error_amount_invalid'.tr(),
-        EntryError.amountNotPositive => 'entry.error_amount_positive'.tr(),
+        EntryError.amountMissing => LocaleKeys.entry_error_amount_missing.tr(),
+        EntryError.amountInvalid => LocaleKeys.entry_error_amount_invalid.tr(),
+        EntryError.amountNotPositive =>
+          LocaleKeys.entry_error_amount_positive.tr(),
         EntryError.noCategory || null => null,
       },
       suffixIcon: Padding(
@@ -223,7 +225,7 @@ class _CategoryPicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (state.categories.isEmpty) {
-      return Text('entry.no_categories'.tr());
+      return Text(LocaleKeys.entry_no_categories.tr());
     }
 
     return Wrap(
@@ -253,7 +255,7 @@ class _DateField extends StatelessWidget {
     onTap: () => _pick(context),
     child: InputDecorator(
       decoration: InputDecoration(
-        labelText: 'entry.date'.tr(),
+        labelText: LocaleKeys.entry_date.tr(),
         prefixIcon: const Icon(Icons.event_outlined),
       ),
       child: Text(date.formatDay(context)),

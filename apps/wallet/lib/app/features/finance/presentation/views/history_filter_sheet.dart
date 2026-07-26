@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:wallet/app/features/finance/domain/models/category.dart';
 import 'package:wallet/app/features/finance/domain/models/money_transaction.dart';
 import 'package:wallet/app/features/finance/domain/rules/transaction_filter.dart';
+import 'package:wallet/generated/locale_keys.g.dart';
 
 /// What the filter sheet returns. Wrapped so "closed without changing
 /// anything" (`null`) is distinguishable from "cleared the filter".
@@ -45,15 +46,21 @@ class _HistoryFilterSheetState extends State<HistoryFilterSheet> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('history.filter'.tr(), style: theme.textTheme.titleLarge),
+            Text(
+              LocaleKeys.history_filter.tr(),
+              style: theme.textTheme.titleLarge,
+            ),
             const SizedBox(height: 20),
-            Text('history.type'.tr(), style: theme.textTheme.labelLarge),
+            Text(
+              LocaleKeys.history_type.tr(),
+              style: theme.textTheme.labelLarge,
+            ),
             const SizedBox(height: 8),
             Wrap(
               spacing: 8,
               children: [
                 ChoiceChip(
-                  label: Text('common.all'.tr()),
+                  label: Text(LocaleKeys.common_all.tr()),
                   selected: _draft.type == null,
                   onSelected: (_) => setState(
                     () => _draft = _draft.copyWith(clearType: true),
@@ -69,7 +76,10 @@ class _HistoryFilterSheetState extends State<HistoryFilterSheet> {
               ],
             ),
             const SizedBox(height: 20),
-            Text('history.categories'.tr(), style: theme.textTheme.labelLarge),
+            Text(
+              LocaleKeys.history_categories.tr(),
+              style: theme.textTheme.labelLarge,
+            ),
             const SizedBox(height: 8),
             Wrap(
               spacing: 8,
@@ -92,7 +102,7 @@ class _HistoryFilterSheetState extends State<HistoryFilterSheet> {
                     onPressed: () => Navigator.of(context).pop(
                       const TransactionFilterResult(TransactionFilter()),
                     ),
-                    child: Text('history.clear_filter'.tr()),
+                    child: Text(LocaleKeys.history_clear_filter.tr()),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -101,7 +111,7 @@ class _HistoryFilterSheetState extends State<HistoryFilterSheet> {
                     onPressed: () => Navigator.of(
                       context,
                     ).pop(TransactionFilterResult(_draft)),
-                    child: Text('common.apply'.tr()),
+                    child: Text(LocaleKeys.common_apply.tr()),
                   ),
                 ),
               ],

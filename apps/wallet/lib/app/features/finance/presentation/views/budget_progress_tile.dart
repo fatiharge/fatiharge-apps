@@ -4,6 +4,7 @@ import 'package:wallet/app/features/finance/domain/models/category.dart';
 import 'package:wallet/app/features/finance/domain/rules/budget_evaluator.dart';
 import 'package:wallet/app/features/finance/presentation/format/category_icons.dart';
 import 'package:wallet/app/features/finance/presentation/format/money_format.dart';
+import 'package:wallet/generated/locale_keys.g.dart';
 
 /// One budget with its progress bar.
 class BudgetProgressTile extends StatelessWidget {
@@ -29,7 +30,7 @@ class BudgetProgressTile extends StatelessWidget {
       BudgetHealth.exceeded => theme.colorScheme.error,
     };
     final title = status.budget.isOverall
-        ? 'budget.overall'.tr()
+        ? LocaleKeys.budget_overall.tr()
         : category?.name ?? status.budget.categoryId!;
 
     return Card(
@@ -63,7 +64,7 @@ class BudgetProgressTile extends StatelessWidget {
                     IconButton(
                       onPressed: onDelete,
                       icon: const Icon(Icons.delete_outline),
-                      tooltip: 'common.delete'.tr(),
+                      tooltip: LocaleKeys.common_delete.tr(),
                       visualDensity: VisualDensity.compact,
                     ),
                 ],
@@ -91,12 +92,12 @@ class BudgetProgressTile extends StatelessWidget {
                   ),
                   Text(
                     status.isExceeded
-                        ? 'budget.over_by'.tr(
+                        ? LocaleKeys.budget_over_by.tr(
                             namedArgs: {
                               'amount': status.remaining.abs().format(context),
                             },
                           )
-                        : 'budget.remaining'.tr(
+                        : LocaleKeys.budget_remaining.tr(
                             namedArgs: {
                               'amount': status.remaining.format(context),
                             },
@@ -135,7 +136,7 @@ class BudgetAlertBanner extends StatelessWidget {
     final names = exceeded
         .map(
           (status) => status.budget.isOverall
-              ? 'budget.overall'.tr()
+              ? LocaleKeys.budget_overall.tr()
               : categories[status.budget.categoryId]?.name ??
                     status.budget.categoryId!,
         )
@@ -156,7 +157,7 @@ class BudgetAlertBanner extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              'budget.exceeded_warning'.plural(
+              LocaleKeys.budget_exceeded_warning.plural(
                 exceeded.length,
                 namedArgs: {'names': names},
               ),
