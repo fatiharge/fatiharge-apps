@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +13,7 @@ import 'package:wallet/app/features/finance/presentation/views/empty_state.dart'
 import 'package:wallet/app/features/finance/presentation/views/history_filter_sheet.dart';
 import 'package:wallet/app/features/finance/presentation/views/transaction_tile.dart';
 import 'package:wallet/app/route/app_router.gr.dart';
+import 'package:wallet/generated/locale_keys.g.dart';
 
 /// The full transaction list, with filtering and swipe-to-delete.
 @RoutePage()
@@ -59,9 +59,9 @@ class _HistoryViewState extends State<_HistoryView> {
       case HistoryTransactionRemoved(:final transaction):
         messenger.showSnackBar(
           SnackBar(
-            content: Text('history.deleted'.tr()),
+            content: Text(LocaleKeys.history_deleted.tr()),
             action: SnackBarAction(
-              label: 'common.undo'.tr(),
+              label: LocaleKeys.common_undo.tr(),
               onPressed: () => context.read<HistoryBloc>().add(
                 HistoryDeleteUndone(transaction),
               ),
@@ -70,7 +70,7 @@ class _HistoryViewState extends State<_HistoryView> {
         );
       case HistoryDeleteRestored():
         messenger.showSnackBar(
-          SnackBar(content: Text('history.restored'.tr())),
+          SnackBar(content: Text(LocaleKeys.history_restored.tr())),
         );
     }
   }
@@ -79,11 +79,11 @@ class _HistoryViewState extends State<_HistoryView> {
   Widget build(BuildContext context) => BlocBuilder<HistoryBloc, HistoryState>(
     builder: (context, state) => Scaffold(
       appBar: AppBar(
-        title: Text('tabs.history'.tr()),
+        title: Text(LocaleKeys.tabs_history.tr()),
         actions: [
           IconButton(
             onPressed: () => _openFilter(context, state),
-            tooltip: 'history.filter'.tr(),
+            tooltip: LocaleKeys.history_filter.tr(),
             icon: Badge(
               isLabelVisible: !state.filter.isEmpty,
               child: const Icon(Icons.filter_list),
@@ -97,18 +97,18 @@ class _HistoryViewState extends State<_HistoryView> {
         ),
         HistoryState(isFilteredEmpty: true) => EmptyState(
           icon: Icons.search_off,
-          title: 'history.no_match'.tr(),
+          title: LocaleKeys.history_no_match.tr(),
           action: TextButton(
             onPressed: () => context.read<HistoryBloc>().add(
               const HistoryFilterCleared(),
             ),
-            child: Text('history.clear_filter'.tr()),
+            child: Text(LocaleKeys.history_clear_filter.tr()),
           ),
         ),
         HistoryState(isEmpty: true) => EmptyState(
           icon: Icons.receipt_long_outlined,
-          title: 'history.empty_title'.tr(),
-          message: 'history.empty_message'.tr(),
+          title: LocaleKeys.history_empty_title.tr(),
+          message: LocaleKeys.history_empty_message.tr(),
         ),
         _ => _TransactionList(state: state),
       },

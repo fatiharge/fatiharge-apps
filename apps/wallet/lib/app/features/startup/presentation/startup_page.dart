@@ -3,6 +3,7 @@ import 'package:bootstrap_kit/bootstrap_kit.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:wallet/app/infrastructure/adapter/bootstrap/bootstrap_adapter.dart';
+import 'package:wallet/generated/locale_keys.g.dart';
 
 /// The first route: runs the startup jobs and hands over to the main tabs.
 ///
@@ -45,15 +46,15 @@ class _StartupError extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               Text(
-                'startup.failed_title'.tr(),
+                LocaleKeys.startup_failed_title.tr(),
                 style: theme.textTheme.titleLarge,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
               Text(
                 onRetry != null
-                    ? 'startup.failed_retryable'.tr()
-                    : 'startup.failed_fatal'.tr(),
+                    ? LocaleKeys.startup_failed_retryable.tr()
+                    : LocaleKeys.startup_failed_fatal.tr(),
                 style: theme.textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),
@@ -62,7 +63,7 @@ class _StartupError extends StatelessWidget {
                 FilledButton.icon(
                   onPressed: onRetry,
                   icon: const Icon(Icons.refresh),
-                  label: Text('common.retry'.tr()),
+                  label: Text(LocaleKeys.common_retry.tr()),
                 ),
             ],
           ),

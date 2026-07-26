@@ -6,6 +6,7 @@ import 'package:wallet/app/features/finance/domain/models/money.dart';
 import 'package:wallet/app/features/finance/domain/rules/monthly_summary.dart';
 import 'package:wallet/app/features/finance/presentation/format/money_format.dart';
 import 'package:wallet/app/features/finance/presentation/views/empty_state.dart';
+import 'package:wallet/generated/locale_keys.g.dart';
 
 /// Expense split by category, as a donut plus a legend.
 ///
@@ -42,7 +43,7 @@ class _CategoryPieChartState extends State<CategoryPieChart> {
           height: 240,
           child: EmptyState(
             icon: Icons.pie_chart_outline,
-            title: 'dashboard.no_expenses'.tr(),
+            title: LocaleKeys.dashboard_no_expenses.tr(),
           ),
         ),
       );
@@ -57,7 +58,7 @@ class _CategoryPieChartState extends State<CategoryPieChart> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'dashboard.by_category'.tr(),
+              LocaleKeys.dashboard_by_category.tr(),
               style: theme.textTheme.titleMedium,
             ),
             const SizedBox(height: 16),
@@ -128,7 +129,7 @@ class _CategoryPieChartState extends State<CategoryPieChart> {
     if (otherMinor > 0) {
       slices.add(
         _Slice(
-          label: 'dashboard.other_categories'.tr(),
+          label: LocaleKeys.dashboard_other_categories.tr(),
           amount: Money(otherMinor, widget.total.currency),
           share: otherMinor / total * 100,
           color: _otherColor,

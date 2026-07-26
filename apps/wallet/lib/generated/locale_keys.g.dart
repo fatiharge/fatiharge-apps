@@ -1,0 +1,73 @@
+// DO NOT EDIT. This is code generated via package:easy_localization/generate.dart
+
+// ignore_for_file: constant_identifier_names
+
+abstract class LocaleKeys {
+  static const common_save = 'common.save';
+  static const common_delete = 'common.delete';
+  static const common_retry = 'common.retry';
+  static const common_undo = 'common.undo';
+  static const common_all = 'common.all';
+  static const common_apply = 'common.apply';
+  static const tabs_dashboard = 'tabs.dashboard';
+  static const tabs_history = 'tabs.history';
+  static const tabs_budget = 'tabs.budget';
+  static const startup_failed_title = 'startup.failed_title';
+  static const startup_failed_retryable = 'startup.failed_retryable';
+  static const startup_failed_fatal = 'startup.failed_fatal';
+  static const dashboard_net_balance = 'dashboard.net_balance';
+  static const dashboard_income = 'dashboard.income';
+  static const dashboard_expense = 'dashboard.expense';
+  static const dashboard_by_category = 'dashboard.by_category';
+  static const dashboard_other_categories = 'dashboard.other_categories';
+  static const dashboard_no_expenses = 'dashboard.no_expenses';
+  static const dashboard_empty_title = 'dashboard.empty_title';
+  static const dashboard_empty_month = 'dashboard.empty_month';
+  static const dashboard_empty_message = 'dashboard.empty_message';
+  static const history_filter = 'history.filter';
+  static const history_type = 'history.type';
+  static const history_categories = 'history.categories';
+  static const history_clear_filter = 'history.clear_filter';
+  static const history_no_match = 'history.no_match';
+  static const history_empty_title = 'history.empty_title';
+  static const history_empty_message = 'history.empty_message';
+  static const history_deleted = 'history.deleted';
+  static const history_restored = 'history.restored';
+  static const entry_add_title = 'entry.add_title';
+  static const entry_edit_title = 'entry.edit_title';
+  static const entry_amount = 'entry.amount';
+  static const entry_category = 'entry.category';
+  static const entry_date = 'entry.date';
+  static const entry_note = 'entry.note';
+  static const entry_type_income = 'entry.type_income';
+  static const entry_type_expense = 'entry.type_expense';
+  static const entry_no_categories = 'entry.no_categories';
+  static const entry_error_amount_missing = 'entry.error_amount_missing';
+  static const entry_error_amount_invalid = 'entry.error_amount_invalid';
+  static const entry_error_amount_positive = 'entry.error_amount_positive';
+  static const budget_title = 'budget.title';
+  static const budget_add = 'budget.add';
+  static const budget_edit = 'budget.edit';
+  static const budget_limit = 'budget.limit';
+  static const budget_applies_to = 'budget.applies_to';
+  static const budget_overall = 'budget.overall';
+  static const budget_remaining = 'budget.remaining';
+  static const budget_over_by = 'budget.over_by';
+  static const budget_invalid_limit = 'budget.invalid_limit';
+  static const budget_empty_title = 'budget.empty_title';
+  static const budget_empty_message = 'budget.empty_message';
+  static const budget_exceeded_warning = 'budget.exceeded_warning';
+  static const category_food = 'category.food';
+  static const category_transport = 'category.transport';
+  static const category_home = 'category.home';
+  static const category_bills = 'category.bills';
+  static const category_health = 'category.health';
+  static const category_shopping = 'category.shopping';
+  static const category_entertainment = 'category.entertainment';
+  static const category_education = 'category.education';
+  static const category_travel = 'category.travel';
+  static const category_misc = 'category.misc';
+  static const category_salary = 'category.salary';
+  static const category_gift = 'category.gift';
+  static const category_savings = 'category.savings';
+}

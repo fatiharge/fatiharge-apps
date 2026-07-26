@@ -22,6 +22,28 @@ fvm flutter run --dart-define=SEED_DEMO_DATA=true   # fill an empty database
 fvm flutter run --dart-define=FEATURE_DEBUG_LOGS=false
 ```
 
+## Translations
+
+UI strings are addressed through generated constants
+(`LocaleKeys.dashboard_income.tr()`), never raw strings — a typo in a raw key
+is invisible until it renders on screen. After editing anything under
+`assets/translations/`:
+
+```bash
+melos run generate:l10n     # from the repo root
+```
+
+This is **not** part of `melos run generate`: easy_localization ships a
+standalone executable rather than a `build_runner` builder. The script also
+formats the output, which is required — the generator emits code that
+`dart format --set-exit-if-changed` rejects.
+
+One sharp edge: the generator treats any key whose last segment is a plural
+form name (`zero`, `one`, `two`, `few`, `many`, `other`) as part of a plural
+group and emits no constant for it. That is why the "other" category is keyed
+`category.misc`. `test/app/l10n/translations_test.dart` fails the build if a
+key loses its constant, or if `tr` and `en` drift apart.
+
 ## Layout
 
 ```

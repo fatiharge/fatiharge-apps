@@ -9,6 +9,7 @@ import 'package:wallet/app/features/finance/domain/rules/budget_evaluator.dart';
 import 'package:wallet/app/features/finance/presentation/views/budget_editor_sheet.dart';
 import 'package:wallet/app/features/finance/presentation/views/budget_progress_tile.dart';
 import 'package:wallet/app/features/finance/presentation/views/empty_state.dart';
+import 'package:wallet/generated/locale_keys.g.dart';
 
 /// Monthly limits and how far through each one this month is.
 @RoutePage()
@@ -29,11 +30,11 @@ class _BudgetView extends StatelessWidget {
   Widget build(BuildContext context) => BlocBuilder<BudgetCubit, BudgetState>(
     builder: (context, state) => Scaffold(
       appBar: AppBar(
-        title: Text('tabs.budget'.tr()),
+        title: Text(LocaleKeys.tabs_budget.tr()),
         actions: [
           IconButton(
             onPressed: () => _edit(context, state),
-            tooltip: 'budget.add'.tr(),
+            tooltip: LocaleKeys.budget_add.tr(),
             icon: const Icon(Icons.add_chart),
           ),
         ],
@@ -43,12 +44,12 @@ class _BudgetView extends StatelessWidget {
           : state.isEmpty
           ? EmptyState(
               icon: Icons.savings_outlined,
-              title: 'budget.empty_title'.tr(),
-              message: 'budget.empty_message'.tr(),
+              title: LocaleKeys.budget_empty_title.tr(),
+              message: LocaleKeys.budget_empty_message.tr(),
               action: FilledButton.icon(
                 onPressed: () => _edit(context, state),
                 icon: const Icon(Icons.add),
-                label: Text('budget.add'.tr()),
+                label: Text(LocaleKeys.budget_add.tr()),
               ),
             )
           : ListView.separated(

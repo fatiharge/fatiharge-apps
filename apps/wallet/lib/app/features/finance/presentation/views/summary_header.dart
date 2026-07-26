@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:wallet/app/features/finance/domain/models/money.dart';
 import 'package:wallet/app/features/finance/presentation/format/money_format.dart';
 import 'package:wallet/app/theme/app_theme.dart';
+import 'package:wallet/generated/locale_keys.g.dart';
 
 /// Income / expense / net for the selected month.
 class SummaryHeader extends StatelessWidget {
@@ -27,7 +28,7 @@ class SummaryHeader extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'dashboard.net_balance'.tr(),
+              LocaleKeys.dashboard_net_balance.tr(),
               style: theme.textTheme.labelMedium?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
@@ -45,7 +46,7 @@ class SummaryHeader extends StatelessWidget {
               children: [
                 Expanded(
                   child: _Figure(
-                    label: 'dashboard.income'.tr(),
+                    label: LocaleKeys.dashboard_income.tr(),
                     value: income,
                     color: AppTheme.income,
                     icon: Icons.south_west,
@@ -53,7 +54,7 @@ class SummaryHeader extends StatelessWidget {
                 ),
                 Expanded(
                   child: _Figure(
-                    label: 'dashboard.expense'.tr(),
+                    label: LocaleKeys.dashboard_expense.tr(),
                     value: expense,
                     color: AppTheme.expense,
                     icon: Icons.north_east,

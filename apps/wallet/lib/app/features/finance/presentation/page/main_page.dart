@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:wallet/app/route/app_router.gr.dart';
+import 'package:wallet/generated/locale_keys.g.dart';
 
 /// The tab shell: dashboard, history, budgets.
 ///
@@ -22,17 +23,17 @@ class MainPage extends StatelessWidget {
         NavigationDestination(
           icon: const Icon(Icons.pie_chart_outline),
           selectedIcon: const Icon(Icons.pie_chart),
-          label: 'tabs.dashboard'.tr(),
+          label: LocaleKeys.tabs_dashboard.tr(),
         ),
         NavigationDestination(
           icon: const Icon(Icons.receipt_long_outlined),
           selectedIcon: const Icon(Icons.receipt_long),
-          label: 'tabs.history'.tr(),
+          label: LocaleKeys.tabs_history.tr(),
         ),
         NavigationDestination(
           icon: const Icon(Icons.savings_outlined),
           selectedIcon: const Icon(Icons.savings),
-          label: 'tabs.budget'.tr(),
+          label: LocaleKeys.tabs_budget.tr(),
         ),
       ],
     ),
@@ -45,7 +46,7 @@ class _AddTransactionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) => FloatingActionButton(
     onPressed: () => context.router.push(TransactionEntryRoute()),
-    tooltip: 'entry.add_title'.tr(),
+    tooltip: LocaleKeys.entry_add_title.tr(),
     child: const Icon(Icons.add),
   );
 }

@@ -12,6 +12,7 @@ import 'package:wallet/app/features/finance/presentation/views/empty_state.dart'
 import 'package:wallet/app/features/finance/presentation/views/month_switcher.dart';
 import 'package:wallet/app/features/finance/presentation/views/summary_header.dart';
 import 'package:wallet/app/route/app_router.gr.dart';
+import 'package:wallet/generated/locale_keys.g.dart';
 
 /// Monthly totals, the category breakdown and any blown budgets.
 @RoutePage()
@@ -30,7 +31,7 @@ class _DashboardView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text('tabs.dashboard'.tr())),
+    appBar: AppBar(title: Text(LocaleKeys.tabs_dashboard.tr())),
     body: BlocBuilder<DashboardCubit, DashboardState>(
       builder: (context, state) => switch (state) {
         DashboardLoading() => const Center(child: CircularProgressIndicator()),
@@ -89,7 +90,7 @@ class _Ready extends StatelessWidget {
           if (state.budgetStatuses.isNotEmpty) ...[
             const SizedBox(height: 24),
             Text(
-              'budget.title'.tr(),
+              LocaleKeys.budget_title.tr(),
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 12),
@@ -121,13 +122,13 @@ class _EmptyMonth extends StatelessWidget {
     child: EmptyState(
       icon: Icons.insights_outlined,
       title: hasAnyCurrency
-          ? 'dashboard.empty_month'.tr()
-          : 'dashboard.empty_title'.tr(),
-      message: 'dashboard.empty_message'.tr(),
+          ? LocaleKeys.dashboard_empty_month.tr()
+          : LocaleKeys.dashboard_empty_title.tr(),
+      message: LocaleKeys.dashboard_empty_message.tr(),
       action: FilledButton.icon(
         onPressed: () => context.router.push(TransactionEntryRoute()),
         icon: const Icon(Icons.add),
-        label: Text('entry.add_title'.tr()),
+        label: Text(LocaleKeys.entry_add_title.tr()),
       ),
     ),
   );

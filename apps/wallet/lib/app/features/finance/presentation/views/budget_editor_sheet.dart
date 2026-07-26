@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:wallet/app/features/finance/application/budget/budget_state.dart';
 import 'package:wallet/app/features/finance/domain/models/budget.dart';
 import 'package:wallet/app/features/finance/domain/models/money.dart';
+import 'package:wallet/generated/locale_keys.g.dart';
 
 /// What the editor hands back to the cubit.
 class BudgetDraft {
@@ -81,7 +82,9 @@ class _BudgetEditorSheetState extends State<BudgetEditorSheet> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              widget.existing == null ? 'budget.add'.tr() : 'budget.edit'.tr(),
+              widget.existing == null
+                  ? LocaleKeys.budget_add.tr()
+                  : LocaleKeys.budget_edit.tr(),
               style: theme.textTheme.titleLarge,
             ),
             const SizedBox(height: 20),
@@ -95,13 +98,18 @@ class _BudgetEditorSheetState extends State<BudgetEditorSheet> {
                 FilteringTextInputFormatter.allow(RegExp(r'[\d.,]')),
               ],
               decoration: InputDecoration(
-                labelText: 'budget.limit'.tr(),
+                labelText: LocaleKeys.budget_limit.tr(),
                 suffixText: widget.state.currency.symbol,
-                errorText: _showError ? 'budget.invalid_limit'.tr() : null,
+                errorText: _showError
+                    ? LocaleKeys.budget_invalid_limit.tr()
+                    : null,
               ),
             ),
             const SizedBox(height: 20),
-            Text('budget.applies_to'.tr(), style: theme.textTheme.labelLarge),
+            Text(
+              LocaleKeys.budget_applies_to.tr(),
+              style: theme.textTheme.labelLarge,
+            ),
             const SizedBox(height: 8),
             Wrap(
               spacing: 8,
@@ -109,7 +117,7 @@ class _BudgetEditorSheetState extends State<BudgetEditorSheet> {
               children: [
                 if (canPickOverall)
                   ChoiceChip(
-                    label: Text('budget.overall'.tr()),
+                    label: Text(LocaleKeys.budget_overall.tr()),
                     selected: _categoryId == null,
                     onSelected: (_) => setState(() => _categoryId = null),
                   ),
@@ -124,7 +132,7 @@ class _BudgetEditorSheetState extends State<BudgetEditorSheet> {
             const SizedBox(height: 24),
             FilledButton(
               onPressed: _submit,
-              child: Text('common.save'.tr()),
+              child: Text(LocaleKeys.common_save.tr()),
             ),
           ],
         ),
