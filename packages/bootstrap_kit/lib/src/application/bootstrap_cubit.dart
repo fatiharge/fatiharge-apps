@@ -33,12 +33,17 @@ class BootstrapCubit extends Cubit<BootstrapState> {
   Future<void> _execute() async {
     final jobs = _jobs ??= _port.jobs();
 
-    final minWait = Future<void>.delayed(_minDuration);
+    final elapsed = Stopwatch()..start();
 
     final completed = await _runJobs(jobs, from: _resumeFrom);
     if (!completed) return; // BootstrapFailed emitted; the flow stopped.
 
-    await minWait;
+    // Only pad the *remaining* time, and only once the flow has succeeded.
+    // Starting the timer up front would leave it pending on the failure path.
+    final remaining = _minDuration - elapsed.elapsed;
+    if (remaining > Duration.zero) {
+      await Future<void>.delayed(remaining);
+    }
     _port.bootstrapFinished();
   }
 

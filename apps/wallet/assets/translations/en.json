@@ -1,0 +1,88 @@
+{
+  "common": {
+    "save": "Save",
+    "delete": "Delete",
+    "retry": "Retry",
+    "undo": "Undo",
+    "all": "All",
+    "apply": "Apply"
+  },
+  "tabs": {
+    "dashboard": "Overview",
+    "history": "History",
+    "budget": "Budget"
+  },
+  "startup": {
+    "failed_title": "Could not start",
+    "failed_retryable": "Something went wrong. You can try again.",
+    "failed_fatal": "An unrecoverable error occurred. Please restart the app."
+  },
+  "dashboard": {
+    "net_balance": "Balance this month",
+    "income": "Income",
+    "expense": "Expense",
+    "by_category": "By category",
+    "other_categories": "Other",
+    "no_expenses": "No expenses this month",
+    "empty_title": "Nothing recorded yet",
+    "empty_month": "Nothing this month",
+    "empty_message": "Start by adding your first income or expense."
+  },
+  "history": {
+    "filter": "Filter",
+    "type": "Type",
+    "categories": "Categories",
+    "clear_filter": "Clear filter",
+    "no_match": "No records match the filter",
+    "empty_title": "History is empty",
+    "empty_message": "Income and expenses you add will show up here.",
+    "deleted": "Record deleted",
+    "restored": "Record restored"
+  },
+  "entry": {
+    "add_title": "Add record",
+    "edit_title": "Edit record",
+    "amount": "Amount",
+    "category": "Category",
+    "date": "Date",
+    "note": "Note",
+    "type_income": "Income",
+    "type_expense": "Expense",
+    "no_categories": "Create a category first.",
+    "error_amount_missing": "Enter an amount",
+    "error_amount_invalid": "Enter a valid amount",
+    "error_amount_positive": "Amount must be greater than zero"
+  },
+  "budget": {
+    "title": "Budgets",
+    "add": "Add limit",
+    "edit": "Edit limit",
+    "limit": "Monthly limit",
+    "applies_to": "Applies to",
+    "overall": "All spending",
+    "remaining": "{amount} left",
+    "over_by": "{amount} over",
+    "invalid_limit": "Enter a valid limit",
+    "empty_title": "No budgets yet",
+    "empty_message": "Set a monthly limit and we'll warn you when it's passed.",
+    "exceeded_warning": {
+      "one": "{names} budget exceeded.",
+      "other": "{names} budgets exceeded."
+    }
+  },
+  "category": {
+    "food": "Food",
+    "transport": "Transport",
+    "home": "Home",
+    "bills": "Bills",
+    "health": "Health",
+    "shopping": "Shopping",
+    "entertainment": "Entertainment",
+    "education": "Education",
+    "travel": "Travel",
+    "other": "Other",
+    "salary": "Salary",
+    "gift": "Gift",
+    "savings": "Savings"
+  }
+}

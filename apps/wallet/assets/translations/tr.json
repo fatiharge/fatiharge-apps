@@ -1,0 +1,88 @@
+{
+  "common": {
+    "save": "Kaydet",
+    "delete": "Sil",
+    "retry": "Tekrar dene",
+    "undo": "Geri al",
+    "all": "Tümü",
+    "apply": "Uygula"
+  },
+  "tabs": {
+    "dashboard": "Özet",
+    "history": "Geçmiş",
+    "budget": "Bütçe"
+  },
+  "startup": {
+    "failed_title": "Uygulama başlatılamadı",
+    "failed_retryable": "Bir şeyler ters gitti. Tekrar deneyebilirsin.",
+    "failed_fatal": "Kurtarılamayan bir hata oluştu. Lütfen uygulamayı yeniden başlat."
+  },
+  "dashboard": {
+    "net_balance": "Bu ayki bakiye",
+    "income": "Gelir",
+    "expense": "Gider",
+    "by_category": "Kategori dağılımı",
+    "other_categories": "Diğer",
+    "no_expenses": "Bu ay gider yok",
+    "empty_title": "Henüz kayıt yok",
+    "empty_month": "Bu ay kayıt yok",
+    "empty_message": "İlk gelir veya giderini ekleyerek başla."
+  },
+  "history": {
+    "filter": "Filtrele",
+    "type": "Tür",
+    "categories": "Kategoriler",
+    "clear_filter": "Filtreyi temizle",
+    "no_match": "Filtreye uyan kayıt yok",
+    "empty_title": "Geçmiş boş",
+    "empty_message": "Eklediğin gelir ve giderler burada listelenir.",
+    "deleted": "Kayıt silindi",
+    "restored": "Kayıt geri alındı"
+  },
+  "entry": {
+    "add_title": "Kayıt ekle",
+    "edit_title": "Kaydı düzenle",
+    "amount": "Tutar",
+    "category": "Kategori",
+    "date": "Tarih",
+    "note": "Not",
+    "type_income": "Gelir",
+    "type_expense": "Gider",
+    "no_categories": "Önce bir kategori oluştur.",
+    "error_amount_missing": "Tutar gir",
+    "error_amount_invalid": "Geçerli bir tutar gir",
+    "error_amount_positive": "Tutar sıfırdan büyük olmalı"
+  },
+  "budget": {
+    "title": "Bütçeler",
+    "add": "Limit ekle",
+    "edit": "Limiti düzenle",
+    "limit": "Aylık limit",
+    "applies_to": "Kapsam",
+    "overall": "Tüm harcamalar",
+    "remaining": "{amount} kaldı",
+    "over_by": "{amount} aşıldı",
+    "invalid_limit": "Geçerli bir limit gir",
+    "empty_title": "Henüz bütçe yok",
+    "empty_message": "Aylık limit belirle, aşınca uyaralım.",
+    "exceeded_warning": {
+      "one": "{names} bütçesi aşıldı.",
+      "other": "{names} bütçeleri aşıldı."
+    }
+  },
+  "category": {
+    "food": "Yemek",
+    "transport": "Ulaşım",
+    "home": "Ev",
+    "bills": "Faturalar",
+    "health": "Sağlık",
+    "shopping": "Alışveriş",
+    "entertainment": "Eğlence",
+    "education": "Eğitim",
+    "travel": "Seyahat",
+    "other": "Diğer",
+    "salary": "Maaş",
+    "gift": "Hediye",
+    "savings": "Birikim"
+  }
+}
