@@ -39,7 +39,7 @@ The shared `ui_kit` is organised as `atoms → molecules → organisms → templ
 ```
 fatiharge-apps/
 ├─ apps/                     # runnable applications (thin composition roots)
-│  └─ wallet/lib/app/        # config, route, theme, infrastructure, features/
+│  └─ wallet/lib/            # config, route, theme, infrastructure, features/
 ├─ packages/                 # shared packages (Melos workspace members)
 │  ├─ lint_kit/              # shared analyzer + lint config (very_good_analysis)
 │  ├─ utility_kit/           # UI-independent base contracts (EffectBloc)
@@ -55,7 +55,7 @@ They are named here so the target is clear — not to imply they are available.
 ### Where a feature lives
 
 A feature starts as a folder **inside the app**
-(`apps/<app>/lib/app/features/<name>/`), carrying the same
+(`apps/<app>/lib/features/<name>/`), carrying the same
 `domain / application / presentation` layering described below. It moves out to
 `packages/<name>/` only once a second app or feature actually needs it — the
 test is in [package-conventions.md](package-conventions.md#when-to-create-a-new-package),
@@ -71,7 +71,7 @@ package is a file move plus an import rewrite.
 | ----------- | ------------------------------------------ | ---------------------------------------- |
 | **kit**     | `ui_kit`, `utility_kit`, `lint_kit`        | No — cross-cutting building blocks       |
 | **generated** | `api_client`                             | No — code-generated, do not hand-edit    |
-| **feature** | `apps/<app>/lib/app/features/<name>/`, promoted to `packages/<name>/` once shared | Yes — `domain / application / presentation` |
+| **feature** | `apps/<app>/lib/features/<name>/`, promoted to `packages/<name>/` once shared | Yes — `domain / application / presentation` |
 | **app**     | `apps/<app>`                               | Composition root + `features/` shell     |
 
 ## Dependency direction

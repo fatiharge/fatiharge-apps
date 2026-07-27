@@ -39,7 +39,7 @@ Paylaşılan `ui_kit`; `atoms → molecules → organisms → templates` ve enin
 ```
 fatiharge-apps/
 ├─ apps/                     # çalıştırılabilir uygulamalar (ince composition root'lar)
-│  └─ wallet/lib/app/        # config, route, theme, infrastructure, features/
+│  └─ wallet/lib/            # config, route, theme, infrastructure, features/
 ├─ packages/                 # paylaşılan paketler (Melos workspace member)
 │  ├─ lint_kit/              # ortak analyzer + lint config (very_good_analysis)
 │  ├─ utility_kit/           # UI'dan bağımsız temel sözleşmeler (EffectBloc)
@@ -55,7 +55,7 @@ Burada hedefi netleştirmek için anılıyorlar, mevcut oldukları anlamına gel
 ### Bir feature nerede yaşar
 
 Bir feature, **uygulamanın içinde** bir klasör olarak başlar
-(`apps/<app>/lib/app/features/<ad>/`) ve aşağıda anlatılan
+(`apps/<app>/lib/features/<ad>/`) ve aşağıda anlatılan
 `domain / application / presentation` katmanlamasını aynen taşır.
 `packages/<ad>/` altına ancak ikinci bir uygulama ya da feature gerçekten
 ihtiyaç duyduğunda çıkar — ölçüt
@@ -72,7 +72,7 @@ dosya taşıma + import düzeltmesinden ibarettir.
 | ----------- | ------------------------------------------ | ---------------------------------------- |
 | **kit**     | `ui_kit`, `utility_kit`, `lint_kit`        | Hayır — enine kesen yapı taşları         |
 | **generated** | `api_client`                             | Hayır — kod üretimi, elle düzenlenmez    |
-| **feature** | `apps/<app>/lib/app/features/<ad>/`, paylaşılınca `packages/<ad>/` | Evet — `domain / application / presentation` |
+| **feature** | `apps/<app>/lib/features/<ad>/`, paylaşılınca `packages/<ad>/` | Evet — `domain / application / presentation` |
 | **app**     | `apps/<app>`                               | Composition root + `features/` kabuğu    |
 
 ## Bağımlılık yönü

@@ -39,7 +39,7 @@ export 'src/theme/app_theme.dart';
 
 Bir feature, tam clean-architecture yığınını taşır. `application/`'ı türlere göre değil, alt-özelliğe (use-case) göre grupla.
 
-Aşağıdaki yerleşim, feature ister `packages/<ad>/lib/src/` içinde olsun ister —çoğunun başlangıçta olduğu gibi— `apps/<app>/lib/app/features/<ad>/` içinde olsun aynıdır; bkz. [Ne zaman yeni paket açılır](#ne-zaman-yeni-paket-açılır). Değişen tek şey konum.
+Aşağıdaki yerleşim, feature ister `packages/<ad>/lib/src/` içinde olsun ister —çoğunun başlangıçta olduğu gibi— `apps/<app>/lib/features/<ad>/` içinde olsun aynıdır; bkz. [Ne zaman yeni paket açılır](#ne-zaman-yeni-paket-açılır). Değişen tek şey konum.
 
 ```
 packages/auth/lib/src/
@@ -93,28 +93,34 @@ Uygulama incedir: adapter'ları port'lara bağlar ve feature giriş noktaların�
 
 ```
 apps/<app>/lib/
-├─ main.dart
-└─ app/
-   ├─ app.dart
-   ├─ config/
-   │  ├─ injectable.dart / injectable.config.dart   # get_it + injectable
-   │  ├─ modules/            # DI modülleri (api_module, core_module, environments)
-   │  ├─ env.dart
-   │  ├─ app_log.dart
-   │  └─ app_crash_listener.dart
-   ├─ infrastructure/        # DIŞ KENAR — domain port/repository'lerini implemente eder
-   │  ├─ adapter/            # port adapter'ları
-   │  ├─ repository/         # *_repository_impl.dart
-   │  ├─ mocks/              # dev/test flavor'ları için API mock'ları
-   │  └─ push/               # push notification servisi
-   ├─ network/               # interceptor http client
-   ├─ remote_config/         # accessor / mapper / model
-   ├─ route/                 # app_router feature router'larını birleştirir
-   ├─ theme/                 # uygulama seviyesi theme bağlama (ui_kit kullanır)
-   └─ features/<f>/presentation/{page,router}   # ince feature kabukları
+├─ main.dart               # tek giriş noktası — flavor'lar native projelerde yaşar
+├─ app.dart                # kök widget: theme, lokalizasyon, router
+├─ config/
+│  ├─ injectable.dart / injectable.config.dart   # get_it + injectable
+│  ├─ modules/             # DI modülleri
+│  ├─ env.dart             # build-time anahtarlar (String.fromEnvironment)
+│  └─ app_crash_listener.dart
+├─ infrastructure/         # DIŞ KENAR — domain port/repository'lerini implemente eder
+│  ├─ adapter/             # port adapter'ları (örn. bootstrap)
+│  ├─ repository/          # *_repository_impl.dart + dto/ + mapper/
+│  ├─ storage/             # somut veritabanı
+│  └─ seed/                # ilk açılış verisi
+├─ route/                  # app_router feature router'larını birleştirir
+├─ theme/                  # uygulama seviyesi theme bağlama
+├─ features/<ad>/          # domain / application / presentation
+└─ generated/              # kod üretimi çıktısı, elle düzenlenmez
 ```
 
-Kilit nokta: **somut adapter'ları yalnızca uygulama bilir.** Feature/domain paketleri port bildirir; `app/infrastructure/` bunları implemente eder ve DI (`config/modules/`) implementasyon → arayüz bağlar.
+`lib/` altında **`app/` diye bir sarmalayıcı klasör yok**. Paketlerin
+`lib/src/`'e ihtiyacı var çünkü public API'yi iç detaydan ayırır; bir
+uygulamanın dış tüketicisi olmadığı için aynı iç içelik hiçbir bilgi taşımaz,
+karşılığında her import'ta bir seviye maliyeti çıkarır.
+
+Backend geldiğinde bunlara `infrastructure/mocks/`, `infrastructure/push/`,
+`network/` ve `remote_config/` eklenir. Henüz var olmadıkları için mevcut
+gibi listelenmiyorlar.
+
+Kilit nokta: **somut adapter'ları yalnızca uygulama bilir.** Feature'lar port ve repository sözleşmelerini bildirir; `infrastructure/` bunları implemente eder ve DI (`config/`) implementasyon → arayüz bağlar.
 
 ## İsimlendirme
 

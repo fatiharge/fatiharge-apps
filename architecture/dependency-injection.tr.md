@@ -6,7 +6,7 @@ Service locator olarak **`get_it`**, kayıtlarını üretmek için **`injectable
 
 ## DI nerede yaşar
 
-Somut implementasyonları yalnızca **uygulama** (composition root) bilir. Kayıt `apps/<app>/lib/app/config/` altında yaşar:
+Somut implementasyonları yalnızca **uygulama** (composition root) bilir. Kayıt `apps/<app>/lib/config/` altında yaşar:
 
 ```
 config/
