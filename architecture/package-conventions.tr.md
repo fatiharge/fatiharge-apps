@@ -104,7 +104,8 @@ apps/<app>/lib/
 │  ├─ adapter/             # port adapter'ları (örn. bootstrap)
 │  ├─ repository/          # *_repository_impl.dart + dto/ + mapper/
 │  ├─ storage/             # somut veritabanı
-│  └─ seed/                # ilk açılış verisi
+│  ├─ seed/                # her kurulumun ilk açılışta aldığı veri
+│  └─ dev/                 # --dart-define arkasındaki araçlar, yayınlanmaz
 ├─ route/                  # app_router feature router'larını birleştirir
 ├─ theme/                  # uygulama seviyesi theme bağlama
 ├─ features/<ad>/          # domain / application / presentation

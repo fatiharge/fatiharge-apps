@@ -5,8 +5,8 @@ import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:wallet/config/env.dart';
 import 'package:wallet/config/injectable.dart';
 import 'package:wallet/features/finance/domain/repository/category_repository.dart';
+import 'package:wallet/infrastructure/dev/demo_transactions.dart';
 import 'package:wallet/infrastructure/seed/default_categories.dart';
-import 'package:wallet/infrastructure/seed/demo_transactions.dart';
 import 'package:wallet/route/app_router.dart';
 import 'package:wallet/route/app_router.gr.dart';
 
