@@ -48,11 +48,13 @@ anahtarının `category.misc` olmasının sebebi bu.
 ## Yerleşim
 
 ```
-lib/app/
+lib/
+├─ main.dart · app.dart  giriş noktası ve kök widget
 ├─ features/finance/     domain / application / presentation
 ├─ features/startup/     açılış (bootstrap) ekranı
 ├─ infrastructure/       Hive adapter'ları — depolamayı bilen tek yer
 ├─ config/  route/  theme/
+└─ generated/            lokalizasyon anahtarları
 ```
 
 Feature `packages/` altında değil, app'in içinde: tek tüketicisi var, yani

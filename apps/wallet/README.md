@@ -47,11 +47,13 @@ key loses its constant, or if `tr` and `en` drift apart.
 ## Layout
 
 ```
-lib/app/
+lib/
+├─ main.dart · app.dart  entry point and root widget
 ├─ features/finance/     domain / application / presentation
 ├─ features/startup/     the bootstrap screen
 ├─ infrastructure/       Hive adapters — the only code that knows the storage
 ├─ config/  route/  theme/
+└─ generated/            localization keys
 ```
 
 The feature lives inside the app rather than in `packages/`: it has a single

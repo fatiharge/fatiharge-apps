@@ -1,9 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:wallet/app/app.dart';
-import 'package:wallet/app/config/app_crash_listener.dart';
-import 'package:wallet/app/config/injectable.dart';
-import 'package:wallet/app/route/app_router.dart';
+import 'package:wallet/app.dart';
+import 'package:wallet/config/app_crash_listener.dart';
+import 'package:wallet/config/injectable.dart';
+import 'package:wallet/route/app_router.dart';
 
 /// Single entry point — no `main_dev.dart` / `main_prod.dart`.
 ///

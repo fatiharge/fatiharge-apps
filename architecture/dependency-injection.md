@@ -6,7 +6,7 @@ We use **`get_it`** as the service locator and **`injectable`** to generate its 
 
 ## Where DI lives
 
-Only the **app** (composition root) knows concrete implementations. Registration lives under `apps/<app>/lib/app/config/`:
+Only the **app** (composition root) knows concrete implementations. Registration lives under `apps/<app>/lib/config/`:
 
 ```
 config/

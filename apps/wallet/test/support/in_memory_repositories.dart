@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:wallet/app/features/finance/domain/models/budget.dart';
-import 'package:wallet/app/features/finance/domain/models/category.dart';
-import 'package:wallet/app/features/finance/domain/models/money_transaction.dart';
-import 'package:wallet/app/features/finance/domain/repository/budget_repository.dart';
-import 'package:wallet/app/features/finance/domain/repository/category_repository.dart';
-import 'package:wallet/app/features/finance/domain/repository/transaction_repository.dart';
+import 'package:wallet/features/finance/domain/models/budget.dart';
+import 'package:wallet/features/finance/domain/models/category.dart';
+import 'package:wallet/features/finance/domain/models/money_transaction.dart';
+import 'package:wallet/features/finance/domain/repository/budget_repository.dart';
+import 'package:wallet/features/finance/domain/repository/category_repository.dart';
+import 'package:wallet/features/finance/domain/repository/transaction_repository.dart';
 
 /// Shared stream/CRUD behaviour for the fakes below.
 ///

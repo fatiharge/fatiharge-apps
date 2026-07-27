@@ -39,7 +39,7 @@ export 'src/theme/app_theme.dart';
 
 A feature carries the full clean-architecture stack. Group `application/` by sub-feature (use-case), not by type.
 
-The layout below is the same whether the feature lives in `packages/<name>/lib/src/` or, as most do to begin with, in `apps/<app>/lib/app/features/<name>/` — see [When to create a new package](#when-to-create-a-new-package). Only the location changes.
+The layout below is the same whether the feature lives in `packages/<name>/lib/src/` or, as most do to begin with, in `apps/<app>/lib/features/<name>/` — see [When to create a new package](#when-to-create-a-new-package). Only the location changes.
 
 ```
 packages/auth/lib/src/
@@ -93,28 +93,36 @@ The app is thin: it wires adapters to ports and hosts feature entry points.
 
 ```
 apps/<app>/lib/
-├─ main.dart
-└─ app/
-   ├─ app.dart
-   ├─ config/
-   │  ├─ injectable.dart / injectable.config.dart   # get_it + injectable
-   │  ├─ modules/            # DI modules (api_module, core_module, environments)
-   │  ├─ env.dart
-   │  ├─ app_log.dart
-   │  └─ app_crash_listener.dart
-   ├─ infrastructure/        # THE outer edge — implements domain ports/repositories
-   │  ├─ adapter/            # port adapters
-   │  ├─ repository/         # *_repository_impl.dart
-   │  ├─ mocks/              # API mocks for dev/test flavors
-   │  └─ push/               # push notification service
-   ├─ network/               # interceptor http client
-   ├─ remote_config/         # accessors / mappers / models
-   ├─ route/                 # app_router aggregates feature routers
-   ├─ theme/                 # app-level theme wiring (uses ui_kit)
-   └─ features/<f>/presentation/{page,router}   # thin feature shells
+├─ main.dart               # single entry point — flavors live in the native projects
+├─ app.dart                # the root widget: theme, localization, router
+├─ config/
+│  ├─ injectable.dart / injectable.config.dart   # get_it + injectable
+│  ├─ modules/             # DI modules
+│  ├─ env.dart             # build-time switches (String.fromEnvironment)
+│  └─ app_crash_listener.dart
+├─ infrastructure/         # THE outer edge — implements domain ports/repositories
+│  ├─ adapter/             # port adapters (e.g. bootstrap)
+│  ├─ repository/          # *_repository_impl.dart + dto/ + mapper/
+│  ├─ storage/             # the concrete database
+│  └─ seed/                # first-run data
+├─ route/                  # app_router aggregates feature routers
+├─ theme/                  # app-level theme wiring
+├─ features/<name>/        # domain / application / presentation
+└─ generated/              # codegen output, never hand-edited
 ```
 
-Key point: **only the app knows concrete adapters.** Feature/domain packages declare ports; `app/infrastructure/` implements them and DI (`config/modules/`) binds implementation → interface.
+There is **no `app/` wrapper directory** under `lib/`. Packages need `lib/src/`
+to separate their public API from their internals; an application has no
+external consumers, so the same nesting would carry no information and cost a
+level in every import.
+
+A backend adds `infrastructure/mocks/`, `infrastructure/push/`, `network/` and
+`remote_config/` alongside the above. They are not listed as present because
+they do not exist yet.
+
+Key point: **only the app knows concrete adapters.** Features declare ports and
+repository contracts; `infrastructure/` implements them and DI (`config/`) binds
+implementation → interface.
 
 ## Naming
 
