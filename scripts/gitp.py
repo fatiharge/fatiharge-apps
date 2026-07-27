@@ -43,6 +43,19 @@ def read(cmd: list[str], *, allow_fail: bool = False) -> str:
     return (result.stdout or "").strip()
 
 
+class CommandFailed(Exception):
+    """A state-changing command exited non-zero.
+
+    Raised rather than exiting on the spot: once a branch exists, the caller
+    has to unwind it. Exiting here used to strand you on a half-built branch
+    (`git add` on an ignored path was enough to trigger it).
+    """
+
+    def __init__(self, cmd: list[str], returncode: int) -> None:
+        super().__init__(f"{' '.join(cmd)} exited {returncode}")
+        self.returncode = returncode
+
+
 def do(cmd: list[str], *, allow_fail: bool = False) -> None:
     """Runs a command that changes state. Skipped under --dry-run."""
     print(f"$ {' '.join(cmd)}")
@@ -50,7 +63,48 @@ def do(cmd: list[str], *, allow_fail: bool = False) -> None:
         return
     result = subprocess.run(cmd, text=True)
     if result.returncode != 0 and not allow_fail:
-        sys.exit(result.returncode)
+        raise CommandFailed(cmd, result.returncode)
+
+
+def diagnose(paths: list[str]) -> None:
+    """Prints what git saw when a group staged nothing.
+
+    Nothing here changes the outcome — the run is aborting either way. It
+    exists because "staged nothing" has several causes that look identical
+    from the outside (a path that matches no change, a path whose files are
+    all ignored, a path already covered by an earlier group), and by the time
+    anyone reads the failure the branch is gone and the evidence with it.
+    """
+    scope = paths or ["."]
+    print("--- diagnosis ---", file=sys.stderr)
+    print(
+        f"requested paths: {', '.join(paths) if paths else '(everything)'}",
+        file=sys.stderr,
+    )
+
+    checks = (
+        (
+            "changed or untracked under those paths",
+            ["git", "status", "--porcelain", "--untracked-files=all", "--", *scope],
+        ),
+        (
+            "ignored under those paths",
+            ["git", "ls-files", "--others", "--ignored", "--exclude-standard",
+             "--", *scope],
+        ),
+        ("staged right now (repo-wide)", ["git", "diff", "--cached", "--name-only"]),
+    )
+
+    for label, cmd in checks:
+        output = read(cmd, allow_fail=True)
+        lines = output.splitlines()
+        shown = "\n".join(f"    {line}" for line in lines[:20])
+        if len(lines) > 20:
+            shown += f"\n    … and {len(lines) - 20} more"
+        print(f"  {label}:", file=sys.stderr)
+        print(shown or "    (none)", file=sys.stderr)
+
+    print("--- end diagnosis ---", file=sys.stderr)
 
 
 def abort(branch: str, base_sha: str, reason: str) -> None:
@@ -128,21 +182,33 @@ def main() -> None:
     base_sha = read(["git", "rev-parse", "HEAD"])
     do(["git", "switch", "-c", args.branch])
 
-    for index, spec in enumerate(specs, start=1):
-        message, paths = spec[0], spec[1:]
-        do(["git", "add", *paths] if paths else ["git", "add", "-A"])
+    # Everything from here until the push is undoable, so any failure unwinds
+    # the branch instead of leaving you standing on half of it.
+    try:
+        for index, spec in enumerate(specs, start=1):
+            message, paths = spec[0], spec[1:]
+            do(["git", "add", *paths] if paths else ["git", "add", "-A"])
 
-        if not DRY_RUN and not read(["git", "diff", "--cached", "--name-only"]):
-            abort(
-                args.branch,
-                base_sha,
-                f"commit {index} ({message.splitlines()[0]!r}) staged nothing "
-                "— check its paths.",
-            )
+            if not DRY_RUN and not read(
+                ["git", "diff", "--cached", "--name-only"]
+            ):
+                diagnose(paths)
+                abort(
+                    args.branch,
+                    base_sha,
+                    f"commit {index} ({message.splitlines()[0]!r}) staged "
+                    "nothing — check its paths.",
+                )
 
-        do(["git", "commit", "-m", message])
+            do(["git", "commit", "-m", message])
+    except CommandFailed as failure:
+        abort(args.branch, base_sha, str(failure))
 
-    do(["git", "push", "--set-upstream", "origin", args.branch])
+    # Still undoable: a failed push leaves nothing behind on the remote.
+    try:
+        do(["git", "push", "--set-upstream", "origin", args.branch])
+    except CommandFailed as failure:
+        abort(args.branch, base_sha, str(failure))
 
     lines = args.message.splitlines()
     title = lines[0].strip()
@@ -156,7 +222,17 @@ def main() -> None:
     ]
     if args.draft:
         pr.append("--draft")
-    do(pr)
+
+    # Past the push, rolling back would delete a local branch that already
+    # exists on the remote. The commits are safe; only the PR is missing.
+    try:
+        do(pr)
+    except CommandFailed as failure:
+        print(f"\n{failure}", file=sys.stderr)
+        sys.exit(
+            f"the branch is pushed but no PR was opened. Retry with:\n"
+            f"  gh pr create --base {args.base} --head {args.branch}"
+        )
 
     do(["git", "switch", MAIN])
 
