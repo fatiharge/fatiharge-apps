@@ -104,7 +104,8 @@ apps/<app>/lib/
 │  ├─ adapter/             # port adapters (e.g. bootstrap)
 │  ├─ repository/          # *_repository_impl.dart + dto/ + mapper/
 │  ├─ storage/             # the concrete database
-│  └─ seed/                # first-run data
+│  ├─ seed/                # first-run data every install gets
+│  └─ dev/                 # tools behind a --dart-define, never shipped
 ├─ route/                  # app_router aggregates feature routers
 ├─ theme/                  # app-level theme wiring
 ├─ features/<name>/        # domain / application / presentation
