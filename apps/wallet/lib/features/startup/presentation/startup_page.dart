@@ -3,9 +3,9 @@ import 'package:bootstrap_kit/bootstrap_kit.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:wallet/config/env.dart';
+import 'package:wallet/config/injectable.dart';
 import 'package:wallet/features/startup/presentation/splash_view.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
-import 'package:wallet/infrastructure/adapter/bootstrap/bootstrap_adapter.dart';
 
 /// The first route: runs the startup jobs and hands over to the main tabs.
 ///
@@ -13,13 +13,11 @@ import 'package:wallet/infrastructure/adapter/bootstrap/bootstrap_adapter.dart';
 /// the port and the localized failure screen.
 @RoutePage()
 class StartupPage extends StatelessWidget {
-  StartupPage({super.key});
-
-  final BootstrapAdapter _adapter = BootstrapAdapter();
+  const StartupPage({super.key});
 
   @override
   Widget build(BuildContext context) => BootstrapPage(
-    port: _adapter,
+    port: getIt<BootstrapPort>(),
     splash: const SplashView(),
     errorBuilder: (context, state, onRetry) =>
         _StartupError(state: state, onRetry: onRetry),
