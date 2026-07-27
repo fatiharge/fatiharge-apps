@@ -234,11 +234,15 @@ def main() -> None:
             f"  gh pr create --base {args.base} --head {args.branch}"
         )
 
+    # Read before switching. On main the branch's own .gitignore files are
+    # gone from disk, so build and IDE artefacts they cover suddenly look
+    # untracked — which reported a forgotten path that was never forgotten.
+    leftover = read(["git", "status", "--porcelain"])
+
     do(["git", "switch", MAIN])
 
     # Anything not covered by the -c groups is still sitting in the working
     # tree and came back to main with you. Usually a forgotten path.
-    leftover = read(["git", "status", "--porcelain"])
     if leftover and not DRY_RUN:
         print("\nnote: left uncommitted in the working tree:")
         print(leftover)
