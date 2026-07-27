@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wallet/features/finance/application/budget/budget_state.dart';
 import 'package:wallet/features/finance/domain/models/budget.dart';
-import 'package:wallet/features/finance/domain/models/money.dart';
+import 'package:wallet/features/finance/domain/rules/amount_input.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 
 /// What the editor hands back to the cubit.
@@ -141,8 +141,10 @@ class _BudgetEditorSheetState extends State<BudgetEditorSheet> {
   }
 
   void _submit() {
-    final parsed = Money.tryParse(_amount.text, widget.state.currency);
-    if (parsed == null || parsed.amountMinor <= 0) {
+    // Consults the rule, does not restate it — the cubit checks the same way
+    // before saving. The sheet only needs the answer to decide whether to show
+    // an error or close.
+    if (readAmount(_amount.text, widget.state.currency).problem != null) {
       setState(() => _showError = true);
       return;
     }

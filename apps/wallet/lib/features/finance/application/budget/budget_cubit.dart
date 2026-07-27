@@ -7,11 +7,11 @@ import 'package:wallet/features/finance/application/budget/budget_state.dart';
 import 'package:wallet/features/finance/domain/models/budget.dart';
 import 'package:wallet/features/finance/domain/models/category.dart';
 import 'package:wallet/features/finance/domain/models/currency.dart';
-import 'package:wallet/features/finance/domain/models/money.dart';
 import 'package:wallet/features/finance/domain/models/money_transaction.dart';
 import 'package:wallet/features/finance/domain/repository/budget_repository.dart';
 import 'package:wallet/features/finance/domain/repository/category_repository.dart';
 import 'package:wallet/features/finance/domain/repository/transaction_repository.dart';
+import 'package:wallet/features/finance/domain/rules/amount_input.dart';
 import 'package:wallet/features/finance/domain/rules/budget_evaluator.dart';
 import 'package:wallet/features/finance/domain/rules/monthly_summary.dart';
 
@@ -63,8 +63,8 @@ class BudgetCubit extends Cubit<BudgetState> {
     String? categoryId,
     String? budgetId,
   }) async {
-    final limit = Money.tryParse(amountText, state.currency);
-    if (limit == null || limit.amountMinor <= 0) return false;
+    final limit = readAmount(amountText, state.currency).money;
+    if (limit == null) return false;
 
     await _budgets.save(
       Budget(
