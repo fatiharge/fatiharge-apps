@@ -1,5 +1,4 @@
 import 'package:bootstrap_kit/bootstrap_kit.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class _FakePort extends BootstrapPort {
@@ -10,9 +9,6 @@ class _FakePort extends BootstrapPort {
 
   @override
   List<BootstrapJob> jobs() => _jobs;
-
-  @override
-  Widget get bootstrapView => const SizedBox.shrink();
 
   @override
   void bootstrapFinished() => finished = true;

@@ -12,11 +12,15 @@ class _FakePort extends BootstrapPort {
   List<BootstrapJob> jobs() => _jobs;
 
   @override
-  Widget get bootstrapView =>
-      const Scaffold(body: Center(child: Text('splash')));
+  void bootstrapFinished() => finished = true;
+}
+
+class _Splash extends StatelessWidget {
+  const _Splash();
 
   @override
-  void bootstrapFinished() => finished = true;
+  Widget build(BuildContext context) =>
+      const Scaffold(body: Center(child: Text('splash')));
 }
 
 void main() {
@@ -26,7 +30,11 @@ void main() {
     ) async {
       final port = _FakePort([BootstrapJob('a', () async {})]);
 
-      await tester.pumpWidget(MaterialApp(home: BootstrapPage(port: port)));
+      await tester.pumpWidget(
+        MaterialApp(
+          home: BootstrapPage(port: port, splash: const _Splash()),
+        ),
+      );
 
       expect(find.text('splash'), findsOneWidget);
       expect(port.finished, isFalse);
@@ -45,7 +53,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: BootstrapPage(
+          home: BootstrapPage.withProgress(
             port: port,
             runningBuilder: (context, state) => Scaffold(
               body: Center(child: Text('${state.completed}/${state.total}')),
@@ -69,7 +77,11 @@ void main() {
         }),
       ]);
 
-      await tester.pumpWidget(MaterialApp(home: BootstrapPage(port: port)));
+      await tester.pumpWidget(
+        MaterialApp(
+          home: BootstrapPage(port: port, splash: const _Splash()),
+        ),
+      );
       await tester.pump();
 
       expect(find.text('flaky'), findsOneWidget);
@@ -92,7 +104,11 @@ void main() {
         ),
       ]);
 
-      await tester.pumpWidget(MaterialApp(home: BootstrapPage(port: port)));
+      await tester.pumpWidget(
+        MaterialApp(
+          home: BootstrapPage(port: port, splash: const _Splash()),
+        ),
+      );
       await tester.pump();
 
       expect(find.text('fatal'), findsOneWidget);
@@ -110,6 +126,7 @@ void main() {
         MaterialApp(
           home: BootstrapPage(
             port: port,
+            splash: const _Splash(),
             errorBuilder: (context, state, onRetry) => Scaffold(
               body: Center(
                 child: TextButton(
