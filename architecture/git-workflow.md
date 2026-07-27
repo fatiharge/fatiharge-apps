@@ -20,7 +20,8 @@ We use a **trunk-based** flow with a single long-lived branch.
 
 - Every change lands on `main` through a **pull request** — no direct pushes.
 - Short-lived branches: open a PR early, keep it small, merge fast the branch.
-- Branch off the latest `main`; rebase on `main` if it moves ahead of you.
+- Branch off the latest `main`; if `main` moves ahead, bring your branch up to
+  date with GitHub's **Update branch** button.
 
 ### Naming
 
@@ -61,33 +62,44 @@ Full rules, type table, and examples live in [CONTRIBUTING.md](../CONTRIBUTING.m
 3. **Open a PR** into `main`. The PR **title must be a valid Conventional Commit** — we squash-merge, so the merge commit is built from the title.
 4. **CI must pass.** The `Conventional PR Title` workflow validates the title; other checks (tests, analyze) are added as the project grows.
 5. **Review** — at least one approval required.
-6. **Merge** — squash by default; see [Scope a PR to one package](#scope-a-pr-to-one-package) for when to rebase instead.
+6. **Squash and merge** — the only method the ruleset allows. See [Scope a PR, and title it for every package it touches](#scope-a-pr-and-title-it-for-every-package-it-touches).
 7. **Delete** the branch after merge.
 
-### Scope a PR to one package
+### Scope a PR, and title it for every package it touches
 
-**Split a PR by package by default.** Merge them into one only when the changes
-are *coupled* — when neither side compiles without the other, e.g. a package
-changes its API and the app has to follow.
+**Prefer one PR per workspace member.** Split whenever the changes are
+independent — it keeps each one reviewable and revertable on its own.
 
-This is not stylistic. `melos version` attributes a commit to a package by the
-files it touched, and takes the changelog text from the commit *subject*. A
-squashed PR spanning two packages has one subject, so one of them gets an entry
-describing the other's work — and a `!` meant for one package bumps both.
+When they are genuinely *coupled*, ship them together. A package changing its
+API and the app following it belong in one PR; splitting that into an
+expand/deprecate/contract sequence buys correctness we can get more cheaply
+from the title.
 
-That already happened here: `wallet` went to `0.2.0` because a squashed commit
-titled `refactor(bootstrap_kit)!: …` also touched `apps/wallet`.
+The reason the title matters: `melos version` attributes a commit to a package
+by the files it touched, but takes the changelog text from the commit
+*subject*. We squash-merge, so a PR spanning two members leaves **one** subject
+and **every** member touched gets that exact line.
 
-So:
+So for a PR that touches more than one member, **leave the scope out**:
 
-| PR touches | Merge with | Why |
-| ---------- | ---------- | --- |
-| one package | **Squash** | the default; subject and package agree |
-| several, coupled | **Rebase** | each commit lands with its own scope, so each changelog is right |
-| several, independent | — | split it into one PR per package instead |
+```
+refactor!: take the splash from the page, not the port     ← good
+refactor(bootstrap_kit)!: take the splash from …           ← wallet's changelog
+                                                              now names another
+                                                              package
+```
 
-`architecture/` and root config files belong to no package, so they never
-trigger this and can ride along with any PR.
+The scope is optional in Conventional Commits and the PR title check accepts
+it either way. Dropping it costs nothing and stops a package's changelog from
+claiming work that belongs to its neighbour. `wallet` reaching `0.2.0` off a
+`refactor(bootstrap_kit)!` title is what this avoids.
+
+Merging is always **squash**: the ruleset on `main` allows no other method and
+requires linear history. Nothing broken can reach `main` regardless — both CI
+checks are required to pass first.
+
+`architecture/`, `.github/`, `scripts/` and root config belong to no member, so
+they never affect any of this and can ride along with any PR.
 
 ### Why squash-merge
 
@@ -97,19 +109,25 @@ trigger this and can ride along with any PR.
 
 ## Branch protection (GitHub settings)
 
-Configure on GitHub → **Settings → Branches → Add rule** for `main`:
+Configured as a **ruleset** (`main-protection`) rather than classic branch
+protection — GitHub → **Settings → Rules → Rulesets**. Note that the older
+`/branches/main/protection` API returns 404 for rulesets, which makes it easy to
+conclude the branch is unprotected when it is not.
 
-- ✅ **Require a pull request before merging** (no direct pushes to `main`).
-  - Require at least **1 approval**.
--  **Require status checks to pass before merging.**
-  - Select **`Validate PR title`** (from the `Conventional PR Title` workflow).
-  -  Require branches to be up to date before merging.
--  **Require linear history** (pairs with squash-merge).
--  Optionally: require conversation resolution, block force-pushes, include administrators.
+What is enforced on `main` today:
+
+- **Require a pull request before merging**, squash as the only allowed method.
+  No approval is required — a single maintainer approving their own work adds
+  nothing.
+- **Require status checks:** `Analyze, format & test` and `Validate PR title`.
+- **Require linear history**, block deletion, block force-pushes.
+- **Not** enabled: *require branches to be up to date before merging*. A PR is
+  therefore tested against the `main` it was opened from, not necessarily the
+  one it lands on — which is why CI also runs on every push to `main`.
 
 Repository → **Settings → General → Pull Requests**:
 
-- Allow **squash merging** only (disable merge commits and rebase merging).
+- Allow **squash merging** only — the other two methods are off.
 - **Automatically delete head branches** after merge.
 
 > Until these settings are enabled in the GitHub UI, the CI check reports status but cannot *block* a merge. Branch protection is what turns the convention into a hard gate.
