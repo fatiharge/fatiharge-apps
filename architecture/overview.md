@@ -28,7 +28,7 @@ The concrete implementations of ports and repositories (HTTP clients, storage, p
 
 ### 2. Feature-first app shell
 
-The app is a thin **composition root**. It wires dependencies and hosts feature entry points; heavy logic lives in feature/domain packages.
+The app is a thin **composition root**. It wires dependencies and hosts feature entry points; heavy logic lives in each feature's `domain`/`application` layers — whether those sit inside the app or in their own package.
 
 ### 3. Atomic Design for UI
 
@@ -39,17 +39,31 @@ The shared `ui_kit` is organised as `atoms → molecules → organisms → templ
 ```
 fatiharge-apps/
 ├─ apps/                     # runnable applications (thin composition roots)
-│  └─ <app>/lib/app/…
-├─ packages/                 # shared & feature packages (Melos workspace members)
+│  └─ wallet/lib/app/        # config, route, theme, infrastructure, features/
+├─ packages/                 # shared packages (Melos workspace members)
 │  ├─ lint_kit/              # shared analyzer + lint config (very_good_analysis)
-│  ├─ utility_kit/           # extensions, base types, services, storage, exceptions
-│  ├─ ui_kit/                # design system (Atomic Design) + theme
-│  ├─ api_client/            # generated OpenAPI client
-│  ├─ bootstrap/             # app startup orchestration (jobs, cubit, page)
-│  └─ <feature>/             # e.g. auth, content_engine, dynamic_form
+│  ├─ utility_kit/           # UI-independent base contracts (EffectBloc)
+│  ├─ bootstrap_kit/         # app startup orchestration (jobs, cubit, page)
+│  └─ …                      # ui_kit, api_client, shared features — see below
 ├─ architecture/             # these docs
 └─ .githooks/ .github/       # governance (commit hook, CI)
 ```
+
+`ui_kit` and `api_client` are part of the intended shape but do not exist yet.
+They are named here so the target is clear — not to imply they are available.
+
+### Where a feature lives
+
+A feature starts as a folder **inside the app**
+(`apps/<app>/lib/app/features/<name>/`), carrying the same
+`domain / application / presentation` layering described below. It moves out to
+`packages/<name>/` only once a second app or feature actually needs it — the
+test is in [package-conventions.md](package-conventions.md#when-to-create-a-new-package),
+and "one consumer" does not pass it.
+
+What makes that move cheap later is the layering, not the location: as long as
+`domain/` imports nothing from Flutter, storage or IO, promoting a feature to a
+package is a file move plus an import rewrite.
 
 ### Package taxonomy
 
@@ -57,7 +71,7 @@ fatiharge-apps/
 | ----------- | ------------------------------------------ | ---------------------------------------- |
 | **kit**     | `ui_kit`, `utility_kit`, `lint_kit`        | No — cross-cutting building blocks       |
 | **generated** | `api_client`                             | No — code-generated, do not hand-edit    |
-| **feature** | `auth`, `content_engine`, `dynamic_form`   | Yes — `domain / application / presentation` |
+| **feature** | `apps/<app>/lib/app/features/<name>/`, promoted to `packages/<name>/` once shared | Yes — `domain / application / presentation` |
 | **app**     | `apps/<app>`                               | Composition root + `features/` shell     |
 
 ## Dependency direction
@@ -66,11 +80,11 @@ Allowed dependency edges (an arrow means "may depend on"):
 
 ```mermaid
 graph TD
-  app[apps/*] --> feature[feature packages]
+  app[apps/*] --> feature[features<br/>in-app, or promoted]
   app --> uikit[ui_kit]
   app --> util[utility_kit]
   app --> api[api_client]
-  app --> boot[bootstrap]
+  app --> boot[bootstrap_kit]
   feature --> uikit
   feature --> util
   feature --> api
@@ -84,6 +98,7 @@ graph TD
 Rules:
 
 - **domain** layers depend on nothing outside their package (except `utility_kit` pure helpers and pure packages).
+- **A feature starts inside the app** and only becomes a package once a second consumer exists. The layering is identical either way.
 - **Features never depend on other features.** Shared code goes to a kit; cross-feature flows are coordinated by the app.
 - **The app is the only place that knows concrete adapters.** It implements ports/repositories (`infrastructure/`) and registers them via DI.
 - **No cycles.** Melos/pub will refuse a dependency cycle; the layering above prevents them by design.
