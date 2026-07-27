@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:bootstrap_kit/bootstrap_kit.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:wallet/config/env.dart';
 import 'package:wallet/features/startup/presentation/splash_view.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 import 'package:wallet/infrastructure/adapter/bootstrap/bootstrap_adapter.dart';
@@ -60,6 +61,20 @@ class _StartupError extends StatelessWidget {
                 style: theme.textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),
+              // Which job failed, for whoever is holding the device. Users get
+              // nothing useful out of a job name and an exception, but a
+              // tester on a build with no debugger attached gets everything
+              // they need for an exact report. Off in release by default.
+              if (Env.debugLogs) ...[
+                const SizedBox(height: 12),
+                Text(
+                  '${state.jobName}: ${state.error}',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
               const SizedBox(height: 24),
               if (onRetry != null)
                 FilledButton.icon(
