@@ -62,9 +62,14 @@ ihtiyaç duyduğunda çıkar — ölçüt
 [package-conventions.tr.md](package-conventions.tr.md#ne-zaman-yeni-paket-açılır)
 içinde ve "tek tüketici" bu ölçütü geçmez.
 
-O taşımayı ileride ucuz kılan şey konum değil katmanlama: `domain/` içinde
-Flutter, depolama ve IO import'u olmadığı sürece feature'ı pakete çıkarmak
-dosya taşıma + import düzeltmesinden ibarettir.
+Nerede yaşarsa yaşasın aynı kurallar geçerli:
+
+- `domain/` ve `application/` feature'ın dışında hiçbir şeye bakmaz.
+- `presentation/` barındıran uygulamanın lokalizasyonunu, DI'ını, router'ını ve
+  temasını kullanabilir.
+- **Adapter'lar hiçbir zaman feature'ın içinde olmaz.** Feature repository
+  sözleşmesini bildirir; uygulama implemente eder ve ikinci bir uygulama onları
+  farklı biçimde implemente etmekte serbesttir.
 
 ### Paket taksonomisi
 

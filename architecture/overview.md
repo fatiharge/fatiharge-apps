@@ -61,9 +61,13 @@ A feature starts as a folder **inside the app**
 test is in [package-conventions.md](package-conventions.md#when-to-create-a-new-package),
 and "one consumer" does not pass it.
 
-What makes that move cheap later is the layering, not the location: as long as
-`domain/` imports nothing from Flutter, storage or IO, promoting a feature to a
-package is a file move plus an import rewrite.
+Wherever it lives, the same rules hold:
+
+- `domain/` and `application/` reference nothing outside the feature.
+- `presentation/` may use the host app's localization, DI, router and theme.
+- **Adapters never live in the feature.** It declares repository contracts;
+  the app implements them, and a second app is free to implement them
+  differently.
 
 ### Package taxonomy
 
