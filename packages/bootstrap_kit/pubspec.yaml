@@ -1,6 +1,6 @@
 name: bootstrap_kit
 description: App startup orchestration — a guarded crash boundary and a retryable startup-job engine.
-version: 0.0.2
+version: 0.0.3
 publish_to: none
 resolution: workspace
 
