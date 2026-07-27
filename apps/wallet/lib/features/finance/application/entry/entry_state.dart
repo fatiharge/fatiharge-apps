@@ -3,6 +3,7 @@ import 'package:wallet/features/finance/domain/models/category.dart';
 import 'package:wallet/features/finance/domain/models/currency.dart';
 import 'package:wallet/features/finance/domain/models/money.dart';
 import 'package:wallet/features/finance/domain/models/money_transaction.dart';
+import 'package:wallet/features/finance/domain/rules/amount_input.dart';
 
 part 'entry_state.freezed.dart';
 
@@ -47,13 +48,17 @@ abstract class EntryState with _$EntryState {
 
   bool get isEditing => editingId != null;
 
-  Money? get amount => Money.tryParse(amountText, currency);
+  Money? get amount => readAmount(amountText, currency).money;
 
   EntryError? get error {
-    if (amountText.trim().isEmpty) return EntryError.amountMissing;
-    final parsed = amount;
-    if (parsed == null) return EntryError.amountInvalid;
-    if (parsed.amountMinor <= 0) return EntryError.amountNotPositive;
+    final problem = readAmount(amountText, currency).problem;
+    if (problem != null) {
+      return switch (problem) {
+        AmountProblem.missing => EntryError.amountMissing,
+        AmountProblem.notANumber => EntryError.amountInvalid,
+        AmountProblem.notPositive => EntryError.amountNotPositive,
+      };
+    }
     if (categoryId == null) return EntryError.noCategory;
     return null;
   }
