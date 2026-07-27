@@ -4,6 +4,7 @@ import 'package:bootstrap_kit/src/application/bootstrap_cubit.dart';
 import 'package:bootstrap_kit/src/application/bootstrap_state.dart';
 import 'package:bootstrap_kit/src/domain/bootstrap_port.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// Signature for rendering the running (splash) state with live progress.
 typedef BootstrapRunningBuilder =
@@ -39,9 +40,9 @@ typedef BootstrapErrorBuilder =
 /// [BootstrapPort] can stay free of Flutter and the app can keep its startup
 /// UI in the presentation layer.
 ///
-/// Deliberately built on a plain [StreamBuilder] rather than `flutter_bloc`:
-/// startup is the one screen that must not depend on the app's state
-/// management choice.
+/// The cubit is handed to [BlocBuilder] directly rather than through a
+/// `BlocProvider`: nothing below this widget reads it, so there is nothing to
+/// provide.
 class BootstrapPage extends StatefulWidget {
   /// Shows [splash] unchanged for the whole run.
   const BootstrapPage({
@@ -92,27 +93,24 @@ class _BootstrapPageState extends State<BootstrapPage> {
   }
 
   @override
-  Widget build(BuildContext context) => StreamBuilder<BootstrapState>(
-    stream: _cubit.stream,
-    initialData: _cubit.state,
-    builder: (context, snapshot) {
-      final state = snapshot.data!;
-      return switch (state) {
-        BootstrapRunning() =>
-          widget.runningBuilder?.call(context, state) ?? widget.splash!,
-        BootstrapFailed() =>
-          widget.errorBuilder?.call(
-                context,
-                state,
-                state.canRetry ? _cubit.retry : null,
-              ) ??
-              _DefaultBootstrapError(
-                state: state,
-                onRetry: state.canRetry ? _cubit.retry : null,
-              ),
-      };
-    },
-  );
+  Widget build(BuildContext context) =>
+      BlocBuilder<BootstrapCubit, BootstrapState>(
+        bloc: _cubit,
+        builder: (context, state) => switch (state) {
+          BootstrapRunning() =>
+            widget.runningBuilder?.call(context, state) ?? widget.splash!,
+          BootstrapFailed() =>
+            widget.errorBuilder?.call(
+                  context,
+                  state,
+                  state.canRetry ? _cubit.retry : null,
+                ) ??
+                _DefaultBootstrapError(
+                  state: state,
+                  onRetry: state.canRetry ? _cubit.retry : null,
+                ),
+        },
+      );
 }
 
 /// The fallback failure screen. Intentionally plain — apps are expected to
