@@ -1,3 +1,7 @@
+## 0.1.1
+
+ - **REFACTOR**(bootstrap_kit): render the startup page with BlocBuilder ([#25](https://github.com/fatiharge/fatiharge-apps/issues/25)). ([d8fda2fe](https://github.com/fatiharge/fatiharge-apps/commit/d8fda2fe5980472352732d2690857c8ebaee98b5))
+
 ## 0.1.0
 
 > Note: This release has breaking changes.

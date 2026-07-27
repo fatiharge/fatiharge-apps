@@ -1,3 +1,7 @@
+## 0.2.1+5
+
+ - **FEAT**(wallet): show which startup job failed in debug builds ([#26](https://github.com/fatiharge/fatiharge-apps/issues/26)). ([49a87d4c](https://github.com/fatiharge/fatiharge-apps/commit/49a87d4c6406d48b26519b160a8dc8c683479454))
+
 ## 0.2.0+4
 
 > Note: This release has breaking changes.

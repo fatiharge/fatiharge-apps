@@ -11,6 +11,32 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 Packages with breaking changes:
 
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`bootstrap_kit` - `v0.1.1`](#bootstrap_kit---v011)
+ - [`wallet` - `v0.2.1+5`](#wallet---v0215)
+
+---
+
+#### `bootstrap_kit` - `v0.1.1`
+
+ - **REFACTOR**(bootstrap_kit): render the startup page with BlocBuilder ([#25](https://github.com/fatiharge/fatiharge-apps/issues/25)). ([d8fda2fe](https://github.com/fatiharge/fatiharge-apps/commit/d8fda2fe5980472352732d2690857c8ebaee98b5))
+
+#### `wallet` - `v0.2.1+5`
+
+ - **FEAT**(wallet): show which startup job failed in debug builds ([#26](https://github.com/fatiharge/fatiharge-apps/issues/26)). ([49a87d4c](https://github.com/fatiharge/fatiharge-apps/commit/49a87d4c6406d48b26519b160a8dc8c683479454))
+
+
+## 2026-07-27
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
  - [`bootstrap_kit` - `v0.1.0`](#bootstrap_kit---v010)
  - [`wallet` - `v0.2.0+4`](#wallet---v0204)
 
