@@ -23,32 +23,53 @@ typedef BootstrapErrorBuilder =
 /// Drives a [BootstrapPort] to completion and shows the right view for each
 /// phase.
 ///
-/// Owns the [BootstrapCubit] (creates, starts and closes it), so the app only
-/// supplies the port:
+/// Owns the [BootstrapCubit] (creates, starts and closes it), so the app
+/// supplies the port and the view to show while it runs:
 ///
 /// ```dart
-/// MaterialApp(home: BootstrapPage(port: BootstrapAdapter()));
+/// MaterialApp(
+///   home: BootstrapPage(port: BootstrapAdapter(), splash: const SplashView()),
+/// );
 /// ```
+///
+/// Use [BootstrapPage.withProgress] instead when the splash should react to
+/// how far along the jobs are.
+///
+/// The splash is a parameter rather than something the port provides, so that
+/// [BootstrapPort] can stay free of Flutter and the app can keep its startup
+/// UI in the presentation layer.
 ///
 /// Deliberately built on a plain [StreamBuilder] rather than `flutter_bloc`:
 /// startup is the one screen that must not depend on the app's state
 /// management choice.
 class BootstrapPage extends StatefulWidget {
+  /// Shows [splash] unchanged for the whole run.
   const BootstrapPage({
     required this.port,
-    this.runningBuilder,
+    required this.splash,
     this.errorBuilder,
     super.key,
-  });
+  }) : runningBuilder = null;
+
+  /// Rebuilds the running view from live progress, e.g. to draw a bar.
+  const BootstrapPage.withProgress({
+    required this.port,
+    required this.runningBuilder,
+    this.errorBuilder,
+    super.key,
+  }) : splash = null;
 
   final BootstrapPort port;
 
-  /// Renders the running state. Defaults to [BootstrapPort.bootstrapView],
-  /// which ignores progress; supply this to draw a progress indicator.
-  final BootstrapRunningBuilder? runningBuilder;
-
   /// Renders a failure. Defaults to a minimal message + retry screen.
   final BootstrapErrorBuilder? errorBuilder;
+
+  /// Set by the default constructor. Exactly one of [splash] and
+  /// [runningBuilder] is non-null.
+  final Widget? splash;
+
+  /// Set by [BootstrapPage.withProgress].
+  final BootstrapRunningBuilder? runningBuilder;
 
   @override
   State<BootstrapPage> createState() => _BootstrapPageState();
@@ -78,8 +99,7 @@ class _BootstrapPageState extends State<BootstrapPage> {
       final state = snapshot.data!;
       return switch (state) {
         BootstrapRunning() =>
-          widget.runningBuilder?.call(context, state) ??
-              widget.port.bootstrapView,
+          widget.runningBuilder?.call(context, state) ?? widget.splash!,
         BootstrapFailed() =>
           widget.errorBuilder?.call(
                 context,

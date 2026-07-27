@@ -1,6 +1,5 @@
 import 'package:bootstrap_kit/bootstrap_kit.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:wallet/config/env.dart';
 import 'package:wallet/config/injectable.dart';
@@ -48,9 +47,6 @@ class BootstrapAdapter implements BootstrapPort {
   ];
 
   @override
-  Widget get bootstrapView => const _SplashView();
-
-  @override
   void bootstrapFinished() => getIt<RouteManager>().replaceAll([
     const MainRoute(),
   ]);
@@ -65,35 +61,4 @@ class BootstrapAdapter implements BootstrapPort {
   }
 
   Future<void> _seedDemoData() => seedDemoTransactions(getIt());
-}
-
-class _SplashView extends StatelessWidget {
-  const _SplashView();
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Scaffold(
-      backgroundColor: theme.colorScheme.surface,
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.account_balance_wallet_outlined,
-              size: 64,
-              color: theme.colorScheme.primary,
-            ),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: 120,
-              child: LinearProgressIndicator(
-                backgroundColor: theme.colorScheme.surfaceContainerHighest,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
