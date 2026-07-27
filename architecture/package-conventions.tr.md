@@ -37,7 +37,9 @@ export 'src/theme/app_theme.dart';
 
 ## Feature / domain paketi
 
-Bir feature paketi, tam clean-architecture yığınını taşır. `application/`'ı türlere göre değil, alt-özelliğe (use-case) göre grupla.
+Bir feature, tam clean-architecture yığınını taşır. `application/`'ı türlere göre değil, alt-özelliğe (use-case) göre grupla.
+
+Aşağıdaki yerleşim, feature ister `packages/<ad>/lib/src/` içinde olsun ister —çoğunun başlangıçta olduğu gibi— `apps/<app>/lib/app/features/<ad>/` içinde olsun aynıdır; bkz. [Ne zaman yeni paket açılır](#ne-zaman-yeni-paket-açılır). Değişen tek şey konum.
 
 ```
 packages/auth/lib/src/
@@ -138,6 +140,8 @@ Elle yazılan dokümanı yavaş değişen seviyede tut; geri kalan her şeyi ür
 ## Ne zaman yeni paket açılır
 
 Kod **feature/uygulamalar arasında yeniden kullanılıyorsa**, **bağımsız bir yaşam döngüsü/versiyonlama** gerekiyorsa ya da **zorlanan bir sınırdan** faydalanıyorsa (feature A'nın feature B'nin iç detayına uzanmasını derleyicinin durdurmasını istiyorsan) paket oluştur. Aksi halde mevcut bir paket içinde bir klasör yeterlidir — fazla parçalama.
+
+Özellikle **feature** için: uygulamanın içinde başlar ve ikinci bir uygulama ya da feature ihtiyaç duyduğunda `packages/`'a taşınır. Tek tüketici bu ölçütü geçmez; paketi erken açmak, bakımı gereken bir pubspec, barrel, changelog ve versiyon karşılığında yalnızca bir import sınırı satın alır.
 
 ## Yeni paket için kontrol listesi
 

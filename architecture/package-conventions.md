@@ -37,7 +37,9 @@ export 'src/theme/app_theme.dart';
 
 ## Feature / domain package
 
-A feature package carries the full clean-architecture stack. Group `application/` by sub-feature (use-case), not by type.
+A feature carries the full clean-architecture stack. Group `application/` by sub-feature (use-case), not by type.
+
+The layout below is the same whether the feature lives in `packages/<name>/lib/src/` or, as most do to begin with, in `apps/<app>/lib/app/features/<name>/` — see [When to create a new package](#when-to-create-a-new-package). Only the location changes.
 
 ```
 packages/auth/lib/src/
@@ -138,6 +140,8 @@ Keep hand-written docs at the level that changes slowly; let everything else be 
 ## When to create a new package
 
 Create a package when code is **reused across features/apps**, needs an **independent lifecycle/versioning**, or benefits from an **enforced boundary** (you want the compiler to stop feature A from reaching into feature B's internals). Otherwise, a folder inside an existing package is enough — don't over-fragment.
+
+For a **feature** specifically: it starts inside the app and moves to `packages/` when a second app or feature needs it. A single consumer does not pass the test, and building the package early buys an import boundary at the cost of a pubspec, a barrel, a changelog and a version to maintain.
 
 ## Checklist for a new package
 
