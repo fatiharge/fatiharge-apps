@@ -3,15 +3,17 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:wallet/config/env.dart';
 import 'package:wallet/config/injectable.dart';
+import 'package:wallet/features/finance/default_categories.dart';
 import 'package:wallet/features/finance/domain/repository/category_repository.dart';
 import 'package:wallet/infrastructure/dev/demo_transactions.dart';
-import 'package:wallet/infrastructure/seed/default_categories.dart';
 import 'package:wallet/route/app_router.dart';
 import 'package:wallet/route/app_router.gr.dart';
 
 /// The app's half of the bootstrap contract: what to run at startup, what to
 /// show while it runs, and where to go once it is done.
 class BootstrapAdapter implements BootstrapPort {
+  const BootstrapAdapter();
+
   @override
   List<BootstrapJob> jobs() => [
     // Nothing can be read or written before this; a failure is unrecoverable.

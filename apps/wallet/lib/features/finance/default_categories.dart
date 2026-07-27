@@ -3,6 +3,11 @@ import 'package:wallet/generated/locale_keys.g.dart';
 
 /// The categories a fresh install starts with.
 ///
+/// Feature content, so it lives with the feature rather than under
+/// `infrastructure/` — nothing in here touches storage. It sits at the feature
+/// root instead of inside `domain/` because it names localization keys, and
+/// `domain/` references nothing outside the feature.
+///
 /// Names are translated **once, at seed time** and then stored as ordinary
 /// data — the user can rename them, and a rename must not be undone by a
 /// language switch. [translate] is injected rather than called globally so
