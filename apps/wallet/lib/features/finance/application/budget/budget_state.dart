@@ -1,30 +1,29 @@
-import 'package:flutter/foundation.dart' show immutable, listEquals, mapEquals;
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:wallet/features/finance/domain/models/category.dart';
 import 'package:wallet/features/finance/domain/models/currency.dart';
 import 'package:wallet/features/finance/domain/rules/budget_evaluator.dart';
 import 'package:wallet/features/finance/domain/rules/month_period.dart';
 
+part 'budget_state.freezed.dart';
+
 /// The budget screen: every budget with this month's spending against it.
-@immutable
-class BudgetState {
-  const BudgetState({
-    required this.period,
-    this.currency = Currency.turkishLira,
-    this.statuses = const [],
-    this.categories = const {},
-    this.loading = true,
-  });
+@freezed
+abstract class BudgetState with _$BudgetState {
+  const factory BudgetState({
+    required MonthPeriod period,
+    @Default(Currency.turkishLira) Currency currency,
 
-  BudgetState.initial() : this(period: MonthPeriod.of(DateTime.now()));
+    /// Most-at-risk first.
+    @Default(<BudgetStatus>[]) List<BudgetStatus> statuses,
+    @Default(<String, Category>{}) Map<String, Category> categories,
+    @Default(true) bool loading,
+  }) = _BudgetState;
 
-  final MonthPeriod period;
-  final Currency currency;
+  const BudgetState._();
 
-  /// Most-at-risk first.
-  final List<BudgetStatus> statuses;
-
-  final Map<String, Category> categories;
-  final bool loading;
+  /// The screen before storage has answered.
+  factory BudgetState.initial() =>
+      BudgetState(period: MonthPeriod.of(DateTime.now()));
 
   bool get isEmpty => statuses.isEmpty;
 
@@ -37,39 +36,4 @@ class BudgetState {
 
   bool get hasOverallBudget =>
       statuses.any((status) => status.budget.isOverall);
-
-  BudgetState copyWith({
-    MonthPeriod? period,
-    Currency? currency,
-    List<BudgetStatus>? statuses,
-    Map<String, Category>? categories,
-    bool? loading,
-  }) => BudgetState(
-    period: period ?? this.period,
-    currency: currency ?? this.currency,
-    statuses: statuses ?? this.statuses,
-    categories: categories ?? this.categories,
-    loading: loading ?? this.loading,
-  );
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is BudgetState &&
-          other.period == period &&
-          other.currency == currency &&
-          listEquals(other.statuses, statuses) &&
-          mapEquals(other.categories, categories) &&
-          other.loading == loading;
-
-  @override
-  int get hashCode => Object.hash(
-    period,
-    currency,
-    Object.hashAll(statuses),
-    Object.hashAllUnordered(
-      categories.entries.map((e) => Object.hash(e.key, e.value)),
-    ),
-    loading,
-  );
 }
