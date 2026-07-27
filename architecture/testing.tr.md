@@ -79,5 +79,14 @@ CI her PR'da `melos run test` çalıştırır (bkz. `.github/workflows/ci.yml`).
 ## Coverage
 
 - Yerelde `melos run coverage` ile üret; `coverage/lcov.info`'yu birleştir/incele.
+- `flutter test --coverage` yalnızca testlerin import ettiği kütüphaneleri
+  enstrümante eder; testi olmayan dosya raporda %0 olarak değil, **hiç**
+  görünmez — bu da oranı sessizce şişirir. `test/coverage_helper_test.dart`
+  her kütüphaneyi import ederek bunu engeller; `melos run coverage:helper` ile
+  yeniden üretilir. Yeni bir kütüphane eklenip helper güncellenmezse test
+  kırılır, yani oran tekrar yanıltıcı hale gelemez.
+- Raporu `genhtml coverage/lcov.info -o coverage/html` ile oku (`brew install
+  lcov` gerekir) ya da `lcov.info`'yu satır içinde gösteren bir editör
+  eklentisi kullan.
 - `domain`/`application`'da yükseği hedefle; generated ya da presentation tutkalında %100 kovalama.
 - Generated dosyaları hariç tut (zaten `lint_kit` ile analizden hariç).

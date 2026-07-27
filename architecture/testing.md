@@ -79,5 +79,13 @@ CI runs `melos run test` on every PR (see `.github/workflows/ci.yml`). A change 
 ## Coverage
 
 - Generate locally with `melos run coverage`; merge/inspect `coverage/lcov.info`.
+- `flutter test --coverage` only instruments libraries the tests import, so a
+  file with no test is **absent** from the report rather than reported as 0% —
+  which silently inflates the percentage. `test/coverage_helper_test.dart`
+  imports every library to prevent that; regenerate it with
+  `melos run coverage:helper`. It fails the build when a new library is missing
+  from it, so the number cannot drift back into being flattering.
+- Read the report with `genhtml coverage/lcov.info -o coverage/html` (needs
+  `brew install lcov`), or an editor extension that renders `lcov.info` inline.
 - Aim high on `domain`/`application`; don't chase 100% on generated or presentation glue.
 - Exclude generated files (already excluded from analysis via `lint_kit`).
