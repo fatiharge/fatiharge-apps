@@ -15,6 +15,27 @@ Packages with breaking changes:
 
 Packages with other changes:
 
+ - [`wallet` - `v0.1.2+3`](#wallet---v0123)
+
+---
+
+#### `wallet` - `v0.1.2+3`
+
+ - **REFACTOR**(wallet): drop the redundant app/ directory under lib ([#20](https://github.com/fatiharge/fatiharge-apps/issues/20)). ([8bae2cab](https://github.com/fatiharge/fatiharge-apps/commit/8bae2cab4e1fe66b4408fcadccc951fb510318de))
+
+
+## 2026-07-27
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
  - [`bootstrap_kit` - `v0.0.3`](#bootstrap_kit---v003)
  - [`wallet` - `v0.1.1+2`](#wallet---v0112)
 
