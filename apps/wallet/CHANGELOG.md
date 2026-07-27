@@ -1,3 +1,10 @@
+## 0.2.0+4
+
+> Note: This release has breaking changes.
+
+ - **REFACTOR**(wallet): move the demo fixture out of seed/ ([#21](https://github.com/fatiharge/fatiharge-apps/issues/21)). ([31de9a02](https://github.com/fatiharge/fatiharge-apps/commit/31de9a02edd23b933b8390474c6dbe646ad618ed))
+ - **BREAKING** **REFACTOR**(bootstrap_kit): take the splash from the page, not the port ([#23](https://github.com/fatiharge/fatiharge-apps/issues/23)). ([b909fbd5](https://github.com/fatiharge/fatiharge-apps/commit/b909fbd55d900f0e60a0abc1ae589c3bd950ba58))
+
 ## 0.1.2+3
 
  - **REFACTOR**(wallet): drop the redundant app/ directory under lib ([#20](https://github.com/fatiharge/fatiharge-apps/issues/20)). ([8bae2cab](https://github.com/fatiharge/fatiharge-apps/commit/8bae2cab4e1fe66b4408fcadccc951fb510318de))

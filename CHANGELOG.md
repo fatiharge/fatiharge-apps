@@ -11,6 +11,33 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 Packages with breaking changes:
 
+ - [`bootstrap_kit` - `v0.1.0`](#bootstrap_kit---v010)
+ - [`wallet` - `v0.2.0+4`](#wallet---v0204)
+
+Packages with other changes:
+
+ - There are no other changes in this release.
+
+---
+
+#### `bootstrap_kit` - `v0.1.0`
+
+ - **BREAKING** **REFACTOR**(bootstrap_kit): take the splash from the page, not the port ([#23](https://github.com/fatiharge/fatiharge-apps/issues/23)). ([b909fbd5](https://github.com/fatiharge/fatiharge-apps/commit/b909fbd55d900f0e60a0abc1ae589c3bd950ba58))
+
+#### `wallet` - `v0.2.0+4`
+
+ - **REFACTOR**(wallet): move the demo fixture out of seed/ ([#21](https://github.com/fatiharge/fatiharge-apps/issues/21)). ([31de9a02](https://github.com/fatiharge/fatiharge-apps/commit/31de9a02edd23b933b8390474c6dbe646ad618ed))
+ - **BREAKING** **REFACTOR**(bootstrap_kit): take the splash from the page, not the port ([#23](https://github.com/fatiharge/fatiharge-apps/issues/23)). ([b909fbd5](https://github.com/fatiharge/fatiharge-apps/commit/b909fbd55d900f0e60a0abc1ae589c3bd950ba58))
+
+
+## 2026-07-27
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
  - There are no breaking changes in this release.
 
 Packages with other changes:
