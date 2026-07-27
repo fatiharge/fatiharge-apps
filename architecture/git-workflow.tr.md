@@ -61,8 +61,34 @@ Tüm kurallar, tür tablosu ve örnekler [CONTRIBUTING.tr.md](../CONTRIBUTING.tr
 3. `main`'e bir **PR aç**. PR **başlığı geçerli bir Conventional Commit olmalı** — squash-merge yaptığımız için merge commit'i başlıktan oluşur.
 4. **CI geçmeli.** `Conventional PR Title` workflow'u başlığı doğrular; diğer kontroller (test, analyze) proje büyüdükçe eklenir.
 5. **Review** — en az bir onay gerekir.
-6. **Squash and merge.** `main` geçmişini lineer ve okunur tut.
+6. **Merge et** — varsayılan squash; ne zaman rebase gerektiği için bkz. [Bir PR tek pakete dokunsun](#bir-pr-tek-pakete-dokunsun).
 7. Merge'den sonra branch'i **sil**.
+
+### Bir PR tek pakete dokunsun
+
+**Varsayılan: PR'ı pakete göre böl.** Yalnızca değişiklikler *birbirine bağlıysa*
+tek PR'da birleştir — yani biri olmadan diğeri derlenmiyorsa; örneğin bir paket
+API'sini değiştirir ve uygulamanın uyması gerekir.
+
+Bu bir üslup meselesi değil. `melos version` bir commit'i **dokunduğu dosyalara**
+bakarak pakete atar, changelog metnini de commit'in **konu satırından** alır. İki
+pakete birden dokunan squash'lanmış bir PR'ın tek konu satırı vardır; biri
+diğerinin işini anlatan bir girdi alır — ve tek bir pakete ait `!` işareti
+ikisini birden yükseltir.
+
+Bu bizde zaten yaşandı: `wallet`, `refactor(bootstrap_kit)!: …` başlıklı squash
+commit'i `apps/wallet`'a da dokunduğu için `0.2.0`'a çıktı.
+
+Yani:
+
+| PR şuna dokunuyorsa | Şununla merge et | Neden |
+| ------------------- | ---------------- | ----- |
+| tek pakete | **Squash** | varsayılan; konu satırı ile paket örtüşür |
+| birkaçına, bağımlı | **Rebase** | her commit kendi scope'uyla iner, her changelog doğru olur |
+| birkaçına, bağımsız | — | onun yerine paket başına bir PR'a böl |
+
+`architecture/` ve kökteki config dosyaları hiçbir pakete ait değildir; bu
+durumu tetiklemezler ve herhangi bir PR'a eşlik edebilirler.
 
 ### Neden squash-merge
 

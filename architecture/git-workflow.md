@@ -61,8 +61,33 @@ Full rules, type table, and examples live in [CONTRIBUTING.md](../CONTRIBUTING.m
 3. **Open a PR** into `main`. The PR **title must be a valid Conventional Commit** — we squash-merge, so the merge commit is built from the title.
 4. **CI must pass.** The `Conventional PR Title` workflow validates the title; other checks (tests, analyze) are added as the project grows.
 5. **Review** — at least one approval required.
-6. **Squash and merge.** Keep `main` history linear and readable.
+6. **Merge** — squash by default; see [Scope a PR to one package](#scope-a-pr-to-one-package) for when to rebase instead.
 7. **Delete** the branch after merge.
+
+### Scope a PR to one package
+
+**Split a PR by package by default.** Merge them into one only when the changes
+are *coupled* — when neither side compiles without the other, e.g. a package
+changes its API and the app has to follow.
+
+This is not stylistic. `melos version` attributes a commit to a package by the
+files it touched, and takes the changelog text from the commit *subject*. A
+squashed PR spanning two packages has one subject, so one of them gets an entry
+describing the other's work — and a `!` meant for one package bumps both.
+
+That already happened here: `wallet` went to `0.2.0` because a squashed commit
+titled `refactor(bootstrap_kit)!: …` also touched `apps/wallet`.
+
+So:
+
+| PR touches | Merge with | Why |
+| ---------- | ---------- | --- |
+| one package | **Squash** | the default; subject and package agree |
+| several, coupled | **Rebase** | each commit lands with its own scope, so each changelog is right |
+| several, independent | — | split it into one PR per package instead |
+
+`architecture/` and root config files belong to no package, so they never
+trigger this and can ride along with any PR.
 
 ### Why squash-merge
 
