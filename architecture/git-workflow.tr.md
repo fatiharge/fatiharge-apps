@@ -20,7 +20,8 @@ Tek uzun ömürlü branch'li bir **trunk-based** akış kullanıyoruz.
 
 - Her değişiklik `main`'e bir **pull request** ile iner — doğrudan push yok.
 - Kısa ömürlü branch'ler: PR'ı erken aç, küçük tut, hızlı merge et, branch'i sil.
-- En güncel `main`'den branch aç; `main` önüne geçerse `main` üzerine rebase et.
+- En güncel `main`'den branch aç; `main` önüne geçerse branch'ini GitHub'ın
+  **Update branch** düğmesiyle güncelle.
 
 ### İsimlendirme
 
@@ -61,34 +62,44 @@ Tüm kurallar, tür tablosu ve örnekler [CONTRIBUTING.tr.md](../CONTRIBUTING.tr
 3. `main`'e bir **PR aç**. PR **başlığı geçerli bir Conventional Commit olmalı** — squash-merge yaptığımız için merge commit'i başlıktan oluşur.
 4. **CI geçmeli.** `Conventional PR Title` workflow'u başlığı doğrular; diğer kontroller (test, analyze) proje büyüdükçe eklenir.
 5. **Review** — en az bir onay gerekir.
-6. **Merge et** — varsayılan squash; ne zaman rebase gerektiği için bkz. [Bir PR tek pakete dokunsun](#bir-pr-tek-pakete-dokunsun).
+6. **Squash and merge** — ruleset'in izin verdiği tek yöntem. Bkz. [PR'ı kapsamla ve dokunduğu her paketi düşünerek başlıklandır](#prı-kapsamla-ve-dokundugu-her-paketi-düşünerek-başlıklandır).
 7. Merge'den sonra branch'i **sil**.
 
-### Bir PR tek pakete dokunsun
+### PR'ı kapsamla ve dokunduğu her paketi düşünerek başlıklandır
 
-**Varsayılan: PR'ı pakete göre böl.** Yalnızca değişiklikler *birbirine bağlıysa*
-tek PR'da birleştir — yani biri olmadan diğeri derlenmiyorsa; örneğin bir paket
-API'sini değiştirir ve uygulamanın uyması gerekir.
+**Tercihen workspace member başına bir PR.** Değişiklikler bağımsızsa böl —
+her biri ayrı review edilir, ayrı geri alınır.
 
-Bu bir üslup meselesi değil. `melos version` bir commit'i **dokunduğu dosyalara**
-bakarak pakete atar, changelog metnini de commit'in **konu satırından** alır. İki
-pakete birden dokunan squash'lanmış bir PR'ın tek konu satırı vardır; biri
-diğerinin işini anlatan bir girdi alır — ve tek bir pakete ait `!` işareti
-ikisini birden yükseltir.
+Gerçekten *bağımlı*ysalar birlikte gönder. Bir paketin API'sini değiştirmesi ve
+uygulamanın buna uyması tek PR'a aittir; bunu ekle/kullan/kaldır dizisine bölmek,
+başlıktan çok daha ucuza elde edebileceğimiz bir doğruluğu pahalıya satın alır.
 
-Bu bizde zaten yaşandı: `wallet`, `refactor(bootstrap_kit)!: …` başlıklı squash
-commit'i `apps/wallet`'a da dokunduğu için `0.2.0`'a çıktı.
+Başlığın önemi şuradan geliyor: `melos version` bir commit'i **dokunduğu
+dosyalara** bakarak pakete atar, ama changelog metnini commit'in **konu
+satırından** alır. Squash-merge yaptığımız için iki member'a dokunan bir PR
+geriye **tek** konu satırı bırakır ve dokunulan **her** member o satırı alır.
 
-Yani:
+Bu yüzden birden fazla member'a dokunan PR'da **scope'u hiç yazma**:
 
-| PR şuna dokunuyorsa | Şununla merge et | Neden |
-| ------------------- | ---------------- | ----- |
-| tek pakete | **Squash** | varsayılan; konu satırı ile paket örtüşür |
-| birkaçına, bağımlı | **Rebase** | her commit kendi scope'uyla iner, her changelog doğru olur |
-| birkaçına, bağımsız | — | onun yerine paket başına bir PR'a böl |
+```
+refactor!: take the splash from the page, not the port     ← iyi
+refactor(bootstrap_kit)!: take the splash from …           ← wallet'ın
+                                                              changelog'u artık
+                                                              başka bir paketin
+                                                              adını anıyor
+```
 
-`architecture/` ve kökteki config dosyaları hiçbir pakete ait değildir; bu
-durumu tetiklemezler ve herhangi bir PR'a eşlik edebilirler.
+Conventional Commits'te scope opsiyonel ve PR başlık kontrolü ikisini de kabul
+ediyor. Yazmamak hiçbir şeye mal olmuyor ve bir paketin changelog'unun
+komşusunun işini sahiplenmesini engelliyor. `wallet`'ın `refactor(bootstrap_kit)!`
+başlığı yüzünden `0.2.0`'a çıkması tam da bundan kaçınılan durum.
+
+Merge her zaman **squash**: `main` üzerindeki ruleset başka yönteme izin
+vermiyor ve doğrusal geçmiş şart. Zaten bozuk hiçbir şey `main`'e ulaşamaz —
+iki CI kontrolü de geçmek zorunda.
+
+`architecture/`, `.github/`, `scripts/` ve kök config hiçbir member'a ait
+değildir; bu konuyu hiç tetiklemezler ve herhangi bir PR'a eşlik edebilirler.
 
 ### Neden squash-merge
 
@@ -98,19 +109,24 @@ durumu tetiklemezler ve herhangi bir PR'a eşlik edebilirler.
 
 ## Branch protection (GitHub ayarları)
 
-GitHub → **Settings → Branches → Add rule** ile `main` için ayarla:
+Klasik branch protection yerine bir **ruleset** olarak kurulu
+(`main-protection`) — GitHub → **Settings → Rules → Rulesets**. Dikkat: eski
+`/branches/main/protection` API'si ruleset'ler için 404 döner; branch korumasız
+sanmak buradan kolay.
 
-- ✅ **Require a pull request before merging** (`main`'e doğrudan push yok).
-  - En az **1 onay** iste.
-- ✅ **Require status checks to pass before merging.**
-  - **`Validate PR title`**'ı seç (`Conventional PR Title` workflow'undan).
-  - ✅ Merge'den önce branch'lerin güncel olmasını iste.
-- ✅ **Require linear history** (squash-merge ile eşleşir).
-- ✅ İsteğe bağlı: conversation resolution iste, force-push'u engelle, yöneticileri de dahil et.
+Bugün `main` üzerinde zorlananlar:
+
+- **Merge öncesi PR zorunlu**, tek izinli yöntem squash. Onay zorunlu değil —
+  tek kişilik bir ekipte kendi işini onaylamak bir şey katmıyor.
+- **Zorunlu status check'ler:** `Analyze, format & test` ve `Validate PR title`.
+- **Doğrusal geçmiş zorunlu**, silme ve force-push kapalı.
+- **Açık değil:** *require branches to be up to date before merging*. Yani bir PR,
+  açıldığı `main`'e karşı test edilir; indiği `main`'e karşı değil — CI'ın her
+  `main` push'unda da çalışmasının sebebi bu.
 
 Repository → **Settings → General → Pull Requests**:
 
-- Yalnızca **squash merging**'e izin ver (merge commit ve rebase merging'i kapat).
+- Yalnızca **squash merging**'e izin ver — diğer iki yöntem kapalı.
 - Merge'den sonra head branch'leri **otomatik sil**.
 
 > Bu ayarlar GitHub arayüzünde etkinleştirilene kadar CI kontrolü durum bildirir ama merge'i *engelleyemez*. Konvansiyonu sert bir bariyere çeviren şey branch protection'dır.
