@@ -65,6 +65,16 @@ melos:
       packageFilters:
         dependsOn: build_runner
 
+    coverage:helper:
+      # `flutter test --coverage` only instruments libraries the tests import,
+      # so a file with no test is missing from lcov.info rather than reported
+      # as 0% — which inflates the number. The generated helper imports every
+      # library. It self-checks: the test fails when a new file is not in it.
+      description: Regenerate the coverage helper that forces every library into the report.
+      exec: ./tool/coverage_helper.sh
+      packageFilters:
+        fileExists: tool/coverage_helper.sh
+
     generate:l10n:
       # easy_localization ships a standalone executable, NOT a build_runner
       # builder, so `generate` above does not cover it. Run this after editing
