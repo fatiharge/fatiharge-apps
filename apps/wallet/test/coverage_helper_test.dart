@@ -52,6 +52,7 @@ import 'package:wallet/features/finance/presentation/views/history_filter_sheet.
 import 'package:wallet/features/finance/presentation/views/month_switcher.dart';
 import 'package:wallet/features/finance/presentation/views/summary_header.dart';
 import 'package:wallet/features/finance/presentation/views/transaction_tile.dart';
+import 'package:wallet/features/startup/presentation/splash_view.dart';
 import 'package:wallet/features/startup/presentation/startup_page.dart';
 import 'package:wallet/infrastructure/adapter/bootstrap/bootstrap_adapter.dart';
 import 'package:wallet/infrastructure/dev/demo_transactions.dart';
