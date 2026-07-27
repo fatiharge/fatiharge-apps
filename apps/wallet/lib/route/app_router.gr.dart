@@ -91,46 +91,18 @@ class MainRoute extends _i7.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i5.StartupPage]
-class StartupRoute extends _i7.PageRouteInfo<StartupRouteArgs> {
-  StartupRoute({_i8.Key? key, List<_i7.PageRouteInfo>? children})
-    : super(
-        StartupRoute.name,
-        args: StartupRouteArgs(key: key),
-        initialChildren: children,
-      );
+class StartupRoute extends _i7.PageRouteInfo<void> {
+  const StartupRoute({List<_i7.PageRouteInfo>? children})
+    : super(StartupRoute.name, initialChildren: children);
 
   static const String name = 'StartupRoute';
 
   static _i7.PageInfo page = _i7.PageInfo(
     name,
     builder: (data) {
-      final args = data.argsAs<StartupRouteArgs>(
-        orElse: () => const StartupRouteArgs(),
-      );
-      return _i5.StartupPage(key: args.key);
+      return const _i5.StartupPage();
     },
   );
-}
-
-class StartupRouteArgs {
-  const StartupRouteArgs({this.key});
-
-  final _i8.Key? key;
-
-  @override
-  String toString() {
-    return 'StartupRouteArgs{key: $key}';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    if (other is! StartupRouteArgs) return false;
-    return key == other.key;
-  }
-
-  @override
-  int get hashCode => key.hashCode;
 }
 
 /// generated route for

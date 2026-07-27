@@ -45,13 +45,18 @@ class HistoryBloc
     ]);
   }
 
+  /// Either half of the data can arrive on its own, so anything the event does
+  /// not carry keeps its current value. The fallbacks are spelled out because
+  /// the generated `copyWith` takes non-nullable arguments — it cannot express
+  /// "leave this alone" through a null.
   void _onDataReceived(HistoryDataReceived event, Emitter<HistoryState> emit) {
+    final categories = event.categories;
     emit(
       state.copyWith(
-        all: event.transactions,
-        categories: event.categories == null
-            ? null
-            : {for (final category in event.categories!) category.id: category},
+        all: event.transactions ?? state.all,
+        categories: categories == null
+            ? state.categories
+            : {for (final category in categories) category.id: category},
         loading: false,
       ),
     );

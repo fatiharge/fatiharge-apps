@@ -1,8 +1,10 @@
-import 'package:flutter/foundation.dart' show immutable, listEquals;
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:wallet/features/finance/domain/models/category.dart';
 import 'package:wallet/features/finance/domain/models/currency.dart';
 import 'package:wallet/features/finance/domain/models/money.dart';
 import 'package:wallet/features/finance/domain/models/money_transaction.dart';
+
+part 'entry_state.freezed.dart';
 
 /// Why the entry form cannot be submitted yet.
 enum EntryError { amountMissing, amountInvalid, amountNotPositive, noCategory }
@@ -12,46 +14,36 @@ enum EntryError { amountMissing, amountInvalid, amountNotPositive, noCategory }
 /// The amount is held as raw [amountText] rather than a parsed [Money]: the
 /// user types `12,` on the way to `12,50`, and a state that cannot represent
 /// half-typed input forces the widget to keep its own shadow copy.
-@immutable
-class EntryState {
-  const EntryState({
-    required this.type,
-    required this.currency,
-    required this.date,
-    this.editingId,
-    this.amountText = '',
-    this.categoryId,
-    this.note = '',
-    this.categories = const [],
-    this.submitting = false,
-    this.saved = false,
-    this.showErrors = false,
-  });
+@freezed
+abstract class EntryState with _$EntryState {
+  const factory EntryState({
+    required TransactionType type,
+    required Currency currency,
+    required DateTime date,
 
-  EntryState.initial({DateTime? now})
-    : this(
-        type: TransactionType.expense,
-        currency: Currency.turkishLira,
-        date: now ?? DateTime.now(),
-      );
+    /// Set when editing an existing transaction; `null` when adding a new one.
+    String? editingId,
+    @Default('') String amountText,
+    String? categoryId,
+    @Default('') String note,
 
-  /// Set when editing an existing transaction; `null` when adding a new one.
-  final String? editingId;
-  final TransactionType type;
-  final Currency currency;
-  final DateTime date;
-  final String amountText;
-  final String? categoryId;
-  final String note;
+    /// Selectable categories (archived ones excluded).
+    @Default(<Category>[]) List<Category> categories,
+    @Default(false) bool submitting,
+    @Default(false) bool saved,
 
-  /// Selectable categories (archived ones excluded).
-  final List<Category> categories;
+    /// Errors stay hidden until the first submit attempt.
+    @Default(false) bool showErrors,
+  }) = _EntryState;
 
-  final bool submitting;
-  final bool saved;
+  const EntryState._();
 
-  /// Errors stay hidden until the first submit attempt.
-  final bool showErrors;
+  /// A blank form.
+  factory EntryState.initial({DateTime? now}) => EntryState(
+    type: TransactionType.expense,
+    currency: Currency.turkishLira,
+    date: now ?? DateTime.now(),
+  );
 
   bool get isEditing => editingId != null;
 
@@ -70,61 +62,4 @@ class EntryState {
 
   /// The error to render, or `null` while the user has not submitted yet.
   EntryError? get visibleError => showErrors ? error : null;
-
-  EntryState copyWith({
-    String? editingId,
-    TransactionType? type,
-    Currency? currency,
-    DateTime? date,
-    String? amountText,
-    String? categoryId,
-    String? note,
-    List<Category>? categories,
-    bool? submitting,
-    bool? saved,
-    bool? showErrors,
-  }) => EntryState(
-    editingId: editingId ?? this.editingId,
-    type: type ?? this.type,
-    currency: currency ?? this.currency,
-    date: date ?? this.date,
-    amountText: amountText ?? this.amountText,
-    categoryId: categoryId ?? this.categoryId,
-    note: note ?? this.note,
-    categories: categories ?? this.categories,
-    submitting: submitting ?? this.submitting,
-    saved: saved ?? this.saved,
-    showErrors: showErrors ?? this.showErrors,
-  );
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is EntryState &&
-          other.editingId == editingId &&
-          other.type == type &&
-          other.currency == currency &&
-          other.date == date &&
-          other.amountText == amountText &&
-          other.categoryId == categoryId &&
-          other.note == note &&
-          listEquals(other.categories, categories) &&
-          other.submitting == submitting &&
-          other.saved == saved &&
-          other.showErrors == showErrors;
-
-  @override
-  int get hashCode => Object.hash(
-    editingId,
-    type,
-    currency,
-    date,
-    amountText,
-    categoryId,
-    note,
-    Object.hashAll(categories),
-    submitting,
-    saved,
-    showErrors,
-  );
 }

@@ -11,28 +11,28 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
-import 'package:wallet/config/modules/storage_module.dart' as _i135;
+import 'package:wallet/config/modules/storage_module.dart' as _i253;
 import 'package:wallet/features/finance/application/budget/budget_cubit.dart'
-    as _i1038;
+    as _i203;
 import 'package:wallet/features/finance/application/dashboard/dashboard_cubit.dart'
-    as _i990;
+    as _i444;
 import 'package:wallet/features/finance/application/entry/entry_cubit.dart'
-    as _i682;
+    as _i346;
 import 'package:wallet/features/finance/application/history/history_bloc.dart'
-    as _i773;
+    as _i186;
 import 'package:wallet/features/finance/domain/repository/budget_repository.dart'
-    as _i750;
+    as _i469;
 import 'package:wallet/features/finance/domain/repository/category_repository.dart'
-    as _i976;
+    as _i270;
 import 'package:wallet/features/finance/domain/repository/transaction_repository.dart'
-    as _i442;
+    as _i616;
 import 'package:wallet/infrastructure/repository/budget_repository_impl.dart'
-    as _i864;
+    as _i137;
 import 'package:wallet/infrastructure/repository/category_repository_impl.dart'
-    as _i587;
+    as _i353;
 import 'package:wallet/infrastructure/repository/transaction_repository_impl.dart'
-    as _i389;
-import 'package:wallet/infrastructure/storage/wallet_storage.dart' as _i255;
+    as _i1031;
+import 'package:wallet/infrastructure/storage/wallet_storage.dart' as _i448;
 
 extension GetItInjectableX on _i174.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
@@ -42,47 +42,47 @@ extension GetItInjectableX on _i174.GetIt {
   }) async {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final storageModule = _$StorageModule();
-    await gh.singletonAsync<_i255.WalletStorage>(
+    await gh.singletonAsync<_i448.WalletStorage>(
       () => storageModule.storage,
       preResolve: true,
     );
-    gh.lazySingleton<_i442.TransactionRepository>(
-      () => _i389.TransactionRepositoryImpl(gh<_i255.WalletStorage>()),
+    gh.lazySingleton<_i616.TransactionRepository>(
+      () => _i1031.TransactionRepositoryImpl(gh<_i448.WalletStorage>()),
     );
-    gh.lazySingleton<_i976.CategoryRepository>(
-      () => _i587.CategoryRepositoryImpl(gh<_i255.WalletStorage>()),
+    gh.lazySingleton<_i270.CategoryRepository>(
+      () => _i353.CategoryRepositoryImpl(gh<_i448.WalletStorage>()),
     );
-    gh.lazySingleton<_i750.BudgetRepository>(
-      () => _i864.BudgetRepositoryImpl(gh<_i255.WalletStorage>()),
+    gh.lazySingleton<_i469.BudgetRepository>(
+      () => _i137.BudgetRepositoryImpl(gh<_i448.WalletStorage>()),
     );
-    gh.factory<_i1038.BudgetCubit>(
-      () => _i1038.BudgetCubit(
-        gh<_i750.BudgetRepository>(),
-        gh<_i442.TransactionRepository>(),
-        gh<_i976.CategoryRepository>(),
+    gh.factory<_i444.DashboardCubit>(
+      () => _i444.DashboardCubit(
+        gh<_i616.TransactionRepository>(),
+        gh<_i270.CategoryRepository>(),
+        gh<_i469.BudgetRepository>(),
       ),
     );
-    gh.factory<_i682.EntryCubit>(
-      () => _i682.EntryCubit(
-        gh<_i442.TransactionRepository>(),
-        gh<_i976.CategoryRepository>(),
+    gh.factory<_i346.EntryCubit>(
+      () => _i346.EntryCubit(
+        gh<_i616.TransactionRepository>(),
+        gh<_i270.CategoryRepository>(),
       ),
     );
-    gh.factory<_i773.HistoryBloc>(
-      () => _i773.HistoryBloc(
-        gh<_i442.TransactionRepository>(),
-        gh<_i976.CategoryRepository>(),
+    gh.factory<_i186.HistoryBloc>(
+      () => _i186.HistoryBloc(
+        gh<_i616.TransactionRepository>(),
+        gh<_i270.CategoryRepository>(),
       ),
     );
-    gh.factory<_i990.DashboardCubit>(
-      () => _i990.DashboardCubit(
-        gh<_i442.TransactionRepository>(),
-        gh<_i976.CategoryRepository>(),
-        gh<_i750.BudgetRepository>(),
+    gh.factory<_i203.BudgetCubit>(
+      () => _i203.BudgetCubit(
+        gh<_i469.BudgetRepository>(),
+        gh<_i616.TransactionRepository>(),
+        gh<_i270.CategoryRepository>(),
       ),
     );
     return this;
   }
 }
 
-class _$StorageModule extends _i135.StorageModule {}
+class _$StorageModule extends _i253.StorageModule {}
