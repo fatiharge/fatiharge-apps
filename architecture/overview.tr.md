@@ -28,7 +28,7 @@ Port'ların ve repository'lerin somut implementasyonları (HTTP client, storage,
 
 ### 2. Feature-first uygulama kabuğu
 
-Uygulama ince bir **composition root**'tur. Bağımlılıkları bağlar ve feature giriş noktalarını barındırır; ağır mantık feature/domain paketlerinde yaşar.
+Uygulama ince bir **composition root**'tur. Bağımlılıkları bağlar ve feature giriş noktalarını barındırır; ağır mantık feature'ların `domain`/`application` katmanlarında yaşar — bu katmanlar ister app içinde ister ayrı bir pakette olsun.
 
 ### 3. UI'da Atomic Design
 
@@ -39,17 +39,32 @@ Paylaşılan `ui_kit`; `atoms → molecules → organisms → templates` ve enin
 ```
 fatiharge-apps/
 ├─ apps/                     # çalıştırılabilir uygulamalar (ince composition root'lar)
-│  └─ <app>/lib/app/…
-├─ packages/                 # paylaşılan & feature paketleri (Melos workspace member)
+│  └─ wallet/lib/app/        # config, route, theme, infrastructure, features/
+├─ packages/                 # paylaşılan paketler (Melos workspace member)
 │  ├─ lint_kit/              # ortak analyzer + lint config (very_good_analysis)
-│  ├─ utility_kit/           # extension, base tipler, servisler, storage, exception
-│  ├─ ui_kit/                # tasarım sistemi (Atomic Design) + theme
-│  ├─ api_client/            # generated OpenAPI client
-│  ├─ bootstrap/             # uygulama başlangıç orkestrasyonu (job, cubit, page)
-│  └─ <feature>/             # örn. auth, content_engine, dynamic_form
+│  ├─ utility_kit/           # UI'dan bağımsız temel sözleşmeler (EffectBloc)
+│  ├─ bootstrap_kit/         # uygulama başlangıç orkestrasyonu (job, cubit, page)
+│  └─ …                      # ui_kit, api_client, paylaşılan feature'lar — aşağıda
 ├─ architecture/             # bu dokümanlar
 └─ .githooks/ .github/       # governance (commit hook, CI)
 ```
+
+`ui_kit` ve `api_client` hedeflenen yapının parçası ama **henüz yoklar**.
+Burada hedefi netleştirmek için anılıyorlar, mevcut oldukları anlamına gelmez.
+
+### Bir feature nerede yaşar
+
+Bir feature, **uygulamanın içinde** bir klasör olarak başlar
+(`apps/<app>/lib/app/features/<ad>/`) ve aşağıda anlatılan
+`domain / application / presentation` katmanlamasını aynen taşır.
+`packages/<ad>/` altına ancak ikinci bir uygulama ya da feature gerçekten
+ihtiyaç duyduğunda çıkar — ölçüt
+[package-conventions.tr.md](package-conventions.tr.md#ne-zaman-yeni-paket-açılır)
+içinde ve "tek tüketici" bu ölçütü geçmez.
+
+O taşımayı ileride ucuz kılan şey konum değil katmanlama: `domain/` içinde
+Flutter, depolama ve IO import'u olmadığı sürece feature'ı pakete çıkarmak
+dosya taşıma + import düzeltmesinden ibarettir.
 
 ### Paket taksonomisi
 
@@ -57,7 +72,7 @@ fatiharge-apps/
 | ----------- | ------------------------------------------ | ---------------------------------------- |
 | **kit**     | `ui_kit`, `utility_kit`, `lint_kit`        | Hayır — enine kesen yapı taşları         |
 | **generated** | `api_client`                             | Hayır — kod üretimi, elle düzenlenmez    |
-| **feature** | `auth`, `content_engine`, `dynamic_form`   | Evet — `domain / application / presentation` |
+| **feature** | `apps/<app>/lib/app/features/<ad>/`, paylaşılınca `packages/<ad>/` | Evet — `domain / application / presentation` |
 | **app**     | `apps/<app>`                               | Composition root + `features/` kabuğu    |
 
 ## Bağımlılık yönü
@@ -66,11 +81,11 @@ fatiharge-apps/
 
 ```mermaid
 graph TD
-  app[apps/*] --> feature[feature paketleri]
+  app[apps/*] --> feature[feature'lar<br/>app içinde ya da paket]
   app --> uikit[ui_kit]
   app --> util[utility_kit]
   app --> api[api_client]
-  app --> boot[bootstrap]
+  app --> boot[bootstrap_kit]
   feature --> uikit
   feature --> util
   feature --> api
@@ -84,6 +99,7 @@ graph TD
 Kurallar:
 
 - **domain** katmanları kendi paketleri dışında hiçbir şeye bağlı değildir (`utility_kit` saf yardımcıları ve saf paketler hariç).
+- **Bir feature uygulamanın içinde başlar** ve ancak ikinci bir tüketici çıkınca paket olur. Katmanlama her iki durumda da aynıdır.
 - **Feature'lar başka feature'lara bağlanmaz.** Ortak kod bir kit'e taşınır; feature'lar arası akışları uygulama koordine eder.
 - **Somut adapter'ları yalnızca uygulama bilir.** Port/repository'leri (`infrastructure/`) uygulama implemente eder ve DI ile kaydeder.
 - **Döngü yok.** Melos/pub bir bağımlılık döngüsünü reddeder; yukarıdaki katmanlama bunu tasarımca engeller.
