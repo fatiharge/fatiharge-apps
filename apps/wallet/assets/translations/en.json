@@ -70,6 +70,18 @@
       "other": "{names} budgets exceeded."
     }
   },
+  "about": {
+    "title": "About",
+    "tagline": "Personal income and expense tracking. Your data stays on this device.",
+    "made_by": "Made by",
+    "feedback": "Feedback",
+    "bug_report": "Report a bug",
+    "bug_report_hint": "Opens a bug report on GitHub",
+    "feature_request": "Request a feature",
+    "feature_request_hint": "Opens a feature request on GitHub",
+    "source": "Source code",
+    "copied": "Copied to clipboard"
+  },
   "category": {
     "food": "Food",
     "transport": "Transport",

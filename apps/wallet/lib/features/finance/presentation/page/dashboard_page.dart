@@ -21,7 +21,19 @@ class DashboardPage extends StatelessWidget {
   Widget build(BuildContext context) => BlocProvider(
     create: (_) => getIt<DashboardCubit>()..start(),
     child: Scaffold(
-      appBar: AppBar(title: Text(LocaleKeys.tabs_dashboard.tr())),
+      appBar: AppBar(
+        title: Text(LocaleKeys.tabs_dashboard.tr()),
+        // The dashboard is the app's landing tab, so its action bar is the one
+        // place an "about" button is reliably found without adding a fourth
+        // navigation destination for it.
+        actions: [
+          IconButton(
+            onPressed: () => context.router.push(const AboutRoute()),
+            icon: const Icon(Icons.info_outline),
+            tooltip: LocaleKeys.about_title.tr(),
+          ),
+        ],
+      ),
       body: BlocBuilder<DashboardCubit, DashboardState>(
         builder: (context, state) {
           final cubit = context.read<DashboardCubit>();

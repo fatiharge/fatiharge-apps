@@ -57,6 +57,16 @@ abstract class LocaleKeys {
   static const budget_empty_title = 'budget.empty_title';
   static const budget_empty_message = 'budget.empty_message';
   static const budget_exceeded_warning = 'budget.exceeded_warning';
+  static const about_title = 'about.title';
+  static const about_tagline = 'about.tagline';
+  static const about_made_by = 'about.made_by';
+  static const about_feedback = 'about.feedback';
+  static const about_bug_report = 'about.bug_report';
+  static const about_bug_report_hint = 'about.bug_report_hint';
+  static const about_feature_request = 'about.feature_request';
+  static const about_feature_request_hint = 'about.feature_request_hint';
+  static const about_source = 'about.source';
+  static const about_copied = 'about.copied';
   static const category_food = 'category.food';
   static const category_transport = 'category.transport';
   static const category_home = 'category.home';

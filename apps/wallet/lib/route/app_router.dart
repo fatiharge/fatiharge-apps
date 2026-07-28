@@ -23,6 +23,10 @@ class RouteManager extends RootStackRouter {
       page: TransactionEntryRoute.page,
       customRouteBuilder: _modalSheetBuilder,
     ),
+    // No navigation leads here — the dashboard title's hidden gesture pushes
+    // it. Registered like any other route all the same, so it is reachable in
+    // tests and by a deep link.
+    AutoRoute(page: AboutRoute.page),
   ];
 }
 
