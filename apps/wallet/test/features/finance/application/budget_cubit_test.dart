@@ -12,7 +12,8 @@ void main() {
   late FakeTransactionRepository transactions;
   late FakeCategoryRepository categories;
 
-  final thisMonth = DateTime.now();
+  final thisMonth = DateTime(2026, 7, 15);
+  DateTime clock() => thisMonth;
 
   setUp(() {
     budgets = FakeBudgetRepository();
@@ -27,7 +28,8 @@ void main() {
     await categories.dispose();
   });
 
-  BudgetCubit build() => BudgetCubit(budgets, transactions, categories);
+  BudgetCubit build() =>
+      BudgetCubit(budgets, transactions, categories, clock: clock);
 
   Future<void> settle() => Future<void>.delayed(Duration.zero);
 

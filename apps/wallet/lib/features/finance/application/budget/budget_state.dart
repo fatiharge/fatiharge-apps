@@ -22,8 +22,8 @@ abstract class BudgetState with _$BudgetState {
   const BudgetState._();
 
   /// The screen before storage has answered.
-  factory BudgetState.initial() =>
-      BudgetState(period: MonthPeriod.of(DateTime.now()));
+  factory BudgetState.initial({DateTime? now}) =>
+      BudgetState(period: MonthPeriod.of(now ?? DateTime.now()));
 
   bool get isEmpty => statuses.isEmpty;
 

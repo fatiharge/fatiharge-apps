@@ -14,7 +14,8 @@ void main() {
   late FakeCategoryRepository categories;
   late FakeBudgetRepository budgets;
 
-  final thisMonth = DateTime.now();
+  final thisMonth = DateTime(2026, 7, 15);
+  DateTime clock() => thisMonth;
 
   setUp(() {
     transactions = FakeTransactionRepository();
@@ -28,7 +29,8 @@ void main() {
     await budgets.dispose();
   });
 
-  DashboardCubit build() => DashboardCubit(transactions, categories, budgets);
+  DashboardCubit build() =>
+      DashboardCubit(transactions, categories, budgets, clock: clock);
 
   /// Lets the three repository streams deliver their first values.
   Future<void> settle() => Future<void>.delayed(Duration.zero);
@@ -156,6 +158,35 @@ void main() {
       final state = cubit.state as DashboardReady;
       expect(state.exceededBudgets, hasLength(1));
       expect(state.budgetStatuses.single.health, BudgetHealth.exceeded);
+    });
+
+    test('refuses to browse past the current month', () async {
+      final cubit = build();
+      addTearDown(cubit.close);
+      cubit.start();
+      await settle();
+
+      cubit.showNextMonth();
+
+      final state = cubit.state as DashboardReady;
+      expect(state.period, MonthPeriod.of(thisMonth));
+      expect(state.canShowNextMonth, isFalse);
+    });
+
+    test('allows browsing forward once it is behind', () async {
+      final cubit = build();
+      addTearDown(cubit.close);
+      cubit.start();
+      await settle();
+
+      cubit.showPreviousMonth();
+      expect((cubit.state as DashboardReady).canShowNextMonth, isTrue);
+
+      cubit.showNextMonth();
+      expect(
+        (cubit.state as DashboardReady).period,
+        MonthPeriod.of(thisMonth),
+      );
     });
 
     test('start is idempotent, so a rebuild cannot double-subscribe', () async {

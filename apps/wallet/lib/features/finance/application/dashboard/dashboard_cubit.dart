@@ -11,6 +11,7 @@ import 'package:wallet/features/finance/domain/repository/budget_repository.dart
 import 'package:wallet/features/finance/domain/repository/category_repository.dart';
 import 'package:wallet/features/finance/domain/repository/transaction_repository.dart';
 import 'package:wallet/features/finance/domain/rules/budget_evaluator.dart';
+import 'package:wallet/features/finance/domain/rules/clock.dart';
 import 'package:wallet/features/finance/domain/rules/currency_usage.dart';
 import 'package:wallet/features/finance/domain/rules/month_period.dart';
 import 'package:wallet/features/finance/domain/rules/monthly_summary.dart';
@@ -23,12 +24,18 @@ import 'package:wallet/features/finance/domain/rules/monthly_summary.dart';
 /// without either screen knowing about the other.
 @injectable
 class DashboardCubit extends Cubit<DashboardState> {
-  DashboardCubit(this._transactions, this._categories, this._budgets)
-    : super(const DashboardLoading());
+  DashboardCubit(
+    this._transactions,
+    this._categories,
+    this._budgets, {
+    this.clock = systemClock,
+  }) : super(const DashboardLoading());
 
   final TransactionRepository _transactions;
   final CategoryRepository _categories;
   final BudgetRepository _budgets;
+
+  final Clock clock;
 
   final List<StreamSubscription<void>> _subscriptions = [];
 
@@ -36,7 +43,7 @@ class DashboardCubit extends Cubit<DashboardState> {
   List<Category> _allCategories = const [];
   List<Budget> _allBudgets = const [];
 
-  MonthPeriod _period = MonthPeriod.of(DateTime.now());
+  late MonthPeriod _period = MonthPeriod.of(clock());
   Currency? _currency;
   bool _hasTransactions = false;
 
@@ -67,7 +74,13 @@ class DashboardCubit extends Cubit<DashboardState> {
 
   void showPreviousMonth() => selectPeriod(_period.previous);
 
-  void showNextMonth() => selectPeriod(_period.next);
+  /// Browsing stops at the current month; there is nothing recorded past today.
+  void showNextMonth() {
+    if (!_canShowNextMonth) return;
+    selectPeriod(_period.next);
+  }
+
+  bool get _canShowNextMonth => _period.isBefore(MonthPeriod.of(clock()));
 
   void selectCurrency(Currency currency) {
     _currency = currency;
@@ -93,6 +106,7 @@ class DashboardCubit extends Cubit<DashboardState> {
         currency: currency,
         availableCurrencies: available,
         summary: summary,
+        canShowNextMonth: _canShowNextMonth,
         budgetStatuses: BudgetEvaluator.evaluate(
           budgets: _allBudgets,
           summary: summary,
