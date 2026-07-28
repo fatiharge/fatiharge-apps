@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:wallet/features/about/about_info.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
+import 'package:wallet/theme/app_mark.dart';
 
 /// Credits and where to file issues.
 ///
@@ -70,13 +71,9 @@ class _Header extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
       child: Column(
         children: [
-          Icon(
-            Icons.account_balance_wallet_outlined,
-            size: 56,
-            color: theme.colorScheme.primary,
-          ),
+          const AppMark(size: 76),
           const SizedBox(height: 12),
-          Text('Wariden', style: theme.textTheme.headlineSmall),
+          Text('Warizo', style: theme.textTheme.headlineSmall),
           const SizedBox(height: 4),
           Text(
             LocaleKeys.about_tagline.tr(),
