@@ -15,7 +15,7 @@ class App extends StatelessWidget {
     final router = getIt<RouteManager>();
 
     return MaterialApp.router(
-      title: 'Wallet',
+      title: 'Wariden',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
