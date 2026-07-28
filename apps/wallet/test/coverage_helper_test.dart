@@ -36,6 +36,7 @@ import 'package:wallet/features/finance/domain/repository/category_repository.da
 import 'package:wallet/features/finance/domain/repository/transaction_repository.dart';
 import 'package:wallet/features/finance/domain/rules/amount_input.dart';
 import 'package:wallet/features/finance/domain/rules/budget_evaluator.dart';
+import 'package:wallet/features/finance/domain/rules/clock.dart';
 import 'package:wallet/features/finance/domain/rules/currency_usage.dart';
 import 'package:wallet/features/finance/domain/rules/month_period.dart';
 import 'package:wallet/features/finance/domain/rules/monthly_summary.dart';

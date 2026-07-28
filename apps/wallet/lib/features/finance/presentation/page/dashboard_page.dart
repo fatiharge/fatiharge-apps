@@ -49,7 +49,7 @@ class DashboardPage extends StatelessWidget {
               budgetStatuses: state.budgetStatuses,
               categories: state.categories,
               onPreviousMonth: cubit.showPreviousMonth,
-              onNextMonth: cubit.showNextMonth,
+              onNextMonth: state.canShowNextMonth ? cubit.showNextMonth : null,
               onCurrencySelected: cubit.selectCurrency,
               onAddTransaction: () =>
                   context.router.push(TransactionEntryRoute()),

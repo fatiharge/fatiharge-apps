@@ -35,6 +35,9 @@ sealed class DashboardState with _$DashboardState {
 
     /// Category lookup by id, archived ones included.
     required Map<String, Category> categories,
+
+    /// False once the shown month has caught up with the current one.
+    @Default(false) bool canShowNextMonth,
   }) = DashboardReady;
 
   const DashboardState._();

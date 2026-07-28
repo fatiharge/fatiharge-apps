@@ -26,6 +26,7 @@ import 'package:wallet/features/finance/domain/repository/category_repository.da
     as _i270;
 import 'package:wallet/features/finance/domain/repository/transaction_repository.dart'
     as _i616;
+import 'package:wallet/features/finance/domain/rules/clock.dart' as _i576;
 import 'package:wallet/infrastructure/repository/budget_repository_impl.dart'
     as _i137;
 import 'package:wallet/infrastructure/repository/category_repository_impl.dart'
@@ -60,6 +61,15 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i616.TransactionRepository>(),
         gh<_i270.CategoryRepository>(),
         gh<_i469.BudgetRepository>(),
+        clock: gh<_i576.Clock>(),
+      ),
+    );
+    gh.factory<_i203.BudgetCubit>(
+      () => _i203.BudgetCubit(
+        gh<_i469.BudgetRepository>(),
+        gh<_i616.TransactionRepository>(),
+        gh<_i270.CategoryRepository>(),
+        clock: gh<_i576.Clock>(),
       ),
     );
     gh.factory<_i346.EntryCubit>(
@@ -70,13 +80,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i186.HistoryBloc>(
       () => _i186.HistoryBloc(
-        gh<_i616.TransactionRepository>(),
-        gh<_i270.CategoryRepository>(),
-      ),
-    );
-    gh.factory<_i203.BudgetCubit>(
-      () => _i203.BudgetCubit(
-        gh<_i469.BudgetRepository>(),
         gh<_i616.TransactionRepository>(),
         gh<_i270.CategoryRepository>(),
       ),

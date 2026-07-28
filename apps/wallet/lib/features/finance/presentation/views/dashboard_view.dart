@@ -43,7 +43,7 @@ class DashboardView extends StatelessWidget {
   final Map<String, Category> categories;
 
   final VoidCallback onPreviousMonth;
-  final VoidCallback onNextMonth;
+  final VoidCallback? onNextMonth;
   final ValueChanged<Currency> onCurrencySelected;
   final VoidCallback onAddTransaction;
 

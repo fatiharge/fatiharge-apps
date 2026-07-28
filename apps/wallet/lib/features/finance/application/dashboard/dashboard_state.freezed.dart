@@ -119,11 +119,11 @@ return ready(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  loading,TResult Function( MonthPeriod period,  Currency currency,  List<Currency> availableCurrencies,  MonthlySummary summary,  List<BudgetStatus> budgetStatuses,  Map<String, Category> categories)?  ready,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  loading,TResult Function( MonthPeriod period,  Currency currency,  List<Currency> availableCurrencies,  MonthlySummary summary,  List<BudgetStatus> budgetStatuses,  Map<String, Category> categories,  bool canShowNextMonth)?  ready,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case DashboardLoading() when loading != null:
 return loading();case DashboardReady() when ready != null:
-return ready(_that.period,_that.currency,_that.availableCurrencies,_that.summary,_that.budgetStatuses,_that.categories);case _:
+return ready(_that.period,_that.currency,_that.availableCurrencies,_that.summary,_that.budgetStatuses,_that.categories,_that.canShowNextMonth);case _:
   return orElse();
 
 }
@@ -141,11 +141,11 @@ return ready(_that.period,_that.currency,_that.availableCurrencies,_that.summary
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  loading,required TResult Function( MonthPeriod period,  Currency currency,  List<Currency> availableCurrencies,  MonthlySummary summary,  List<BudgetStatus> budgetStatuses,  Map<String, Category> categories)  ready,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  loading,required TResult Function( MonthPeriod period,  Currency currency,  List<Currency> availableCurrencies,  MonthlySummary summary,  List<BudgetStatus> budgetStatuses,  Map<String, Category> categories,  bool canShowNextMonth)  ready,}) {final _that = this;
 switch (_that) {
 case DashboardLoading():
 return loading();case DashboardReady():
-return ready(_that.period,_that.currency,_that.availableCurrencies,_that.summary,_that.budgetStatuses,_that.categories);}
+return ready(_that.period,_that.currency,_that.availableCurrencies,_that.summary,_that.budgetStatuses,_that.categories,_that.canShowNextMonth);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -159,11 +159,11 @@ return ready(_that.period,_that.currency,_that.availableCurrencies,_that.summary
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  loading,TResult? Function( MonthPeriod period,  Currency currency,  List<Currency> availableCurrencies,  MonthlySummary summary,  List<BudgetStatus> budgetStatuses,  Map<String, Category> categories)?  ready,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  loading,TResult? Function( MonthPeriod period,  Currency currency,  List<Currency> availableCurrencies,  MonthlySummary summary,  List<BudgetStatus> budgetStatuses,  Map<String, Category> categories,  bool canShowNextMonth)?  ready,}) {final _that = this;
 switch (_that) {
 case DashboardLoading() when loading != null:
 return loading();case DashboardReady() when ready != null:
-return ready(_that.period,_that.currency,_that.availableCurrencies,_that.summary,_that.budgetStatuses,_that.categories);case _:
+return ready(_that.period,_that.currency,_that.availableCurrencies,_that.summary,_that.budgetStatuses,_that.categories,_that.canShowNextMonth);case _:
   return null;
 
 }
@@ -207,7 +207,7 @@ String toString() {
 
 
 class DashboardReady extends DashboardState {
-  const DashboardReady({required this.period, required this.currency, required final  List<Currency> availableCurrencies, required this.summary, required final  List<BudgetStatus> budgetStatuses, required final  Map<String, Category> categories}): _availableCurrencies = availableCurrencies,_budgetStatuses = budgetStatuses,_categories = categories,super._();
+  const DashboardReady({required this.period, required this.currency, required final  List<Currency> availableCurrencies, required this.summary, required final  List<BudgetStatus> budgetStatuses, required final  Map<String, Category> categories, this.canShowNextMonth = false}): _availableCurrencies = availableCurrencies,_budgetStatuses = budgetStatuses,_categories = categories,super._();
   
 
  final  MonthPeriod period;
@@ -241,6 +241,8 @@ class DashboardReady extends DashboardState {
   return EqualUnmodifiableMapView(_categories);
 }
 
+/// False once [period] has caught up with the current month.
+@JsonKey() final  bool canShowNextMonth;
 
 /// Create a copy of DashboardState
 /// with the given fields replaced by the non-null parameter values.
@@ -252,16 +254,16 @@ $DashboardReadyCopyWith<DashboardReady> get copyWith => _$DashboardReadyCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DashboardReady&&(identical(other.period, period) || other.period == period)&&(identical(other.currency, currency) || other.currency == currency)&&const DeepCollectionEquality().equals(other._availableCurrencies, _availableCurrencies)&&(identical(other.summary, summary) || other.summary == summary)&&const DeepCollectionEquality().equals(other._budgetStatuses, _budgetStatuses)&&const DeepCollectionEquality().equals(other._categories, _categories));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DashboardReady&&(identical(other.period, period) || other.period == period)&&(identical(other.currency, currency) || other.currency == currency)&&const DeepCollectionEquality().equals(other._availableCurrencies, _availableCurrencies)&&(identical(other.summary, summary) || other.summary == summary)&&const DeepCollectionEquality().equals(other._budgetStatuses, _budgetStatuses)&&const DeepCollectionEquality().equals(other._categories, _categories)&&(identical(other.canShowNextMonth, canShowNextMonth) || other.canShowNextMonth == canShowNextMonth));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,period,currency,const DeepCollectionEquality().hash(_availableCurrencies),summary,const DeepCollectionEquality().hash(_budgetStatuses),const DeepCollectionEquality().hash(_categories));
+int get hashCode => Object.hash(runtimeType,period,currency,const DeepCollectionEquality().hash(_availableCurrencies),summary,const DeepCollectionEquality().hash(_budgetStatuses),const DeepCollectionEquality().hash(_categories),canShowNextMonth);
 
 @override
 String toString() {
-  return 'DashboardState.ready(period: $period, currency: $currency, availableCurrencies: $availableCurrencies, summary: $summary, budgetStatuses: $budgetStatuses, categories: $categories)';
+  return 'DashboardState.ready(period: $period, currency: $currency, availableCurrencies: $availableCurrencies, summary: $summary, budgetStatuses: $budgetStatuses, categories: $categories, canShowNextMonth: $canShowNextMonth)';
 }
 
 
@@ -272,7 +274,7 @@ abstract mixin class $DashboardReadyCopyWith<$Res> implements $DashboardStateCop
   factory $DashboardReadyCopyWith(DashboardReady value, $Res Function(DashboardReady) _then) = _$DashboardReadyCopyWithImpl;
 @useResult
 $Res call({
- MonthPeriod period, Currency currency, List<Currency> availableCurrencies, MonthlySummary summary, List<BudgetStatus> budgetStatuses, Map<String, Category> categories
+ MonthPeriod period, Currency currency, List<Currency> availableCurrencies, MonthlySummary summary, List<BudgetStatus> budgetStatuses, Map<String, Category> categories, bool canShowNextMonth
 });
 
 
@@ -289,7 +291,7 @@ class _$DashboardReadyCopyWithImpl<$Res>
 
 /// Create a copy of DashboardState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? period = null,Object? currency = null,Object? availableCurrencies = null,Object? summary = null,Object? budgetStatuses = null,Object? categories = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? period = null,Object? currency = null,Object? availableCurrencies = null,Object? summary = null,Object? budgetStatuses = null,Object? categories = null,Object? canShowNextMonth = null,}) {
   return _then(DashboardReady(
 period: null == period ? _self.period : period // ignore: cast_nullable_to_non_nullable
 as MonthPeriod,currency: null == currency ? _self.currency : currency // ignore: cast_nullable_to_non_nullable
@@ -297,7 +299,8 @@ as Currency,availableCurrencies: null == availableCurrencies ? _self._availableC
 as List<Currency>,summary: null == summary ? _self.summary : summary // ignore: cast_nullable_to_non_nullable
 as MonthlySummary,budgetStatuses: null == budgetStatuses ? _self._budgetStatuses : budgetStatuses // ignore: cast_nullable_to_non_nullable
 as List<BudgetStatus>,categories: null == categories ? _self._categories : categories // ignore: cast_nullable_to_non_nullable
-as Map<String, Category>,
+as Map<String, Category>,canShowNextMonth: null == canShowNextMonth ? _self.canShowNextMonth : canShowNextMonth // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

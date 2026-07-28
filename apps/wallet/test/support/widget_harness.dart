@@ -59,6 +59,26 @@ Future<void> pumpLocalized(
   }
 }
 
+/// For a widget that builds its own MaterialApp, which `App` does.
+Future<void> pumpApp(WidgetTester tester, Widget app) async {
+  SharedPreferences.setMockInitialValues({});
+  await EasyLocalization.ensureInitialized();
+
+  await tester.pumpWidget(
+    EasyLocalization(
+      supportedLocales: _supported,
+      path: 'assets/translations',
+      fallbackLocale: _locale,
+      startLocale: _locale,
+      saveLocale: false,
+      assetLoader: const _FileAssetLoader(),
+      child: app,
+    ),
+  );
+  await tester.pump();
+  await tester.pump();
+}
+
 const _locale = Locale('tr');
 const _supported = [Locale('tr'), Locale('en')];
 

@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:wallet/features/about/about_info.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 import 'package:wallet/theme/app_mark.dart';
@@ -74,6 +75,7 @@ class _Header extends StatelessWidget {
           const AppMark(size: 76),
           const SizedBox(height: 12),
           Text('Warizo', style: theme.textTheme.headlineSmall),
+          const _Version(),
           const SizedBox(height: 4),
           Text(
             LocaleKeys.about_tagline.tr(),
@@ -86,6 +88,25 @@ class _Header extends StatelessWidget {
       ),
     );
   }
+}
+
+/// The installed version, which can differ from pubspec after a store update.
+class _Version extends StatelessWidget {
+  const _Version();
+
+  @override
+  Widget build(BuildContext context) => FutureBuilder<PackageInfo>(
+    future: PackageInfo.fromPlatform(),
+    builder: (context, snapshot) {
+      final info = snapshot.data;
+      return Text(
+        info == null ? '' : '${info.version} (${info.buildNumber})',
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+          color: Theme.of(context).colorScheme.outline,
+        ),
+      );
+    },
+  );
 }
 
 class _SectionLabel extends StatelessWidget {

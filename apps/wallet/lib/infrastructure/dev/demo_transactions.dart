@@ -4,6 +4,7 @@ import 'package:wallet/features/finance/domain/models/currency.dart';
 import 'package:wallet/features/finance/domain/models/money.dart';
 import 'package:wallet/features/finance/domain/models/money_transaction.dart';
 import 'package:wallet/features/finance/domain/repository/transaction_repository.dart';
+import 'package:wallet/features/finance/domain/rules/clock.dart';
 
 /// Fills an empty database with a plausible month, for screenshots and manual
 /// testing. Enabled with `--dart-define=SEED_DEMO_DATA=true`.
@@ -13,11 +14,14 @@ import 'package:wallet/features/finance/domain/repository/transaction_repository
 /// runs unless a developer asks for it.
 ///
 /// Seeded from a fixed [Random] so repeated runs produce the same numbers.
-Future<void> seedDemoTransactions(TransactionRepository repository) async {
+Future<void> seedDemoTransactions(
+  TransactionRepository repository, {
+  Clock clock = systemClock,
+}) async {
   if ((await repository.fetchAll()).isNotEmpty) return;
 
   final random = Random(42);
-  final now = DateTime.now();
+  final now = clock();
   const expenseCategories = <String, ({int min, int max})>{
     'food': (min: 8000, max: 45000),
     'transport': (min: 3000, max: 15000),
