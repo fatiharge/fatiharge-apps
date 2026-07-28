@@ -1,3 +1,12 @@
+## 0.2.2+6
+
+ - **REFACTOR**(wallet): split the screens out of the pages ([#32](https://github.com/fatiharge/fatiharge-apps/issues/32)). ([f36d99af](https://github.com/fatiharge/fatiharge-apps/commit/f36d99af7bca8c333571e58e504895e7853fc117))
+ - **REFACTOR**(wallet): keep the positive-amount rule in one place ([#31](https://github.com/fatiharge/fatiharge-apps/issues/31)). ([d2ea1cfe](https://github.com/fatiharge/fatiharge-apps/commit/d2ea1cfe4a9bff90c7a542eb039a4bdd23414880))
+ - **REFACTOR**(wallet): generate state equality instead of writing it ([#30](https://github.com/fatiharge/fatiharge-apps/issues/30)). ([932a55cf](https://github.com/fatiharge/fatiharge-apps/commit/932a55cfb113d5c04b044f0f241f1065da9d93be))
+ - **REFACTOR**(wallet): stop presentation reaching into infrastructure ([#28](https://github.com/fatiharge/fatiharge-apps/issues/28)). ([e08f7482](https://github.com/fatiharge/fatiharge-apps/commit/e08f74824a3a69c352f0675e1472718d251e04ba))
+ - **FEAT**(wallet): name the app Wariden and give it the fatiharge icon ([#34](https://github.com/fatiharge/fatiharge-apps/issues/34)). ([7e99304b](https://github.com/fatiharge/fatiharge-apps/commit/7e99304ba0bfdaf72f0e5a72134f7522eec656cf))
+ - **FEAT**(wallet): add an about page with credits and issue links ([#33](https://github.com/fatiharge/fatiharge-apps/issues/33)). ([f84d3e92](https://github.com/fatiharge/fatiharge-apps/commit/f84d3e923ecd9b1b437c8573c690113a10bfd2cb))
+
 ## 0.2.1+5
 
  - **FEAT**(wallet): show which startup job failed in debug builds ([#26](https://github.com/fatiharge/fatiharge-apps/issues/26)). ([49a87d4c](https://github.com/fatiharge/fatiharge-apps/commit/49a87d4c6406d48b26519b160a8dc8c683479454))
