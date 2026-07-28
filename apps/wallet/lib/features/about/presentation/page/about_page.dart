@@ -8,8 +8,8 @@ import 'package:wallet/generated/locale_keys.g.dart';
 
 /// Credits and where to file issues.
 ///
-/// Reached from the dashboard's app bar rather than a navigation destination
-/// — visible, but not competing with the three tabs.
+/// Reached from settings rather than a navigation destination — visible, but
+/// not competing with the three tabs.
 ///
 /// Every row copies rather than opens: launching a browser would mean adding
 /// `url_launcher` to an app that otherwise has no platform channels at all,
@@ -76,7 +76,7 @@ class _Header extends StatelessWidget {
             color: theme.colorScheme.primary,
           ),
           const SizedBox(height: 12),
-          Text('Wallet', style: theme.textTheme.headlineSmall),
+          Text('Wariden', style: theme.textTheme.headlineSmall),
           const SizedBox(height: 4),
           Text(
             LocaleKeys.about_tagline.tr(),

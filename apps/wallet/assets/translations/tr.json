@@ -70,6 +70,17 @@
       "other": "{names} bütçeleri aşıldı."
     }
   },
+  "settings": {
+    "title": "Ayarlar",
+    "appearance": "Görünüm",
+    "language": "Dil",
+    "theme": {
+      "system": "Sistem",
+      "light": "Açık",
+      "dark": "Koyu"
+    },
+    "language_system": "Cihaz dili"
+  },
   "about": {
     "title": "Hakkında",
     "tagline": "Kişisel gelir ve gider takibi. Verilerin bu cihazda kalır.",
