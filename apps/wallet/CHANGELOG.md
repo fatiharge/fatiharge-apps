@@ -1,3 +1,8 @@
+## 0.2.3+7
+
+ - **FEAT**(wallet): rename to Warizo and show the mark in-app ([#36](https://github.com/fatiharge/fatiharge-apps/issues/36)). ([2307a64f](https://github.com/fatiharge/fatiharge-apps/commit/2307a64f642cb5c1402ecd859346b8aaa2b8c70e))
+ - **FEAT**(wallet): add settings with theme and language choice ([#35](https://github.com/fatiharge/fatiharge-apps/issues/35)). ([d6d4b9c1](https://github.com/fatiharge/fatiharge-apps/commit/d6d4b9c1a065ea969321ff30b77de0dc6cca249f))
+
 ## 0.2.2+6
 
  - **REFACTOR**(wallet): split the screens out of the pages ([#32](https://github.com/fatiharge/fatiharge-apps/issues/32)). ([f36d99af](https://github.com/fatiharge/fatiharge-apps/commit/f36d99af7bca8c333571e58e504895e7853fc117))
