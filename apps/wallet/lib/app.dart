@@ -25,7 +25,7 @@ class App extends StatelessWidget {
       create: (_) => SettingsCubit(getIt<SettingsRepository>()),
       child: BlocBuilder<SettingsCubit, ThemePreference>(
         builder: (context, theme) => MaterialApp.router(
-          title: 'Wariden',
+          title: 'Warizo',
           debugShowCheckedModeBanner: false,
           theme: AppTheme.light(),
           darkTheme: AppTheme.dark(),

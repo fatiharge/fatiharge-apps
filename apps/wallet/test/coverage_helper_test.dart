@@ -82,6 +82,7 @@ import 'package:wallet/infrastructure/storage/hive_collection.dart';
 import 'package:wallet/infrastructure/storage/wallet_storage.dart';
 import 'package:wallet/main.dart';
 import 'package:wallet/route/app_router.dart';
+import 'package:wallet/theme/app_mark.dart';
 import 'package:wallet/theme/app_theme.dart';
 
 void main() {

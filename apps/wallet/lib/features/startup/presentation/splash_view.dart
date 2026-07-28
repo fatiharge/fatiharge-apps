@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wallet/theme/app_mark.dart';
 
 /// What the app shows while the startup jobs run.
 ///
@@ -17,11 +18,7 @@ class SplashView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.account_balance_wallet_outlined,
-              size: 64,
-              color: theme.colorScheme.primary,
-            ),
+            const AppMark(size: 88),
             const SizedBox(height: 24),
             SizedBox(
               width: 120,
