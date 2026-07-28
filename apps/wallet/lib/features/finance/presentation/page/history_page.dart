@@ -9,10 +9,8 @@ import 'package:wallet/features/finance/application/history/history_bloc.dart';
 import 'package:wallet/features/finance/application/history/history_effect.dart';
 import 'package:wallet/features/finance/application/history/history_event.dart';
 import 'package:wallet/features/finance/application/history/history_state.dart';
-import 'package:wallet/features/finance/domain/models/money_transaction.dart';
-import 'package:wallet/features/finance/presentation/views/empty_state.dart';
 import 'package:wallet/features/finance/presentation/views/history_filter_sheet.dart';
-import 'package:wallet/features/finance/presentation/views/transaction_tile.dart';
+import 'package:wallet/features/finance/presentation/views/history_view.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 import 'package:wallet/route/app_router.gr.dart';
 
@@ -24,18 +22,20 @@ class HistoryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => BlocProvider(
     create: (_) => getIt<HistoryBloc>()..add(const HistoryStarted()),
-    child: const _HistoryView(),
+    child: const _HistoryScaffold(),
   );
 }
 
-class _HistoryView extends StatefulWidget {
-  const _HistoryView();
+/// Everything the list cannot do for itself: the effect subscription, the
+/// filter sheet, and navigation to the entry form.
+class _HistoryScaffold extends StatefulWidget {
+  const _HistoryScaffold();
 
   @override
-  State<_HistoryView> createState() => _HistoryViewState();
+  State<_HistoryScaffold> createState() => _HistoryScaffoldState();
 }
 
-class _HistoryViewState extends State<_HistoryView> {
+class _HistoryScaffoldState extends State<_HistoryScaffold> {
   StreamSubscription<HistoryEffect>? _effects;
 
   @override
@@ -78,42 +78,37 @@ class _HistoryViewState extends State<_HistoryView> {
 
   @override
   Widget build(BuildContext context) => BlocBuilder<HistoryBloc, HistoryState>(
-    builder: (context, state) => Scaffold(
-      appBar: AppBar(
-        title: Text(LocaleKeys.tabs_history.tr()),
-        actions: [
-          IconButton(
-            onPressed: () => _openFilter(context, state),
-            tooltip: LocaleKeys.history_filter.tr(),
-            icon: Badge(
-              isLabelVisible: !state.filter.isEmpty,
-              child: const Icon(Icons.filter_list),
+    builder: (context, state) {
+      final bloc = context.read<HistoryBloc>();
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(LocaleKeys.tabs_history.tr()),
+          actions: [
+            IconButton(
+              onPressed: () => _openFilter(context, state),
+              tooltip: LocaleKeys.history_filter.tr(),
+              icon: Badge(
+                isLabelVisible: !state.filter.isEmpty,
+                child: const Icon(Icons.filter_list),
+              ),
             ),
-          ),
-        ],
-      ),
-      body: switch (state) {
-        HistoryState(loading: true) => const Center(
-          child: CircularProgressIndicator(),
+          ],
         ),
-        HistoryState(isFilteredEmpty: true) => EmptyState(
-          icon: Icons.search_off,
-          title: LocaleKeys.history_no_match.tr(),
-          action: TextButton(
-            onPressed: () => context.read<HistoryBloc>().add(
-              const HistoryFilterCleared(),
-            ),
-            child: Text(LocaleKeys.history_clear_filter.tr()),
-          ),
-        ),
-        HistoryState(isEmpty: true) => EmptyState(
-          icon: Icons.receipt_long_outlined,
-          title: LocaleKeys.history_empty_title.tr(),
-          message: LocaleKeys.history_empty_message.tr(),
-        ),
-        _ => _TransactionList(state: state),
-      },
-    ),
+        body: state.loading
+            ? const Center(child: CircularProgressIndicator())
+            : HistoryView(
+                transactions: state.visible,
+                categories: state.categories,
+                isFiltered: state.isFilteredEmpty,
+                onDelete: (transaction) =>
+                    bloc.add(HistoryTransactionDeleted(transaction)),
+                onEdit: (transaction) => context.router.push(
+                  TransactionEntryRoute(existing: transaction),
+                ),
+                onClearFilter: () => bloc.add(const HistoryFilterCleared()),
+              ),
+      );
+    },
   );
 
   Future<void> _openFilter(BuildContext context, HistoryState state) async {
@@ -130,54 +125,4 @@ class _HistoryViewState extends State<_HistoryView> {
     if (filter == null) return;
     bloc.add(HistoryFilterChanged(filter.filter));
   }
-}
-
-class _TransactionList extends StatelessWidget {
-  const _TransactionList({required this.state});
-
-  final HistoryState state;
-
-  @override
-  Widget build(BuildContext context) {
-    final items = state.visible;
-    return ListView.separated(
-      padding: const EdgeInsets.only(bottom: 96),
-      itemCount: items.length,
-      separatorBuilder: (_, _) => const Divider(height: 1),
-      itemBuilder: (context, index) {
-        final transaction = items[index];
-        return Dismissible(
-          key: ValueKey(transaction.id),
-          direction: DismissDirection.endToStart,
-          background: const _DeleteBackground(),
-          onDismissed: (_) => context.read<HistoryBloc>().add(
-            HistoryTransactionDeleted(transaction),
-          ),
-          child: TransactionTile(
-            transaction: transaction,
-            category: state.categories[transaction.categoryId],
-            onTap: () => _edit(context, transaction),
-          ),
-        );
-      },
-    );
-  }
-
-  void _edit(BuildContext context, MoneyTransaction transaction) =>
-      context.router.push(TransactionEntryRoute(existing: transaction));
-}
-
-class _DeleteBackground extends StatelessWidget {
-  const _DeleteBackground();
-
-  @override
-  Widget build(BuildContext context) => Container(
-    alignment: Alignment.centerRight,
-    padding: const EdgeInsets.symmetric(horizontal: 24),
-    color: Theme.of(context).colorScheme.errorContainer,
-    child: Icon(
-      Icons.delete_outline,
-      color: Theme.of(context).colorScheme.onErrorContainer,
-    ),
-  );
 }
