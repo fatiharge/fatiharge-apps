@@ -1,3 +1,7 @@
+## 0.2.4+8
+
+ - **REFACTOR**(wallet): inject the clock and cover what was never run ([#38](https://github.com/fatiharge/fatiharge-apps/issues/38)). ([d50857fc](https://github.com/fatiharge/fatiharge-apps/commit/d50857fcd7dd699b6f23652feb60257f04662699))
+
 ## 0.2.3+7
 
  - **FEAT**(wallet): rename to Warizo and show the mark in-app ([#36](https://github.com/fatiharge/fatiharge-apps/issues/36)). ([2307a64f](https://github.com/fatiharge/fatiharge-apps/commit/2307a64f642cb5c1402ecd859346b8aaa2b8c70e))

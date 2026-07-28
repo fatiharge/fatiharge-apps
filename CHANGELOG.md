@@ -15,6 +15,27 @@ Packages with breaking changes:
 
 Packages with other changes:
 
+ - [`wallet` - `v0.2.4+8`](#wallet---v0248)
+
+---
+
+#### `wallet` - `v0.2.4+8`
+
+ - **REFACTOR**(wallet): inject the clock and cover what was never run ([#38](https://github.com/fatiharge/fatiharge-apps/issues/38)). ([d50857fc](https://github.com/fatiharge/fatiharge-apps/commit/d50857fcd7dd699b6f23652feb60257f04662699))
+
+
+## 2026-07-28
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
  - [`wallet` - `v0.2.3+7`](#wallet---v0237)
 
 ---
