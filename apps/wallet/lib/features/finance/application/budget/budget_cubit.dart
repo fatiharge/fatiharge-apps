@@ -23,7 +23,7 @@ class BudgetCubit extends Cubit<BudgetState> {
     this._budgets,
     this._transactions,
     this._categories, {
-    Clock clock = systemClock,
+    @ignoreParam Clock clock = systemClock,
   }) : super(BudgetState.initial(now: clock()));
 
   final BudgetRepository _budgets;

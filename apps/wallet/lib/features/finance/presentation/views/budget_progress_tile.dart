@@ -83,28 +83,39 @@ class BudgetProgressTile extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    '${status.spent.format(context)}'
-                    ' / ${status.budget.limit.format(context)}',
-                    style: theme.textTheme.bodySmall,
+                  // Both sides flex: five-figure amounts in two currencies
+                  // overflowed this row on a 360dp screen.
+                  Expanded(
+                    child: Text(
+                      '${status.spent.format(context)}'
+                      ' / ${status.budget.limit.format(context)}',
+                      style: theme.textTheme.bodySmall,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                  Text(
-                    status.isExceeded
-                        ? LocaleKeys.budget_over_by.tr(
-                            namedArgs: {
-                              'amount': status.remaining.abs().format(context),
-                            },
-                          )
-                        : LocaleKeys.budget_remaining.tr(
-                            namedArgs: {
-                              'amount': status.remaining.format(context),
-                            },
-                          ),
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: color,
-                      fontWeight: FontWeight.w600,
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Text(
+                      status.isExceeded
+                          ? LocaleKeys.budget_over_by.tr(
+                              namedArgs: {
+                                'amount': status.remaining.abs().format(
+                                  context,
+                                ),
+                              },
+                            )
+                          : LocaleKeys.budget_remaining.tr(
+                              namedArgs: {
+                                'amount': status.remaining.format(context),
+                              },
+                            ),
+                      textAlign: TextAlign.end,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: color,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ],

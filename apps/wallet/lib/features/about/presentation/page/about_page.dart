@@ -3,8 +3,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:package_info_plus/package_info_plus.dart';
+import 'package:wallet/config/injectable.dart';
 import 'package:wallet/features/about/about_info.dart';
+import 'package:wallet/features/about/domain/app_version_port.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 import 'package:wallet/theme/app_mark.dart';
 
@@ -95,12 +96,12 @@ class _Version extends StatelessWidget {
   const _Version();
 
   @override
-  Widget build(BuildContext context) => FutureBuilder<PackageInfo>(
-    future: PackageInfo.fromPlatform(),
+  Widget build(BuildContext context) => FutureBuilder<AppVersion>(
+    future: getIt<AppVersionPort>().read(),
     builder: (context, snapshot) {
-      final info = snapshot.data;
+      final version = snapshot.data;
       return Text(
-        info == null ? '' : '${info.version} (${info.buildNumber})',
+        version?.toString() ?? '',
         style: Theme.of(context).textTheme.bodySmall?.copyWith(
           color: Theme.of(context).colorScheme.outline,
         ),

@@ -14,6 +14,7 @@ import 'package:wallet/config/env.dart';
 import 'package:wallet/config/injectable.dart';
 import 'package:wallet/config/modules/storage_module.dart';
 import 'package:wallet/features/about/about_info.dart';
+import 'package:wallet/features/about/domain/app_version_port.dart';
 import 'package:wallet/features/about/presentation/page/about_page.dart';
 import 'package:wallet/features/finance/application/budget/budget_cubit.dart';
 import 'package:wallet/features/finance/application/budget/budget_state.dart';
@@ -71,6 +72,7 @@ import 'package:wallet/features/settings/presentation/views/setting_option_tile.
 import 'package:wallet/features/startup/presentation/splash_view.dart';
 import 'package:wallet/features/startup/presentation/startup_page.dart';
 import 'package:wallet/infrastructure/adapter/bootstrap/bootstrap_adapter.dart';
+import 'package:wallet/infrastructure/adapter/version/package_info_version_adapter.dart';
 import 'package:wallet/infrastructure/dev/demo_transactions.dart';
 import 'package:wallet/infrastructure/repository/budget_repository_impl.dart';
 import 'package:wallet/infrastructure/repository/category_repository_impl.dart';

@@ -28,7 +28,7 @@ class DashboardCubit extends Cubit<DashboardState> {
     this._transactions,
     this._categories,
     this._budgets, {
-    this.clock = systemClock,
+    @ignoreParam this.clock = systemClock,
   }) : super(const DashboardLoading());
 
   final TransactionRepository _transactions;

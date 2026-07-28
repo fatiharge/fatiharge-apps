@@ -48,14 +48,22 @@ melos:
       exec: dart format .
 
     test:
+      # Goldens are excluded: they are rendered by the host, so a baseline
+      # written on macOS does not match one rendered on CI's Linux.
       description: Run tests in every package that has a test/ directory.
-      exec: flutter test
+      exec: flutter test --exclude-tags golden
+      packageFilters:
+        dirExists: test
+
+    test:golden:
+      description: Run the golden tests. Add -- --update-goldens to rewrite them.
+      exec: flutter test --tags golden
       packageFilters:
         dirExists: test
 
     coverage:
       description: Run tests with coverage in every package that has tests.
-      exec: flutter test --coverage
+      exec: flutter test --coverage --exclude-tags golden
       packageFilters:
         dirExists: test
 

@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:wallet/features/finance/domain/models/category.dart';
 import 'package:wallet/features/finance/domain/models/currency.dart';
 import 'package:wallet/features/finance/domain/models/money_transaction.dart';
+import 'package:wallet/features/finance/domain/rules/clock.dart';
 import 'package:wallet/features/finance/presentation/format/category_icons.dart';
 import 'package:wallet/features/finance/presentation/format/money_format.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
@@ -35,6 +36,7 @@ class TransactionEntryView extends StatelessWidget {
     required this.onNoteChanged,
     required this.onSubmit,
     this.amountError,
+    this.clock = systemClock,
     super.key,
   });
 
@@ -62,6 +64,9 @@ class TransactionEntryView extends StatelessWidget {
   final ValueChanged<DateTime> onDateSelected;
   final ValueChanged<String> onNoteChanged;
   final VoidCallback onSubmit;
+
+  /// Bounds the date picker; injected so a test can pin today.
+  final Clock clock;
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +113,7 @@ class TransactionEntryView extends StatelessWidget {
               onSelected: onCategorySelected,
             ),
             const SizedBox(height: 20),
-            _DateField(date: date, onChanged: onDateSelected),
+            _DateField(date: date, onChanged: onDateSelected, clock: clock),
             const SizedBox(height: 16),
             TextField(
               controller: noteController,
@@ -253,10 +258,15 @@ class _CategoryPicker extends StatelessWidget {
 }
 
 class _DateField extends StatelessWidget {
-  const _DateField({required this.date, required this.onChanged});
+  const _DateField({
+    required this.date,
+    required this.onChanged,
+    required this.clock,
+  });
 
   final DateTime date;
   final ValueChanged<DateTime> onChanged;
+  final Clock clock;
 
   @override
   Widget build(BuildContext context) => InkWell(
@@ -271,7 +281,7 @@ class _DateField extends StatelessWidget {
   );
 
   Future<void> _pick(BuildContext context) async {
-    final now = DateTime.now();
+    final now = clock();
     final picked = await showDatePicker(
       context: context,
       initialDate: date,
