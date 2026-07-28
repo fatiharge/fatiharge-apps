@@ -24,13 +24,13 @@ class DashboardPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(LocaleKeys.tabs_dashboard.tr()),
         // The dashboard is the app's landing tab, so its action bar is the one
-        // place an "about" button is reliably found without adding a fourth
-        // navigation destination for it.
+        // place settings are reliably found without adding a fourth
+        // navigation destination for them.
         actions: [
           IconButton(
-            onPressed: () => context.router.push(const AboutRoute()),
-            icon: const Icon(Icons.info_outline),
-            tooltip: LocaleKeys.about_title.tr(),
+            onPressed: () => context.router.push(const SettingsRoute()),
+            icon: const Icon(Icons.settings_outlined),
+            tooltip: LocaleKeys.settings_title.tr(),
           ),
         ],
       ),

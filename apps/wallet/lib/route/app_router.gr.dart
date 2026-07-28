@@ -9,11 +9,11 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:auto_route/auto_route.dart' as _i8;
-import 'package:flutter/material.dart' as _i9;
+import 'package:auto_route/auto_route.dart' as _i9;
+import 'package:flutter/material.dart' as _i10;
 import 'package:wallet/features/about/presentation/page/about_page.dart' as _i1;
 import 'package:wallet/features/finance/domain/models/money_transaction.dart'
-    as _i10;
+    as _i11;
 import 'package:wallet/features/finance/presentation/page/budget_page.dart'
     as _i2;
 import 'package:wallet/features/finance/presentation/page/dashboard_page.dart'
@@ -23,18 +23,20 @@ import 'package:wallet/features/finance/presentation/page/history_page.dart'
 import 'package:wallet/features/finance/presentation/page/main_page.dart'
     as _i5;
 import 'package:wallet/features/finance/presentation/page/transaction_entry_page.dart'
-    as _i7;
-import 'package:wallet/features/startup/presentation/startup_page.dart' as _i6;
+    as _i8;
+import 'package:wallet/features/settings/presentation/page/settings_page.dart'
+    as _i6;
+import 'package:wallet/features/startup/presentation/startup_page.dart' as _i7;
 
 /// generated route for
 /// [_i1.AboutPage]
-class AboutRoute extends _i8.PageRouteInfo<void> {
-  const AboutRoute({List<_i8.PageRouteInfo>? children})
+class AboutRoute extends _i9.PageRouteInfo<void> {
+  const AboutRoute({List<_i9.PageRouteInfo>? children})
     : super(AboutRoute.name, initialChildren: children);
 
   static const String name = 'AboutRoute';
 
-  static _i8.PageInfo page = _i8.PageInfo(
+  static _i9.PageInfo page = _i9.PageInfo(
     name,
     builder: (data) {
       return const _i1.AboutPage();
@@ -44,13 +46,13 @@ class AboutRoute extends _i8.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i2.BudgetPage]
-class BudgetRoute extends _i8.PageRouteInfo<void> {
-  const BudgetRoute({List<_i8.PageRouteInfo>? children})
+class BudgetRoute extends _i9.PageRouteInfo<void> {
+  const BudgetRoute({List<_i9.PageRouteInfo>? children})
     : super(BudgetRoute.name, initialChildren: children);
 
   static const String name = 'BudgetRoute';
 
-  static _i8.PageInfo page = _i8.PageInfo(
+  static _i9.PageInfo page = _i9.PageInfo(
     name,
     builder: (data) {
       return const _i2.BudgetPage();
@@ -60,13 +62,13 @@ class BudgetRoute extends _i8.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i3.DashboardPage]
-class DashboardRoute extends _i8.PageRouteInfo<void> {
-  const DashboardRoute({List<_i8.PageRouteInfo>? children})
+class DashboardRoute extends _i9.PageRouteInfo<void> {
+  const DashboardRoute({List<_i9.PageRouteInfo>? children})
     : super(DashboardRoute.name, initialChildren: children);
 
   static const String name = 'DashboardRoute';
 
-  static _i8.PageInfo page = _i8.PageInfo(
+  static _i9.PageInfo page = _i9.PageInfo(
     name,
     builder: (data) {
       return const _i3.DashboardPage();
@@ -76,13 +78,13 @@ class DashboardRoute extends _i8.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i4.HistoryPage]
-class HistoryRoute extends _i8.PageRouteInfo<void> {
-  const HistoryRoute({List<_i8.PageRouteInfo>? children})
+class HistoryRoute extends _i9.PageRouteInfo<void> {
+  const HistoryRoute({List<_i9.PageRouteInfo>? children})
     : super(HistoryRoute.name, initialChildren: children);
 
   static const String name = 'HistoryRoute';
 
-  static _i8.PageInfo page = _i8.PageInfo(
+  static _i9.PageInfo page = _i9.PageInfo(
     name,
     builder: (data) {
       return const _i4.HistoryPage();
@@ -92,13 +94,13 @@ class HistoryRoute extends _i8.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i5.MainPage]
-class MainRoute extends _i8.PageRouteInfo<void> {
-  const MainRoute({List<_i8.PageRouteInfo>? children})
+class MainRoute extends _i9.PageRouteInfo<void> {
+  const MainRoute({List<_i9.PageRouteInfo>? children})
     : super(MainRoute.name, initialChildren: children);
 
   static const String name = 'MainRoute';
 
-  static _i8.PageInfo page = _i8.PageInfo(
+  static _i9.PageInfo page = _i9.PageInfo(
     name,
     builder: (data) {
       return const _i5.MainPage();
@@ -107,29 +109,45 @@ class MainRoute extends _i8.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i6.StartupPage]
-class StartupRoute extends _i8.PageRouteInfo<void> {
-  const StartupRoute({List<_i8.PageRouteInfo>? children})
-    : super(StartupRoute.name, initialChildren: children);
+/// [_i6.SettingsPage]
+class SettingsRoute extends _i9.PageRouteInfo<void> {
+  const SettingsRoute({List<_i9.PageRouteInfo>? children})
+    : super(SettingsRoute.name, initialChildren: children);
 
-  static const String name = 'StartupRoute';
+  static const String name = 'SettingsRoute';
 
-  static _i8.PageInfo page = _i8.PageInfo(
+  static _i9.PageInfo page = _i9.PageInfo(
     name,
     builder: (data) {
-      return const _i6.StartupPage();
+      return const _i6.SettingsPage();
     },
   );
 }
 
 /// generated route for
-/// [_i7.TransactionEntryPage]
+/// [_i7.StartupPage]
+class StartupRoute extends _i9.PageRouteInfo<void> {
+  const StartupRoute({List<_i9.PageRouteInfo>? children})
+    : super(StartupRoute.name, initialChildren: children);
+
+  static const String name = 'StartupRoute';
+
+  static _i9.PageInfo page = _i9.PageInfo(
+    name,
+    builder: (data) {
+      return const _i7.StartupPage();
+    },
+  );
+}
+
+/// generated route for
+/// [_i8.TransactionEntryPage]
 class TransactionEntryRoute
-    extends _i8.PageRouteInfo<TransactionEntryRouteArgs> {
+    extends _i9.PageRouteInfo<TransactionEntryRouteArgs> {
   TransactionEntryRoute({
-    _i9.Key? key,
-    _i10.MoneyTransaction? existing,
-    List<_i8.PageRouteInfo>? children,
+    _i10.Key? key,
+    _i11.MoneyTransaction? existing,
+    List<_i9.PageRouteInfo>? children,
   }) : super(
          TransactionEntryRoute.name,
          args: TransactionEntryRouteArgs(key: key, existing: existing),
@@ -138,13 +156,13 @@ class TransactionEntryRoute
 
   static const String name = 'TransactionEntryRoute';
 
-  static _i8.PageInfo page = _i8.PageInfo(
+  static _i9.PageInfo page = _i9.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<TransactionEntryRouteArgs>(
         orElse: () => const TransactionEntryRouteArgs(),
       );
-      return _i7.TransactionEntryPage(key: args.key, existing: args.existing);
+      return _i8.TransactionEntryPage(key: args.key, existing: args.existing);
     },
   );
 }
@@ -152,9 +170,9 @@ class TransactionEntryRoute
 class TransactionEntryRouteArgs {
   const TransactionEntryRouteArgs({this.key, this.existing});
 
-  final _i9.Key? key;
+  final _i10.Key? key;
 
-  final _i10.MoneyTransaction? existing;
+  final _i11.MoneyTransaction? existing;
 
   @override
   String toString() {
