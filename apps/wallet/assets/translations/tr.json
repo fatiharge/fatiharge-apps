@@ -70,6 +70,18 @@
       "other": "{names} bütçeleri aşıldı."
     }
   },
+  "about": {
+    "title": "Hakkında",
+    "tagline": "Kişisel gelir ve gider takibi. Verilerin bu cihazda kalır.",
+    "made_by": "Yapanlar",
+    "feedback": "Geri bildirim",
+    "bug_report": "Hata bildir",
+    "bug_report_hint": "GitHub'da hata kaydı açar",
+    "feature_request": "Özellik iste",
+    "feature_request_hint": "GitHub'da özellik isteği açar",
+    "source": "Kaynak kod",
+    "copied": "Panoya kopyalandı"
+  },
   "category": {
     "food": "Yemek",
     "transport": "Ulaşım",

@@ -13,6 +13,8 @@ import 'package:wallet/config/app_crash_listener.dart';
 import 'package:wallet/config/env.dart';
 import 'package:wallet/config/injectable.dart';
 import 'package:wallet/config/modules/storage_module.dart';
+import 'package:wallet/features/about/about_info.dart';
+import 'package:wallet/features/about/presentation/page/about_page.dart';
 import 'package:wallet/features/finance/application/budget/budget_cubit.dart';
 import 'package:wallet/features/finance/application/budget/budget_state.dart';
 import 'package:wallet/features/finance/application/dashboard/dashboard_cubit.dart';
