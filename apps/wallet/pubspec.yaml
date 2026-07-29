@@ -45,6 +45,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  integration_test:
+    sdk: flutter
 
   lint_kit:
     path: ../../packages/lint_kit
@@ -55,6 +57,7 @@ dev_dependencies:
   freezed: ^3.2.3
   injectable_generator: ^2.7.0
   mocktail: ^1.0.4
+  flutter_native_splash: ^2.4.8
 
 flutter:
   uses-material-design: true
@@ -62,6 +65,16 @@ flutter:
   assets:
     - assets/branding/
     - assets/translations/
+
+# Regenerate the native launch screen with:
+#   dart run flutter_native_splash:create
+flutter_native_splash:
+  color: "#262C54"
+  image: assets/branding/splash.png
+  android_12:
+    color: "#262C54"
+    image: assets/branding/splash.png
+    icon_background_color: "#262C54"
 
 flutter_launcher_icons:
   image_path: assets/launcher/icon.png

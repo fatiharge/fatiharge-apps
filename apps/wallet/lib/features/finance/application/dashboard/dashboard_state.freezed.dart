@@ -241,7 +241,7 @@ class DashboardReady extends DashboardState {
   return EqualUnmodifiableMapView(_categories);
 }
 
-/// False once [period] has caught up with the current month.
+/// False once the shown month has caught up with the current one.
 @JsonKey() final  bool canShowNextMonth;
 
 /// Create a copy of DashboardState

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:package_info_plus/package_info_plus.dart';
+import 'package:wallet/config/injectable.dart';
+import 'package:wallet/features/about/domain/app_version_port.dart';
 import 'package:wallet/features/about/presentation/page/about_page.dart';
 import 'package:wallet/features/settings/application/settings_cubit.dart';
 import 'package:wallet/features/settings/domain/repository/settings_repository.dart';
@@ -17,16 +18,13 @@ import '../../../support/widget_harness.dart';
 void main() {
   late _RecordingSettings settings;
 
-  setUp(() {
+  setUp(() async {
     settings = _RecordingSettings();
-    PackageInfo.setMockInitialValues(
-      appName: 'Warizo',
-      packageName: 'com.fatiharge.wallet',
-      version: '0.3.1',
-      buildNumber: '7',
-      buildSignature: '',
-    );
+    await getIt.reset();
+    getIt.registerSingleton<AppVersionPort>(_StubVersion());
   });
+
+  tearDown(getIt.reset);
 
   Future<void> pumpSettings(WidgetTester tester) => pumpLocalized(
     tester,
@@ -133,6 +131,12 @@ void main() {
       expect(find.byType(LinearProgressIndicator), findsOneWidget);
     });
   });
+}
+
+class _StubVersion implements AppVersionPort {
+  @override
+  Future<AppVersion> read() async =>
+      const AppVersion(name: '0.3.1', build: '7');
 }
 
 class _RecordingSettings implements SettingsRepository {
