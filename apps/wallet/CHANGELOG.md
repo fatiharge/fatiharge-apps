@@ -1,3 +1,7 @@
+## 0.2.5+9
+
+ - **FEAT**(wallet): brand the native launch screen and close two layer leaks ([#39](https://github.com/fatiharge/fatiharge-apps/issues/39)). ([7eed55ff](https://github.com/fatiharge/fatiharge-apps/commit/7eed55ffcec870654dcdcd24265dded5477c224b))
+
 ## 0.2.4+8
 
  - **REFACTOR**(wallet): inject the clock and cover what was never run ([#38](https://github.com/fatiharge/fatiharge-apps/issues/38)). ([d50857fc](https://github.com/fatiharge/fatiharge-apps/commit/d50857fcd7dd699b6f23652feb60257f04662699))

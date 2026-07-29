@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2026-07-29
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`wallet` - `v0.2.5+9`](#wallet---v0259)
+
+---
+
+#### `wallet` - `v0.2.5+9`
+
+ - **FEAT**(wallet): brand the native launch screen and close two layer leaks ([#39](https://github.com/fatiharge/fatiharge-apps/issues/39)). ([7eed55ff](https://github.com/fatiharge/fatiharge-apps/commit/7eed55ffcec870654dcdcd24265dded5477c224b))
+
+
 ## 2026-07-28
 
 ### Changes
