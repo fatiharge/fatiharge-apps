@@ -20,7 +20,7 @@ dependencies:
     path: ../../packages/utility_kit
 
   # State, DI, routing.
-  auto_route: ^10.2.0
+  auto_route: ^11.1.0
   # bloc is used directly by cubits/blocs; flutter_bloc only by the widgets.
   bloc: ^9.0.0
   flutter_bloc: ^9.1.1
