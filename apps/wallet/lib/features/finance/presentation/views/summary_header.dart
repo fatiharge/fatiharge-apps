@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:wallet/features/finance/domain/models/money.dart';
 import 'package:wallet/features/finance/presentation/format/money_format.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
-import 'package:wallet/theme/app_theme.dart';
+import 'package:wallet/theme/finance_colors.dart';
 
 /// Income / expense / net for the selected month.
 class SummaryHeader extends StatelessWidget {
@@ -21,6 +21,7 @@ class SummaryHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final financeColors = FinanceColors.of(context);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -38,7 +39,7 @@ class SummaryHeader extends StatelessWidget {
               net.format(context),
               style: theme.textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.w700,
-                color: net.isNegative ? AppTheme.expense : null,
+                color: net.isNegative ? financeColors.expense : null,
               ),
             ),
             const SizedBox(height: 20),
@@ -48,7 +49,7 @@ class SummaryHeader extends StatelessWidget {
                   child: _Figure(
                     label: LocaleKeys.dashboard_income.tr(),
                     value: income,
-                    color: AppTheme.income,
+                    color: financeColors.income,
                     icon: Icons.south_west,
                   ),
                 ),
@@ -56,7 +57,7 @@ class SummaryHeader extends StatelessWidget {
                   child: _Figure(
                     label: LocaleKeys.dashboard_expense.tr(),
                     value: expense,
-                    color: AppTheme.expense,
+                    color: financeColors.expense,
                     icon: Icons.north_east,
                   ),
                 ),

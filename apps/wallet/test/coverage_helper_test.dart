@@ -87,6 +87,7 @@ import 'package:wallet/main.dart';
 import 'package:wallet/route/app_router.dart';
 import 'package:wallet/theme/app_mark.dart';
 import 'package:wallet/theme/app_theme.dart';
+import 'package:wallet/theme/finance_colors.dart';
 
 void main() {
   test('imports every library, so untested files count as 0%', () {

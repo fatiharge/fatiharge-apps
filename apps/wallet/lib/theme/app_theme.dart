@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:wallet/theme/finance_colors.dart';
 
 /// The app's Material 3 themes.
 ///
 /// Lives in the app rather than a `ui_kit` package: with one consumer there is
 /// nothing to share yet. It moves out the day a second app needs it.
 abstract final class AppTheme {
-  static const Color seed = Color(0xFF2E7D32);
+  /// The launcher tile and native launch screen, so the app opens in the
+  /// colour it launched in. Material derives a lighter primary from it.
+  static const Color navy = Color(0xFF262C54);
 
-  /// Green for income, red for expense — used by charts and amount labels.
-  static const Color income = Color(0xFF2E7D32);
-  static const Color expense = Color(0xFFC62828);
+  /// The W in the mark. Never a text colour — 1.96:1 on a light surface.
+  static const Color teal = Color(0xFF1CCFA3);
 
   static ThemeData light() => _build(Brightness.light);
 
@@ -17,12 +19,18 @@ abstract final class AppTheme {
 
   static ThemeData _build(Brightness brightness) {
     final scheme = ColorScheme.fromSeed(
-      seedColor: seed,
+      seedColor: navy,
       brightness: brightness,
     );
     return ThemeData(
       colorScheme: scheme,
       useMaterial3: true,
+      extensions: [
+        if (brightness == Brightness.dark)
+          FinanceColors.dark
+        else
+          FinanceColors.light,
+      ],
       appBarTheme: AppBarTheme(
         backgroundColor: scheme.surface,
         surfaceTintColor: Colors.transparent,
@@ -44,8 +52,4 @@ abstract final class AppTheme {
       ),
     );
   }
-
-  /// The colour an amount should be drawn in.
-  static Color amountColor(BuildContext context, {required bool isExpense}) =>
-      isExpense ? expense : income;
 }
