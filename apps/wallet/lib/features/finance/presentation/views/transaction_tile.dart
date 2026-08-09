@@ -3,7 +3,7 @@ import 'package:wallet/features/finance/domain/models/category.dart';
 import 'package:wallet/features/finance/domain/models/money_transaction.dart';
 import 'package:wallet/features/finance/presentation/format/category_icons.dart';
 import 'package:wallet/features/finance/presentation/format/money_format.dart';
-import 'package:wallet/theme/app_theme.dart';
+import 'package:wallet/theme/finance_colors.dart';
 
 /// One row in the history list.
 class TransactionTile extends StatelessWidget {
@@ -53,10 +53,9 @@ class TransactionTile extends StatelessWidget {
       trailing: Text(
         transaction.formatAmount(context),
         style: theme.textTheme.titleSmall?.copyWith(
-          color: AppTheme.amountColor(
+          color: FinanceColors.of(
             context,
-            isExpense: transaction.isExpense,
-          ),
+          ).amountColor(isExpense: transaction.isExpense),
           fontWeight: FontWeight.w600,
         ),
       ),
