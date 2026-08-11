@@ -1,13 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wallet/features/settings/application/settings_cubit.dart';
-import 'package:wallet/features/settings/domain/theme_preference.dart';
-import 'package:wallet/features/settings/presentation/theme_preference_label.dart';
 import 'package:wallet/features/settings/presentation/views/currency_section.dart';
 import 'package:wallet/features/settings/presentation/views/language_section.dart';
-import 'package:wallet/features/settings/presentation/views/setting_option_tile.dart';
+import 'package:wallet/features/settings/presentation/views/theme_section.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 import 'package:wallet/route/app_router.gr.dart';
 
@@ -27,21 +24,7 @@ class SettingsPage extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 32),
       children: [
         _SectionLabel(context.tr(LocaleKeys.settings_appearance)),
-        BlocBuilder<SettingsCubit, ThemePreference>(
-          builder: (context, selected) => Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              for (final preference in ThemePreference.values)
-                SettingOptionTile(
-                  icon: preference.icon,
-                  label: preference.label(context),
-                  selected: preference == selected,
-                  onTap: () =>
-                      context.read<SettingsCubit>().selectTheme(preference),
-                ),
-            ],
-          ),
-        ),
+        const ThemeSection(),
         _SectionLabel(context.tr(LocaleKeys.settings_language)),
         const LanguageSection(),
         _SectionLabel(context.tr(LocaleKeys.settings_currency)),

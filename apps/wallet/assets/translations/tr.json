@@ -17,6 +17,20 @@
     "failed_retryable": "Bir şeyler ters gitti. Tekrar deneyebilirsin.",
     "failed_fatal": "Kurtarılamayan bir hata oluştu. Lütfen uygulamayı yeniden başlat."
   },
+  "onboarding": {
+    "welcome_title": "Warizo'ya hoş geldin",
+    "welcome_message": "Gelirini ve giderini takip et, aylık limit koy, ayın nereye gittiğini gör. Her şey bu cihazda kalır.",
+    "language_title": "Hangi dil?",
+    "theme_title": "Açık mı, koyu mu?",
+    "currency_title": "Hangi para birimi?",
+    "categories_title": "Kategorilerini seç",
+    "categories_message": "Kullanmayacaklarının işaretini kaldır. Hiçbiri kaybolmaz — sonra ayarlardan geri getirebilirsin.",
+    "skip": "Atla",
+    "next": "İleri",
+    "back": "Geri",
+    "start": "Başla",
+    "step": "Adım {current}/{total}"
+  },
   "dashboard": {
     "net_balance": "Bu ayki bakiye",
     "income": "Gelir",

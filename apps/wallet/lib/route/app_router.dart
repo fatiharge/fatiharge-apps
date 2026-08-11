@@ -11,6 +11,7 @@ class RouteManager extends RootStackRouter {
   @override
   List<AutoRoute> get routes => [
     AutoRoute(page: StartupRoute.page, initial: true),
+    AutoRoute(page: OnboardingRoute.page),
     AutoRoute(
       page: MainRoute.page,
       children: [

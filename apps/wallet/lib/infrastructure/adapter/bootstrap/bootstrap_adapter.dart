@@ -4,6 +4,7 @@ import 'package:wallet/config/env.dart';
 import 'package:wallet/config/injectable.dart';
 import 'package:wallet/features/finance/default_categories.dart';
 import 'package:wallet/features/finance/domain/repository/category_repository.dart';
+import 'package:wallet/features/settings/domain/repository/settings_repository.dart';
 import 'package:wallet/infrastructure/dev/demo_transactions.dart';
 import 'package:wallet/route/app_router.dart';
 import 'package:wallet/route/app_router.gr.dart';
@@ -47,9 +48,15 @@ class BootstrapAdapter implements BootstrapPort {
       ),
   ];
 
+  /// Straight to the tabs once the first-run flow has been through — checked
+  /// here rather than in the router because this is the only place that knows
+  /// storage is open.
   @override
   void bootstrapFinished() => getIt<RouteManager>().replaceAll([
-    const MainRoute(),
+    if (getIt<SettingsRepository>().isOnboarded())
+      const MainRoute()
+    else
+      const OnboardingRoute(),
   ]);
 
   Future<void> _seedCategories() async {
