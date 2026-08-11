@@ -4,6 +4,7 @@ import 'package:wallet/features/onboarding/application/onboarding_state.dart';
 import 'package:wallet/features/onboarding/presentation/views/onboarding_category_step.dart';
 import 'package:wallet/features/settings/presentation/views/currency_section.dart';
 import 'package:wallet/features/settings/presentation/views/language_section.dart';
+import 'package:wallet/features/settings/presentation/views/reminder_section.dart';
 import 'package:wallet/features/settings/presentation/views/theme_section.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 import 'package:wallet/theme/app_mark.dart';
@@ -92,6 +93,9 @@ class OnboardingView extends StatelessWidget {
     OnboardingStep.categories => context.tr(
       LocaleKeys.onboarding_categories_title,
     ),
+    OnboardingStep.reminder => context.tr(
+      LocaleKeys.onboarding_reminder_title,
+    ),
   };
 
   String? _message(BuildContext context) => switch (state.step) {
@@ -99,6 +103,9 @@ class OnboardingView extends StatelessWidget {
     OnboardingStep.currency => context.tr(LocaleKeys.settings_currency_hint),
     OnboardingStep.categories => context.tr(
       LocaleKeys.onboarding_categories_message,
+    ),
+    OnboardingStep.reminder => context.tr(
+      LocaleKeys.onboarding_reminder_message,
     ),
     _ => null,
   };
@@ -113,6 +120,9 @@ class OnboardingView extends StatelessWidget {
       keptIds: state.keptCategoryIds,
       onToggle: onToggleCategory,
     ),
+    // Off unless the user turns it on: the platform prompt is one shot, and
+    // spending it on someone with no data yet wastes it.
+    OnboardingStep.reminder => const ReminderSection(),
   };
 }
 

@@ -27,6 +27,9 @@ abstract class LocaleKeys {
   static const onboarding_back = 'onboarding.back';
   static const onboarding_start = 'onboarding.start';
   static const onboarding_step = 'onboarding.step';
+  static const onboarding_reminder_title = 'onboarding.reminder_title';
+  static const onboarding_reminder_message = 'onboarding.reminder_message';
+  static const onboarding_reminder_not_now = 'onboarding.reminder_not_now';
   static const dashboard_net_balance = 'dashboard.net_balance';
   static const dashboard_income = 'dashboard.income';
   static const dashboard_expense = 'dashboard.expense';
@@ -36,6 +39,11 @@ abstract class LocaleKeys {
   static const dashboard_empty_title = 'dashboard.empty_title';
   static const dashboard_empty_month = 'dashboard.empty_month';
   static const dashboard_empty_message = 'dashboard.empty_message';
+  static const dashboard_reminder_nudge = 'dashboard.reminder_nudge';
+  static const dashboard_reminder_nudge_accept =
+      'dashboard.reminder_nudge_accept';
+  static const dashboard_reminder_nudge_dismiss =
+      'dashboard.reminder_nudge_dismiss';
   static const history_filter = 'history.filter';
   static const history_type = 'history.type';
   static const history_categories = 'history.categories';
@@ -78,6 +86,16 @@ abstract class LocaleKeys {
   static const settings_language_system = 'settings.language_system';
   static const settings_currency = 'settings.currency';
   static const settings_currency_hint = 'settings.currency_hint';
+  static const settings_reminder = 'settings.reminder';
+  static const settings_reminder_hint = 'settings.reminder_hint';
+  static const settings_reminder_enabled = 'settings.reminder_enabled';
+  static const settings_reminder_day = 'settings.reminder_day';
+  static const settings_reminder_blocked = 'settings.reminder_blocked';
+  static const settings_reminder_open_settings =
+      'settings.reminder_open_settings';
+  static const settings_notification_title = 'settings.notification_title';
+  static const settings_notification_body = 'settings.notification_body';
+  static const settings_notification_channel = 'settings.notification_channel';
   static const about_title = 'about.title';
   static const about_tagline = 'about.tagline';
   static const about_made_by = 'about.made_by';

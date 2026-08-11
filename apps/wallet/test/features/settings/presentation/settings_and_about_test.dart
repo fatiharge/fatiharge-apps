@@ -7,6 +7,7 @@ import 'package:wallet/features/about/domain/app_version_port.dart';
 import 'package:wallet/features/about/presentation/page/about_page.dart';
 import 'package:wallet/features/finance/domain/models/currency.dart';
 import 'package:wallet/features/settings/application/settings_cubit.dart';
+import 'package:wallet/features/settings/application/summary_reminder_controller.dart';
 import 'package:wallet/features/settings/domain/repository/settings_repository.dart';
 import 'package:wallet/features/settings/domain/theme_preference.dart';
 import 'package:wallet/features/settings/presentation/page/settings_page.dart';
@@ -26,7 +27,10 @@ void main() {
     await getIt.reset();
     getIt
       ..registerSingleton<AppVersionPort>(_StubVersion())
-      ..registerSingleton<SettingsRepository>(settings);
+      ..registerSingleton<SettingsRepository>(settings)
+      ..registerSingleton<SummaryReminderController>(
+        SummaryReminderController(settings, FakeSummaryNotifier()),
+      );
   });
 
   tearDown(getIt.reset);

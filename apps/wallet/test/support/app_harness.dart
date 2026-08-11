@@ -9,7 +9,9 @@ import 'package:wallet/features/finance/domain/repository/budget_repository.dart
 import 'package:wallet/features/finance/domain/repository/category_repository.dart';
 import 'package:wallet/features/finance/domain/repository/transaction_repository.dart';
 import 'package:wallet/features/onboarding/application/onboarding_cubit.dart';
+import 'package:wallet/features/settings/application/summary_reminder_controller.dart';
 import 'package:wallet/features/settings/domain/repository/settings_repository.dart';
+import 'package:wallet/features/settings/domain/summary_notifier.dart';
 import 'package:wallet/features/settings/domain/theme_preference.dart';
 import 'package:wallet/infrastructure/adapter/bootstrap/bootstrap_adapter.dart';
 import 'package:wallet/route/app_router.dart';
@@ -18,12 +20,19 @@ import 'in_memory_repositories.dart';
 
 /// The fakes behind a booted `App`.
 class AppHarness {
-  AppHarness._(this.transactions, this.categories, this.budgets, this.settings);
+  AppHarness._(
+    this.transactions,
+    this.categories,
+    this.budgets,
+    this.settings,
+    this.notifier,
+  );
 
   final FakeTransactionRepository transactions;
   final FakeCategoryRepository categories;
   final FakeBudgetRepository budgets;
   final FakeSettingsRepository settings;
+  final FakeSummaryNotifier notifier;
 
   Future<void> dispose() async {
     await transactions.dispose();
@@ -48,6 +57,7 @@ Future<AppHarness> registerAppDependencies({
     currency: currency,
     onboarded: onboarded,
   );
+  final notifier = FakeSummaryNotifier();
   final now = clock ?? () => DateTime(2026, 7, 15);
 
   await getIt.reset();
@@ -58,6 +68,10 @@ Future<AppHarness> registerAppDependencies({
     ..registerSingleton<CategoryRepository>(categories)
     ..registerSingleton<BudgetRepository>(budgets)
     ..registerSingleton<SettingsRepository>(settings)
+    ..registerSingleton<SummaryNotifier>(notifier)
+    ..registerSingleton<SummaryReminderController>(
+      SummaryReminderController(settings, notifier),
+    )
     ..registerFactory<DashboardCubit>(
       () => DashboardCubit(
         transactions,
@@ -84,7 +98,13 @@ Future<AppHarness> registerAppDependencies({
       ),
     );
 
-  return AppHarness._(transactions, categories, budgets, settings);
+  return AppHarness._(
+    transactions,
+    categories,
+    budgets,
+    settings,
+    notifier,
+  );
 }
 
 /// No jobs to run — those are covered in bootstrap_kit — but the real

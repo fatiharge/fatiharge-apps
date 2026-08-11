@@ -1,11 +1,15 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wallet/config/injectable.dart';
 import 'package:wallet/features/settings/application/settings_cubit.dart';
+import 'package:wallet/features/settings/application/summary_reminder_controller.dart';
 import 'package:wallet/features/settings/domain/repository/settings_repository.dart';
 import 'package:wallet/features/settings/domain/theme_preference.dart';
 import 'package:wallet/features/settings/presentation/theme_preference_label.dart';
+import 'package:wallet/features/settings/presentation/views/reminder_section.dart';
 import 'package:wallet/route/app_router.dart';
 import 'package:wallet/theme/app_theme.dart';
 
@@ -34,8 +38,47 @@ class App extends StatelessWidget {
           supportedLocales: context.supportedLocales,
           locale: context.locale,
           routerConfig: router.config(),
+          // Rewrites the scheduled window on every launch, and on every
+          // language change: a notification's text is written when it is
+          // scheduled, so this is the only moment it can follow the app.
+          builder: (context, child) =>
+              _RescheduleReminder(child: child ?? const SizedBox.shrink()),
         ),
       ),
     );
   }
+}
+
+/// Reschedules the monthly reminder whenever the locale changes, launch
+/// included.
+///
+/// A widget rather than a call in `main`: the notification text has to be
+/// translated, and only something inside the tree can do that.
+class _RescheduleReminder extends StatefulWidget {
+  const _RescheduleReminder({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_RescheduleReminder> createState() => _RescheduleReminderState();
+}
+
+class _RescheduleReminderState extends State<_RescheduleReminder> {
+  Locale? _scheduledFor;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final locale = context.locale;
+    if (locale == _scheduledFor) return;
+    _scheduledFor = locale;
+
+    unawaited(
+      getIt<SummaryReminderController>().refresh(summaryTextOf(context)),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }
