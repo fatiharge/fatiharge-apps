@@ -37,16 +37,16 @@ class HistoryView extends StatelessWidget {
       return isFiltered
           ? EmptyState(
               icon: Icons.search_off,
-              title: LocaleKeys.history_no_match.tr(),
+              title: context.tr(LocaleKeys.history_no_match),
               action: TextButton(
                 onPressed: onClearFilter,
-                child: Text(LocaleKeys.history_clear_filter.tr()),
+                child: Text(context.tr(LocaleKeys.history_clear_filter)),
               ),
             )
           : EmptyState(
               icon: Icons.receipt_long_outlined,
-              title: LocaleKeys.history_empty_title.tr(),
-              message: LocaleKeys.history_empty_message.tr(),
+              title: context.tr(LocaleKeys.history_empty_title),
+              message: context.tr(LocaleKeys.history_empty_message),
             );
     }
 

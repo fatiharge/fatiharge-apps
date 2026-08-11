@@ -65,6 +65,24 @@ void main() {
       expect(find.text('Cihaz dili'), findsOneWidget);
     });
 
+    testWidgets('moves the check mark onto the language just picked', (
+      tester,
+    ) async {
+      await pumpSettings(tester);
+
+      ListTile tileFor(String label) => tester.widget<ListTile>(
+        find.ancestor(of: find.text(label), matching: find.byType(ListTile)),
+      );
+
+      expect(tileFor('Cihaz dili').selected, isTrue);
+
+      await tester.tap(find.text('English'));
+      await tester.pumpAndSettle();
+
+      expect(tileFor('English').selected, isTrue);
+      expect(tileFor('Device language').selected, isFalse);
+    });
+
     testWidgets('leads to the about page', (tester) async {
       await pumpSettings(tester);
 

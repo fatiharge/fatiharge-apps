@@ -22,7 +22,7 @@ class DashboardPage extends StatelessWidget {
     create: (_) => getIt<DashboardCubit>()..start(),
     child: Scaffold(
       appBar: AppBar(
-        title: Text(LocaleKeys.tabs_dashboard.tr()),
+        title: Text(context.tr(LocaleKeys.tabs_dashboard)),
         // The dashboard is the app's landing tab, so its action bar is the one
         // place settings are reliably found without adding a fourth
         // navigation destination for them.
@@ -30,7 +30,7 @@ class DashboardPage extends StatelessWidget {
           IconButton(
             onPressed: () => context.router.push(const SettingsRoute()),
             icon: const Icon(Icons.settings_outlined),
-            tooltip: LocaleKeys.settings_title.tr(),
+            tooltip: context.tr(LocaleKeys.settings_title),
           ),
         ],
       ),

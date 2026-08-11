@@ -54,9 +54,15 @@ class _EntryFormState extends State<_EntryForm> {
 
   /// Which failure it is belongs to the form; how it reads belongs here.
   String? _amountError(EntryError? error) => switch (error) {
-    EntryError.amountMissing => LocaleKeys.entry_error_amount_missing.tr(),
-    EntryError.amountInvalid => LocaleKeys.entry_error_amount_invalid.tr(),
-    EntryError.amountNotPositive => LocaleKeys.entry_error_amount_positive.tr(),
+    EntryError.amountMissing => context.tr(
+      LocaleKeys.entry_error_amount_missing,
+    ),
+    EntryError.amountInvalid => context.tr(
+      LocaleKeys.entry_error_amount_invalid,
+    ),
+    EntryError.amountNotPositive => context.tr(
+      LocaleKeys.entry_error_amount_positive,
+    ),
     EntryError.noCategory || null => null,
   };
 

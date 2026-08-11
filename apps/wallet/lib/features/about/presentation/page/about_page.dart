@@ -23,12 +23,12 @@ class AboutPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text(LocaleKeys.about_title.tr())),
+    appBar: AppBar(title: Text(context.tr(LocaleKeys.about_title))),
     body: ListView(
       padding: const EdgeInsets.only(bottom: 32),
       children: [
         const _Header(),
-        _SectionLabel(LocaleKeys.about_made_by.tr()),
+        _SectionLabel(context.tr(LocaleKeys.about_made_by)),
         for (final maintainer in maintainers)
           _CopyTile(
             // FaIcon rather than Icon: Font Awesome glyphs are not square, and
@@ -38,22 +38,22 @@ class AboutPage extends StatelessWidget {
             subtitle: maintainer.mention,
             value: maintainer.githubUrl,
           ),
-        _SectionLabel(LocaleKeys.about_feedback.tr()),
+        _SectionLabel(context.tr(LocaleKeys.about_feedback)),
         _CopyTile(
           leading: const Icon(Icons.bug_report_outlined),
-          title: LocaleKeys.about_bug_report.tr(),
-          subtitle: LocaleKeys.about_bug_report_hint.tr(),
+          title: context.tr(LocaleKeys.about_bug_report),
+          subtitle: context.tr(LocaleKeys.about_bug_report_hint),
           value: bugReportUrl,
         ),
         _CopyTile(
           leading: const Icon(Icons.lightbulb_outline),
-          title: LocaleKeys.about_feature_request.tr(),
-          subtitle: LocaleKeys.about_feature_request_hint.tr(),
+          title: context.tr(LocaleKeys.about_feature_request),
+          subtitle: context.tr(LocaleKeys.about_feature_request_hint),
           value: featureRequestUrl,
         ),
         _CopyTile(
           leading: const Icon(Icons.code),
-          title: LocaleKeys.about_source.tr(),
+          title: context.tr(LocaleKeys.about_source),
           subtitle: repositoryUrl,
           value: repositoryUrl,
         ),
@@ -79,7 +79,7 @@ class _Header extends StatelessWidget {
           const _Version(),
           const SizedBox(height: 4),
           Text(
-            LocaleKeys.about_tagline.tr(),
+            context.tr(LocaleKeys.about_tagline),
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
@@ -156,10 +156,12 @@ class _CopyTile extends StatelessWidget {
 
   Future<void> _copy(BuildContext context) async {
     final messenger = ScaffoldMessenger.of(context);
+    final confirmation = context.tr(LocaleKeys.about_copied);
+
     await Clipboard.setData(ClipboardData(text: value));
 
     messenger
       ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(LocaleKeys.about_copied.tr())));
+      ..showSnackBar(SnackBar(content: Text(confirmation)));
   }
 }

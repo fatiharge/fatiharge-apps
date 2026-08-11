@@ -47,15 +47,15 @@ class _StartupError extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               Text(
-                LocaleKeys.startup_failed_title.tr(),
+                context.tr(LocaleKeys.startup_failed_title),
                 style: theme.textTheme.titleLarge,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
               Text(
                 onRetry != null
-                    ? LocaleKeys.startup_failed_retryable.tr()
-                    : LocaleKeys.startup_failed_fatal.tr(),
+                    ? context.tr(LocaleKeys.startup_failed_retryable)
+                    : context.tr(LocaleKeys.startup_failed_fatal),
                 style: theme.textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),
@@ -78,7 +78,7 @@ class _StartupError extends StatelessWidget {
                 FilledButton.icon(
                   onPressed: onRetry,
                   icon: const Icon(Icons.refresh),
-                  label: Text(LocaleKeys.common_retry.tr()),
+                  label: Text(context.tr(LocaleKeys.common_retry)),
                 ),
             ],
           ),

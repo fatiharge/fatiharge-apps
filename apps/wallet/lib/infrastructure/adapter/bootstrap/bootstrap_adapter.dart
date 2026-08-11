@@ -1,5 +1,4 @@
 import 'package:bootstrap_kit/bootstrap_kit.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:wallet/config/env.dart';
 import 'package:wallet/config/injectable.dart';
@@ -57,7 +56,7 @@ class BootstrapAdapter implements BootstrapPort {
     final repository = getIt<CategoryRepository>();
     if ((await repository.fetchAll()).isNotEmpty) return;
 
-    for (final category in defaultCategories((key) => key.tr())) {
+    for (final category in defaultCategories()) {
       await repository.save(category);
     }
   }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:wallet/features/finance/domain/models/category.dart';
 import 'package:wallet/features/finance/domain/models/money_transaction.dart';
 import 'package:wallet/features/finance/domain/rules/transaction_filter.dart';
+import 'package:wallet/features/finance/presentation/format/category_name.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 
 /// What the filter sheet returns. Wrapped so "closed without changing
@@ -47,12 +48,12 @@ class _HistoryFilterSheetState extends State<HistoryFilterSheet> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              LocaleKeys.history_filter.tr(),
+              context.tr(LocaleKeys.history_filter),
               style: theme.textTheme.titleLarge,
             ),
             const SizedBox(height: 20),
             Text(
-              LocaleKeys.history_type.tr(),
+              context.tr(LocaleKeys.history_type),
               style: theme.textTheme.labelLarge,
             ),
             const SizedBox(height: 8),
@@ -60,7 +61,7 @@ class _HistoryFilterSheetState extends State<HistoryFilterSheet> {
               spacing: 8,
               children: [
                 ChoiceChip(
-                  label: Text(LocaleKeys.common_all.tr()),
+                  label: Text(context.tr(LocaleKeys.common_all)),
                   selected: _draft.type == null,
                   onSelected: (_) => setState(
                     () => _draft = _draft.copyWith(clearType: true),
@@ -68,7 +69,7 @@ class _HistoryFilterSheetState extends State<HistoryFilterSheet> {
                 ),
                 for (final type in TransactionType.values)
                   ChoiceChip(
-                    label: Text('entry.type_${type.name}'.tr()),
+                    label: Text(context.tr('entry.type_${type.name}')),
                     selected: _draft.type == type,
                     onSelected: (_) =>
                         setState(() => _draft = _draft.copyWith(type: type)),
@@ -77,7 +78,7 @@ class _HistoryFilterSheetState extends State<HistoryFilterSheet> {
             ),
             const SizedBox(height: 20),
             Text(
-              LocaleKeys.history_categories.tr(),
+              context.tr(LocaleKeys.history_categories),
               style: theme.textTheme.labelLarge,
             ),
             const SizedBox(height: 8),
@@ -87,7 +88,7 @@ class _HistoryFilterSheetState extends State<HistoryFilterSheet> {
               children: [
                 for (final category in widget.categories)
                   FilterChip(
-                    label: Text(category.name),
+                    label: Text(category.displayName(context)),
                     selected: _draft.categoryIds.contains(category.id),
                     onSelected: (selected) =>
                         setState(() => _toggleCategory(category.id, selected)),
@@ -102,7 +103,7 @@ class _HistoryFilterSheetState extends State<HistoryFilterSheet> {
                     onPressed: () => Navigator.of(context).pop(
                       const TransactionFilterResult(TransactionFilter()),
                     ),
-                    child: Text(LocaleKeys.history_clear_filter.tr()),
+                    child: Text(context.tr(LocaleKeys.history_clear_filter)),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -111,7 +112,7 @@ class _HistoryFilterSheetState extends State<HistoryFilterSheet> {
                     onPressed: () => Navigator.of(
                       context,
                     ).pop(TransactionFilterResult(_draft)),
-                    child: Text(LocaleKeys.common_apply.tr()),
+                    child: Text(context.tr(LocaleKeys.common_apply)),
                   ),
                 ),
               ],

@@ -60,9 +60,9 @@ class _HistoryScaffoldState extends State<_HistoryScaffold> {
       case HistoryTransactionRemoved(:final transaction):
         messenger.showSnackBar(
           SnackBar(
-            content: Text(LocaleKeys.history_deleted.tr()),
+            content: Text(context.tr(LocaleKeys.history_deleted)),
             action: SnackBarAction(
-              label: LocaleKeys.common_undo.tr(),
+              label: context.tr(LocaleKeys.common_undo),
               onPressed: () => context.read<HistoryBloc>().add(
                 HistoryDeleteUndone(transaction),
               ),
@@ -71,7 +71,7 @@ class _HistoryScaffoldState extends State<_HistoryScaffold> {
         );
       case HistoryDeleteRestored():
         messenger.showSnackBar(
-          SnackBar(content: Text(LocaleKeys.history_restored.tr())),
+          SnackBar(content: Text(context.tr(LocaleKeys.history_restored))),
         );
     }
   }
@@ -82,11 +82,11 @@ class _HistoryScaffoldState extends State<_HistoryScaffold> {
       final bloc = context.read<HistoryBloc>();
       return Scaffold(
         appBar: AppBar(
-          title: Text(LocaleKeys.tabs_history.tr()),
+          title: Text(context.tr(LocaleKeys.tabs_history)),
           actions: [
             IconButton(
               onPressed: () => _openFilter(context, state),
-              tooltip: LocaleKeys.history_filter.tr(),
+              tooltip: context.tr(LocaleKeys.history_filter),
               icon: Badge(
                 isLabelVisible: !state.filter.isEmpty,
                 child: const Icon(Icons.filter_list),

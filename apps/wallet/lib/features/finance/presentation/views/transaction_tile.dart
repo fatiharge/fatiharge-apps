@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:wallet/features/finance/domain/models/category.dart';
 import 'package:wallet/features/finance/domain/models/money_transaction.dart';
 import 'package:wallet/features/finance/presentation/format/category_icons.dart';
+import 'package:wallet/features/finance/presentation/format/category_name.dart';
 import 'package:wallet/features/finance/presentation/format/money_format.dart';
 import 'package:wallet/theme/finance_colors.dart';
 
@@ -37,7 +38,7 @@ class TransactionTile extends StatelessWidget {
         child: Icon(iconFor(category?.icon ?? CategoryIcon.other), size: 20),
       ),
       title: Text(
-        category?.name ?? transaction.categoryId,
+        category?.displayName(context) ?? transaction.categoryId,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),

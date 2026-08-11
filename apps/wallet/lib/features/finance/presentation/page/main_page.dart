@@ -23,17 +23,17 @@ class MainPage extends StatelessWidget {
         NavigationDestination(
           icon: const Icon(Icons.pie_chart_outline),
           selectedIcon: const Icon(Icons.pie_chart),
-          label: LocaleKeys.tabs_dashboard.tr(),
+          label: context.tr(LocaleKeys.tabs_dashboard),
         ),
         NavigationDestination(
           icon: const Icon(Icons.receipt_long_outlined),
           selectedIcon: const Icon(Icons.receipt_long),
-          label: LocaleKeys.tabs_history.tr(),
+          label: context.tr(LocaleKeys.tabs_history),
         ),
         NavigationDestination(
           icon: const Icon(Icons.savings_outlined),
           selectedIcon: const Icon(Icons.savings),
-          label: LocaleKeys.tabs_budget.tr(),
+          label: context.tr(LocaleKeys.tabs_budget),
         ),
       ],
     ),
@@ -46,7 +46,7 @@ class _AddTransactionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) => FloatingActionButton(
     onPressed: () => context.router.push(TransactionEntryRoute()),
-    tooltip: LocaleKeys.entry_add_title.tr(),
+    tooltip: context.tr(LocaleKeys.entry_add_title),
     child: const Icon(Icons.add),
   );
 }

@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:wallet/features/finance/application/budget/budget_state.dart';
 import 'package:wallet/features/finance/domain/models/budget.dart';
 import 'package:wallet/features/finance/domain/rules/amount_input.dart';
+import 'package:wallet/features/finance/presentation/format/category_name.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 
 /// What the editor hands back to the cubit.
@@ -56,12 +57,12 @@ class _BudgetEditorSheetState extends State<BudgetEditorSheet> {
 
   /// Categories that can still take a limit: not archived, and not already
   /// budgeted (unless this is the one being edited).
-  List<MapEntry<String, String>> get _selectable => [
+  List<MapEntry<String, String>> _selectable(BuildContext context) => [
     for (final entry in widget.state.categories.entries)
       if (!entry.value.archived &&
           (!widget.state.budgetedCategoryIds.contains(entry.key) ||
               entry.key == widget.existing?.categoryId))
-        MapEntry(entry.key, entry.value.name),
+        MapEntry(entry.key, entry.value.displayName(context)),
   ];
 
   @override
@@ -83,8 +84,8 @@ class _BudgetEditorSheetState extends State<BudgetEditorSheet> {
           children: [
             Text(
               widget.existing == null
-                  ? LocaleKeys.budget_add.tr()
-                  : LocaleKeys.budget_edit.tr(),
+                  ? context.tr(LocaleKeys.budget_add)
+                  : context.tr(LocaleKeys.budget_edit),
               style: theme.textTheme.titleLarge,
             ),
             const SizedBox(height: 20),
@@ -98,16 +99,16 @@ class _BudgetEditorSheetState extends State<BudgetEditorSheet> {
                 FilteringTextInputFormatter.allow(RegExp(r'[\d.,]')),
               ],
               decoration: InputDecoration(
-                labelText: LocaleKeys.budget_limit.tr(),
+                labelText: context.tr(LocaleKeys.budget_limit),
                 suffixText: widget.state.currency.symbol,
                 errorText: _showError
-                    ? LocaleKeys.budget_invalid_limit.tr()
+                    ? context.tr(LocaleKeys.budget_invalid_limit)
                     : null,
               ),
             ),
             const SizedBox(height: 20),
             Text(
-              LocaleKeys.budget_applies_to.tr(),
+              context.tr(LocaleKeys.budget_applies_to),
               style: theme.textTheme.labelLarge,
             ),
             const SizedBox(height: 8),
@@ -117,11 +118,11 @@ class _BudgetEditorSheetState extends State<BudgetEditorSheet> {
               children: [
                 if (canPickOverall)
                   ChoiceChip(
-                    label: Text(LocaleKeys.budget_overall.tr()),
+                    label: Text(context.tr(LocaleKeys.budget_overall)),
                     selected: _categoryId == null,
                     onSelected: (_) => setState(() => _categoryId = null),
                   ),
-                for (final entry in _selectable)
+                for (final entry in _selectable(context))
                   ChoiceChip(
                     label: Text(entry.value),
                     selected: _categoryId == entry.key,
@@ -132,7 +133,7 @@ class _BudgetEditorSheetState extends State<BudgetEditorSheet> {
             const SizedBox(height: 24),
             FilledButton(
               onPressed: _submit,
-              child: Text(LocaleKeys.common_save.tr()),
+              child: Text(context.tr(LocaleKeys.common_save)),
             ),
           ],
         ),
