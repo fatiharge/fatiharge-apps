@@ -29,7 +29,7 @@ class SummaryHeader extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              LocaleKeys.dashboard_net_balance.tr(),
+              context.tr(LocaleKeys.dashboard_net_balance),
               style: theme.textTheme.labelMedium?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
@@ -47,7 +47,7 @@ class SummaryHeader extends StatelessWidget {
               children: [
                 Expanded(
                   child: _Figure(
-                    label: LocaleKeys.dashboard_income.tr(),
+                    label: context.tr(LocaleKeys.dashboard_income),
                     value: income,
                     color: financeColors.income,
                     icon: Icons.south_west,
@@ -55,7 +55,7 @@ class SummaryHeader extends StatelessWidget {
                 ),
                 Expanded(
                   child: _Figure(
-                    label: LocaleKeys.dashboard_expense.tr(),
+                    label: context.tr(LocaleKeys.dashboard_expense),
                     value: expense,
                     color: financeColors.expense,
                     icon: Icons.north_east,

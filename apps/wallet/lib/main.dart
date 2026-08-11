@@ -38,7 +38,7 @@ Future<void> main() => AppCrashListener().runGuarded(() async {
     EasyLocalization(
       supportedLocales: const [Locale('tr'), Locale('en')],
       path: 'assets/translations',
-      fallbackLocale: const Locale('tr'),
+      fallbackLocale: const Locale('en'),
       child: const App(),
     ),
   );

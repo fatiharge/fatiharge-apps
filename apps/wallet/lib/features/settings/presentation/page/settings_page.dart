@@ -21,11 +21,11 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text(LocaleKeys.settings_title.tr())),
+    appBar: AppBar(title: Text(context.tr(LocaleKeys.settings_title))),
     body: ListView(
       padding: const EdgeInsets.only(bottom: 32),
       children: [
-        _SectionLabel(LocaleKeys.settings_appearance.tr()),
+        _SectionLabel(context.tr(LocaleKeys.settings_appearance)),
         BlocBuilder<SettingsCubit, ThemePreference>(
           builder: (context, selected) => Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -33,7 +33,7 @@ class SettingsPage extends StatelessWidget {
               for (final preference in ThemePreference.values)
                 SettingOptionTile(
                   icon: preference.icon,
-                  label: preference.label,
+                  label: preference.label(context),
                   selected: preference == selected,
                   onTap: () =>
                       context.read<SettingsCubit>().selectTheme(preference),
@@ -41,12 +41,12 @@ class SettingsPage extends StatelessWidget {
             ],
           ),
         ),
-        _SectionLabel(LocaleKeys.settings_language.tr()),
+        _SectionLabel(context.tr(LocaleKeys.settings_language)),
         const LanguageSection(),
         const Divider(height: 32),
         ListTile(
           leading: const Icon(Icons.info_outline),
-          title: Text(LocaleKeys.about_title.tr()),
+          title: Text(context.tr(LocaleKeys.about_title)),
           trailing: const Icon(Icons.chevron_right),
           onTap: () => context.router.push(const AboutRoute()),
         ),

@@ -91,7 +91,7 @@ class DashboardView extends StatelessWidget {
         if (budgetStatuses.isNotEmpty) ...[
           const SizedBox(height: 24),
           Text(
-            LocaleKeys.budget_title.tr(),
+            context.tr(LocaleKeys.budget_title),
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 12),
@@ -126,13 +126,13 @@ class _EmptyMonth extends StatelessWidget {
     child: EmptyState(
       icon: Icons.insights_outlined,
       title: hasAnyCurrency
-          ? LocaleKeys.dashboard_empty_month.tr()
-          : LocaleKeys.dashboard_empty_title.tr(),
-      message: LocaleKeys.dashboard_empty_message.tr(),
+          ? context.tr(LocaleKeys.dashboard_empty_month)
+          : context.tr(LocaleKeys.dashboard_empty_title),
+      message: context.tr(LocaleKeys.dashboard_empty_message),
       action: FilledButton.icon(
         onPressed: onAddTransaction,
         icon: const Icon(Icons.add),
-        label: Text(LocaleKeys.entry_add_title.tr()),
+        label: Text(context.tr(LocaleKeys.entry_add_title)),
       ),
     ),
   );

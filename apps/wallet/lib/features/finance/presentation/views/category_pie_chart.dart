@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:wallet/features/finance/domain/models/category.dart';
 import 'package:wallet/features/finance/domain/models/money.dart';
 import 'package:wallet/features/finance/domain/rules/monthly_summary.dart';
+import 'package:wallet/features/finance/presentation/format/category_name.dart';
 import 'package:wallet/features/finance/presentation/format/money_format.dart';
 import 'package:wallet/features/finance/presentation/views/empty_state.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
@@ -43,7 +44,7 @@ class _CategoryPieChartState extends State<CategoryPieChart> {
           height: 240,
           child: EmptyState(
             icon: Icons.pie_chart_outline,
-            title: LocaleKeys.dashboard_no_expenses.tr(),
+            title: context.tr(LocaleKeys.dashboard_no_expenses),
           ),
         ),
       );
@@ -58,7 +59,7 @@ class _CategoryPieChartState extends State<CategoryPieChart> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              LocaleKeys.dashboard_by_category.tr(),
+              context.tr(LocaleKeys.dashboard_by_category),
               style: theme.textTheme.titleMedium,
             ),
             const SizedBox(height: 16),
@@ -118,7 +119,7 @@ class _CategoryPieChartState extends State<CategoryPieChart> {
       }
       slices.add(
         _Slice(
-          label: category?.name ?? entry.categoryId,
+          label: category?.displayName(context) ?? entry.categoryId,
           amount: entry.total,
           share: share,
           color: category == null ? _otherColor : Color(category.colorArgb),
@@ -129,7 +130,7 @@ class _CategoryPieChartState extends State<CategoryPieChart> {
     if (otherMinor > 0) {
       slices.add(
         _Slice(
-          label: LocaleKeys.dashboard_other_categories.tr(),
+          label: context.tr(LocaleKeys.dashboard_other_categories),
           amount: Money(otherMinor, widget.total.currency),
           share: otherMinor / total * 100,
           color: _otherColor,

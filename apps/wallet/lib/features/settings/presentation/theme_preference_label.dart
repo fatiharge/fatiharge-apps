@@ -20,9 +20,9 @@ extension ThemePreferenceView on ThemePreference {
     ThemePreference.dark => Icons.dark_mode_outlined,
   };
 
-  String get label => switch (this) {
-    ThemePreference.system => LocaleKeys.settings_theme_system.tr(),
-    ThemePreference.light => LocaleKeys.settings_theme_light.tr(),
-    ThemePreference.dark => LocaleKeys.settings_theme_dark.tr(),
+  String label(BuildContext context) => switch (this) {
+    ThemePreference.system => context.tr(LocaleKeys.settings_theme_system),
+    ThemePreference.light => context.tr(LocaleKeys.settings_theme_light),
+    ThemePreference.dark => context.tr(LocaleKeys.settings_theme_dark),
   };
 }

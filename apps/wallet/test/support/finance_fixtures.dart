@@ -52,14 +52,18 @@ Budget budgetOf(
   categoryId: category,
 );
 
+/// Defaults to a user-given [name]; pass [nameKey] for the seeded kind, whose
+/// displayed name follows the locale.
 Category categoryOf(
   String id, {
   String? name,
+  String? nameKey,
   CategoryIcon icon = CategoryIcon.other,
   bool archived = false,
 }) => Category(
   id: id,
-  name: name ?? id,
+  name: nameKey == null ? name ?? id : name,
+  nameKey: nameKey,
   icon: icon,
   colorArgb: 0xFF607D8B,
   archived: archived,

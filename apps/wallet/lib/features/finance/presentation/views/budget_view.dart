@@ -30,12 +30,12 @@ class BudgetView extends StatelessWidget {
     if (statuses.isEmpty) {
       return EmptyState(
         icon: Icons.savings_outlined,
-        title: LocaleKeys.budget_empty_title.tr(),
-        message: LocaleKeys.budget_empty_message.tr(),
+        title: context.tr(LocaleKeys.budget_empty_title),
+        message: context.tr(LocaleKeys.budget_empty_message),
         action: FilledButton.icon(
           onPressed: onAdd,
           icon: const Icon(Icons.add),
-          label: Text(LocaleKeys.budget_add.tr()),
+          label: Text(context.tr(LocaleKeys.budget_add)),
         ),
       );
     }

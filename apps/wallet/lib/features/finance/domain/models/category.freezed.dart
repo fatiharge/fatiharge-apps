@@ -14,7 +14,11 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Category {
 
- String get id; String get name; CategoryIcon get icon; int get colorArgb; bool get archived;
+ String get id; CategoryIcon get icon; int get colorArgb;/// The name the user gave this category. `null` while it still carries the
+/// seeded one — see [nameKey].
+ String? get name;/// Translation key of the seeded name. Cleared the moment the user renames
+/// the category.
+ String? get nameKey; bool get archived;
 /// Create a copy of Category
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +29,16 @@ $CategoryCopyWith<Category> get copyWith => _$CategoryCopyWithImpl<Category>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Category&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.colorArgb, colorArgb) || other.colorArgb == colorArgb)&&(identical(other.archived, archived) || other.archived == archived));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Category&&(identical(other.id, id) || other.id == id)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.colorArgb, colorArgb) || other.colorArgb == colorArgb)&&(identical(other.name, name) || other.name == name)&&(identical(other.nameKey, nameKey) || other.nameKey == nameKey)&&(identical(other.archived, archived) || other.archived == archived));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,name,icon,colorArgb,archived);
+int get hashCode => Object.hash(runtimeType,id,icon,colorArgb,name,nameKey,archived);
 
 @override
 String toString() {
-  return 'Category(id: $id, name: $name, icon: $icon, colorArgb: $colorArgb, archived: $archived)';
+  return 'Category(id: $id, icon: $icon, colorArgb: $colorArgb, name: $name, nameKey: $nameKey, archived: $archived)';
 }
 
 
@@ -45,7 +49,7 @@ abstract mixin class $CategoryCopyWith<$Res>  {
   factory $CategoryCopyWith(Category value, $Res Function(Category) _then) = _$CategoryCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, CategoryIcon icon, int colorArgb, bool archived
+ String id, CategoryIcon icon, int colorArgb, String? name, String? nameKey, bool archived
 });
 
 
@@ -62,13 +66,14 @@ class _$CategoryCopyWithImpl<$Res>
 
 /// Create a copy of Category
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? icon = null,Object? colorArgb = null,Object? archived = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? icon = null,Object? colorArgb = null,Object? name = freezed,Object? nameKey = freezed,Object? archived = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,icon: null == icon ? _self.icon : icon // ignore: cast_nullable_to_non_nullable
 as CategoryIcon,colorArgb: null == colorArgb ? _self.colorArgb : colorArgb // ignore: cast_nullable_to_non_nullable
-as int,archived: null == archived ? _self.archived : archived // ignore: cast_nullable_to_non_nullable
+as int,name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String?,nameKey: freezed == nameKey ? _self.nameKey : nameKey // ignore: cast_nullable_to_non_nullable
+as String?,archived: null == archived ? _self.archived : archived // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }
@@ -154,10 +159,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  CategoryIcon icon,  int colorArgb,  bool archived)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  CategoryIcon icon,  int colorArgb,  String? name,  String? nameKey,  bool archived)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Category() when $default != null:
-return $default(_that.id,_that.name,_that.icon,_that.colorArgb,_that.archived);case _:
+return $default(_that.id,_that.icon,_that.colorArgb,_that.name,_that.nameKey,_that.archived);case _:
   return orElse();
 
 }
@@ -175,10 +180,10 @@ return $default(_that.id,_that.name,_that.icon,_that.colorArgb,_that.archived);c
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  CategoryIcon icon,  int colorArgb,  bool archived)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  CategoryIcon icon,  int colorArgb,  String? name,  String? nameKey,  bool archived)  $default,) {final _that = this;
 switch (_that) {
 case _Category():
-return $default(_that.id,_that.name,_that.icon,_that.colorArgb,_that.archived);case _:
+return $default(_that.id,_that.icon,_that.colorArgb,_that.name,_that.nameKey,_that.archived);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -195,10 +200,10 @@ return $default(_that.id,_that.name,_that.icon,_that.colorArgb,_that.archived);c
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  CategoryIcon icon,  int colorArgb,  bool archived)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  CategoryIcon icon,  int colorArgb,  String? name,  String? nameKey,  bool archived)?  $default,) {final _that = this;
 switch (_that) {
 case _Category() when $default != null:
-return $default(_that.id,_that.name,_that.icon,_that.colorArgb,_that.archived);case _:
+return $default(_that.id,_that.icon,_that.colorArgb,_that.name,_that.nameKey,_that.archived);case _:
   return null;
 
 }
@@ -210,13 +215,18 @@ return $default(_that.id,_that.name,_that.icon,_that.colorArgb,_that.archived);c
 
 
 class _Category implements Category {
-  const _Category({required this.id, required this.name, required this.icon, required this.colorArgb, this.archived = false});
+  const _Category({required this.id, required this.icon, required this.colorArgb, this.name, this.nameKey, this.archived = false});
   
 
 @override final  String id;
-@override final  String name;
 @override final  CategoryIcon icon;
 @override final  int colorArgb;
+/// The name the user gave this category. `null` while it still carries the
+/// seeded one — see [nameKey].
+@override final  String? name;
+/// Translation key of the seeded name. Cleared the moment the user renames
+/// the category.
+@override final  String? nameKey;
 @override@JsonKey() final  bool archived;
 
 /// Create a copy of Category
@@ -229,16 +239,16 @@ _$CategoryCopyWith<_Category> get copyWith => __$CategoryCopyWithImpl<_Category>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Category&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.colorArgb, colorArgb) || other.colorArgb == colorArgb)&&(identical(other.archived, archived) || other.archived == archived));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Category&&(identical(other.id, id) || other.id == id)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.colorArgb, colorArgb) || other.colorArgb == colorArgb)&&(identical(other.name, name) || other.name == name)&&(identical(other.nameKey, nameKey) || other.nameKey == nameKey)&&(identical(other.archived, archived) || other.archived == archived));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,name,icon,colorArgb,archived);
+int get hashCode => Object.hash(runtimeType,id,icon,colorArgb,name,nameKey,archived);
 
 @override
 String toString() {
-  return 'Category(id: $id, name: $name, icon: $icon, colorArgb: $colorArgb, archived: $archived)';
+  return 'Category(id: $id, icon: $icon, colorArgb: $colorArgb, name: $name, nameKey: $nameKey, archived: $archived)';
 }
 
 
@@ -249,7 +259,7 @@ abstract mixin class _$CategoryCopyWith<$Res> implements $CategoryCopyWith<$Res>
   factory _$CategoryCopyWith(_Category value, $Res Function(_Category) _then) = __$CategoryCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, CategoryIcon icon, int colorArgb, bool archived
+ String id, CategoryIcon icon, int colorArgb, String? name, String? nameKey, bool archived
 });
 
 
@@ -266,13 +276,14 @@ class __$CategoryCopyWithImpl<$Res>
 
 /// Create a copy of Category
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? icon = null,Object? colorArgb = null,Object? archived = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? icon = null,Object? colorArgb = null,Object? name = freezed,Object? nameKey = freezed,Object? archived = null,}) {
   return _then(_Category(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,icon: null == icon ? _self.icon : icon // ignore: cast_nullable_to_non_nullable
 as CategoryIcon,colorArgb: null == colorArgb ? _self.colorArgb : colorArgb // ignore: cast_nullable_to_non_nullable
-as int,archived: null == archived ? _self.archived : archived // ignore: cast_nullable_to_non_nullable
+as int,name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String?,nameKey: freezed == nameKey ? _self.nameKey : nameKey // ignore: cast_nullable_to_non_nullable
+as String?,archived: null == archived ? _self.archived : archived // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }

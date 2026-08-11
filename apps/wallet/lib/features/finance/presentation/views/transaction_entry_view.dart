@@ -6,6 +6,7 @@ import 'package:wallet/features/finance/domain/models/currency.dart';
 import 'package:wallet/features/finance/domain/models/money_transaction.dart';
 import 'package:wallet/features/finance/domain/rules/clock.dart';
 import 'package:wallet/features/finance/presentation/format/category_icons.dart';
+import 'package:wallet/features/finance/presentation/format/category_name.dart';
 import 'package:wallet/features/finance/presentation/format/money_format.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 
@@ -86,8 +87,8 @@ class TransactionEntryView extends StatelessWidget {
           children: [
             Text(
               isEditing
-                  ? LocaleKeys.entry_edit_title.tr()
-                  : LocaleKeys.entry_add_title.tr(),
+                  ? context.tr(LocaleKeys.entry_edit_title)
+                  : context.tr(LocaleKeys.entry_add_title),
               style: theme.textTheme.titleLarge,
             ),
             const SizedBox(height: 20),
@@ -103,7 +104,7 @@ class TransactionEntryView extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             Text(
-              LocaleKeys.entry_category.tr(),
+              context.tr(LocaleKeys.entry_category),
               style: theme.textTheme.labelLarge,
             ),
             const SizedBox(height: 8),
@@ -120,7 +121,7 @@ class TransactionEntryView extends StatelessWidget {
               onChanged: onNoteChanged,
               textCapitalization: TextCapitalization.sentences,
               decoration: InputDecoration(
-                labelText: LocaleKeys.entry_note.tr(),
+                labelText: context.tr(LocaleKeys.entry_note),
                 prefixIcon: const Icon(Icons.notes_outlined),
               ),
             ),
@@ -132,7 +133,7 @@ class TransactionEntryView extends StatelessWidget {
                       dimension: 20,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : Text(LocaleKeys.common_save.tr()),
+                  : Text(context.tr(LocaleKeys.common_save)),
             ),
           ],
         ),
@@ -149,9 +150,9 @@ class _TypeSelector extends StatelessWidget {
 
   /// Spelled out rather than interpolated from the enum name, so a renamed
   /// value is a compile error instead of a key that silently renders raw.
-  String _label(TransactionType value) => switch (value) {
-    TransactionType.income => LocaleKeys.entry_type_income.tr(),
-    TransactionType.expense => LocaleKeys.entry_type_expense.tr(),
+  String _label(BuildContext context, TransactionType value) => switch (value) {
+    TransactionType.income => context.tr(LocaleKeys.entry_type_income),
+    TransactionType.expense => context.tr(LocaleKeys.entry_type_expense),
   };
 
   @override
@@ -160,7 +161,7 @@ class _TypeSelector extends StatelessWidget {
       for (final value in TransactionType.values)
         ButtonSegment(
           value: value,
-          label: Text(_label(value)),
+          label: Text(_label(context, value)),
           icon: Icon(
             value == TransactionType.expense
                 ? Icons.north_east
@@ -200,7 +201,7 @@ class _AmountField extends StatelessWidget {
     inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[\d.,]'))],
     style: Theme.of(context).textTheme.headlineSmall,
     decoration: InputDecoration(
-      labelText: LocaleKeys.entry_amount.tr(),
+      labelText: context.tr(LocaleKeys.entry_amount),
       errorText: errorText,
       suffixIcon: Padding(
         padding: const EdgeInsets.only(right: 8),
@@ -238,7 +239,7 @@ class _CategoryPicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (categories.isEmpty) {
-      return Text(LocaleKeys.entry_no_categories.tr());
+      return Text(context.tr(LocaleKeys.entry_no_categories));
     }
 
     return Wrap(
@@ -248,7 +249,7 @@ class _CategoryPicker extends StatelessWidget {
         for (final category in categories)
           ChoiceChip(
             avatar: Icon(iconFor(category.icon), size: 18),
-            label: Text(category.name),
+            label: Text(category.displayName(context)),
             selected: selectedId == category.id,
             onSelected: (_) => onSelected(category.id),
           ),
@@ -273,7 +274,7 @@ class _DateField extends StatelessWidget {
     onTap: () => _pick(context),
     child: InputDecorator(
       decoration: InputDecoration(
-        labelText: LocaleKeys.entry_date.tr(),
+        labelText: context.tr(LocaleKeys.entry_date),
         prefixIcon: const Icon(Icons.event_outlined),
       ),
       child: Text(date.formatDay(context)),

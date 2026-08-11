@@ -24,11 +24,11 @@ class BudgetPage extends StatelessWidget {
     child: BlocBuilder<BudgetCubit, BudgetState>(
       builder: (context, state) => Scaffold(
         appBar: AppBar(
-          title: Text(LocaleKeys.tabs_budget.tr()),
+          title: Text(context.tr(LocaleKeys.tabs_budget)),
           actions: [
             IconButton(
               onPressed: () => _edit(context, state),
-              tooltip: LocaleKeys.budget_add.tr(),
+              tooltip: context.tr(LocaleKeys.budget_add),
               icon: const Icon(Icons.add_chart),
             ),
           ],

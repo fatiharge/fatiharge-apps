@@ -28,13 +28,17 @@ enum CategoryIcon {
 /// Categories are never hard-deleted: past transactions keep pointing at them,
 /// so removal is an [archived] flag. Archived categories disappear from
 /// pickers but historical records still resolve their name and colour.
+///
+/// [name] and [nameKey] are exclusive: a key follows the app language, a name
+/// is the user's own and must survive a language switch.
 @freezed
 abstract class Category with _$Category {
   const factory Category({
     required String id,
-    required String name,
     required CategoryIcon icon,
     required int colorArgb,
+    String? name,
+    String? nameKey,
     @Default(false) bool archived,
   }) = _Category;
 }

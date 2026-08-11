@@ -73,6 +73,17 @@ void main() {
       expect(CategoryDto.decode(CategoryDto.encode(category)), category);
     });
 
+    test('a seeded category keeps its key rather than a resolved name', () {
+      const seeded = Category(
+        id: 'food',
+        nameKey: 'category.food',
+        icon: CategoryIcon.food,
+        colorArgb: 0xFFE57373,
+      );
+
+      expect(CategoryDto.decode(CategoryDto.encode(seeded)), seeded);
+    });
+
     test(
       'defaults archived to false for records written before it existed',
       () {

@@ -4,6 +4,7 @@ import 'package:wallet/features/finance/domain/models/category.dart';
 abstract final class CategoryDto {
   static const _id = 'id';
   static const _name = 'name';
+  static const _nameKey = 'nameKey';
   static const _icon = 'icon';
   static const _colorArgb = 'colorArgb';
   static const _archived = 'archived';
@@ -11,6 +12,7 @@ abstract final class CategoryDto {
   static Map<String, dynamic> encode(Category category) => <String, dynamic>{
     _id: category.id,
     _name: category.name,
+    _nameKey: category.nameKey,
     _icon: category.icon.name,
     _colorArgb: category.colorArgb,
     _archived: category.archived,
@@ -18,7 +20,8 @@ abstract final class CategoryDto {
 
   static Category decode(Map<String, dynamic> record) => Category(
     id: record[_id] as String,
-    name: record[_name] as String,
+    name: record[_name] as String?,
+    nameKey: record[_nameKey] as String?,
     icon: CategoryIcon.values.byName(record[_icon] as String),
     colorArgb: record[_colorArgb] as int,
     archived: record[_archived] as bool? ?? false,

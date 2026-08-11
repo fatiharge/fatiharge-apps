@@ -43,6 +43,7 @@ import 'package:wallet/features/finance/domain/rules/month_period.dart';
 import 'package:wallet/features/finance/domain/rules/monthly_summary.dart';
 import 'package:wallet/features/finance/domain/rules/transaction_filter.dart';
 import 'package:wallet/features/finance/presentation/format/category_icons.dart';
+import 'package:wallet/features/finance/presentation/format/category_name.dart';
 import 'package:wallet/features/finance/presentation/format/money_format.dart';
 import 'package:wallet/features/finance/presentation/page/budget_page.dart';
 import 'package:wallet/features/finance/presentation/page/dashboard_page.dart';
