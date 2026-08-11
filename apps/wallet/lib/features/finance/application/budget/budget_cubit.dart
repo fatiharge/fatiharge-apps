@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:uuid/uuid.dart';
@@ -15,6 +14,7 @@ import 'package:wallet/features/finance/domain/rules/amount_input.dart';
 import 'package:wallet/features/finance/domain/rules/budget_evaluator.dart';
 import 'package:wallet/features/finance/domain/rules/clock.dart';
 import 'package:wallet/features/finance/domain/rules/monthly_summary.dart';
+import 'package:wallet/features/settings/domain/repository/settings_repository.dart';
 
 /// Manages monthly limits and shows how far through each one this month is.
 @injectable
@@ -22,9 +22,15 @@ class BudgetCubit extends Cubit<BudgetState> {
   BudgetCubit(
     this._budgets,
     this._transactions,
-    this._categories, {
+    this._categories,
+    SettingsRepository settings, {
     @ignoreParam Clock clock = systemClock,
-  }) : super(BudgetState.initial(now: clock()));
+  }) : super(
+         BudgetState.initial(
+           now: clock(),
+           currency: settings.readCurrency(),
+         ),
+       );
 
   final BudgetRepository _budgets;
   final TransactionRepository _transactions;

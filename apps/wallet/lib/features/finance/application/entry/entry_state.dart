@@ -40,9 +40,9 @@ abstract class EntryState with _$EntryState {
   const EntryState._();
 
   /// A blank form.
-  factory EntryState.initial({DateTime? now}) => EntryState(
+  factory EntryState.initial({DateTime? now, Currency? currency}) => EntryState(
     type: TransactionType.expense,
-    currency: Currency.turkishLira,
+    currency: currency ?? Currency.turkishLira,
     date: now ?? DateTime.now(),
   );
 

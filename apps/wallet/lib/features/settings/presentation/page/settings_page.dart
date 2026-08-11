@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wallet/features/settings/application/settings_cubit.dart';
 import 'package:wallet/features/settings/domain/theme_preference.dart';
 import 'package:wallet/features/settings/presentation/theme_preference_label.dart';
+import 'package:wallet/features/settings/presentation/views/currency_section.dart';
 import 'package:wallet/features/settings/presentation/views/language_section.dart';
 import 'package:wallet/features/settings/presentation/views/setting_option_tile.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
@@ -43,6 +44,9 @@ class SettingsPage extends StatelessWidget {
         ),
         _SectionLabel(context.tr(LocaleKeys.settings_language)),
         const LanguageSection(),
+        _SectionLabel(context.tr(LocaleKeys.settings_currency)),
+        _SectionHint(context.tr(LocaleKeys.settings_currency_hint)),
+        const CurrencySection(),
         const Divider(height: 32),
         ListTile(
           leading: const Icon(Icons.category_outlined),
@@ -59,6 +63,28 @@ class SettingsPage extends StatelessWidget {
       ],
     ),
   );
+}
+
+/// A line under a section label, for a rule the options cannot state.
+class _SectionHint extends StatelessWidget {
+  const _SectionHint(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+      child: Text(
+        text,
+        style: theme.textTheme.bodySmall?.copyWith(
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
+      ),
+    );
+  }
 }
 
 class _SectionLabel extends StatelessWidget {

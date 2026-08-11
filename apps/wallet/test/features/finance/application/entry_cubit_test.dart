@@ -11,9 +11,11 @@ import '../../../support/in_memory_repositories.dart';
 void main() {
   late FakeTransactionRepository transactions;
   late FakeCategoryRepository categories;
+  late FakeSettingsRepository settings;
 
   setUp(() {
     transactions = FakeTransactionRepository();
+    settings = FakeSettingsRepository();
     categories = FakeCategoryRepository()
       ..seed([
         categoryOf('food', name: 'Yemek'),
@@ -27,7 +29,7 @@ void main() {
     await categories.dispose();
   });
 
-  EntryCubit build() => EntryCubit(transactions, categories);
+  EntryCubit build() => EntryCubit(transactions, categories, settings);
 
   Future<void> settle() => Future<void>.delayed(Duration.zero);
 

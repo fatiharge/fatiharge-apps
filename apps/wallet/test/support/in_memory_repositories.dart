@@ -2,10 +2,13 @@ import 'dart:async';
 
 import 'package:wallet/features/finance/domain/models/budget.dart';
 import 'package:wallet/features/finance/domain/models/category.dart';
+import 'package:wallet/features/finance/domain/models/currency.dart';
 import 'package:wallet/features/finance/domain/models/money_transaction.dart';
 import 'package:wallet/features/finance/domain/repository/budget_repository.dart';
 import 'package:wallet/features/finance/domain/repository/category_repository.dart';
 import 'package:wallet/features/finance/domain/repository/transaction_repository.dart';
+import 'package:wallet/features/settings/domain/repository/settings_repository.dart';
+import 'package:wallet/features/settings/domain/theme_preference.dart';
 
 /// Shared stream/CRUD behaviour for the fakes below.
 ///
@@ -116,4 +119,27 @@ class FakeBudgetRepository implements BudgetRepository {
 
   @override
   Future<void> delete(String id) => _collection.delete(id);
+}
+
+class FakeSettingsRepository implements SettingsRepository {
+  FakeSettingsRepository({
+    this.theme = ThemePreference.system,
+    this.currency = Currency.turkishLira,
+  });
+
+  ThemePreference theme;
+  Currency currency;
+
+  @override
+  ThemePreference readTheme() => theme;
+
+  @override
+  Future<void> writeTheme(ThemePreference preference) async =>
+      theme = preference;
+
+  @override
+  Currency readCurrency() => currency;
+
+  @override
+  Future<void> writeCurrency(Currency value) async => currency = value;
 }

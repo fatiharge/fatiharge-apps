@@ -43,6 +43,7 @@ import 'package:wallet/features/finance/domain/rules/clock.dart';
 import 'package:wallet/features/finance/domain/rules/currency_usage.dart';
 import 'package:wallet/features/finance/domain/rules/month_period.dart';
 import 'package:wallet/features/finance/domain/rules/monthly_summary.dart';
+import 'package:wallet/features/finance/domain/rules/regional_currency.dart';
 import 'package:wallet/features/finance/domain/rules/transaction_filter.dart';
 import 'package:wallet/features/finance/presentation/format/category_icons.dart';
 import 'package:wallet/features/finance/presentation/format/category_name.dart';
@@ -73,6 +74,7 @@ import 'package:wallet/features/settings/domain/repository/settings_repository.d
 import 'package:wallet/features/settings/domain/theme_preference.dart';
 import 'package:wallet/features/settings/presentation/page/settings_page.dart';
 import 'package:wallet/features/settings/presentation/theme_preference_label.dart';
+import 'package:wallet/features/settings/presentation/views/currency_section.dart';
 import 'package:wallet/features/settings/presentation/views/language_section.dart';
 import 'package:wallet/features/settings/presentation/views/setting_option_tile.dart';
 import 'package:wallet/features/startup/presentation/splash_view.dart';

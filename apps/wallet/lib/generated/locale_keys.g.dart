@@ -64,6 +64,8 @@ abstract class LocaleKeys {
   static const settings_theme_light = 'settings.theme.light';
   static const settings_theme_dark = 'settings.theme.dark';
   static const settings_language_system = 'settings.language_system';
+  static const settings_currency = 'settings.currency';
+  static const settings_currency_hint = 'settings.currency_hint';
   static const about_title = 'about.title';
   static const about_tagline = 'about.tagline';
   static const about_made_by = 'about.made_by';

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:bootstrap_kit/bootstrap_kit.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +33,10 @@ Future<void> main() => AppCrashListener().runGuarded(() async {
     ..registerSingleton<RouteManager>(RouteManager())
     ..registerSingleton<BootstrapPort>(const BootstrapAdapter())
     ..registerSingleton<SettingsRepository>(
-      SettingsRepositoryImpl(preferences),
+      SettingsRepositoryImpl(
+        preferences,
+        region: PlatformDispatcher.instance.locale.countryCode,
+      ),
     );
 
   runApp(

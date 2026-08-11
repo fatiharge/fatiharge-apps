@@ -15,6 +15,7 @@ import 'package:wallet/features/finance/domain/rules/clock.dart';
 import 'package:wallet/features/finance/domain/rules/currency_usage.dart';
 import 'package:wallet/features/finance/domain/rules/month_period.dart';
 import 'package:wallet/features/finance/domain/rules/monthly_summary.dart';
+import 'package:wallet/features/settings/domain/repository/settings_repository.dart';
 
 /// Recomputes the dashboard whenever transactions, categories or budgets
 /// change.
@@ -27,13 +28,15 @@ class DashboardCubit extends Cubit<DashboardState> {
   DashboardCubit(
     this._transactions,
     this._categories,
-    this._budgets, {
+    this._budgets,
+    this._settings, {
     @ignoreParam this.clock = systemClock,
   }) : super(const DashboardLoading());
 
   final TransactionRepository _transactions;
   final CategoryRepository _categories;
   final BudgetRepository _budgets;
+  final SettingsRepository _settings;
 
   final Clock clock;
 
@@ -118,12 +121,19 @@ class DashboardCubit extends Cubit<DashboardState> {
     );
   }
 
-  /// Keeps the user's pick when it is still in use, otherwise falls back to
-  /// the first currency they have data in.
+  /// The chip is a view filter, not the preference: switching it here shows
+  /// another currency's month, it does not change what new records default to.
+  ///
+  /// Falls through the preferred currency before the first one on record, so
+  /// someone who keeps a few euro receipts alongside their lira still opens on
+  /// lira.
   Currency _resolveCurrency(List<Currency> available) {
     final selected = _currency;
     if (selected != null && available.contains(selected)) return selected;
-    return available.isNotEmpty ? available.first : Currency.turkishLira;
+
+    final preferred = _settings.readCurrency();
+    if (available.contains(preferred)) return preferred;
+    return available.isNotEmpty ? available.first : preferred;
   }
 
   @override

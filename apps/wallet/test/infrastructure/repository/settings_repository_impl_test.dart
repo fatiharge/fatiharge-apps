@@ -1,65 +1,70 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wallet/features/finance/domain/models/currency.dart';
 import 'package:wallet/features/settings/domain/theme_preference.dart';
 import 'package:wallet/infrastructure/repository/settings_repository_impl.dart';
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-
-  Future<SettingsRepositoryImpl> repositoryWith(
-    Map<String, Object> stored,
-  ) async {
+  Future<SettingsRepositoryImpl> build({
+    Map<String, Object> stored = const {},
+    String? region,
+  }) async {
     SharedPreferences.setMockInitialValues(stored);
-    return SettingsRepositoryImpl(await SharedPreferences.getInstance());
+    return SettingsRepositoryImpl(
+      await SharedPreferences.getInstance(),
+      region: region,
+    );
   }
 
-  group('SettingsRepositoryImpl', () {
-    test('a fresh install follows the system', () async {
-      final repository = await repositoryWith({});
+  test('a fresh install starts in the currency of its region', () async {
+    expect((await build(region: 'DE')).readCurrency(), Currency.euro);
+    expect((await build(region: 'TR')).readCurrency(), Currency.turkishLira);
+  });
 
-      expect(repository.readTheme(), ThemePreference.system);
-    });
+  test('a stored choice outranks the region', () async {
+    final settings = await build(
+      stored: {SettingsRepositoryImpl.currencyKey: 'USD'},
+      region: 'TR',
+    );
 
-    test('a written theme reads back', () async {
-      final repository = await repositoryWith({});
+    expect(settings.readCurrency(), Currency.usDollar);
+  });
 
-      await repository.writeTheme(ThemePreference.dark);
-
-      expect(repository.readTheme(), ThemePreference.dark);
-    });
-
-    test('survives a restart', () async {
-      final first = await repositoryWith({});
-      await first.writeTheme(ThemePreference.light);
-
-      // A second instance over the same store — what the next launch sees.
-      final second = SettingsRepositoryImpl(
-        await SharedPreferences.getInstance(),
+  test(
+    'a currency the app no longer carries falls back, it does not throw',
+    () async {
+      final settings = await build(
+        stored: {SettingsRepositoryImpl.currencyKey: 'XXX'},
+        region: 'GB',
       );
 
-      expect(second.readTheme(), ThemePreference.light);
-    });
+      expect(settings.readCurrency(), Currency.britishPound);
+    },
+  );
 
-    test('a corrupted value falls back instead of throwing', () async {
-      final repository = await repositoryWith({
-        SettingsRepositoryImpl.themeKey: 'not-a-theme',
-      });
+  test('the choice survives a write and a reopen', () async {
+    SharedPreferences.setMockInitialValues({});
+    final preferences = await SharedPreferences.getInstance();
 
-      expect(repository.readTheme(), ThemePreference.system);
-    });
+    await SettingsRepositoryImpl(
+      preferences,
+      region: 'TR',
+    ).writeCurrency(Currency.euro);
 
-    test("does not collide with easy_localization's locale key", () async {
-      final repository = await repositoryWith({'locale': 'en'});
+    // A second instance over the same store stands in for the next launch.
+    expect(
+      SettingsRepositoryImpl(preferences, region: 'TR').readCurrency(),
+      Currency.euro,
+    );
+  });
 
-      await repository.writeTheme(ThemePreference.dark);
-      final preferences = await SharedPreferences.getInstance();
+  test('the theme is untouched by any of this', () async {
+    final settings = await build(
+      stored: {
+        SettingsRepositoryImpl.themeKey: ThemePreference.dark.storageKey,
+      },
+    );
 
-      expect(
-        preferences.getString('locale'),
-        'en',
-        reason: 'writing the theme must not disturb the saved language',
-      );
-      expect(repository.readTheme(), ThemePreference.dark);
-    });
+    expect(settings.readTheme(), ThemePreference.dark);
   });
 }

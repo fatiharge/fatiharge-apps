@@ -8,12 +8,13 @@ import 'package:wallet/features/finance/domain/models/currency.dart';
 import 'package:wallet/features/finance/domain/models/money_transaction.dart';
 import 'package:wallet/features/finance/domain/repository/category_repository.dart';
 import 'package:wallet/features/finance/domain/repository/transaction_repository.dart';
+import 'package:wallet/features/settings/domain/repository/settings_repository.dart';
 
 /// Drives the add/edit transaction form.
 @injectable
 class EntryCubit extends Cubit<EntryState> {
-  EntryCubit(this._transactions, this._categories)
-    : super(EntryState.initial());
+  EntryCubit(this._transactions, this._categories, SettingsRepository settings)
+    : super(EntryState.initial(currency: settings.readCurrency()));
 
   final TransactionRepository _transactions;
   final CategoryRepository _categories;

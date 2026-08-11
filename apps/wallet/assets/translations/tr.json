@@ -79,7 +79,9 @@
       "light": "Açık",
       "dark": "Koyu"
     },
-    "language_system": "Cihaz dili"
+    "language_system": "Cihaz dili",
+    "currency": "Varsayılan para birimi",
+    "currency_hint": "Yeni kayıtlar bununla açılır. Mevcut kayıtlar kaydedildikleri para biriminde kalır."
   },
   "about": {
     "title": "Hakkında",
