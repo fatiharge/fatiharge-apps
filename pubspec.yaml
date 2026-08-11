@@ -67,6 +67,12 @@ melos:
       packageFilters:
         dirExists: test
 
+    coverage:check:
+      # One pass, not two: this runs the same tests `test` does, so CI calls
+      # this instead of both.
+      description: Run tests with coverage and fail below the floor per package.
+      run: melos exec --dir-exists="test" -- "flutter test --coverage --exclude-tags golden" && python3 scripts/coverage_gate.py
+
     generate:
       description: Run build_runner in every package that depends on it.
       exec: dart run build_runner build --delete-conflicting-outputs
