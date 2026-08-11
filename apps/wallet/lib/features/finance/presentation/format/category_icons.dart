@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wallet/features/finance/domain/models/category.dart';
+import 'package:wallet/generated/locale_keys.g.dart';
 
 /// Maps the domain's [CategoryIcon] onto concrete Material icons.
 ///
@@ -20,4 +21,26 @@ IconData iconFor(CategoryIcon icon) => switch (icon) {
   CategoryIcon.gift => Icons.card_giftcard_outlined,
   CategoryIcon.savings => Icons.savings_outlined,
   CategoryIcon.other => Icons.category_outlined,
+};
+
+/// What to call an icon out loud.
+///
+/// Reuses the seeded category names rather than inventing a second set: the
+/// enum was named after them, so "Yemek" is already the right word for the
+/// fork-and-knife. Spelled out per row for the same reason the seeds are —
+/// an interpolated key cannot be checked by anything.
+String iconLabelKey(CategoryIcon icon) => switch (icon) {
+  CategoryIcon.food => LocaleKeys.category_food,
+  CategoryIcon.transport => LocaleKeys.category_transport,
+  CategoryIcon.home => LocaleKeys.category_home,
+  CategoryIcon.bills => LocaleKeys.category_bills,
+  CategoryIcon.health => LocaleKeys.category_health,
+  CategoryIcon.shopping => LocaleKeys.category_shopping,
+  CategoryIcon.entertainment => LocaleKeys.category_entertainment,
+  CategoryIcon.education => LocaleKeys.category_education,
+  CategoryIcon.travel => LocaleKeys.category_travel,
+  CategoryIcon.salary => LocaleKeys.category_salary,
+  CategoryIcon.gift => LocaleKeys.category_gift,
+  CategoryIcon.savings => LocaleKeys.category_savings,
+  CategoryIcon.other => LocaleKeys.category_misc,
 };

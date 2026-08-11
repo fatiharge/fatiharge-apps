@@ -105,6 +105,7 @@ class _CategoryEditorSheetState extends State<CategoryEditorSheet> {
                   IconButton(
                     onPressed: () => setState(() => _icon = icon),
                     isSelected: _icon == icon,
+                    tooltip: context.tr(iconLabelKey(icon)),
                     icon: Icon(iconFor(icon)),
                     style: IconButton.styleFrom(
                       backgroundColor: _icon == icon
@@ -125,9 +126,13 @@ class _CategoryEditorSheetState extends State<CategoryEditorSheet> {
               spacing: 12,
               runSpacing: 8,
               children: [
-                for (final argb in categoryPalette)
+                for (final (index, argb) in categoryPalette.indexed)
                   _ColorDot(
                     argb: argb,
+                    label: context.tr(
+                      LocaleKeys.categories_colour_indexed,
+                      namedArgs: {'index': '${index + 1}'},
+                    ),
                     selected: argb == _colorArgb,
                     onTap: () => setState(() => _colorArgb = argb),
                   ),
@@ -162,37 +167,52 @@ class _CategoryEditorSheetState extends State<CategoryEditorSheet> {
 class _ColorDot extends StatelessWidget {
   const _ColorDot({
     required this.argb,
+    required this.label,
     required this.selected,
     required this.onTap,
   });
 
+  /// The dot people see. The tap target around it is larger — see [build].
+  static const double _diameter = 40;
+
   final int argb;
+  final String label;
   final bool selected;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) => Semantics(
+    label: label,
     selected: selected,
     button: true,
-    child: InkWell(
+    child: InkResponse(
       onTap: onTap,
-      customBorder: const CircleBorder(),
-      child: Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-          color: Color(argb),
-          shape: BoxShape.circle,
-          border: selected
-              ? Border.all(
-                  color: Theme.of(context).colorScheme.onSurface,
-                  width: 3,
-                )
-              : null,
+      // A 40dp dot is the size the palette wants to look right; 48dp is the
+      // size a thumb needs. The tap area is grown past the paint rather than
+      // the dot being drawn bigger.
+      radius: kMinInteractiveDimension / 2,
+      child: SizedBox(
+        width: kMinInteractiveDimension,
+        height: kMinInteractiveDimension,
+        child: Center(
+          child: Container(
+            width: _diameter,
+            height: _diameter,
+            decoration: BoxDecoration(
+              color: Color(argb),
+              shape: BoxShape.circle,
+              border: selected
+                  ? Border.all(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      width: 3,
+                    )
+                  : null,
+            ),
+            child: selected
+                ? const Icon(Icons.check, size: 20, color: Colors.white)
+                : null,
+          ),
         ),
-        child: selected
-            ? const Icon(Icons.check, size: 20, color: Colors.white)
-            : null,
       ),
     ),
   );
