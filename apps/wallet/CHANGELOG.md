@@ -1,3 +1,9 @@
+## 0.2.7+11
+
+ - **FEAT**(wallet): walk first-run setup before the tabs ([#51](https://github.com/fatiharge/fatiharge-apps/issues/51)). ([e36f8232](https://github.com/fatiharge/fatiharge-apps/commit/e36f823231d091afbcfdd6e9e806c8169a6a7ed9))
+ - **FEAT**(wallet): pick the default currency in settings ([#50](https://github.com/fatiharge/fatiharge-apps/issues/50)). ([02354384](https://github.com/fatiharge/fatiharge-apps/commit/02354384d4084132a292770df884067c52feac4a))
+ - **FEAT**(wallet): manage categories from settings ([#48](https://github.com/fatiharge/fatiharge-apps/issues/48)). ([35ff416d](https://github.com/fatiharge/fatiharge-apps/commit/35ff416d7334559dd3ee66a93bfcc393c10b4628))
+
 ## 0.2.6+10
 
  - **FIX**(wallet): make every screen follow the selected language ([#47](https://github.com/fatiharge/fatiharge-apps/issues/47)). ([28fbccca](https://github.com/fatiharge/fatiharge-apps/commit/28fbcccaeb0fd2bf7dd9010474fb1b4bedb17ac9))
