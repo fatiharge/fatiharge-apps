@@ -114,4 +114,5 @@ abstract class LocaleKeys {
   static const categories_archived_hint = 'categories.archived_hint';
   static const categories_empty_title = 'categories.empty_title';
   static const categories_empty_message = 'categories.empty_message';
+  static const categories_colour_indexed = 'categories.colour_indexed';
 }

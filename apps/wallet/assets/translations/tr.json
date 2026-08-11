@@ -137,6 +137,7 @@
     "restore": "Geri al",
     "archived_hint": "Arşivlenen kategoriler seçim listelerinde çıkmaz. Geçmiş kayıtlar onları korur.",
     "empty_title": "Kategori yok",
-    "empty_message": "Gelir ve giderlerini ayırmaya başlamak için bir tane ekle."
+    "empty_message": "Gelir ve giderlerini ayırmaya başlamak için bir tane ekle.",
+    "colour_indexed": "{index}. renk"
   }
 }

@@ -137,6 +137,7 @@
     "restore": "Restore",
     "archived_hint": "Archived categories stay out of the pickers. Past records keep them.",
     "empty_title": "No categories",
-    "empty_message": "Add one to start sorting your income and expenses."
+    "empty_message": "Add one to start sorting your income and expenses.",
+    "colour_indexed": "Colour {index}"
   }
 }
