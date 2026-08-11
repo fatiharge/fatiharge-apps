@@ -87,4 +87,17 @@ abstract class LocaleKeys {
   static const category_salary = 'category.salary';
   static const category_gift = 'category.gift';
   static const category_savings = 'category.savings';
+  static const categories_title = 'categories.title';
+  static const categories_add = 'categories.add';
+  static const categories_edit = 'categories.edit';
+  static const categories_name = 'categories.name';
+  static const categories_icon = 'categories.icon';
+  static const categories_colour = 'categories.colour';
+  static const categories_invalid_name = 'categories.invalid_name';
+  static const categories_archived = 'categories.archived';
+  static const categories_archive = 'categories.archive';
+  static const categories_restore = 'categories.restore';
+  static const categories_archived_hint = 'categories.archived_hint';
+  static const categories_empty_title = 'categories.empty_title';
+  static const categories_empty_message = 'categories.empty_message';
 }

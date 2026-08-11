@@ -18,6 +18,8 @@ import 'package:wallet/features/about/domain/app_version_port.dart';
 import 'package:wallet/features/about/presentation/page/about_page.dart';
 import 'package:wallet/features/finance/application/budget/budget_cubit.dart';
 import 'package:wallet/features/finance/application/budget/budget_state.dart';
+import 'package:wallet/features/finance/application/category/category_cubit.dart';
+import 'package:wallet/features/finance/application/category/category_state.dart';
 import 'package:wallet/features/finance/application/dashboard/dashboard_cubit.dart';
 import 'package:wallet/features/finance/application/dashboard/dashboard_state.dart';
 import 'package:wallet/features/finance/application/entry/entry_cubit.dart';
@@ -46,6 +48,7 @@ import 'package:wallet/features/finance/presentation/format/category_icons.dart'
 import 'package:wallet/features/finance/presentation/format/category_name.dart';
 import 'package:wallet/features/finance/presentation/format/money_format.dart';
 import 'package:wallet/features/finance/presentation/page/budget_page.dart';
+import 'package:wallet/features/finance/presentation/page/category_page.dart';
 import 'package:wallet/features/finance/presentation/page/dashboard_page.dart';
 import 'package:wallet/features/finance/presentation/page/history_page.dart';
 import 'package:wallet/features/finance/presentation/page/main_page.dart';
@@ -53,7 +56,9 @@ import 'package:wallet/features/finance/presentation/page/transaction_entry_page
 import 'package:wallet/features/finance/presentation/views/budget_editor_sheet.dart';
 import 'package:wallet/features/finance/presentation/views/budget_progress_tile.dart';
 import 'package:wallet/features/finance/presentation/views/budget_view.dart';
+import 'package:wallet/features/finance/presentation/views/category_editor_sheet.dart';
 import 'package:wallet/features/finance/presentation/views/category_pie_chart.dart';
+import 'package:wallet/features/finance/presentation/views/category_view.dart';
 import 'package:wallet/features/finance/presentation/views/currency_chips.dart';
 import 'package:wallet/features/finance/presentation/views/dashboard_view.dart';
 import 'package:wallet/features/finance/presentation/views/empty_state.dart';

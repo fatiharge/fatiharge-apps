@@ -88,6 +88,12 @@ void main() {
 
       expect(find.text('Hakkında'), findsOneWidget);
     });
+
+    testWidgets('leads to the category screen', (tester) async {
+      await pumpSettings(tester);
+
+      expect(find.text('Kategoriler'), findsOneWidget);
+    });
   });
 
   group('AboutPage', () {

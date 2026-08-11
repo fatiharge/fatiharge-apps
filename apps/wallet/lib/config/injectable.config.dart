@@ -15,6 +15,8 @@ import 'package:wallet/config/modules/storage_module.dart' as _i253;
 import 'package:wallet/features/about/domain/app_version_port.dart' as _i198;
 import 'package:wallet/features/finance/application/budget/budget_cubit.dart'
     as _i203;
+import 'package:wallet/features/finance/application/category/category_cubit.dart'
+    as _i639;
 import 'package:wallet/features/finance/application/dashboard/dashboard_cubit.dart'
     as _i444;
 import 'package:wallet/features/finance/application/entry/entry_cubit.dart'
@@ -86,6 +88,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i616.TransactionRepository>(),
         gh<_i270.CategoryRepository>(),
       ),
+    );
+    gh.factory<_i639.CategoryCubit>(
+      () => _i639.CategoryCubit(gh<_i270.CategoryRepository>()),
     );
     return this;
   }
