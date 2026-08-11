@@ -41,7 +41,7 @@ class AboutPage extends StatelessWidget {
         _SectionLabel(context.tr(LocaleKeys.about_feedback)),
         _CopyTile(
           leading: const Icon(Icons.bug_report_outlined),
-            title: context.tr(LocaleKeys.about_bug_report),
+          title: context.tr(LocaleKeys.about_bug_report),
           subtitle: context.tr(LocaleKeys.about_bug_report_hint),
           value: bugReportUrl,
         ),
