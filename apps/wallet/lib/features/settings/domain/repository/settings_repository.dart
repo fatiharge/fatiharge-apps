@@ -20,4 +20,10 @@ abstract interface class SettingsRepository {
   Currency readCurrency();
 
   Future<void> writeCurrency(Currency currency);
+
+  /// Whether the first-run flow has been through, skipped included. Read
+  /// before the first route is chosen, so it is synchronous like the rest.
+  bool isOnboarded();
+
+  Future<void> completeOnboarding();
 }

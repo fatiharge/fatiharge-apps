@@ -29,6 +29,8 @@ import 'package:wallet/features/finance/domain/repository/category_repository.da
     as _i270;
 import 'package:wallet/features/finance/domain/repository/transaction_repository.dart'
     as _i616;
+import 'package:wallet/features/onboarding/application/onboarding_cubit.dart'
+    as _i92;
 import 'package:wallet/features/settings/domain/repository/settings_repository.dart'
     as _i97;
 import 'package:wallet/infrastructure/adapter/version/package_info_version_adapter.dart'
@@ -84,6 +86,12 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i186.HistoryBloc(
         gh<_i616.TransactionRepository>(),
         gh<_i270.CategoryRepository>(),
+      ),
+    );
+    gh.factory<_i92.OnboardingCubit>(
+      () => _i92.OnboardingCubit(
+        gh<_i270.CategoryRepository>(),
+        gh<_i97.SettingsRepository>(),
       ),
     );
     gh.factory<_i639.CategoryCubit>(

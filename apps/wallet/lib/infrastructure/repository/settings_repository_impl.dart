@@ -20,6 +20,7 @@ class SettingsRepositoryImpl implements SettingsRepository {
   /// same store.
   static const String themeKey = 'settings.theme';
   static const String currencyKey = 'settings.currency';
+  static const String onboardedKey = 'settings.onboarded';
 
   final SharedPreferences _preferences;
 
@@ -48,4 +49,10 @@ class SettingsRepositoryImpl implements SettingsRepository {
   @override
   Future<void> writeCurrency(Currency currency) =>
       _preferences.setString(currencyKey, currency.code);
+
+  @override
+  bool isOnboarded() => _preferences.getBool(onboardedKey) ?? false;
+
+  @override
+  Future<void> completeOnboarding() => _preferences.setBool(onboardedKey, true);
 }

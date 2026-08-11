@@ -2,6 +2,7 @@ import 'package:bootstrap_kit/bootstrap_kit.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:wallet/config/injectable.dart';
 import 'package:wallet/features/finance/domain/repository/category_repository.dart';
+import 'package:wallet/features/settings/domain/repository/settings_repository.dart';
 import 'package:wallet/infrastructure/adapter/bootstrap/bootstrap_adapter.dart';
 import 'package:wallet/route/app_router.dart';
 
@@ -16,7 +17,8 @@ void main() {
     await getIt.reset();
     getIt
       ..registerSingleton<RouteManager>(RouteManager())
-      ..registerSingleton<CategoryRepository>(categories);
+      ..registerSingleton<CategoryRepository>(categories)
+      ..registerSingleton<SettingsRepository>(FakeSettingsRepository());
   });
 
   tearDown(() async {

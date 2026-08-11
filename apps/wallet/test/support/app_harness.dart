@@ -8,8 +8,10 @@ import 'package:wallet/features/finance/domain/models/currency.dart';
 import 'package:wallet/features/finance/domain/repository/budget_repository.dart';
 import 'package:wallet/features/finance/domain/repository/category_repository.dart';
 import 'package:wallet/features/finance/domain/repository/transaction_repository.dart';
+import 'package:wallet/features/onboarding/application/onboarding_cubit.dart';
 import 'package:wallet/features/settings/domain/repository/settings_repository.dart';
 import 'package:wallet/features/settings/domain/theme_preference.dart';
+import 'package:wallet/infrastructure/adapter/bootstrap/bootstrap_adapter.dart';
 import 'package:wallet/route/app_router.dart';
 
 import 'in_memory_repositories.dart';
@@ -35,12 +37,17 @@ class AppHarness {
 Future<AppHarness> registerAppDependencies({
   ThemePreference theme = ThemePreference.dark,
   Currency currency = Currency.turkishLira,
+  bool onboarded = true,
   DateTime Function()? clock,
 }) async {
   final transactions = FakeTransactionRepository();
   final categories = FakeCategoryRepository();
   final budgets = FakeBudgetRepository();
-  final settings = FakeSettingsRepository(theme: theme, currency: currency);
+  final settings = FakeSettingsRepository(
+    theme: theme,
+    currency: currency,
+    onboarded: onboarded,
+  );
   final now = clock ?? () => DateTime(2026, 7, 15);
 
   await getIt.reset();
@@ -64,6 +71,9 @@ Future<AppHarness> registerAppDependencies({
     ..registerFactory<EntryCubit>(
       () => EntryCubit(transactions, categories, settings),
     )
+    ..registerFactory<OnboardingCubit>(
+      () => OnboardingCubit(categories, settings),
+    )
     ..registerFactory<BudgetCubit>(
       () => BudgetCubit(
         budgets,
@@ -77,11 +87,13 @@ Future<AppHarness> registerAppDependencies({
   return AppHarness._(transactions, categories, budgets, settings);
 }
 
-/// Bootstrap with nothing to do: the startup jobs are covered in bootstrap_kit.
+/// No jobs to run — those are covered in bootstrap_kit — but the real
+/// hand-over, because where startup lands is the adapter's decision and worth
+/// exercising through the router that carries it out.
 class _NoJobs implements BootstrapPort {
   @override
   List<BootstrapJob> jobs() => const [];
 
   @override
-  void bootstrapFinished() {}
+  void bootstrapFinished() => const BootstrapAdapter().bootstrapFinished();
 }

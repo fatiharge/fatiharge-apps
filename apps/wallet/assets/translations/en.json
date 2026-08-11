@@ -17,6 +17,20 @@
     "failed_retryable": "Something went wrong. You can try again.",
     "failed_fatal": "An unrecoverable error occurred. Please restart the app."
   },
+  "onboarding": {
+    "welcome_title": "Welcome to Warizo",
+    "welcome_message": "Track what comes in and what goes out, set monthly limits, and see where the month went. Everything stays on this device.",
+    "language_title": "Which language?",
+    "theme_title": "Light or dark?",
+    "currency_title": "Which currency?",
+    "categories_title": "Pick your categories",
+    "categories_message": "Untick the ones you will not use. Nothing is lost — you can bring them back from settings later.",
+    "skip": "Skip",
+    "next": "Next",
+    "back": "Back",
+    "start": "Get started",
+    "step": "Step {current} of {total}"
+  },
   "dashboard": {
     "net_balance": "Balance this month",
     "income": "Income",

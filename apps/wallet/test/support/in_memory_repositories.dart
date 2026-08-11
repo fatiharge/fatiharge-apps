@@ -125,10 +125,15 @@ class FakeSettingsRepository implements SettingsRepository {
   FakeSettingsRepository({
     this.theme = ThemePreference.system,
     this.currency = Currency.turkishLira,
+    this.onboarded = true,
   });
 
   ThemePreference theme;
   Currency currency;
+
+  /// Defaults to done: a test that is not about the first-run flow should not
+  /// have to opt out of it.
+  bool onboarded;
 
   @override
   ThemePreference readTheme() => theme;
@@ -142,4 +147,10 @@ class FakeSettingsRepository implements SettingsRepository {
 
   @override
   Future<void> writeCurrency(Currency value) async => currency = value;
+
+  @override
+  bool isOnboarded() => onboarded;
+
+  @override
+  Future<void> completeOnboarding() async => onboarded = true;
 }
