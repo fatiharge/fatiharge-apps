@@ -45,6 +45,12 @@ class SettingsPage extends StatelessWidget {
         const LanguageSection(),
         const Divider(height: 32),
         ListTile(
+          leading: const Icon(Icons.category_outlined),
+          title: Text(context.tr(LocaleKeys.categories_title)),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => context.router.push(const CategoryRoute()),
+        ),
+        ListTile(
           leading: const Icon(Icons.info_outline),
           title: Text(context.tr(LocaleKeys.about_title)),
           trailing: const Icon(Icons.chevron_right),

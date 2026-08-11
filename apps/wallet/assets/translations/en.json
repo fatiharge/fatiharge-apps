@@ -107,5 +107,20 @@
     "salary": "Salary",
     "gift": "Gift",
     "savings": "Savings"
+  },
+  "categories": {
+    "title": "Categories",
+    "add": "Add category",
+    "edit": "Edit category",
+    "name": "Name",
+    "icon": "Icon",
+    "colour": "Colour",
+    "invalid_name": "Enter a name",
+    "archived": "Archived",
+    "archive": "Archive",
+    "restore": "Restore",
+    "archived_hint": "Archived categories stay out of the pickers. Past records keep them.",
+    "empty_title": "No categories",
+    "empty_message": "Add one to start sorting your income and expenses."
   }
 }

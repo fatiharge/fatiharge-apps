@@ -107,5 +107,20 @@
     "salary": "Maaş",
     "gift": "Hediye",
     "savings": "Birikim"
+  },
+  "categories": {
+    "title": "Kategoriler",
+    "add": "Kategori ekle",
+    "edit": "Kategoriyi düzenle",
+    "name": "Ad",
+    "icon": "Simge",
+    "colour": "Renk",
+    "invalid_name": "Bir ad gir",
+    "archived": "Arşivlenenler",
+    "archive": "Arşivle",
+    "restore": "Geri al",
+    "archived_hint": "Arşivlenen kategoriler seçim listelerinde çıkmaz. Geçmiş kayıtlar onları korur.",
+    "empty_title": "Kategori yok",
+    "empty_message": "Gelir ve giderlerini ayırmaya başlamak için bir tane ekle."
   }
 }

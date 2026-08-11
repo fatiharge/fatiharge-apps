@@ -24,6 +24,7 @@ class RouteManager extends RootStackRouter {
       customRouteBuilder: _modalSheetBuilder,
     ),
     AutoRoute(page: SettingsRoute.page),
+    AutoRoute(page: CategoryRoute.page),
     // Reached from settings rather than from the tabs — credits do not earn a
     // navigation destination.
     AutoRoute(page: AboutRoute.page),

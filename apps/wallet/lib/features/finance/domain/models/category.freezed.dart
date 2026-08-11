@@ -14,11 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Category {
 
- String get id; CategoryIcon get icon; int get colorArgb;/// The name the user gave this category. `null` while it still carries the
-/// seeded one — see [nameKey].
- String? get name;/// Translation key of the seeded name. Cleared the moment the user renames
-/// the category.
- String? get nameKey; bool get archived;
+ String get id; CategoryIcon get icon; int get colorArgb; String? get name; String? get nameKey; bool get archived;
 /// Create a copy of Category
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -221,11 +217,7 @@ class _Category implements Category {
 @override final  String id;
 @override final  CategoryIcon icon;
 @override final  int colorArgb;
-/// The name the user gave this category. `null` while it still carries the
-/// seeded one — see [nameKey].
 @override final  String? name;
-/// Translation key of the seeded name. Cleared the moment the user renames
-/// the category.
 @override final  String? nameKey;
 @override@JsonKey() final  bool archived;
 
