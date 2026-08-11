@@ -4,6 +4,7 @@ import 'package:wallet/features/finance/application/budget/budget_cubit.dart';
 import 'package:wallet/features/finance/application/dashboard/dashboard_cubit.dart';
 import 'package:wallet/features/finance/application/entry/entry_cubit.dart';
 import 'package:wallet/features/finance/application/history/history_bloc.dart';
+import 'package:wallet/features/finance/domain/models/currency.dart';
 import 'package:wallet/features/finance/domain/repository/budget_repository.dart';
 import 'package:wallet/features/finance/domain/repository/category_repository.dart';
 import 'package:wallet/features/finance/domain/repository/transaction_repository.dart';
@@ -15,11 +16,12 @@ import 'in_memory_repositories.dart';
 
 /// The fakes behind a booted `App`.
 class AppHarness {
-  AppHarness._(this.transactions, this.categories, this.budgets);
+  AppHarness._(this.transactions, this.categories, this.budgets, this.settings);
 
   final FakeTransactionRepository transactions;
   final FakeCategoryRepository categories;
   final FakeBudgetRepository budgets;
+  final FakeSettingsRepository settings;
 
   Future<void> dispose() async {
     await transactions.dispose();
@@ -32,11 +34,13 @@ class AppHarness {
 /// Fills `getIt` with everything `App` resolves, backed by in-memory fakes.
 Future<AppHarness> registerAppDependencies({
   ThemePreference theme = ThemePreference.dark,
+  Currency currency = Currency.turkishLira,
   DateTime Function()? clock,
 }) async {
   final transactions = FakeTransactionRepository();
   final categories = FakeCategoryRepository();
   final budgets = FakeBudgetRepository();
+  final settings = FakeSettingsRepository(theme: theme, currency: currency);
   final now = clock ?? () => DateTime(2026, 7, 15);
 
   await getIt.reset();
@@ -46,17 +50,31 @@ Future<AppHarness> registerAppDependencies({
     ..registerSingleton<TransactionRepository>(transactions)
     ..registerSingleton<CategoryRepository>(categories)
     ..registerSingleton<BudgetRepository>(budgets)
-    ..registerSingleton<SettingsRepository>(_StubSettings(theme))
+    ..registerSingleton<SettingsRepository>(settings)
     ..registerFactory<DashboardCubit>(
-      () => DashboardCubit(transactions, categories, budgets, clock: now),
+      () => DashboardCubit(
+        transactions,
+        categories,
+        budgets,
+        settings,
+        clock: now,
+      ),
     )
     ..registerFactory<HistoryBloc>(() => HistoryBloc(transactions, categories))
-    ..registerFactory<EntryCubit>(() => EntryCubit(transactions, categories))
+    ..registerFactory<EntryCubit>(
+      () => EntryCubit(transactions, categories, settings),
+    )
     ..registerFactory<BudgetCubit>(
-      () => BudgetCubit(budgets, transactions, categories, clock: now),
+      () => BudgetCubit(
+        budgets,
+        transactions,
+        categories,
+        settings,
+        clock: now,
+      ),
     );
 
-  return AppHarness._(transactions, categories, budgets);
+  return AppHarness._(transactions, categories, budgets, settings);
 }
 
 /// Bootstrap with nothing to do: the startup jobs are covered in bootstrap_kit.
@@ -66,17 +84,4 @@ class _NoJobs implements BootstrapPort {
 
   @override
   void bootstrapFinished() {}
-}
-
-class _StubSettings implements SettingsRepository {
-  _StubSettings(this._theme);
-
-  ThemePreference _theme;
-
-  @override
-  ThemePreference readTheme() => _theme;
-
-  @override
-  Future<void> writeTheme(ThemePreference preference) async =>
-      _theme = preference;
 }

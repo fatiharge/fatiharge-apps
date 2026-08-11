@@ -79,7 +79,9 @@
       "light": "Light",
       "dark": "Dark"
     },
-    "language_system": "Device language"
+    "language_system": "Device language",
+    "currency": "Default currency",
+    "currency_hint": "New records start here. Existing ones keep the currency they were saved in."
   },
   "about": {
     "title": "About",

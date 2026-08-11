@@ -13,6 +13,7 @@ void main() {
   late FakeTransactionRepository transactions;
   late FakeCategoryRepository categories;
   late FakeBudgetRepository budgets;
+  late FakeSettingsRepository settings;
 
   final thisMonth = DateTime(2026, 7, 15);
   DateTime clock() => thisMonth;
@@ -21,6 +22,7 @@ void main() {
     transactions = FakeTransactionRepository();
     categories = FakeCategoryRepository();
     budgets = FakeBudgetRepository();
+    settings = FakeSettingsRepository();
   });
 
   tearDown(() async {
@@ -29,8 +31,13 @@ void main() {
     await budgets.dispose();
   });
 
-  DashboardCubit build() =>
-      DashboardCubit(transactions, categories, budgets, clock: clock);
+  DashboardCubit build() => DashboardCubit(
+    transactions,
+    categories,
+    budgets,
+    settings,
+    clock: clock,
+  );
 
   /// Lets the three repository streams deliver their first values.
   Future<void> settle() => Future<void>.delayed(Duration.zero);

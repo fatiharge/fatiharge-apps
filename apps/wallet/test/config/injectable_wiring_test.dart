@@ -10,6 +10,9 @@ import 'package:wallet/features/finance/application/history/history_bloc.dart';
 import 'package:wallet/features/finance/domain/repository/budget_repository.dart';
 import 'package:wallet/features/finance/domain/repository/category_repository.dart';
 import 'package:wallet/features/finance/domain/repository/transaction_repository.dart';
+import 'package:wallet/features/settings/domain/repository/settings_repository.dart';
+
+import '../support/in_memory_repositories.dart';
 
 /// Runs the generated container for real.
 ///
@@ -22,6 +25,13 @@ void main() {
   setUp(() async {
     directory = await Directory.systemTemp.createTemp('wallet_di_test');
     Hive.init(directory.path);
+
+    // Mirrors main.dart: the cubits read the currency preference, and its
+    // repository is registered by hand before the container is built — it has
+    // to be loaded before the first frame, which a generated async
+    // registration cannot promise.
+    getIt.registerSingleton<SettingsRepository>(FakeSettingsRepository());
+
     await configureDependencies();
   });
 

@@ -11,6 +11,7 @@ void main() {
   late FakeBudgetRepository budgets;
   late FakeTransactionRepository transactions;
   late FakeCategoryRepository categories;
+  late FakeSettingsRepository settings;
 
   final thisMonth = DateTime(2026, 7, 15);
   DateTime clock() => thisMonth;
@@ -18,6 +19,7 @@ void main() {
   setUp(() {
     budgets = FakeBudgetRepository();
     transactions = FakeTransactionRepository();
+    settings = FakeSettingsRepository();
     categories = FakeCategoryRepository()
       ..seed([categoryOf('food'), categoryOf('rent')]);
   });
@@ -28,8 +30,13 @@ void main() {
     await categories.dispose();
   });
 
-  BudgetCubit build() =>
-      BudgetCubit(budgets, transactions, categories, clock: clock);
+  BudgetCubit build() => BudgetCubit(
+    budgets,
+    transactions,
+    categories,
+    settings,
+    clock: clock,
+  );
 
   Future<void> settle() => Future<void>.delayed(Duration.zero);
 

@@ -1,4 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wallet/features/finance/domain/models/currency.dart';
+import 'package:wallet/features/finance/domain/rules/regional_currency.dart';
 import 'package:wallet/features/settings/domain/repository/settings_repository.dart';
 import 'package:wallet/features/settings/domain/theme_preference.dart';
 
@@ -12,13 +14,18 @@ import 'package:wallet/features/settings/domain/theme_preference.dart';
 /// Not annotated for injectable — a generated registration would resolve too
 /// late to be of any use here.
 class SettingsRepositoryImpl implements SettingsRepository {
-  const SettingsRepositoryImpl(this._preferences);
+  const SettingsRepositoryImpl(this._preferences, {this.region});
 
   /// Namespaced because easy_localization keeps its own `locale` key in this
   /// same store.
   static const String themeKey = 'settings.theme';
+  static const String currencyKey = 'settings.currency';
 
   final SharedPreferences _preferences;
+
+  /// ISO 3166-1 alpha-2 code of the device's region, passed in rather than
+  /// read here so this stays testable without a platform.
+  final String? region;
 
   @override
   ThemePreference readTheme() =>
@@ -27,4 +34,18 @@ class SettingsRepositoryImpl implements SettingsRepository {
   @override
   Future<void> writeTheme(ThemePreference preference) =>
       _preferences.setString(themeKey, preference.storageKey);
+
+  @override
+  Currency readCurrency() {
+    final stored = _preferences.getString(currencyKey);
+
+    // A dropped currency code falls back rather than throwing: a preference is
+    // not worth crashing over, unlike a stored transaction amount.
+    return Currency.values.where((c) => c.code == stored).firstOrNull ??
+        currencyForRegion(region);
+  }
+
+  @override
+  Future<void> writeCurrency(Currency currency) =>
+      _preferences.setString(currencyKey, currency.code);
 }

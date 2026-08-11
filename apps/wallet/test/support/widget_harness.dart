@@ -59,6 +59,17 @@ Future<void> pumpLocalized(
   }
 }
 
+/// Grows the test surface so a long page is built in full.
+///
+/// The default 800x600 window leaves anything below the fold unbuilt — a
+/// `ListView` is lazy — so `find.text` misses it and the failure reads as
+/// missing content rather than an off-screen one.
+void useTallSurface(WidgetTester tester) {
+  tester.view.physicalSize = const Size(1000, 2400);
+  tester.view.devicePixelRatio = 1.0;
+  addTearDown(tester.view.reset);
+}
+
 /// For a widget that builds its own MaterialApp, which `App` does.
 Future<void> pumpApp(WidgetTester tester, Widget app) async {
   SharedPreferences.setMockInitialValues({});

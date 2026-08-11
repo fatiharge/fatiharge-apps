@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:wallet/config/injectable.dart';
 import 'package:wallet/features/about/domain/app_version_port.dart';
 import 'package:wallet/features/about/presentation/page/about_page.dart';
+import 'package:wallet/features/finance/domain/models/currency.dart';
 import 'package:wallet/features/settings/application/settings_cubit.dart';
 import 'package:wallet/features/settings/domain/repository/settings_repository.dart';
 import 'package:wallet/features/settings/domain/theme_preference.dart';
@@ -13,26 +14,33 @@ import 'package:wallet/features/settings/presentation/views/language_section.dar
 import 'package:wallet/features/startup/presentation/splash_view.dart';
 import 'package:wallet/theme/app_mark.dart';
 
+import '../../../support/in_memory_repositories.dart';
+
 import '../../../support/widget_harness.dart';
 
 void main() {
-  late _RecordingSettings settings;
+  late FakeSettingsRepository settings;
 
   setUp(() async {
-    settings = _RecordingSettings();
+    settings = FakeSettingsRepository();
     await getIt.reset();
-    getIt.registerSingleton<AppVersionPort>(_StubVersion());
+    getIt
+      ..registerSingleton<AppVersionPort>(_StubVersion())
+      ..registerSingleton<SettingsRepository>(settings);
   });
 
   tearDown(getIt.reset);
 
-  Future<void> pumpSettings(WidgetTester tester) => pumpLocalized(
-    tester,
-    BlocProvider(
-      create: (_) => SettingsCubit(settings),
-      child: const SettingsPage(),
-    ),
-  );
+  Future<void> pumpSettings(WidgetTester tester) {
+    useTallSurface(tester);
+    return pumpLocalized(
+      tester,
+      BlocProvider(
+        create: (_) => SettingsCubit(settings),
+        child: const SettingsPage(),
+      ),
+    );
+  }
 
   group('SettingsPage', () {
     testWidgets('offers every theme, with the stored one checked', (
@@ -44,7 +52,8 @@ void main() {
       expect(find.text('Sistem'), findsOneWidget);
       expect(find.text('Açık'), findsOneWidget);
       expect(find.text('Koyu'), findsOneWidget);
-      expect(find.byIcon(Icons.check), findsNWidgets(2)); // theme + language
+      // theme + language + currency
+      expect(find.byIcon(Icons.check), findsNWidgets(3));
     });
 
     testWidgets('choosing a theme writes it through', (tester) async {
@@ -93,6 +102,38 @@ void main() {
       await pumpSettings(tester);
 
       expect(find.text('Kategoriler'), findsOneWidget);
+    });
+
+    testWidgets('offers a default currency, with the stored one checked', (
+      tester,
+    ) async {
+      settings.currency = Currency.euro;
+      await pumpSettings(tester);
+
+      ListTile tileFor(String label) => tester.widget<ListTile>(
+        find.ancestor(of: find.text(label), matching: find.byType(ListTile)),
+      );
+
+      expect(tileFor('€  EUR').selected, isTrue);
+      expect(tileFor('₺  TRY').selected, isFalse);
+    });
+
+    testWidgets('picking a currency writes it through', (tester) async {
+      await pumpSettings(tester);
+
+      await tester.tap(find.text(r'$  USD'));
+      await tester.pumpAndSettle();
+
+      expect(settings.currency, Currency.usDollar);
+    });
+
+    testWidgets('says that existing records are not touched', (tester) async {
+      await pumpSettings(tester);
+
+      expect(
+        find.textContaining('kaydedildikleri para biriminde kalır'),
+        findsOneWidget,
+      );
     });
   });
 
@@ -161,15 +202,4 @@ class _StubVersion implements AppVersionPort {
   @override
   Future<AppVersion> read() async =>
       const AppVersion(name: '0.3.1', build: '7');
-}
-
-class _RecordingSettings implements SettingsRepository {
-  ThemePreference theme = ThemePreference.system;
-
-  @override
-  ThemePreference readTheme() => theme;
-
-  @override
-  Future<void> writeTheme(ThemePreference preference) async =>
-      theme = preference;
 }

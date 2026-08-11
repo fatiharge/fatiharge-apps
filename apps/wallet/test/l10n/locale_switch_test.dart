@@ -39,6 +39,7 @@ void main() {
   testWidgets('the settings page redraws itself in the language just picked', (
     tester,
   ) async {
+    useTallSurface(tester);
     await bootToDashboard(tester);
     await tester.tap(find.byIcon(Icons.settings_outlined));
     await tester.pumpAndSettle();
@@ -64,6 +65,7 @@ void main() {
   testWidgets('the theme options redraw too, though nothing rebuilds them', (
     tester,
   ) async {
+    useTallSurface(tester);
     await bootToDashboard(tester);
     await tester.tap(find.byIcon(Icons.settings_outlined));
     await tester.pumpAndSettle();
