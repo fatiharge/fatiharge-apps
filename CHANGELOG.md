@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2026-08-11
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`wallet` - `v0.2.6+10`](#wallet---v02610)
+
+---
+
+#### `wallet` - `v0.2.6+10`
+
+ - **FIX**(wallet): make every screen follow the selected language ([#47](https://github.com/fatiharge/fatiharge-apps/issues/47)). ([28fbccca](https://github.com/fatiharge/fatiharge-apps/commit/28fbcccaeb0fd2bf7dd9010474fb1b4bedb17ac9))
+ - **FEAT**(wallet): move the theme onto the Warizo palette ([#46](https://github.com/fatiharge/fatiharge-apps/issues/46)). ([3d29335b](https://github.com/fatiharge/fatiharge-apps/commit/3d29335bcb9152349b945ce71cc5455e7081367d))
+
+
 ## 2026-07-29
 
 ### Changes

@@ -1,3 +1,8 @@
+## 0.2.6+10
+
+ - **FIX**(wallet): make every screen follow the selected language ([#47](https://github.com/fatiharge/fatiharge-apps/issues/47)). ([28fbccca](https://github.com/fatiharge/fatiharge-apps/commit/28fbcccaeb0fd2bf7dd9010474fb1b4bedb17ac9))
+ - **FEAT**(wallet): move the theme onto the Warizo palette ([#46](https://github.com/fatiharge/fatiharge-apps/issues/46)). ([3d29335b](https://github.com/fatiharge/fatiharge-apps/commit/3d29335bcb9152349b945ce71cc5455e7081367d))
+
 ## 0.2.5+9
 
  - **FEAT**(wallet): brand the native launch screen and close two layer leaks ([#39](https://github.com/fatiharge/fatiharge-apps/issues/39)). ([7eed55ff](https://github.com/fatiharge/fatiharge-apps/commit/7eed55ffcec870654dcdcd24265dded5477c224b))
