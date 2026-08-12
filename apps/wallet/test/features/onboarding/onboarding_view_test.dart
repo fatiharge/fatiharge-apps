@@ -5,6 +5,7 @@ import 'package:wallet/config/injectable.dart';
 import 'package:wallet/features/onboarding/application/onboarding_state.dart';
 import 'package:wallet/features/onboarding/presentation/views/onboarding_view.dart';
 import 'package:wallet/features/settings/application/settings_cubit.dart';
+import 'package:wallet/features/settings/application/summary_reminder_controller.dart';
 import 'package:wallet/features/settings/domain/repository/settings_repository.dart';
 
 import '../../support/finance_fixtures.dart';
@@ -17,7 +18,11 @@ void main() {
   setUp(() async {
     settings = FakeSettingsRepository(onboarded: false);
     await getIt.reset();
-    getIt.registerSingleton<SettingsRepository>(settings);
+    getIt
+      ..registerSingleton<SettingsRepository>(settings)
+      ..registerSingleton<SummaryReminderController>(
+        SummaryReminderController(settings, FakeSummaryNotifier()),
+      );
   });
 
   tearDown(getIt.reset);
@@ -63,7 +68,7 @@ void main() {
     await pumpStep(tester, OnboardingStep.welcome);
 
     expect(find.text("Warizo'ya hoş geldin"), findsOneWidget);
-    expect(find.text('Adım 1/5'), findsOneWidget);
+    expect(find.text('Adım 1/6'), findsOneWidget);
     expect(find.text('Geri'), findsNothing);
   });
 
@@ -114,7 +119,7 @@ void main() {
   });
 
   testWidgets('the last step finishes rather than advancing', (tester) async {
-    await pumpStep(tester, OnboardingStep.categories);
+    await pumpStep(tester, OnboardingStep.reminder);
 
     expect(find.text('Başla'), findsOneWidget);
     expect(find.text('İleri'), findsNothing);

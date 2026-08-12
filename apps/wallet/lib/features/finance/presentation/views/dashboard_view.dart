@@ -30,6 +30,7 @@ class DashboardView extends StatelessWidget {
     required this.onNextMonth,
     required this.onCurrencySelected,
     required this.onAddTransaction,
+    this.reminderNudge,
     super.key,
   });
 
@@ -46,6 +47,10 @@ class DashboardView extends StatelessWidget {
   final VoidCallback? onNextMonth;
   final ValueChanged<Currency> onCurrencySelected;
   final VoidCallback onAddTransaction;
+
+  /// Offered when the month has numbers and the reminder is not already on.
+  /// Passed in rather than decided here — a view does not read preferences.
+  final Widget? reminderNudge;
 
   List<BudgetStatus> get _exceeded =>
       budgetStatuses.where((status) => status.isExceeded).toList();

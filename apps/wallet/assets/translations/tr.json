@@ -29,7 +29,10 @@
     "next": "İleri",
     "back": "Geri",
     "start": "Başla",
-    "step": "Adım {current}/{total}"
+    "step": "Adım {current}/{total}",
+    "reminder_title": "Hatırlatalım mı?",
+    "reminder_message": "Ayda bir, geçen ayın özeti hazır olduğunda. Sonradan ayarlardan değiştirebilirsin.",
+    "reminder_not_now": "Şimdi değil"
   },
   "dashboard": {
     "net_balance": "Bu ayki bakiye",
@@ -40,7 +43,10 @@
     "no_expenses": "Bu ay gider yok",
     "empty_title": "Henüz kayıt yok",
     "empty_month": "Bu ay kayıt yok",
-    "empty_message": "İlk gelir veya giderini ekleyerek başla."
+    "empty_message": "İlk gelir veya giderini ekleyerek başla.",
+    "reminder_nudge": "Her ayın özeti hazır olduğunda haber verelim mi?",
+    "reminder_nudge_accept": "Evet, hatırlat",
+    "reminder_nudge_dismiss": "Hayır, teşekkürler"
   },
   "history": {
     "filter": "Filtrele",
@@ -95,7 +101,16 @@
     },
     "language_system": "Cihaz dili",
     "currency": "Varsayılan para birimi",
-    "currency_hint": "Yeni kayıtlar bununla açılır. Mevcut kayıtlar kaydedildikleri para biriminde kalır."
+    "currency_hint": "Yeni kayıtlar bununla açılır. Mevcut kayıtlar kaydedildikleri para biriminde kalır.",
+    "reminder": "Aylık özet",
+    "reminder_hint": "Ayda bir hatırlatma — geçen ayın özeti hazır olduğunda.",
+    "reminder_enabled": "Hatırlat",
+    "reminder_day": "Ayın günü",
+    "reminder_blocked": "Warizo için bildirimler kapalı. Sistem ayarlarından açabilirsin.",
+    "reminder_open_settings": "Ayarları aç",
+    "notification_title": "Warizo",
+    "notification_body": "Ayın özeti hazır",
+    "notification_channel": "Aylık özet"
   },
   "about": {
     "title": "Hakkında",

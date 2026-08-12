@@ -29,7 +29,10 @@
     "next": "Next",
     "back": "Back",
     "start": "Get started",
-    "step": "Step {current} of {total}"
+    "step": "Step {current} of {total}",
+    "reminder_title": "Shall we remind you?",
+    "reminder_message": "Once a month, when the summary of the month just gone is ready. You can change this later in settings.",
+    "reminder_not_now": "Not now"
   },
   "dashboard": {
     "net_balance": "Balance this month",
@@ -40,7 +43,10 @@
     "no_expenses": "No expenses this month",
     "empty_title": "Nothing recorded yet",
     "empty_month": "Nothing this month",
-    "empty_message": "Start by adding your first income or expense."
+    "empty_message": "Start by adding your first income or expense.",
+    "reminder_nudge": "Want a reminder when each month's summary is ready?",
+    "reminder_nudge_accept": "Yes, remind me",
+    "reminder_nudge_dismiss": "No thanks"
   },
   "history": {
     "filter": "Filter",
@@ -95,7 +101,16 @@
     },
     "language_system": "Device language",
     "currency": "Default currency",
-    "currency_hint": "New records start here. Existing ones keep the currency they were saved in."
+    "currency_hint": "New records start here. Existing ones keep the currency they were saved in.",
+    "reminder": "Monthly summary",
+    "reminder_hint": "One reminder a month, when the summary of the month just gone is ready.",
+    "reminder_enabled": "Remind me",
+    "reminder_day": "Day of the month",
+    "reminder_blocked": "Notifications are off for Warizo. Turn them on in system settings.",
+    "reminder_open_settings": "Open settings",
+    "notification_title": "Warizo",
+    "notification_body": "Your monthly summary is ready",
+    "notification_channel": "Monthly summary"
   },
   "about": {
     "title": "About",

@@ -7,7 +7,9 @@ import 'package:wallet/features/finance/domain/models/money_transaction.dart';
 import 'package:wallet/features/finance/domain/repository/budget_repository.dart';
 import 'package:wallet/features/finance/domain/repository/category_repository.dart';
 import 'package:wallet/features/finance/domain/repository/transaction_repository.dart';
+import 'package:wallet/features/settings/domain/monthly_summary_reminder.dart';
 import 'package:wallet/features/settings/domain/repository/settings_repository.dart';
+import 'package:wallet/features/settings/domain/summary_notifier.dart';
 import 'package:wallet/features/settings/domain/theme_preference.dart';
 
 /// Shared stream/CRUD behaviour for the fakes below.
@@ -153,4 +155,81 @@ class FakeSettingsRepository implements SettingsRepository {
 
   @override
   Future<void> completeOnboarding() async => onboarded = true;
+
+  MonthlySummaryReminder reminder = MonthlySummaryReminder.off;
+  bool notificationPromptShown = false;
+  int nudges = 0;
+  bool nudgeDismissed = false;
+
+  @override
+  MonthlySummaryReminder readSummaryReminder() => reminder;
+
+  @override
+  Future<void> writeSummaryReminder(MonthlySummaryReminder value) async =>
+      reminder = value;
+
+  @override
+  bool wasNotificationPromptShown() => notificationPromptShown;
+
+  @override
+  Future<void> markNotificationPromptShown() async =>
+      notificationPromptShown = true;
+
+  @override
+  int summaryNudgeCount() => nudges;
+
+  @override
+  Future<void> recordSummaryNudge() async => nudges++;
+
+  @override
+  bool isSummaryNudgeDismissed() => nudgeDismissed;
+
+  @override
+  Future<void> dismissSummaryNudge() async => nudgeDismissed = true;
+}
+
+/// Records what the app asked the platform for, so the permission dance can be
+/// tested without one.
+class FakeSummaryNotifier implements SummaryNotifier {
+  FakeSummaryNotifier({this.permitted = false, this.grantOnRequest = true});
+
+  bool permitted;
+
+  /// What the platform prompt will answer.
+  bool grantOnRequest;
+
+  int promptCount = 0;
+  int? scheduledDay;
+  String? scheduledBody;
+  int cancelCount = 0;
+  int settingsOpened = 0;
+
+  @override
+  Future<bool> hasPermission() async => permitted;
+
+  @override
+  Future<bool> requestPermission() async {
+    promptCount++;
+    return permitted = grantOnRequest;
+  }
+
+  @override
+  Future<void> schedule({
+    required int day,
+    required String title,
+    required String body,
+    required String channelName,
+  }) async {
+    scheduledDay = day;
+    scheduledBody = body;
+  }
+
+  @override
+  Future<void> cancel() async {
+    cancelCount++;
+    scheduledDay = null;
+  }
+
+  @override
+  Future<void> openSystemSettings() async => settingsOpened++;
 }

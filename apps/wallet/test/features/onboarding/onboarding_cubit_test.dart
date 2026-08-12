@@ -43,11 +43,11 @@ void main() {
     for (var i = 0; i < OnboardingStep.values.length + 2; i++) {
       cubit.next();
     }
-    expect(cubit.state.step, OnboardingStep.categories);
+    expect(cubit.state.step, OnboardingStep.reminder);
     expect(cubit.state.isLast, isTrue);
 
     cubit.back();
-    expect(cubit.state.step, OnboardingStep.currency);
+    expect(cubit.state.step, OnboardingStep.categories);
   });
 
   test('archives what was unticked and leaves the rest alone', () async {

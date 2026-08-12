@@ -5,7 +5,14 @@ part 'onboarding_state.freezed.dart';
 
 /// The steps, in order. Language before the rest so everything after it is
 /// read in the language just picked.
-enum OnboardingStep { welcome, language, theme, currency, categories }
+enum OnboardingStep {
+  welcome,
+  language,
+  theme,
+  currency,
+  categories,
+  reminder,
+}
 
 @freezed
 abstract class OnboardingState with _$OnboardingState {

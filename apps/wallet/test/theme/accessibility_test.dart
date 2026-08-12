@@ -13,6 +13,7 @@ import 'package:wallet/features/finance/presentation/views/history_view.dart';
 import 'package:wallet/features/onboarding/application/onboarding_state.dart';
 import 'package:wallet/features/onboarding/presentation/views/onboarding_view.dart';
 import 'package:wallet/features/settings/application/settings_cubit.dart';
+import 'package:wallet/features/settings/application/summary_reminder_controller.dart';
 import 'package:wallet/features/settings/domain/repository/settings_repository.dart';
 
 import '../support/finance_fixtures.dart';
@@ -31,7 +32,11 @@ void main() {
   setUp(() async {
     settings = FakeSettingsRepository();
     await getIt.reset();
-    getIt.registerSingleton<SettingsRepository>(settings);
+    getIt
+      ..registerSingleton<SettingsRepository>(settings)
+      ..registerSingleton<SummaryReminderController>(
+        SummaryReminderController(settings, FakeSummaryNotifier()),
+      );
   });
 
   tearDown(getIt.reset);

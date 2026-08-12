@@ -1,6 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wallet/features/finance/domain/models/currency.dart';
 import 'package:wallet/features/finance/domain/rules/regional_currency.dart';
+import 'package:wallet/features/settings/domain/monthly_summary_reminder.dart';
 import 'package:wallet/features/settings/domain/repository/settings_repository.dart';
 import 'package:wallet/features/settings/domain/theme_preference.dart';
 
@@ -21,6 +22,11 @@ class SettingsRepositoryImpl implements SettingsRepository {
   static const String themeKey = 'settings.theme';
   static const String currencyKey = 'settings.currency';
   static const String onboardedKey = 'settings.onboarded';
+  static const String reminderEnabledKey = 'settings.reminder.enabled';
+  static const String reminderDayKey = 'settings.reminder.day';
+  static const String notificationPromptKey = 'settings.reminder.prompted';
+  static const String nudgeCountKey = 'settings.reminder.nudges';
+  static const String nudgeDismissedKey = 'settings.reminder.nudgeOff';
 
   final SharedPreferences _preferences;
 
@@ -55,4 +61,39 @@ class SettingsRepositoryImpl implements SettingsRepository {
 
   @override
   Future<void> completeOnboarding() => _preferences.setBool(onboardedKey, true);
+
+  @override
+  MonthlySummaryReminder readSummaryReminder() => MonthlySummaryReminder(
+    enabled: _preferences.getBool(reminderEnabledKey) ?? false,
+    day: _preferences.getInt(reminderDayKey) ?? MonthlySummaryReminder.off.day,
+  );
+
+  @override
+  Future<void> writeSummaryReminder(MonthlySummaryReminder reminder) async {
+    await _preferences.setBool(reminderEnabledKey, reminder.enabled);
+    await _preferences.setInt(reminderDayKey, reminder.day);
+  }
+
+  @override
+  bool wasNotificationPromptShown() =>
+      _preferences.getBool(notificationPromptKey) ?? false;
+
+  @override
+  Future<void> markNotificationPromptShown() =>
+      _preferences.setBool(notificationPromptKey, true);
+
+  @override
+  int summaryNudgeCount() => _preferences.getInt(nudgeCountKey) ?? 0;
+
+  @override
+  Future<void> recordSummaryNudge() =>
+      _preferences.setInt(nudgeCountKey, summaryNudgeCount() + 1);
+
+  @override
+  bool isSummaryNudgeDismissed() =>
+      _preferences.getBool(nudgeDismissedKey) ?? false;
+
+  @override
+  Future<void> dismissSummaryNudge() =>
+      _preferences.setBool(nudgeDismissedKey, true);
 }

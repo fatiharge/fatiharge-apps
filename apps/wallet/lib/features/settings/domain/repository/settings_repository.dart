@@ -1,4 +1,5 @@
 import 'package:wallet/features/finance/domain/models/currency.dart';
+import 'package:wallet/features/settings/domain/monthly_summary_reminder.dart';
 import 'package:wallet/features/settings/domain/theme_preference.dart';
 
 /// Storage contract for the app's scalar preferences.
@@ -26,4 +27,33 @@ abstract interface class SettingsRepository {
   bool isOnboarded();
 
   Future<void> completeOnboarding();
+
+  /// The monthly summary reminder: whether it is on, and which day of the
+  /// month it arrives. The day is stored as chosen, not as clamped — see
+  /// `SummarySchedule`.
+  MonthlySummaryReminder readSummaryReminder();
+
+  Future<void> writeSummaryReminder(MonthlySummaryReminder reminder);
+
+  /// Whether the platform's one-shot notification prompt has been put in front
+  /// of the user yet.
+  ///
+  /// Separate from a denied permission on purpose. Someone who said no to
+  /// *our* question can be asked again, because the platform prompt was never
+  /// spent; someone who denied the platform prompt cannot, and can only be
+  /// sent to system settings.
+  bool wasNotificationPromptShown();
+
+  Future<void> markNotificationPromptShown();
+
+  /// How many times the dashboard has offered the reminder to someone who does
+  /// not have it on, so the offer can stop rather than nag.
+  int summaryNudgeCount();
+
+  Future<void> recordSummaryNudge();
+
+  /// Set when the user closes the offer for good.
+  bool isSummaryNudgeDismissed();
+
+  Future<void> dismissSummaryNudge();
 }

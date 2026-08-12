@@ -9,6 +9,8 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:flutter_local_notifications/flutter_local_notifications.dart'
+    as _i163;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:wallet/config/modules/storage_module.dart' as _i253;
@@ -31,8 +33,13 @@ import 'package:wallet/features/finance/domain/repository/transaction_repository
     as _i616;
 import 'package:wallet/features/onboarding/application/onboarding_cubit.dart'
     as _i92;
+import 'package:wallet/features/settings/application/summary_reminder_controller.dart'
+    as _i337;
 import 'package:wallet/features/settings/domain/repository/settings_repository.dart'
     as _i97;
+import 'package:wallet/features/settings/domain/summary_notifier.dart' as _i839;
+import 'package:wallet/infrastructure/adapter/notification/summary_notifier_adapter.dart'
+    as _i131;
 import 'package:wallet/infrastructure/adapter/version/package_info_version_adapter.dart'
     as _i333;
 import 'package:wallet/infrastructure/repository/budget_repository_impl.dart'
@@ -75,6 +82,11 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i97.SettingsRepository>(),
       ),
     );
+    gh.lazySingleton<_i839.SummaryNotifier>(
+      () => _i131.SummaryNotifierAdapter(
+        gh<_i163.FlutterLocalNotificationsPlugin>(),
+      ),
+    );
     gh.factory<_i346.EntryCubit>(
       () => _i346.EntryCubit(
         gh<_i616.TransactionRepository>(),
@@ -103,6 +115,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i616.TransactionRepository>(),
         gh<_i270.CategoryRepository>(),
         gh<_i97.SettingsRepository>(),
+      ),
+    );
+    gh.factory<_i337.SummaryReminderController>(
+      () => _i337.SummaryReminderController(
+        gh<_i97.SettingsRepository>(),
+        gh<_i839.SummaryNotifier>(),
       ),
     );
     return this;

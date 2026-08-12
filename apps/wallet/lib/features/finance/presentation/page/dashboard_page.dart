@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +8,8 @@ import 'package:wallet/config/injectable.dart';
 import 'package:wallet/features/finance/application/dashboard/dashboard_cubit.dart';
 import 'package:wallet/features/finance/application/dashboard/dashboard_state.dart';
 import 'package:wallet/features/finance/presentation/views/dashboard_view.dart';
+import 'package:wallet/features/finance/presentation/views/reminder_nudge.dart';
+import 'package:wallet/features/settings/domain/repository/settings_repository.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 import 'package:wallet/route/app_router.gr.dart';
 
@@ -42,6 +46,7 @@ class DashboardPage extends StatelessWidget {
               child: CircularProgressIndicator(),
             ),
             DashboardReady() => DashboardView(
+              reminderNudge: _reminderNudge(context, state),
               period: state.period,
               currency: state.currency,
               availableCurrencies: state.availableCurrencies,
@@ -59,4 +64,58 @@ class DashboardPage extends StatelessWidget {
       ),
     ),
   );
+
+  /// The offer, or nothing.
+  ///
+  /// Withheld unless the month has numbers in it: "shall we remind you when
+  /// the summary is ready" only means something to someone who has just been
+  /// shown one. It also stops after a few showings and after being closed —
+  /// see [ReminderNudge.maxShowings].
+  Widget? _reminderNudge(BuildContext context, DashboardReady state) {
+    final settings = getIt<SettingsRepository>();
+
+    if (state.summary.isEmpty) return null;
+    if (settings.readSummaryReminder().enabled) return null;
+    if (settings.isSummaryNudgeDismissed()) return null;
+    if (settings.summaryNudgeCount() >= ReminderNudge.maxShowings) return null;
+
+    return _CountedNudge(settings: settings);
+  }
+}
+
+/// Records the showing once, when it is first built, rather than on every
+/// rebuild — a scroll or a theme change is not another offer.
+class _CountedNudge extends StatefulWidget {
+  const _CountedNudge({required this.settings});
+
+  final SettingsRepository settings;
+
+  @override
+  State<_CountedNudge> createState() => _CountedNudgeState();
+}
+
+class _CountedNudgeState extends State<_CountedNudge> {
+  bool _closed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    unawaited(widget.settings.recordSummaryNudge());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_closed) return const SizedBox.shrink();
+
+    return ReminderNudge(
+      onAccept: () async {
+        setState(() => _closed = true);
+        await context.router.push(const SettingsRoute());
+      },
+      onDismiss: () async {
+        setState(() => _closed = true);
+        await widget.settings.dismissSummaryNudge();
+      },
+    );
+  }
 }

@@ -71,6 +71,10 @@ void main() {
 
     await tester.tap(find.text('Hediye'));
     await tester.pumpAndSettle();
+
+    // One more step now: the reminder offer sits after the categories.
+    await tester.tap(find.text('İleri'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Başla'));
     await tester.pumpAndSettle();
 

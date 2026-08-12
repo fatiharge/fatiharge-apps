@@ -75,9 +75,12 @@ void main() {
   });
 
   test('every translation key has a generated LocaleKeys constant', () {
+    // Whitespace collapsed first: `dart format` wraps a long declaration
+    // after the `=`, and searching the raw text would then miss it and report
+    // a key that is in fact generated.
     final generated = File(
       'lib/generated/locale_keys.g.dart',
-    ).readAsStringSync();
+    ).readAsStringSync().replaceAll(RegExp(r'\s+'), ' ');
 
     final missing = expectedConstants(
       load('tr'),

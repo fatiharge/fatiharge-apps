@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:wallet/features/settings/application/settings_cubit.dart';
 import 'package:wallet/features/settings/presentation/views/currency_section.dart';
 import 'package:wallet/features/settings/presentation/views/language_section.dart';
+import 'package:wallet/features/settings/presentation/views/reminder_section.dart';
 import 'package:wallet/features/settings/presentation/views/theme_section.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 import 'package:wallet/route/app_router.gr.dart';
@@ -30,6 +31,7 @@ class SettingsPage extends StatelessWidget {
         _SectionLabel(context.tr(LocaleKeys.settings_currency)),
         _SectionHint(context.tr(LocaleKeys.settings_currency_hint)),
         const CurrencySection(),
+        const ReminderSettings(),
         const Divider(height: 32),
         ListTile(
           leading: const Icon(Icons.category_outlined),
