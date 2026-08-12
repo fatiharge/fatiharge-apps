@@ -9,6 +9,7 @@ import 'package:wallet/features/finance/domain/repository/category_repository.da
 import 'package:wallet/features/finance/domain/repository/transaction_repository.dart';
 import 'package:wallet/features/settings/domain/monthly_summary_reminder.dart';
 import 'package:wallet/features/settings/domain/repository/settings_repository.dart';
+import 'package:wallet/features/settings/domain/review_requester.dart';
 import 'package:wallet/features/settings/domain/summary_notifier.dart';
 import 'package:wallet/features/settings/domain/theme_preference.dart';
 
@@ -186,6 +187,21 @@ class FakeSettingsRepository implements SettingsRepository {
 
   @override
   Future<void> dismissSummaryNudge() async => nudgeDismissed = true;
+
+  DateTime? installed;
+  DateTime? reviewAskedAt;
+
+  @override
+  DateTime? installedAt() => installed;
+
+  @override
+  Future<void> recordInstall(DateTime at) async => installed = at;
+
+  @override
+  DateTime? lastReviewRequestAt() => reviewAskedAt;
+
+  @override
+  Future<void> recordReviewRequest(DateTime at) async => reviewAskedAt = at;
 }
 
 /// Records what the app asked the platform for, so the permission dance can be
@@ -232,4 +248,17 @@ class FakeSummaryNotifier implements SummaryNotifier {
 
   @override
   Future<void> openSystemSettings() async => settingsOpened++;
+}
+
+/// The store dialog, which never appears in a test and often does not on a
+/// device either — the store decides.
+class FakeReviewRequester implements ReviewRequester {
+  bool available = true;
+  int requests = 0;
+
+  @override
+  Future<bool> isAvailable() async => available;
+
+  @override
+  Future<void> request() async => requests++;
 }

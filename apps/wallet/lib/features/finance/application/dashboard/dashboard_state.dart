@@ -36,6 +36,10 @@ sealed class DashboardState with _$DashboardState {
     /// Category lookup by id, archived ones included.
     required Map<String, Category> categories,
 
+    /// Every transaction on record, not just this month's — the review prompt
+    /// asks how much the app has been used, which a single month cannot say.
+    required int transactionCount,
+
     /// False once the shown month has caught up with the current one.
     @Default(false) bool canShowNextMonth,
   }) = DashboardReady;

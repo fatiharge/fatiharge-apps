@@ -27,6 +27,8 @@ class SettingsRepositoryImpl implements SettingsRepository {
   static const String notificationPromptKey = 'settings.reminder.prompted';
   static const String nudgeCountKey = 'settings.reminder.nudges';
   static const String nudgeDismissedKey = 'settings.reminder.nudgeOff';
+  static const String installedAtKey = 'settings.installedAt';
+  static const String reviewAskedAtKey = 'settings.reviewAskedAt';
 
   final SharedPreferences _preferences;
 
@@ -96,4 +98,27 @@ class SettingsRepositoryImpl implements SettingsRepository {
   @override
   Future<void> dismissSummaryNudge() =>
       _preferences.setBool(nudgeDismissedKey, true);
+
+  @override
+  DateTime? installedAt() => _readDate(installedAtKey);
+
+  @override
+  Future<void> recordInstall(DateTime at) => _writeDate(installedAtKey, at);
+
+  @override
+  DateTime? lastReviewRequestAt() => _readDate(reviewAskedAtKey);
+
+  @override
+  Future<void> recordReviewRequest(DateTime at) =>
+      _writeDate(reviewAskedAtKey, at);
+
+  /// Milliseconds rather than an ISO string: shared_preferences has no date
+  /// type, and an int cannot be half-parsed into a wrong day.
+  DateTime? _readDate(String key) {
+    final millis = _preferences.getInt(key);
+    return millis == null ? null : DateTime.fromMillisecondsSinceEpoch(millis);
+  }
+
+  Future<void> _writeDate(String key, DateTime at) =>
+      _preferences.setInt(key, at.millisecondsSinceEpoch);
 }

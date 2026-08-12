@@ -18,10 +18,12 @@ class SummaryNotifierAdapter implements SummaryNotifier {
 
   final FlutterLocalNotificationsPlugin _plugin;
 
-  bool _timeZonesLoaded = false;
+  bool _prepared = false;
 
   @override
   Future<bool> requestPermission() async {
+    await _prepare();
+
     final ios = _plugin
         .resolvePlatformSpecificImplementation<
           IOSFlutterLocalNotificationsPlugin
@@ -58,8 +60,8 @@ class SummaryNotifierAdapter implements SummaryNotifier {
     required String body,
     required String channelName,
   }) async {
+    await _prepare();
     await cancel();
-    await _loadTimeZones();
 
     final occurrences = SummarySchedule.occurrencesAfter(
       DateTime.now(),
@@ -88,12 +90,29 @@ class SummaryNotifierAdapter implements SummaryNotifier {
   Future<void> openSystemSettings() =>
       AppSettings.openAppSettings(type: AppSettingsType.notification);
 
-  /// The database is several hundred kilobytes, so it is loaded the first time
-  /// something is actually scheduled rather than at startup.
-  Future<void> _loadTimeZones() async {
-    if (_timeZonesLoaded) return;
+  /// Initialises the plugin and loads the timezone database, once, the first
+  /// time either is actually needed.
+  ///
+  /// `zonedSchedule` silently does nothing on a plugin that was never
+  /// initialised, and without the timezone database every scheduled time is
+  /// read as UTC — both are quiet failures, which is why this is not left to
+  /// chance. Every request flag is off: they default to true, and would throw
+  /// iOS's one-shot permission prompt at whoever merely opened settings.
+  Future<void> _prepare() async {
+    if (_prepared) return;
+
+    await _plugin.initialize(
+      const InitializationSettings(
+        android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+        iOS: DarwinInitializationSettings(
+          requestAlertPermission: false,
+          requestBadgePermission: false,
+          requestSoundPermission: false,
+        ),
+      ),
+    );
     tz_data.initializeTimeZones();
-    _timeZonesLoaded = true;
+    _prepared = true;
   }
 
   /// The channel name is what Android shows in its own notification settings,

@@ -13,6 +13,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart'
     as _i163;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
+import 'package:wallet/config/modules/platform_module.dart' as _i673;
 import 'package:wallet/config/modules/storage_module.dart' as _i253;
 import 'package:wallet/features/about/domain/app_version_port.dart' as _i198;
 import 'package:wallet/features/finance/application/budget/budget_cubit.dart'
@@ -33,13 +34,18 @@ import 'package:wallet/features/finance/domain/repository/transaction_repository
     as _i616;
 import 'package:wallet/features/onboarding/application/onboarding_cubit.dart'
     as _i92;
+import 'package:wallet/features/settings/application/review_prompt.dart'
+    as _i153;
 import 'package:wallet/features/settings/application/summary_reminder_controller.dart'
     as _i337;
 import 'package:wallet/features/settings/domain/repository/settings_repository.dart'
     as _i97;
+import 'package:wallet/features/settings/domain/review_requester.dart' as _i247;
 import 'package:wallet/features/settings/domain/summary_notifier.dart' as _i839;
 import 'package:wallet/infrastructure/adapter/notification/summary_notifier_adapter.dart'
     as _i131;
+import 'package:wallet/infrastructure/adapter/review/review_requester_adapter.dart'
+    as _i343;
 import 'package:wallet/infrastructure/adapter/version/package_info_version_adapter.dart'
     as _i333;
 import 'package:wallet/infrastructure/repository/budget_repository_impl.dart'
@@ -57,13 +63,20 @@ extension GetItInjectableX on _i174.GetIt {
     _i526.EnvironmentFilter? environmentFilter,
   }) async {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
+    final platformModule = _$PlatformModule();
     final storageModule = _$StorageModule();
+    gh.singleton<_i163.FlutterLocalNotificationsPlugin>(
+      () => platformModule.notifications,
+    );
     await gh.singletonAsync<_i448.WalletStorage>(
       () => storageModule.storage,
       preResolve: true,
     );
     gh.lazySingleton<_i616.TransactionRepository>(
       () => _i1031.TransactionRepositoryImpl(gh<_i448.WalletStorage>()),
+    );
+    gh.lazySingleton<_i247.ReviewRequester>(
+      () => const _i343.ReviewRequesterAdapter(),
     );
     gh.lazySingleton<_i198.AppVersionPort>(
       () => _i333.PackageInfoVersionAdapter(),
@@ -80,6 +93,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i270.CategoryRepository>(),
         gh<_i469.BudgetRepository>(),
         gh<_i97.SettingsRepository>(),
+      ),
+    );
+    gh.factory<_i153.ReviewPrompt>(
+      () => _i153.ReviewPrompt(
+        gh<_i97.SettingsRepository>(),
+        gh<_i247.ReviewRequester>(),
       ),
     );
     gh.lazySingleton<_i839.SummaryNotifier>(
@@ -126,5 +145,7 @@ extension GetItInjectableX on _i174.GetIt {
     return this;
   }
 }
+
+class _$PlatformModule extends _i673.PlatformModule {}
 
 class _$StorageModule extends _i253.StorageModule {}

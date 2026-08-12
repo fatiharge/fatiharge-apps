@@ -9,8 +9,10 @@ import 'package:wallet/features/finance/domain/repository/budget_repository.dart
 import 'package:wallet/features/finance/domain/repository/category_repository.dart';
 import 'package:wallet/features/finance/domain/repository/transaction_repository.dart';
 import 'package:wallet/features/onboarding/application/onboarding_cubit.dart';
+import 'package:wallet/features/settings/application/review_prompt.dart';
 import 'package:wallet/features/settings/application/summary_reminder_controller.dart';
 import 'package:wallet/features/settings/domain/repository/settings_repository.dart';
+import 'package:wallet/features/settings/domain/review_requester.dart';
 import 'package:wallet/features/settings/domain/summary_notifier.dart';
 import 'package:wallet/features/settings/domain/theme_preference.dart';
 import 'package:wallet/infrastructure/adapter/bootstrap/bootstrap_adapter.dart';
@@ -58,6 +60,7 @@ Future<AppHarness> registerAppDependencies({
     onboarded: onboarded,
   );
   final notifier = FakeSummaryNotifier();
+  final reviewRequester = FakeReviewRequester();
   final now = clock ?? () => DateTime(2026, 7, 15);
 
   await getIt.reset();
@@ -69,6 +72,10 @@ Future<AppHarness> registerAppDependencies({
     ..registerSingleton<BudgetRepository>(budgets)
     ..registerSingleton<SettingsRepository>(settings)
     ..registerSingleton<SummaryNotifier>(notifier)
+    ..registerSingleton<ReviewRequester>(reviewRequester)
+    ..registerFactory<ReviewPrompt>(
+      () => ReviewPrompt(settings, reviewRequester, clock: now),
+    )
     ..registerSingleton<SummaryReminderController>(
       SummaryReminderController(settings, notifier),
     )

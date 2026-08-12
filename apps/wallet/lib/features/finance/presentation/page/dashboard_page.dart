@@ -9,6 +9,7 @@ import 'package:wallet/features/finance/application/dashboard/dashboard_cubit.da
 import 'package:wallet/features/finance/application/dashboard/dashboard_state.dart';
 import 'package:wallet/features/finance/presentation/views/dashboard_view.dart';
 import 'package:wallet/features/finance/presentation/views/reminder_nudge.dart';
+import 'package:wallet/features/settings/application/review_prompt.dart';
 import 'package:wallet/features/settings/domain/repository/settings_repository.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 import 'package:wallet/route/app_router.gr.dart';
@@ -38,7 +39,19 @@ class DashboardPage extends StatelessWidget {
           ),
         ],
       ),
-      body: BlocBuilder<DashboardCubit, DashboardState>(
+      body: BlocConsumer<DashboardCubit, DashboardState>(
+        // The review ask hangs off this rather than a timer or a launch count:
+        // a month with numbers on screen is the app having just done its job,
+        // which is the only moment worth spending the store's quota on.
+        listener: (context, state) {
+          if (state is! DashboardReady) return;
+          unawaited(
+            getIt<ReviewPrompt>().maybeAsk(
+              transactionCount: state.transactionCount,
+              viewingMonthWithData: !state.summary.isEmpty,
+            ),
+          );
+        },
         builder: (context, state) {
           final cubit = context.read<DashboardCubit>();
           return switch (state) {
