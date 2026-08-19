@@ -31,7 +31,7 @@ dependencies:
   easy_localization: ^3.0.8
   freezed_annotation: ^3.1.0
   intl: any
-  meta: any
+  meta: 1.19.0
 
   # Notifications. timezone is required by flutter_local_notifications for
   # scheduling — without an initialised database every scheduled time is UTC.
