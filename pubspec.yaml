@@ -14,7 +14,7 @@ workspace:
   - apps/wallet
 
 dev_dependencies:
-  melos: ^8.2.0
+  melos: ^8.3.0
   lint_kit:
     path: packages/lint_kit
 
