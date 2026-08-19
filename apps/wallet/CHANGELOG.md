@@ -1,3 +1,7 @@
+## 0.2.8+12
+
+ - **FEAT**(wallet): offer a monthly summary reminder ([#53](https://github.com/fatiharge/fatiharge-apps/issues/53)). ([de4b86b9](https://github.com/fatiharge/fatiharge-apps/commit/de4b86b9a736f0fe5bae71ddc31130ce9f10da71))
+
 ## 0.2.7+11
 
  - **FEAT**(wallet): walk first-run setup before the tabs ([#51](https://github.com/fatiharge/fatiharge-apps/issues/51)). ([e36f8232](https://github.com/fatiharge/fatiharge-apps/commit/e36f823231d091afbcfdd6e9e806c8169a6a7ed9))

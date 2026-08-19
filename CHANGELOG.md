@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2026-08-19
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`wallet` - `v0.2.8+12`](#wallet---v02812)
+
+---
+
+#### `wallet` - `v0.2.8+12`
+
+ - **FEAT**(wallet): offer a monthly summary reminder ([#53](https://github.com/fatiharge/fatiharge-apps/issues/53)). ([de4b86b9](https://github.com/fatiharge/fatiharge-apps/commit/de4b86b9a736f0fe5bae71ddc31130ce9f10da71))
+
+
 ## 2026-08-11
 
 ### Changes
