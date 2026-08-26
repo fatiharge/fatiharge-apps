@@ -1,0 +1,60 @@
+# Deployed by the release workflow, which copies this file to the server and
+# supplies MOTTO_IMAGE as an immutable digest. Everything environment-specific
+# comes from the .env file that lives on the server and is never in this
+# repository.
+
+name: motto-${MOTTO_ENV}
+
+services:
+  api:
+    image: ${MOTTO_IMAGE}
+    restart: unless-stopped
+    environment:
+      QUARKUS_PROFILE: ${MOTTO_PROFILE}
+      QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://db:5432/motto
+      QUARKUS_DATASOURCE_USERNAME: motto
+      QUARKUS_DATASOURCE_PASSWORD: ${MOTTO_DB_PASSWORD}
+      MP_JWT_VERIFY_PUBLICKEY: ${MOTTO_JWT_PUBLIC_KEY}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - proxy
+      - internal
+    labels:
+      - traefik.enable=true
+      # Named explicitly because this container sits on two networks and Traefik
+      # would otherwise have to guess which address to route to.
+      - traefik.docker.network=${PROXY_NETWORK}
+      - traefik.http.routers.motto-${MOTTO_ENV}.rule=Host(`${MOTTO_HOST}`)
+      - traefik.http.routers.motto-${MOTTO_ENV}.entrypoints=${TRAEFIK_ENTRYPOINT}
+      - traefik.http.routers.motto-${MOTTO_ENV}.tls.certresolver=${TRAEFIK_CERTRESOLVER}
+      - traefik.http.services.motto-${MOTTO_ENV}.loadbalancer.server.port=8080
+
+  db:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: motto
+      POSTGRES_USER: motto
+      POSTGRES_PASSWORD: ${MOTTO_DB_PASSWORD}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U motto -d motto"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    # No proxy network, no published port: the database is reachable only from
+    # the service that owns it.
+    networks:
+      - internal
+
+networks:
+  proxy:
+    external: true
+    name: ${PROXY_NETWORK}
+  internal:
+
+volumes:
+  db-data:
