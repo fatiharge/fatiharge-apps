@@ -1,20 +1,27 @@
 # Deployed by the release workflow, which copies this file to the server and
-# supplies MOTTO_IMAGE as an immutable digest. Everything environment-specific
-# comes from the .env file that lives on the server and is never in this
-# repository.
+# rewrites MOTTO_IMAGE to the digest it just built. Everything environment
+# specific comes from the .env beside it, which lives only on the server.
+#
+# The proxy settings match what already runs on that box: the reverse-proxy
+# network, the websecure entrypoint and the myresolver certificate resolver.
+# They stay overridable because the day they change, editing one .env beats
+# editing every service.
 
 name: motto-${MOTTO_ENV}
 
 services:
   api:
     image: ${MOTTO_IMAGE}
+    container_name: motto-${MOTTO_ENV}-api
     restart: unless-stopped
     environment:
       QUARKUS_PROFILE: ${MOTTO_PROFILE}
       QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://db:5432/motto
       QUARKUS_DATASOURCE_USERNAME: motto
       QUARKUS_DATASOURCE_PASSWORD: ${MOTTO_DB_PASSWORD}
-      MP_JWT_VERIFY_PUBLICKEY: ${MOTTO_JWT_PUBLIC_KEY}
+      # Empty until auth is deployed. Nothing here is authenticated yet, so an
+      # unset key costs a warning at startup and nothing else.
+      MP_JWT_VERIFY_PUBLICKEY: ${MOTTO_JWT_PUBLIC_KEY:-}
     depends_on:
       db:
         condition: service_healthy
@@ -23,23 +30,31 @@ services:
       - internal
     labels:
       - traefik.enable=true
-      # Named explicitly because this container sits on two networks and Traefik
-      # would otherwise have to guess which address to route to.
-      - traefik.docker.network=${PROXY_NETWORK}
+      # Named explicitly: this container sits on two networks and Traefik would
+      # otherwise have to guess which address to route to.
+      - traefik.docker.network=${PROXY_NETWORK:-reverse-proxy}
       - traefik.http.routers.motto-${MOTTO_ENV}.rule=Host(`${MOTTO_HOST}`)
-      - traefik.http.routers.motto-${MOTTO_ENV}.entrypoints=${TRAEFIK_ENTRYPOINT}
-      - traefik.http.routers.motto-${MOTTO_ENV}.tls.certresolver=${TRAEFIK_CERTRESOLVER}
+      - traefik.http.routers.motto-${MOTTO_ENV}.entrypoints=${TRAEFIK_ENTRYPOINT:-websecure}
+      - traefik.http.routers.motto-${MOTTO_ENV}.tls.certresolver=${TRAEFIK_CERTRESOLVER:-myresolver}
       - traefik.http.services.motto-${MOTTO_ENV}.loadbalancer.server.port=8080
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   db:
     image: postgres:18-alpine
+    container_name: motto-${MOTTO_ENV}-db
     restart: unless-stopped
     environment:
       POSTGRES_DB: motto
       POSTGRES_USER: motto
       POSTGRES_PASSWORD: ${MOTTO_DB_PASSWORD}
     volumes:
-      - db-data:/var/lib/postgresql/data
+      # A path rather than a named volume, so a backup is a path someone can
+      # point pg_dump at without asking Docker where it put things.
+      - /var/lib/motto-${MOTTO_ENV}-db:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U motto -d motto"]
       interval: 5s
@@ -49,12 +64,14 @@ services:
     # the service that owns it.
     networks:
       - internal
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 networks:
   proxy:
     external: true
-    name: ${PROXY_NETWORK}
+    name: ${PROXY_NETWORK:-reverse-proxy}
   internal:
-
-volumes:
-  db-data:

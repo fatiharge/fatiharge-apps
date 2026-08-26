@@ -1,67 +1,111 @@
 # Deploying motto
 
-The release workflow copies `compose.yaml` next to a `.env` file on the server,
-rewrites `MOTTO_IMAGE` to the digest it just built, and runs
-`docker compose up -d`. Nothing else about the server is in this repository.
+The release workflow builds a native image, pushes it to `ghcr.io`, copies
+`compose.yaml` to the server, rewrites `MOTTO_IMAGE` to the digest it just
+built, and runs `docker compose up -d`. Nothing else about the server lives in
+this repository.
 
-## One-time setup, per environment
+Production is handed the image stage has been running, by digest, and never
+rebuilds. A rebuild from the same source produces a different artefact — a newer
+base layer, a newer compiler patch — and that is what makes "it worked on stage"
+stop meaning anything.
 
-Create a directory for the environment and put a `.env` beside it. Nothing in
-that file may ever be committed.
+## What the server already provides
 
+The box that serves `dafalabs.com` and `op.dafatek.com` runs Traefik on an
+external Docker network called `reverse-proxy`, terminating TLS on the
+`websecure` entrypoint with the `myresolver` certificate resolver.
+`compose.yaml` defaults to exactly those three, so the `.env` only names them if
+they ever change.
+
+## 1. DNS
+
+Both hosts point at the same server as everything else on it. Traefik cannot
+obtain a certificate before the record resolves, so this comes first.
+
+| Record | Type | Value |
+|---|---|---|
+| `motto.stage.dafalabs.com` | A | the server's address |
+| `motto.dafalabs.com` | A | the server's address |
+
+## 2. Directories on the server
+
+One per environment, owned by the deploy user:
+
+```bash
+sudo install -d -o "$USER" -g "$USER" /srv/motto-stage /srv/motto-prod
 ```
-/srv/motto-stage/.env
-/srv/motto-prod/.env
-```
+
+## 3. `.env`, one per environment
+
+Never committed, never leaves the server.
+
+`/srv/motto-stage/.env`:
 
 ```dotenv
-MOTTO_ENV=stage                    # names the compose project and the Traefik router
-MOTTO_PROFILE=stage                # selects the Quarkus profile
+MOTTO_ENV=stage
+MOTTO_PROFILE=stage
 MOTTO_HOST=motto.stage.dafalabs.com
-MOTTO_IMAGE=                       # rewritten by every deploy; leave empty
-MOTTO_DB_PASSWORD=<generate one>
-MOTTO_JWT_PUBLIC_KEY=<the auth service's public key, PEM, one line with \n>
-
-PROXY_NETWORK=<the docker network Traefik is attached to>
-TRAEFIK_ENTRYPOINT=websecure       # whatever this Traefik calls its TLS entrypoint
-TRAEFIK_CERTRESOLVER=letsencrypt   # whatever this Traefik calls its resolver
+MOTTO_IMAGE=
+MOTTO_DB_PASSWORD=<openssl rand -base64 24>
+MOTTO_JWT_PUBLIC_KEY=
 ```
 
-The last three are the ones that differ between installations, which is why they
-are read rather than assumed.
+`/srv/motto-prod/.env` is the same with `prod`, `prod`,
+`motto.dafalabs.com`, and its own password.
 
-Point a DNS record at the server for each host before the first deploy, or
-Traefik will not be able to obtain a certificate.
+- `MOTTO_IMAGE` stays empty. Every deploy rewrites it.
+- `MOTTO_JWT_PUBLIC_KEY` stays empty until `auth` is deployed. Nothing in motto
+  is authenticated yet; an unset key costs a startup warning and nothing else.
+- `PROXY_NETWORK`, `TRAEFIK_ENTRYPOINT` and `TRAEFIK_CERTRESOLVER` only need a
+  line if the server's Traefik ever stops matching the defaults above.
 
-## What GitHub needs
+**A trap worth knowing:** Quarkus profiles do not inherit. A property written as
+`%prod.something` does **not** apply when `MOTTO_PROFILE=stage`. Anything both
+environments need goes in unprefixed.
 
-Repository secrets:
+## 4. `known_hosts`
+
+Pinned rather than scanned at deploy time: every CI run is a first connection,
+so accepting whatever answers would accept anything. SSH is not on port 22 here,
+so pass the real one:
+
+```bash
+ssh-keyscan -p <ssh-port> -H <host> 2>/dev/null
+```
+
+The whole output is the value of the `DEPLOY_KNOWN_HOSTS` secret.
+
+## 5. What GitHub needs
+
+Repository secrets — Settings → Secrets and variables → Actions → Secrets:
 
 | Secret | What it is |
 |---|---|
 | `DEPLOY_HOST` | the server |
-| `DEPLOY_USER` | a user that may only touch the compose directories — not root |
-| `DEPLOY_SSH_KEY` | that user's private key |
-| `DEPLOY_KNOWN_HOSTS` | output of `ssh-keyscan <host>`, so CI is not trusting whatever answers |
+| `DEPLOY_PORT` | its SSH port |
+| `DEPLOY_USER` | a user that may write the two compose directories and talk to Docker — not root |
+| `DEPLOY_SSH_KEY` | that user's private key, whole file including the header line |
+| `DEPLOY_KNOWN_HOSTS` | the output from step 4 |
 
-Repository variable:
+Repository variable — the same page, Variables tab:
 
 | Variable | What it does |
 |---|---|
-| `DEPLOY_ENABLED` | Set it to `true` when the server is ready. Until then every merge builds and pushes the image and stops, instead of failing at a deploy that cannot work yet. |
+| `DEPLOY_ENABLED` | `true` once the server is ready. Until then a merge builds and pushes the image and stops, instead of failing at a deploy that cannot work yet. |
 
-Per-environment variables, under GitHub → Settings → Environments (`stage` and
-`prod`):
+Environment variables — Settings → Environments, one environment named `stage`
+and one named `production`, each with:
 
-| Variable | Example |
-|---|---|
-| `DEPLOY_PATH` | `/srv/motto-stage` |
-| `SERVICE_HOST` | `motto.stage.dafalabs.com` |
+| Variable | `stage` | `production` |
+|---|---|---|
+| `DEPLOY_PATH` | `/srv/motto-stage` | `/srv/motto-prod` |
+| `SERVICE_HOST` | `motto.stage.dafalabs.com` | `motto.dafalabs.com` |
 
-Making `prod` a protected environment there is what turns promotion into a
+Adding a required reviewer to `production` there is what turns promotion into a
 decision rather than a button.
 
-## The image has to be pullable
+## 6. The image has to be pullable
 
 After the first release, set the `motto` package's visibility to public under
 GitHub → Packages. Packages start private even when their repository is public,
@@ -69,14 +113,13 @@ and a private one means the server needs its own registry credential — a secon
 standing secret for no benefit, since the image contains nothing the public
 repository does not already show.
 
-## Promoting
+## Order
 
-The release run prints the digest it pushed. Run **motto promote** and paste it.
-Nothing is rebuilt: production is handed the artefact stage has been running.
-
-## Why the image is a digest
-
-Stage runs an image; production runs *that* image, promoted by digest and never
-rebuilt. A rebuild produces a different artefact from the same source — a
-different base layer, a different compiler patch — and that is what makes "it
-worked in stage" stop meaning anything.
+1. Steps 1–5, then merge.
+2. The first merge builds the native image and pushes it. Deploy is skipped
+   while `DEPLOY_ENABLED` is unset — that first run is where the native build
+   gets proven.
+3. Make the package public, set `DEPLOY_ENABLED=true`, and re-run the release
+   workflow. That deploy is the first one that touches the server.
+4. Promote to production by running **motto promote** with the digest the
+   release run printed.

@@ -47,14 +47,16 @@ jobs:
         env:
           HOST: ${{ secrets.DEPLOY_HOST }}
           USER_NAME: ${{ secrets.DEPLOY_USER }}
+          PORT: ${{ secrets.DEPLOY_PORT }}
           TARGET: ${{ vars.DEPLOY_PATH }}
           DIGEST: ${{ inputs.image }}
           COMPOSE_FILE_PATH: ${{ inputs.compose-file }}
         run: |
           set -euo pipefail
-          scp -i ~/.ssh/deploy "$COMPOSE_FILE_PATH" "${USER_NAME}@${HOST}:${TARGET}/compose.yaml"
+          scp -i ~/.ssh/deploy -P "$PORT" -o BatchMode=yes \
+            "$COMPOSE_FILE_PATH" "${USER_NAME}@${HOST}:${TARGET}/compose.yaml"
 
-          ssh -i ~/.ssh/deploy "${USER_NAME}@${HOST}" bash -s <<EOF
+          ssh -i ~/.ssh/deploy -p "$PORT" -o BatchMode=yes "${USER_NAME}@${HOST}" bash -s <<EOF
             set -euo pipefail
             cd "${TARGET}"
             if grep -q '^MOTTO_IMAGE=' .env; then
@@ -64,6 +66,8 @@ jobs:
             fi
             docker compose pull
             docker compose up -d --remove-orphans
+            # Yesterday's image is still on disk and nothing references it.
+            docker image prune -f
           EOF
 
       # `up -d` returns as soon as the container starts, which is not the same
@@ -81,3 +85,9 @@ jobs:
           done
           echo "never reported healthy — the previous version is still running"
           exit 1
+
+      # The key is short-lived anyway, but leaving it on a runner that other
+      # steps could read is a habit worth not having.
+      - name: Remove the key
+        if: always()
+        run: rm -rf ~/.ssh
