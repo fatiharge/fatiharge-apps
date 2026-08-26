@@ -2,6 +2,12 @@ name: CI
 
 # Quality gate: formatting, static analysis and tests across the workspace.
 # Runs on PRs into main and on pushes to main.
+#
+# The work is filtered by path, the gate is not. A workflow skipped by a
+# top-level `paths:` filter reports no status at all, and a required check that
+# never reports blocks the pull request forever — so this always runs, decides
+# for itself what changed, and reports through a final job that is always
+# reached.
 
 on:
   pull_request:
@@ -17,8 +23,49 @@ permissions:
   contents: read
 
 jobs:
+  changes:
+    name: Detect changed areas
+    runs-on: ubuntu-latest
+    outputs:
+      dart: ${{ steps.filter.outputs.dart }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      # Everything outside these paths is treated as touching the Dart
+      # workspace. Erring towards running is deliberate: a needless run costs
+      # three minutes, a wrong skip lets a break onto main. `scripts/` counts as
+      # Dart work — the melos scripts call into it.
+      - name: Decide whether the Dart workspace is affected
+        id: filter
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            base="${{ github.event.pull_request.base.sha }}"
+          else
+            base="${{ github.event.before }}"
+          fi
+
+          if [ -z "$base" ] || [ "$base" = "0000000000000000000000000000000000000000" ]; then
+            echo "no usable base commit — running everything"
+            echo "dart=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          changed=$(git diff --name-only "$base" "${{ github.sha }}")
+          echo "changed files:"
+          echo "$changed"
+
+          if echo "$changed" | grep -qvE '^(services/|contracts/|architecture/)|\.md$'; then
+            echo "dart=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "dart=false" >> "$GITHUB_OUTPUT"
+          fi
+
   quality:
-    name: Analyze, format & test
+    name: Dart quality
+    needs: changes
+    if: needs.changes.outputs.dart == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -48,3 +95,26 @@ jobs:
 
       - name: Test & coverage floor
         run: melos run coverage:check
+
+  # This job's name is the one `main-protection` requires. It is reached on
+  # every run, including the ones where the Dart pipeline was skipped, so the
+  # required check always reports.
+  gate:
+    name: Analyze, format & test
+    needs: [changes, quality]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail only when something that ran failed
+        run: |
+          echo "changes: ${{ needs.changes.result }}"
+          echo "quality: ${{ needs.quality.result }}"
+
+          if [ "${{ needs.changes.result }}" != "success" ]; then
+            exit 1
+          fi
+
+          case "${{ needs.quality.result }}" in
+            success|skipped) exit 0 ;;
+            *) exit 1 ;;
+          esac
