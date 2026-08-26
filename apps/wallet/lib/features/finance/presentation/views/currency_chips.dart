@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wallet/features/finance/domain/models/currency.dart';
 
-/// Switches which currency the screen is showing.
-///
 /// Visible only when the user actually has more than one — with no exchange
 /// rates, totals are per-currency and this is how you move between them.
 class CurrencyChips extends StatelessWidget {

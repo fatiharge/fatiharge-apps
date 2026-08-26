@@ -2,8 +2,6 @@ import 'package:wallet/features/finance/domain/models/currency.dart';
 import 'package:wallet/features/finance/domain/models/money.dart';
 import 'package:wallet/features/finance/domain/models/money_transaction.dart';
 
-/// On-disk shape of a transaction.
-///
 /// This file is the schema. Changing a key here is a migration; the domain
 /// model can be refactored freely without touching stored data.
 abstract final class TransactionDto {

@@ -4,7 +4,6 @@ import 'package:wallet/features/finance/domain/models/money.dart';
 import 'package:wallet/features/finance/domain/models/money_transaction.dart';
 import 'package:wallet/features/finance/domain/rules/month_period.dart';
 
-/// One slice of the category breakdown.
 @immutable
 class CategoryTotal {
   const CategoryTotal(this.categoryId, this.total);
@@ -26,9 +25,6 @@ class CategoryTotal {
   String toString() => 'CategoryTotal($categoryId, $total)';
 }
 
-/// Income, expense and the per-category breakdown for one month in one
-/// currency.
-///
 /// Scoped to a single [currency] on purpose. Summing across currencies would
 /// require exchange rates, which the app does not have; the dashboard instead
 /// shows one currency at a time and lets the user switch.
@@ -84,7 +80,6 @@ class MonthlySummary {
     );
   }
 
-  /// An all-zero summary, used before any data has loaded.
   factory MonthlySummary.empty({
     required MonthPeriod period,
     required Currency currency,
@@ -99,18 +94,14 @@ class MonthlySummary {
   final Money income;
   final Money expense;
 
-  /// Expense totals keyed by category id. Unmodifiable.
   final Map<String, Money> expenseByCategory;
 
-  /// Income totals keyed by category id. Unmodifiable.
   final Map<String, Money> incomeByCategory;
 
-  /// Income minus expense — negative when the month runs at a loss.
   Money get net => income - expense;
 
   bool get isEmpty => income.isZero && expense.isZero;
 
-  /// Expense breakdown, largest first — the order the chart and legend use.
   List<CategoryTotal> get expenseBreakdown {
     final entries =
         expenseByCategory.entries
@@ -120,7 +111,6 @@ class MonthlySummary {
     return entries;
   }
 
-  /// What was spent in [categoryId], or zero when nothing was.
   Money spentOn(String categoryId) =>
       expenseByCategory[categoryId] ?? Money.zero(currency);
 

@@ -2,8 +2,6 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-/// Bans the string form of easy_localization's translate call from `lib/`.
-///
 /// Both forms read the same translation, but only the context one calls
 /// `Localizations.of` — and that call is what subscribes the widget to the
 /// locale. Without it the widget is never marked dirty when the language

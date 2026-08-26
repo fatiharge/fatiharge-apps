@@ -2,7 +2,6 @@ import 'package:wallet/features/finance/domain/models/budget.dart';
 import 'package:wallet/features/finance/domain/models/currency.dart';
 import 'package:wallet/features/finance/domain/models/money.dart';
 
-/// On-disk shape of a budget.
 abstract final class BudgetDto {
   static const _id = 'id';
   static const _categoryId = 'categoryId';

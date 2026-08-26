@@ -9,8 +9,6 @@ import 'package:wallet/features/settings/presentation/views/theme_section.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 import 'package:wallet/route/app_router.gr.dart';
 
-/// Appearance, language, and the way through to the about page.
-///
 /// Reads [SettingsCubit] from above rather than creating one: the same
 /// instance drives `MaterialApp.themeMode`, so a second one here would change
 /// a theme nobody is watching.
@@ -50,7 +48,6 @@ class SettingsPage extends StatelessWidget {
   );
 }
 
-/// A line under a section label, for a rule the options cannot state.
 class _SectionHint extends StatelessWidget {
   const _SectionHint(this.text);
 

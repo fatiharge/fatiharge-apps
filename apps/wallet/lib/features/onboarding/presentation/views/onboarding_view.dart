@@ -9,7 +9,6 @@ import 'package:wallet/features/settings/presentation/views/theme_section.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 import 'package:wallet/theme/app_mark.dart';
 
-/// One first-run step at a time, with the way out always on screen.
 class OnboardingView extends StatelessWidget {
   const OnboardingView({
     required this.state,

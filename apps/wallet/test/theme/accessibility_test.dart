@@ -20,8 +20,6 @@ import '../support/finance_fixtures.dart';
 import '../support/in_memory_repositories.dart';
 import '../support/widget_harness.dart';
 
-/// The checks Play's pre-launch report runs on every build, brought forward.
-///
 /// Google's Accessibility Scanner reports tap target size and missing labels
 /// on anything uploaded to a testing track, so these findings arrive either
 /// way — here, or in the Play Console after the fact. Flutter ships the same

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// The "nothing here yet" placeholder used by every list in the app.
 class EmptyState extends StatelessWidget {
   const EmptyState({
     required this.icon,

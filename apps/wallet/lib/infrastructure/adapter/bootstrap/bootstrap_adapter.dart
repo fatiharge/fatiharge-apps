@@ -5,19 +5,18 @@ import 'package:wallet/config/injectable.dart';
 import 'package:wallet/features/finance/default_categories.dart';
 import 'package:wallet/features/finance/domain/repository/category_repository.dart';
 import 'package:wallet/features/settings/application/review_prompt.dart';
+import 'package:wallet/features/settings/application/summary_reminder_controller.dart';
 import 'package:wallet/features/settings/domain/repository/settings_repository.dart';
 import 'package:wallet/infrastructure/dev/demo_transactions.dart';
 import 'package:wallet/route/app_router.dart';
 import 'package:wallet/route/app_router.gr.dart';
 
-/// The app's half of the bootstrap contract: what to run at startup, what to
-/// show while it runs, and where to go once it is done.
 class BootstrapAdapter implements BootstrapPort {
   const BootstrapAdapter();
 
   @override
   List<BootstrapJob> jobs() => [
-    // Nothing can be read or written before this; a failure is unrecoverable.
+    // Nothing reads or writes before this, and a failure is unrecoverable.
     BootstrapJob(
       'storage',
       Hive.initFlutter,
@@ -25,15 +24,13 @@ class BootstrapAdapter implements BootstrapPort {
       errorPolicy: BootstrapErrorPolicy.restart,
     ),
 
-    // Opens the boxes (@preResolve) and registers the repositories.
     const BootstrapJob(
       'dependencies',
       configureDependencies,
       errorPolicy: BootstrapErrorPolicy.restart,
     ),
 
-    // First launch only. If it fails the app still works — the user just has
-    // no starter categories — so it must not block startup.
+    // A failure costs the starter categories, not the app.
     BootstrapJob(
       'seed_categories',
       _seedCategories,
@@ -41,12 +38,18 @@ class BootstrapAdapter implements BootstrapPort {
       errorPolicy: BootstrapErrorPolicy.skip,
     ),
 
-    // Stamps the install date the first time it runs. The review prompt
-    // measures age from it, so without this it never reaches a moment worth
-    // asking at.
+    // The review prompt measures age from this stamp.
     BootstrapJob(
       'first_launch',
       () => getIt<ReviewPrompt>().start(),
+      errorPolicy: BootstrapErrorPolicy.skip,
+    ),
+
+    // Pushes the fixed reminder window forward, and notices a permission
+    // revoked in system settings.
+    BootstrapJob(
+      'reminder_window',
+      () => getIt<SummaryReminderController>().refresh(),
       errorPolicy: BootstrapErrorPolicy.skip,
     ),
 
@@ -58,9 +61,8 @@ class BootstrapAdapter implements BootstrapPort {
       ),
   ];
 
-  /// Straight to the tabs once the first-run flow has been through — checked
-  /// here rather than in the router because this is the only place that knows
-  /// storage is open.
+  /// Checked here rather than in the router: this is the only place that
+  /// knows storage is open.
   @override
   void bootstrapFinished() => getIt<RouteManager>().replaceAll([
     if (getIt<SettingsRepository>().isOnboarded())

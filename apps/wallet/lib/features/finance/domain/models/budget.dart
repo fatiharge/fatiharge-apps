@@ -4,8 +4,6 @@ import 'package:wallet/features/finance/domain/models/money.dart';
 
 part 'budget.freezed.dart';
 
-/// A monthly spending limit.
-///
 /// One model covers both shapes the UI offers: a [categoryId] of `null` means
 /// "everything I spend this month", otherwise the limit applies to that
 /// category alone. A budget is scoped to the currency of its [limit] — with no

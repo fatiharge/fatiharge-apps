@@ -13,11 +13,7 @@ import 'package:wallet/features/finance/presentation/views/month_switcher.dart';
 import 'package:wallet/features/finance/presentation/views/summary_header.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 
-/// The dashboard, once there is something to draw.
-///
-/// Takes values and callbacks — no cubit, no router, no container. That is
-/// what lets it be pumped in a widget test with literals, and what would let
-/// it move out of this app without dragging the application layer along.
+/// Values and callbacks only — no cubit, no router, no container.
 class DashboardView extends StatelessWidget {
   const DashboardView({
     required this.period,
@@ -39,7 +35,6 @@ class DashboardView extends StatelessWidget {
   final List<Currency> availableCurrencies;
   final MonthlySummary summary;
 
-  /// Most-at-risk budget first.
   final List<BudgetStatus> budgetStatuses;
   final Map<String, Category> categories;
 
@@ -48,7 +43,6 @@ class DashboardView extends StatelessWidget {
   final ValueChanged<Currency> onCurrencySelected;
   final VoidCallback onAddTransaction;
 
-  /// Offered when the month has numbers and the reminder is not already on.
   /// Passed in rather than decided here — a view does not read preferences.
   final Widget? reminderNudge;
 
@@ -88,6 +82,11 @@ class DashboardView extends StatelessWidget {
           net: summary.net,
         ),
         const SizedBox(height: 16),
+        // Under the summary, which is what the offer refers to.
+        if (reminderNudge != null) ...[
+          reminderNudge!,
+          const SizedBox(height: 16),
+        ],
         CategoryPieChart(
           breakdown: summary.expenseBreakdown,
           total: summary.expense,

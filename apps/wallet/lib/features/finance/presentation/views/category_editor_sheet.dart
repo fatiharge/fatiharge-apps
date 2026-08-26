@@ -4,7 +4,6 @@ import 'package:wallet/features/finance/domain/models/category.dart';
 import 'package:wallet/features/finance/presentation/format/category_icons.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 
-/// What the sheet hands back to the cubit.
 class CategoryDraft {
   const CategoryDraft({
     required this.name,
@@ -17,8 +16,6 @@ class CategoryDraft {
   final int colorArgb;
 }
 
-/// The colours a new category can take.
-///
 /// The same set the seeded categories use, so one added by hand cannot look
 /// out of place next to them.
 const categoryPalette = <int>[
@@ -37,7 +34,6 @@ const categoryPalette = <int>[
   0xFF90A4AE,
 ];
 
-/// Name, icon and colour for a new category.
 class CategoryEditorSheet extends StatefulWidget {
   const CategoryEditorSheet({super.key});
 

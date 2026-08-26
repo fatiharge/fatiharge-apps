@@ -5,8 +5,6 @@ import 'package:wallet/infrastructure/repository/dto/transaction_dto.dart';
 import 'package:wallet/infrastructure/storage/hive_collection.dart';
 import 'package:wallet/infrastructure/storage/wallet_storage.dart';
 
-/// Hive-backed [TransactionRepository].
-///
 /// The only class in the app that knows transactions live in Hive.
 @LazySingleton(as: TransactionRepository)
 class TransactionRepositoryImpl implements TransactionRepository {

@@ -9,12 +9,10 @@ import 'package:wallet/features/finance/domain/models/money_transaction.dart';
 import 'package:wallet/features/finance/presentation/views/transaction_entry_view.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 
-/// Add or edit a transaction.
 @RoutePage()
 class TransactionEntryPage extends StatelessWidget {
   const TransactionEntryPage({super.key, this.existing});
 
-  /// `null` when adding.
   final MoneyTransaction? existing;
 
   @override
@@ -24,7 +22,6 @@ class TransactionEntryPage extends StatelessWidget {
   );
 }
 
-/// Owns the text controllers and turns the form's state into arguments.
 class _EntryForm extends StatefulWidget {
   const _EntryForm();
 

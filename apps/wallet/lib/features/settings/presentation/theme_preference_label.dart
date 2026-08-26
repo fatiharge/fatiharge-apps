@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:wallet/features/settings/domain/theme_preference.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 
-/// The widget-layer view of [ThemePreference].
-///
 /// Kept out of `domain/`, which may not import Flutter — [ThemeMode] and
 /// [IconData] both come from the framework.
 extension ThemePreferenceView on ThemePreference {

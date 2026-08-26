@@ -1,20 +1,17 @@
 import 'package:flutter/foundation.dart';
 
-/// Build-time switches.
-///
-/// Deliberately not a `.env` file or a flavor: nothing in v1 differs between
-/// environments except log verbosity. Real per-environment values (API keys,
-/// Firebase config) arrive with the backend, and `--dart-define-from-file`
-/// plus flavors arrive with them.
+/// Not a `.env` file or a flavor: nothing in v1 differs between environments
+/// except log verbosity. Both arrive with the backend.
 abstract final class Env {
-  /// On in debug builds; override with
-  /// `--dart-define=FEATURE_DEBUG_LOGS=true|false`.
   static const bool debugLogs = bool.fromEnvironment(
     'FEATURE_DEBUG_LOGS',
     defaultValue: kDebugMode,
   );
 
-  /// Fills an empty database with a month of sample transactions.
-  /// `--dart-define=SEED_DEMO_DATA=true`
   static const bool seedDemoData = bool.fromEnvironment('SEED_DEMO_DATA');
+
+  /// [kDebugMode] as well as the define: a release that asked for a review on
+  /// first launch is the kind of thing stores remove apps for.
+  static const bool debugGrowth =
+      kDebugMode && bool.fromEnvironment('DEBUG_GROWTH');
 }

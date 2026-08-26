@@ -7,7 +7,6 @@ import 'package:wallet/features/finance/presentation/format/category_name.dart';
 import 'package:wallet/features/finance/presentation/format/money_format.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 
-/// One budget with its progress bar.
 class BudgetProgressTile extends StatelessWidget {
   const BudgetProgressTile({
     required this.status,
@@ -131,7 +130,6 @@ class BudgetProgressTile extends StatelessWidget {
   }
 }
 
-/// The banner shown on the dashboard when limits have been blown.
 class BudgetAlertBanner extends StatelessWidget {
   const BudgetAlertBanner({
     required this.exceeded,

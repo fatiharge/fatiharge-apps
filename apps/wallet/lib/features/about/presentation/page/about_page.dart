@@ -9,8 +9,6 @@ import 'package:wallet/features/about/domain/app_version_port.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 import 'package:wallet/theme/app_mark.dart';
 
-/// Credits and where to file issues.
-///
 /// Reached from settings rather than a navigation destination — visible, but
 /// not competing with the three tabs.
 ///
@@ -91,7 +89,6 @@ class _Header extends StatelessWidget {
   }
 }
 
-/// The installed version, which can differ from pubspec after a store update.
 class _Version extends StatelessWidget {
   const _Version();
 
@@ -131,7 +128,6 @@ class _SectionLabel extends StatelessWidget {
   }
 }
 
-/// A row that puts [value] on the clipboard and says so.
 class _CopyTile extends StatelessWidget {
   const _CopyTile({
     required this.leading,

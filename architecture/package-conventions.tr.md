@@ -143,6 +143,7 @@ Elle yazılan dokümanı yavaş değişen seviyede tut; geri kalan her şeyi ür
 - **`CHANGELOG.md`** — `melos version` tarafından Conventional Commits'ten üretilir. **Asla elle düzenleme.** Değişim geçmişin commit'lerindir.
 - **API referansı** — `lib/src/**` içindeki `///` doc-comment'lerden gelir, `dart doc` ile üretilir. Public tipleri ve üyeleri belgele; yorum kodun yanında yaşadığı için drift edemez.
 - **Kök README** — paketleri listelemez; `packages/`'a işaret eder. Dizinin kendisi index'tir, senkronlanacak bir şey yoktur.
+- **Koddaki yorumlar** — seyrek, ve aynı drift kuralı geçerli. Bir yorum yerini ancak *neden*'i anlatarak hak eder, o da sebep koddan görünmüyorsa: açıklanmadan yanlış duran bir karar, platformun dayattığı bir kısıt, sonraki okuyucunun düşeceği bir tuzak. Bir satırın ne yaptığını tekrar eden ya da kodun zaten tuttuğu bir değeri yineleyen her şey, kod ilk kımıldadığında yalan söylemeye başlar. Paragraf yerine daha iyi bir isim ya da bir test tercih edilir; yine de söylenmesi gerekiyorsa bir-iki satırda söylenir.
 
 ## Ne zaman yeni paket açılır
 

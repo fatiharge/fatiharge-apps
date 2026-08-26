@@ -6,14 +6,12 @@ import 'package:wallet/features/finance/domain/rules/month_period.dart';
 
 part 'budget_state.freezed.dart';
 
-/// The budget screen: every budget with this month's spending against it.
 @freezed
 abstract class BudgetState with _$BudgetState {
   const factory BudgetState({
     required MonthPeriod period,
     @Default(Currency.turkishLira) Currency currency,
 
-    /// Most-at-risk first.
     @Default(<BudgetStatus>[]) List<BudgetStatus> statuses,
     @Default(<String, Category>{}) Map<String, Category> categories,
     @Default(true) bool loading,
@@ -21,7 +19,6 @@ abstract class BudgetState with _$BudgetState {
 
   const BudgetState._();
 
-  /// The screen before storage has answered.
   factory BudgetState.initial({DateTime? now, Currency? currency}) =>
       BudgetState(
         period: MonthPeriod.of(now ?? DateTime.now()),

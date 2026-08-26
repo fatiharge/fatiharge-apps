@@ -5,7 +5,6 @@ import 'package:wallet/features/finance/presentation/format/money_format.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 import 'package:wallet/theme/finance_colors.dart';
 
-/// Income / expense / net for the selected month.
 class SummaryHeader extends StatelessWidget {
   const SummaryHeader({
     required this.income,

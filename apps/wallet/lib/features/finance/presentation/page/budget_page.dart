@@ -10,8 +10,6 @@ import 'package:wallet/features/finance/presentation/views/budget_editor_sheet.d
 import 'package:wallet/features/finance/presentation/views/budget_view.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 
-/// Monthly limits and how far through each one this month is.
-///
 /// Wiring only — the list itself is [BudgetView]. Opening the editor sheet
 /// stays here because it is navigation, not drawing.
 @RoutePage()

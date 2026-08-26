@@ -1,6 +1,5 @@
 import 'package:wallet/features/finance/domain/models/budget.dart';
 
-/// Storage contract for monthly budgets.
 abstract interface class BudgetRepository {
   Stream<List<Budget>> watchAll();
 

@@ -10,7 +10,6 @@ import 'package:wallet/features/onboarding/presentation/views/onboarding_view.da
 import 'package:wallet/route/app_router.dart';
 import 'package:wallet/route/app_router.gr.dart';
 
-/// The first-run flow, shown once between startup and the tabs.
 @RoutePage()
 class OnboardingPage extends StatelessWidget {
   const OnboardingPage({super.key});

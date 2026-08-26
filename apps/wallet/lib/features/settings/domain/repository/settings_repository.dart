@@ -2,68 +2,48 @@ import 'package:wallet/features/finance/domain/models/currency.dart';
 import 'package:wallet/features/settings/domain/monthly_summary_reminder.dart';
 import 'package:wallet/features/settings/domain/theme_preference.dart';
 
-/// Storage contract for the app's scalar preferences.
-///
-/// [readTheme] is synchronous on purpose. The theme has to be known before the
-/// first frame or the app opens in the wrong one, and an async read would make
-/// that impossible to express — the adapter loads its store before `runApp`
-/// instead, and every read afterwards is from memory.
+/// Every read is synchronous: the theme has to be known before the first
+/// frame, so the adapter loads its store before `runApp`.
 abstract interface class SettingsRepository {
   ThemePreference readTheme();
 
   Future<void> writeTheme(ThemePreference preference);
 
-  /// What a new transaction or budget starts in. Falls back to the device's
-  /// region until the user picks one.
-  ///
-  /// Only a default: existing records keep the currency they were written in,
-  /// and changing this never rewrites them.
+  /// Only a default: existing records keep the currency they were written in.
   Currency readCurrency();
 
   Future<void> writeCurrency(Currency currency);
 
-  /// Whether the first-run flow has been through, skipped included. Read
-  /// before the first route is chosen, so it is synchronous like the rest.
+  /// Skipping counts as through.
   bool isOnboarded();
 
   Future<void> completeOnboarding();
 
-  /// The monthly summary reminder: whether it is on, and which day of the
-  /// month it arrives. The day is stored as chosen, not as clamped — see
-  /// `SummarySchedule`.
+  /// The day is stored as chosen, not as clamped — see `SummarySchedule`.
   MonthlySummaryReminder readSummaryReminder();
 
   Future<void> writeSummaryReminder(MonthlySummaryReminder reminder);
 
-  /// Whether the platform's one-shot notification prompt has been put in front
-  /// of the user yet.
-  ///
-  /// Separate from a denied permission on purpose. Someone who said no to
-  /// *our* question can be asked again, because the platform prompt was never
-  /// spent; someone who denied the platform prompt cannot, and can only be
-  /// sent to system settings.
+  /// Not the same as a denied permission: someone who said no to *our*
+  /// question can be asked again, because the platform prompt was never spent.
   bool wasNotificationPromptShown();
 
   Future<void> markNotificationPromptShown();
 
-  /// How many times the dashboard has offered the reminder to someone who does
-  /// not have it on, so the offer can stop rather than nag.
+  /// So the offer can stop rather than nag.
   int summaryNudgeCount();
 
   Future<void> recordSummaryNudge();
 
-  /// Set when the user closes the offer for good.
   bool isSummaryNudgeDismissed();
 
   Future<void> dismissSummaryNudge();
 
-  /// When the app first ran, so "has used it for a while" can be answered.
   /// Null until the first launch records it.
   DateTime? installedAt();
 
   Future<void> recordInstall(DateTime at);
 
-  /// When the store review dialog was last asked for. Null if never.
   DateTime? lastReviewRequestAt();
 
   Future<void> recordReviewRequest(DateTime at);

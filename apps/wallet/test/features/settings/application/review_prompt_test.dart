@@ -18,8 +18,17 @@ void main() {
     prompt = ReviewPrompt(settings, requester, clock: () => now);
   });
 
-  Future<void> ask() =>
-      prompt.maybeAsk(transactionCount: 50, viewingMonthWithData: true);
+  /// The two halves as their callers pair them: the bloc decides the moment,
+  /// whoever takes the effect does the asking.
+  Future<void> ask() async {
+    final moment = prompt.isMoment(
+      transactionCount: 50,
+      viewingMonthWithData: true,
+    );
+    if (!moment) return;
+
+    await prompt.ask();
+  }
 
   test('records the install date once and never moves it', () async {
     await prompt.start();

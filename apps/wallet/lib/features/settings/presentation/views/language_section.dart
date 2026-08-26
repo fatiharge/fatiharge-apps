@@ -3,12 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:wallet/features/settings/presentation/views/setting_option_tile.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 
-/// Language picker, backed entirely by easy_localization.
-///
-/// Stateful because the package's own state cannot answer "is this still the
-/// device language": `setLocale` persists the choice but leaves `savedLocale`
-/// stale until the next launch, and `deleteSaveLocale` notifies nobody. So the
-/// answer is tracked here, seeded once from what was persisted.
+/// Stateful because easy_localization cannot answer "is this still the device
+/// language": `savedLocale` stays stale until the next launch.
 class LanguageSection extends StatefulWidget {
   const LanguageSection({super.key});
 
@@ -17,18 +13,15 @@ class LanguageSection extends StatefulWidget {
 }
 
 class _LanguageSectionState extends State<LanguageSection> {
-  /// Each language is written in itself — someone who switched to a language
-  /// they cannot read has to be able to find their way back.
+  /// Each written in itself, so someone who switched by accident can get back.
   static const _names = {'tr': 'Türkçe', 'en': 'English'};
 
   /// Lazily, not in `initState`: reading it depends on an inherited widget.
   late bool _followsDevice = context.savedLocale == null;
 
   Future<void> _useDeviceLanguage() async {
-    // Order matters. `resetLocale()` resolves the device language *and saves
-    // it*, which would pin the app to whatever the device is today. Clearing
-    // the saved value afterwards is what makes "follow the device" outlast
-    // this launch.
+    // Order matters: `resetLocale()` also *saves*, pinning the app to today's
+    // device language. Clearing afterwards is what makes it outlast the launch.
     await context.resetLocale();
     if (!mounted) return;
     await context.deleteSaveLocale();

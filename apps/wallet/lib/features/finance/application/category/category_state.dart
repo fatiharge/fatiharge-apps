@@ -3,7 +3,6 @@ import 'package:wallet/features/finance/domain/models/category.dart';
 
 part 'category_state.freezed.dart';
 
-/// The category management screen.
 @freezed
 abstract class CategoryState with _$CategoryState {
   const factory CategoryState({

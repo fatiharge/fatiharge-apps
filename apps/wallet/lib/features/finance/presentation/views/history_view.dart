@@ -6,8 +6,6 @@ import 'package:wallet/features/finance/presentation/views/empty_state.dart';
 import 'package:wallet/features/finance/presentation/views/transaction_tile.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 
-/// The transaction list, with swipe-to-delete.
-///
 /// [isFiltered] separates "the filter hides everything" from "nothing has been
 /// recorded yet" — the same empty list means different things to the reader,
 /// and only the first one is worth offering a way out of.
@@ -22,7 +20,6 @@ class HistoryView extends StatelessWidget {
     super.key,
   });
 
-  /// Newest first; already filtered.
   final List<MoneyTransaction> transactions;
   final Map<String, Category> categories;
   final bool isFiltered;

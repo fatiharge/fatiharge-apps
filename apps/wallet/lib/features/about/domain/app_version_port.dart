@@ -1,4 +1,3 @@
-/// The app's own version, as installed.
 class AppVersion {
   const AppVersion({required this.name, required this.build});
 

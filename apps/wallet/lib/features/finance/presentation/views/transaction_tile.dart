@@ -6,7 +6,6 @@ import 'package:wallet/features/finance/presentation/format/category_name.dart';
 import 'package:wallet/features/finance/presentation/format/money_format.dart';
 import 'package:wallet/theme/finance_colors.dart';
 
-/// One row in the history list.
 class TransactionTile extends StatelessWidget {
   const TransactionTile({
     required this.transaction,

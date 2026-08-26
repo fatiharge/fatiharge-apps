@@ -1,21 +1,12 @@
 import 'package:wallet/features/finance/domain/models/category.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 
-/// The categories a fresh install starts with.
+/// Seeds carry a translation key, not a name: the seed runs once, so a name
+/// would be stuck in the language of first launch.
 ///
-/// Feature content, so it lives with the feature rather than under
-/// `infrastructure/` — nothing in here touches storage. It sits at the feature
-/// root instead of inside `domain/` because it names localization keys, and
-/// `domain/` references nothing outside the feature.
-///
-/// Seeds carry a translation key, not a translated name: the seed runs once,
-/// so a name resolved here would be stuck in the language of first launch.
-///
-/// The id and its translation key are both spelled out per row instead of
-/// building `'category.$id'`. It reads as duplication, but an interpolated key
-/// cannot be checked by anything: a category with no translation would ship
-/// showing `category.foo` on screen. Naming the [LocaleKeys] constant makes
-/// that a compile error instead.
+/// Id and key are spelled out per row rather than interpolated. It reads as
+/// duplication, but naming the [LocaleKeys] constant turns a missing
+/// translation into a compile error instead of `category.foo` on screen.
 List<Category> defaultCategories() => [
   _seed(
     'food',

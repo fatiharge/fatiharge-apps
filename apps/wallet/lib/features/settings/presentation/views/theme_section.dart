@@ -5,8 +5,6 @@ import 'package:wallet/features/settings/domain/theme_preference.dart';
 import 'package:wallet/features/settings/presentation/theme_preference_label.dart';
 import 'package:wallet/features/settings/presentation/views/setting_option_tile.dart';
 
-/// Light, dark, or whatever the device says.
-///
 /// Needs a [SettingsCubit] above it — the same one `MaterialApp.themeMode`
 /// watches, so the choice takes effect as it is made.
 class ThemeSection extends StatelessWidget {

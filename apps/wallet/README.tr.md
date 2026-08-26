@@ -20,7 +20,16 @@ Kullanışlı parametreler:
 ```bash
 fvm flutter run --dart-define=SEED_DEMO_DATA=true   # boş veritabanını doldur
 fvm flutter run --dart-define=FEATURE_DEBUG_LOGS=false
+
+# İki büyüme özelliği de beklemek üzere kurulu: yorum isteği için iki hafta,
+# hatırlatıcı için bir ay. Bu bayrak o beklemeyi kaldırır, ikisi de tek
+# oturumda görülebilir. Yalnızca debug build'de; release'de yok sayılır.
+fvm flutter run --dart-define=DEBUG_GROWTH=true --dart-define=SEED_DEMO_DATA=true
 ```
+
+`DEBUG_GROWTH` açıkken yorum diyaloğu, dashboard'da içi dolu bir ay göründüğü
+anda çıkar; aylık hatırlatıcıyı açmak da bildirimi seçilen güne kurmak yerine
+anında gönderir
 
 ## Çeviriler
 

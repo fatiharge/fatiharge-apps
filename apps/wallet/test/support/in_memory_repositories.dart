@@ -13,8 +13,6 @@ import 'package:wallet/features/settings/domain/review_requester.dart';
 import 'package:wallet/features/settings/domain/summary_notifier.dart';
 import 'package:wallet/features/settings/domain/theme_preference.dart';
 
-/// Shared stream/CRUD behaviour for the fakes below.
-///
 /// These exist instead of mocks because the cubits' whole contract is "react
 /// to the stream" — a mock that returns a fixed list would not exercise it.
 class _Collection<T> {
@@ -211,7 +209,6 @@ class FakeSummaryNotifier implements SummaryNotifier {
 
   bool permitted;
 
-  /// What the platform prompt will answer.
   bool grantOnRequest;
 
   int promptCount = 0;

@@ -1,9 +1,5 @@
-/// A currency the app can track money in.
-///
-/// [decimalDigits] is what separates the *minor* unit (what we store) from the
-/// *major* unit (what the user reads): `12345` minor units of [turkishLira] is
-/// `123.45 ₺`. Zero-decimal currencies exist (JPY), so this is a per-currency
-/// property rather than a global constant.
+/// Zero-decimal currencies exist (JPY), so [decimalDigits] is per-currency
+/// rather than a global constant.
 enum Currency {
   turkishLira('TRY', '₺', 2),
   usDollar('USD', r'$', 2),
@@ -12,19 +8,15 @@ enum Currency {
 
   const Currency(this.code, this.symbol, this.decimalDigits);
 
-  /// ISO 4217 code, e.g. `TRY`. This is what gets persisted.
+  /// What gets persisted.
   final String code;
 
-  /// Display symbol, e.g. `₺`.
   final String symbol;
 
-  /// How many minor units make up one major unit (`2` means 100 minor units).
+  /// `2` means 100 minor units to one major.
   final int decimalDigits;
 
-  /// Resolves a [Currency] from its ISO [code].
-  ///
-  /// Throws [ArgumentError] for an unknown code — persisted data carrying a
-  /// currency we no longer support should fail loudly, not silently default.
+  /// Throws for an unknown code: persisted data must fail loudly, not default.
   static Currency fromCode(String code) => values.firstWhere(
     (currency) => currency.code == code,
     orElse: () => throw ArgumentError.value(code, 'code', 'Unknown currency'),

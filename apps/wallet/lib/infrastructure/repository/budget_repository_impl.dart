@@ -5,7 +5,6 @@ import 'package:wallet/infrastructure/repository/dto/budget_dto.dart';
 import 'package:wallet/infrastructure/storage/hive_collection.dart';
 import 'package:wallet/infrastructure/storage/wallet_storage.dart';
 
-/// Hive-backed [BudgetRepository].
 @LazySingleton(as: BudgetRepository)
 class BudgetRepositoryImpl implements BudgetRepository {
   BudgetRepositoryImpl(WalletStorage storage)

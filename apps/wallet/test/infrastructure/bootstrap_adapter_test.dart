@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:wallet/config/injectable.dart';
 import 'package:wallet/features/finance/domain/repository/category_repository.dart';
 import 'package:wallet/features/settings/application/review_prompt.dart';
+import 'package:wallet/features/settings/application/summary_reminder_controller.dart';
 import 'package:wallet/features/settings/domain/repository/settings_repository.dart';
 import 'package:wallet/infrastructure/adapter/bootstrap/bootstrap_adapter.dart';
 import 'package:wallet/route/app_router.dart';
@@ -13,11 +14,15 @@ import '../support/in_memory_repositories.dart';
 void main() {
   late FakeCategoryRepository categories;
   late FakeSettingsRepository settings;
+  late FakeSummaryNotifier notifier;
+  late SummaryReminderController reminders;
   final now = DateTime(2026, 8, 12);
 
   setUp(() async {
     categories = FakeCategoryRepository();
     settings = FakeSettingsRepository();
+    notifier = FakeSummaryNotifier();
+    reminders = SummaryReminderController(settings, notifier);
     await getIt.reset();
     getIt
       ..registerSingleton<RouteManager>(RouteManager())
@@ -25,7 +30,8 @@ void main() {
       ..registerSingleton<SettingsRepository>(settings)
       ..registerFactory<ReviewPrompt>(
         () => ReviewPrompt(settings, FakeReviewRequester(), clock: () => now),
-      );
+      )
+      ..registerSingleton<SummaryReminderController>(reminders);
   });
 
   tearDown(() async {
@@ -103,6 +109,18 @@ void main() {
       // A later launch must not move it, or the app would never be old enough
       // to ask for a review.
       expect(settings.installed, DateTime(2020));
+    });
+
+    test('pushes the reminder window forward on launch', () async {
+      notifier.permitted = true;
+      await reminders.enable(day: 9);
+      notifier.scheduledDay = null;
+
+      await run('reminder_window');
+
+      // Only a fixed number of occurrences are ever scheduled, so a launch
+      // that did not rewrite the window would let the reminder run out.
+      expect(notifier.scheduledDay, 9);
     });
   });
 }

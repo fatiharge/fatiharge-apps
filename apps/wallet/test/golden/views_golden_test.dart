@@ -17,8 +17,6 @@ import 'package:wallet/theme/app_mark.dart';
 import '../support/finance_fixtures.dart';
 import '../support/widget_harness.dart';
 
-/// Pixel baselines for the widgets whose whole job is how they look.
-///
 /// Tagged so `melos run test` skips them: goldens are rendered by the host, so
 /// a baseline written on macOS does not match one rendered on CI's Linux. Run
 /// `melos run test:golden` on the machine that owns the baselines.

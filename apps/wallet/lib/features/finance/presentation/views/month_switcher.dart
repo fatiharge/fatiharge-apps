@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:wallet/features/finance/domain/rules/month_period.dart';
 import 'package:wallet/features/finance/presentation/format/money_format.dart';
 
-/// `‹  Temmuz 2026  ›` — moves the whole dashboard between months.
 class MonthSwitcher extends StatelessWidget {
   const MonthSwitcher({
     required this.period,
@@ -14,7 +13,6 @@ class MonthSwitcher extends StatelessWidget {
   final MonthPeriod period;
   final VoidCallback onPrevious;
 
-  /// Null disables the arrow.
   final VoidCallback? onNext;
 
   @override

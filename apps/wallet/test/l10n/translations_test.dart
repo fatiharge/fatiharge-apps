@@ -3,14 +3,9 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-/// Guards the two failure modes of key-based localization, both of which are
-/// silent at runtime: easy_localization just renders the raw key.
-///
-/// The generator has a sharp edge that motivated the second test — it treats
-/// *any* leaf named `one`, `other`, `few`, ... as a plural form and emits no
-/// constant for it. `category.other` therefore had to be renamed to
-/// `category.misc`. Without this test that discovery would have been a
-/// runtime surprise instead of a red build.
+/// The generator treats *any* leaf named `one`, `other`, `few`, … as a plural
+/// form and emits no constant — hence `category.misc` rather than
+/// `category.other`.
 void main() {
   const pluralForms = {'zero', 'one', 'two', 'few', 'many', 'other'};
 
@@ -32,10 +27,7 @@ void main() {
     return paths;
   }
 
-  /// The paths that need a `LocaleKeys` constant.
-  ///
-  /// A node whose children are *all* plural forms is addressed by its own
-  /// path (`budget.exceeded_warning`), so the children are not required.
+  /// An all-plural node is addressed by its own path, so its children are not.
   Set<String> expectedConstants(
     Map<String, dynamic> node, [
     String prefix = '',
@@ -75,9 +67,8 @@ void main() {
   });
 
   test('every translation key has a generated LocaleKeys constant', () {
-    // Whitespace collapsed first: `dart format` wraps a long declaration
-    // after the `=`, and searching the raw text would then miss it and report
-    // a key that is in fact generated.
+    // Collapsed first: `dart format` wraps long declarations after the `=`,
+    // and the raw text would then miss them.
     final generated = File(
       'lib/generated/locale_keys.g.dart',
     ).readAsStringSync().replaceAll(RegExp(r'\s+'), ' ');
