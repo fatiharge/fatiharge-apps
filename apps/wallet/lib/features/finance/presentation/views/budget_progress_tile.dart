@@ -65,7 +65,6 @@ class BudgetProgressTile extends StatelessWidget {
                       onPressed: onDelete,
                       icon: const Icon(Icons.delete_outline),
                       tooltip: context.tr(LocaleKeys.common_delete),
-                      visualDensity: VisualDensity.compact,
                     ),
                 ],
               ),
