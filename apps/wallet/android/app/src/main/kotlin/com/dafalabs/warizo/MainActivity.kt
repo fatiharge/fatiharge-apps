@@ -1,4 +1,4 @@
-package com.fatiharge.wallet
+package com.dafalabs.warizo
 
 import io.flutter.embedding.android.FlutterActivity
 
