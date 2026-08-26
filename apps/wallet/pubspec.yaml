@@ -3,7 +3,7 @@ description: Personal income/expense tracker — local-first, no backend.
 publish_to: none
 resolution: workspace
 
-version: 0.2.9+13
+version: 0.2.10+14
 
 environment:
   sdk: ^3.12.0

@@ -15,6 +15,27 @@ Packages with breaking changes:
 
 Packages with other changes:
 
+ - [`wallet` - `v0.2.10+14`](#wallet---v021014)
+
+---
+
+#### `wallet` - `v0.2.10+14`
+
+ - **FEAT**(wallet): carry the privacy policy link in the app ([#66](https://github.com/fatiharge/fatiharge-apps/issues/66)). ([1baa3abc](https://github.com/fatiharge/fatiharge-apps/commit/1baa3abccf3a44841aa32588d40088c27c822229))
+
+
+## 2026-08-26
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
  - [`wallet` - `v0.2.9+13`](#wallet---v02913)
 
 ---

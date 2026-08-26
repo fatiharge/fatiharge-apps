@@ -1,3 +1,7 @@
+## 0.2.10+14
+
+ - **FEAT**(wallet): carry the privacy policy link in the app ([#66](https://github.com/fatiharge/fatiharge-apps/issues/66)). ([1baa3abc](https://github.com/fatiharge/fatiharge-apps/commit/1baa3abccf3a44841aa32588d40088c27c822229))
+
 ## 0.2.9+13
 
  - **REFACTOR**(wallet): raise the review ask as an effect, and fix what that uncovered ([#62](https://github.com/fatiharge/fatiharge-apps/issues/62)). ([e1301d02](https://github.com/fatiharge/fatiharge-apps/commit/e1301d02b6d33281f28491ff932d25aad8efbf23))
