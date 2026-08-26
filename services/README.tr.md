@@ -38,8 +38,14 @@ Docker Desktop, OrbStack ve CI runner'ları için gerekmiyor.
 services/
 ├─ pom.xml     parent: Quarkus BOM, eklenti sürümleri, Jandex
 ├─ core/       kütüphane modülü — her servise derlenir, ağ üzerinden çağrılmaz
-└─ auth/       çalıştırılabilir — cihaz hash'ini kimliğe çevirir ve token'ını imzalar
+├─ auth/       çalıştırılabilir — cihaz hash'ini kimliğe çevirir ve token'ını imzalar
+└─ motto/      çalıştırılabilir — motto uygulamasının API'si
 ```
+
+Uygulama başına bir çalıştırılabilir modül, modül başına bir alt alan adı: bir
+uygulamanın API'sindeki değişiklik diğer uygulamaların üretilmiş istemcilerine
+dokunmaz. Tek ortak şema olsaydı, bir uygulamanın istediği tek alan için bütün
+istemciler yeniden üretilirdi.
 
 Uygulama başına bir çalıştırılabilir modül ilk uygulama servisiyle gelecek.
 Servisler çalışma anında birbiriyle konuşmaz: `auth` bir JWT üretir, her servis
@@ -133,5 +139,14 @@ kadar bloklar.
 > `main-protection` ruleset'inde listelenmiyor, yani rapor veriyor ama
 > bloklayamıyor. GitHub → Settings → Rules altından ekleyince kapıya dönüşür.
 
-Native build ve `@QuarkusIntegrationTest` pull request'e değil merge'e aittir;
-ilk dağıtılabilir servisle gelecek.
+Native build ve `@QuarkusIntegrationTest` pull request'te değil merge'de,
+**motto release** içinde koşar — pull request hızlı cevap ister. O workflow elle
+de tetiklenebilir; native derlemeyi merge'den önce dalda kanıtlamanın yolu bu —
+ikinci sürümden itibaren, çünkü GitHub elle tetiklemeyi yalnızca varsayılan dalda
+zaten bulunan workflow'lar için sunuyor.
+`main` dışından tetiklenirse imajı basar ve durur, çünkü bir dalı stage'e
+göndermek tek tık uzakta olmamalı.
+
+**motto promote** mevcut imajı digest ile prod'a taşır, yeniden derlemez.
+Sunucunun neye ihtiyacı olduğu [motto/deploy/README.md](motto/deploy/README.md)
+içinde.

@@ -1,0 +1,95 @@
+name: motto release
+
+# Native build, image, stage deploy.
+#
+# A top-level paths filter is safe here in a way it is not on a pull request:
+# this workflow gates nothing, so a run that never happens blocks nothing.
+#
+# workflow_dispatch exists so the native build can be proven from a branch
+# before merging. Dispatched from anywhere but main it builds and pushes the
+# image and stops there — deploying a branch to stage by accident is not a
+# thing that should be one click away. It only becomes available once this file
+# is on the default branch, which GitHub requires; the very first native build
+# is therefore the one that runs on merge.
+#
+# Deploying waits for the DEPLOY_ENABLED repository variable. Until the server
+# has its secrets and its .env, an enabled deploy would fail on every merge and
+# turn a red run into background noise nobody reads.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - services/motto/**
+      - services/core/**
+      - services/pom.xml
+      - .github/workflows/motto-release.yml
+  workflow_dispatch:
+
+concurrency:
+  group: motto-release
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    name: Native build and image
+    runs-on: ubuntu-latest
+    outputs:
+      digest: ${{ steps.push.outputs.digest }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          cache-dependency-path: services/**/pom.xml
+
+      # The binary is compiled inside a container, so this runner needs no
+      # GraalVM and the result is built against the libc of the image that will
+      # run it. @QuarkusIntegrationTest runs here, against that binary:
+      # reflection and resource loading behave differently in a native image and
+      # the JVM tests cannot see those failures.
+      - name: Build native and run integration tests
+        working-directory: services
+        run: ./mvnw -B -Dnative -Dquarkus.native.container-build=true -pl motto -am verify
+
+      - name: Log in to ghcr.io
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: echo "$TOKEN" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      - name: Build and push the image
+        id: push
+        working-directory: services/motto
+        env:
+          OWNER: ${{ github.repository_owner }}
+        run: |
+          set -euo pipefail
+          image="ghcr.io/${OWNER,,}/motto"
+          tag="${image}:${GITHUB_SHA::12}"
+
+          docker build -f src/main/docker/Dockerfile.native -t "$tag" .
+          docker push "$tag"
+
+          # The digest, not the tag, is what production will be given: a tag can
+          # be moved, a digest is the artefact itself.
+          digest=$(docker inspect --format='{{index .RepoDigests 0}}' "$tag")
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
+          echo "pushed $digest"
+
+  deploy:
+    name: Stage
+    needs: build
+    if: github.ref == 'refs/heads/main' && vars.DEPLOY_ENABLED == 'true'
+    uses: ./.github/workflows/service-deploy.yml
+    with:
+      image: ${{ needs.build.outputs.digest }}
+      environment: stage
+      compose-file: services/motto/deploy/compose.yaml
+    secrets: inherit

@@ -37,8 +37,13 @@ Docker Desktop, OrbStack and the CI runners need nothing.
 services/
 ├─ pom.xml     parent: Quarkus BOM, plugin versions, Jandex
 ├─ core/       library module — compiled into every service, never called over the network
-└─ auth/       runnable — turns a device hash into an identity and signs its token
+├─ auth/       runnable — turns a device hash into an identity and signs its token
+└─ motto/      runnable — the motto app's API
 ```
+
+One runnable module per app, one subdomain per module: a change to one app's API
+leaves every other app's generated client untouched. A single shared schema
+would regenerate every client for a field one app asked for.
 
 One runnable module per app arrives with the first app service. Services do not
 talk to each other at runtime: `auth` issues a JWT and each service verifies it
@@ -132,5 +137,12 @@ never reports blocks the pull request forever.
 > in the `main-protection` ruleset, so it reports but cannot block. Add it under
 > GitHub → Settings → Rules to turn it into a gate.
 
-Native builds and `@QuarkusIntegrationTest` belong on merge rather than on a
-pull request, and arrive with the first deployable service.
+Native builds and `@QuarkusIntegrationTest` run on merge rather than on a pull
+request, in **motto release** — a pull request wants the fast answer. That
+workflow also accepts a manual run, which is how a native build gets proven from
+a branch before merging; dispatched from anywhere but `main` it builds the image
+and stops, because deploying a branch to stage should not be one click away.
+
+**motto promote** moves an existing image to production by digest and never
+rebuilds. What the server needs is in
+[motto/deploy/README.md](motto/deploy/README.md).

@@ -1,0 +1,4 @@
+# The image needs one file. Sending the rest of target/ as build context costs
+# seconds on every build and buys nothing.
+*
+!target/*-runner
