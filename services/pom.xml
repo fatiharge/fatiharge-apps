@@ -37,6 +37,7 @@
   <modules>
     <module>core</module>
     <module>auth</module>
+    <module>motto</module>
   </modules>
 
   <dependencyManagement>
