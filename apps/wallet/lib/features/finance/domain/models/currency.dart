@@ -4,7 +4,11 @@ enum Currency {
   turkishLira('TRY', '₺', 2),
   usDollar('USD', r'$', 2),
   euro('EUR', '€', 2),
-  britishPound('GBP', '£', 2);
+  britishPound('GBP', '£', 2),
+  swissFranc('CHF', 'CHF', 2),
+  mexicanPeso('MXN', r'$', 2),
+  canadianDollar('CAD', r'$', 2),
+  japaneseYen('JPY', '¥', 0);
 
   const Currency(this.code, this.symbol, this.decimalDigits);
 

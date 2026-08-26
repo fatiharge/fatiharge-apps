@@ -1,0 +1,161 @@
+{
+  "common": {
+    "save": "Speichern",
+    "delete": "Löschen",
+    "retry": "Erneut versuchen",
+    "undo": "Rückgängig",
+    "all": "Alle",
+    "apply": "Übernehmen"
+  },
+  "tabs": {
+    "dashboard": "Übersicht",
+    "history": "Verlauf",
+    "budget": "Budget"
+  },
+  "startup": {
+    "failed_title": "Start fehlgeschlagen",
+    "failed_retryable": "Etwas ist schiefgelaufen. Du kannst es erneut versuchen.",
+    "failed_fatal": "Ein nicht behebbarer Fehler ist aufgetreten. Bitte starte die App neu."
+  },
+  "onboarding": {
+    "welcome_title": "Willkommen bei Warizo",
+    "welcome_message": "Behalte Einnahmen und Ausgaben im Blick, setze monatliche Limits und sieh, wohin der Monat gegangen ist. Alles bleibt auf diesem Gerät.",
+    "language_title": "Welche Sprache?",
+    "theme_title": "Hell oder dunkel?",
+    "currency_title": "Welche Währung?",
+    "categories_title": "Wähle deine Kategorien",
+    "categories_message": "Entferne die Haken bei denen, die du nicht brauchst. Nichts geht verloren — du kannst sie später in den Einstellungen zurückholen.",
+    "skip": "Überspringen",
+    "next": "Weiter",
+    "back": "Zurück",
+    "start": "Los geht's",
+    "step": "Schritt {current} von {total}",
+    "reminder_title": "Sollen wir dich erinnern?",
+    "reminder_message": "Einmal im Monat, wenn die Übersicht des abgelaufenen Monats bereit ist. Du kannst das später in den Einstellungen ändern.",
+    "reminder_not_now": "Jetzt nicht"
+  },
+  "dashboard": {
+    "net_balance": "Saldo diesen Monat",
+    "income": "Einnahmen",
+    "expense": "Ausgaben",
+    "by_category": "Nach Kategorie",
+    "other_categories": "Sonstiges",
+    "no_expenses": "Diesen Monat keine Ausgaben",
+    "empty_title": "Noch nichts erfasst",
+    "empty_month": "Diesen Monat nichts",
+    "empty_message": "Beginne mit deiner ersten Einnahme oder Ausgabe.",
+    "reminder_nudge": "Möchtest du erinnert werden, wenn die Monatsübersicht bereit ist?",
+    "reminder_nudge_accept": "Ja, erinnere mich",
+    "reminder_nudge_dismiss": "Nein danke"
+  },
+  "history": {
+    "filter": "Filter",
+    "type": "Art",
+    "categories": "Kategorien",
+    "clear_filter": "Filter zurücksetzen",
+    "no_match": "Keine Einträge passen zum Filter",
+    "empty_title": "Der Verlauf ist leer",
+    "empty_message": "Einnahmen und Ausgaben, die du hinzufügst, erscheinen hier.",
+    "deleted": "Eintrag gelöscht",
+    "restored": "Eintrag wiederhergestellt"
+  },
+  "entry": {
+    "add_title": "Eintrag hinzufügen",
+    "edit_title": "Eintrag bearbeiten",
+    "amount": "Betrag",
+    "category": "Kategorie",
+    "date": "Datum",
+    "note": "Notiz",
+    "type_income": "Einnahme",
+    "type_expense": "Ausgabe",
+    "no_categories": "Lege zuerst eine Kategorie an.",
+    "error_amount_missing": "Gib einen Betrag ein",
+    "error_amount_invalid": "Gib einen gültigen Betrag ein",
+    "error_amount_positive": "Der Betrag muss größer als null sein"
+  },
+  "budget": {
+    "title": "Budgets",
+    "add": "Limit hinzufügen",
+    "edit": "Limit bearbeiten",
+    "limit": "Monatliches Limit",
+    "applies_to": "Gilt für",
+    "overall": "Alle Ausgaben",
+    "remaining": "{amount} übrig",
+    "over_by": "{amount} darüber",
+    "invalid_limit": "Gib ein gültiges Limit ein",
+    "empty_title": "Noch keine Budgets",
+    "empty_message": "Setze ein monatliches Limit und wir warnen dich, wenn es überschritten wird.",
+    "exceeded_warning": {
+      "one": "Budget {names} überschritten.",
+      "other": "Budgets {names} überschritten."
+    }
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "appearance": "Darstellung",
+    "language": "Sprache",
+    "theme": {
+      "system": "System",
+      "light": "Hell",
+      "dark": "Dunkel"
+    },
+    "language_system": "Gerätesprache",
+    "currency": "Standardwährung",
+    "currency_hint": "Neue Einträge starten damit. Bestehende behalten die Währung, mit der sie gespeichert wurden.",
+    "reminder": "Monatsübersicht",
+    "reminder_hint": "Eine Erinnerung im Monat, wenn die Übersicht des abgelaufenen Monats bereit ist.",
+    "reminder_enabled": "Erinnere mich",
+    "reminder_day": "Tag des Monats",
+    "reminder_blocked": "Benachrichtigungen für Warizo sind aus. Aktiviere sie in den Systemeinstellungen.",
+    "reminder_open_settings": "Einstellungen öffnen",
+    "notification_title": "Warizo",
+    "notification_body": "Deine Monatsübersicht ist bereit",
+    "notification_channel": "Monatsübersicht"
+  },
+  "about": {
+    "title": "Über",
+    "tagline": "Persönliche Einnahmen- und Ausgabenverwaltung. Deine Daten bleiben auf diesem Gerät.",
+    "made_by": "Entwickelt von",
+    "feedback": "Feedback",
+    "bug_report": "Fehler melden",
+    "bug_report_hint": "Öffnet einen Fehlerbericht auf GitHub",
+    "feature_request": "Funktion vorschlagen",
+    "feature_request_hint": "Öffnet einen Vorschlag auf GitHub",
+    "source": "Quellcode",
+    "legal": "Rechtliches",
+    "privacy": "Datenschutzerklärung",
+    "privacy_hint": "Deine Daten verlassen dieses Gerät nie",
+    "copied": "In die Zwischenablage kopiert"
+  },
+  "category": {
+    "food": "Essen",
+    "transport": "Transport",
+    "home": "Wohnen",
+    "bills": "Rechnungen",
+    "health": "Gesundheit",
+    "shopping": "Einkaufen",
+    "entertainment": "Unterhaltung",
+    "education": "Bildung",
+    "travel": "Reisen",
+    "misc": "Sonstiges",
+    "salary": "Gehalt",
+    "gift": "Geschenk",
+    "savings": "Ersparnisse"
+  },
+  "categories": {
+    "title": "Kategorien",
+    "add": "Kategorie hinzufügen",
+    "edit": "Kategorie bearbeiten",
+    "name": "Name",
+    "icon": "Symbol",
+    "colour": "Farbe",
+    "invalid_name": "Gib einen Namen ein",
+    "archived": "Archiviert",
+    "archive": "Archivieren",
+    "restore": "Wiederherstellen",
+    "archived_hint": "Archivierte Kategorien erscheinen nicht in der Auswahl. Vergangene Einträge behalten sie.",
+    "empty_title": "Keine Kategorien",
+    "empty_message": "Füge eine hinzu, um Einnahmen und Ausgaben zu sortieren.",
+    "colour_indexed": "Farbe {index}"
+  }
+}

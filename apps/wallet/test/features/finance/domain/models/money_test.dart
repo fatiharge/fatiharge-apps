@@ -114,4 +114,22 @@ void main() {
       expect(() => Currency.fromCode('XXX'), throwsArgumentError);
     });
   });
+
+  group('zero-decimal currencies', () {
+    const jpy = Currency.japaneseYen;
+
+    test('a minor unit is a major unit', () {
+      expect(const Money(1200, jpy).amountMajor, 1200);
+      expect(Money.fromMajor(1200, jpy), const Money(1200, jpy));
+    });
+
+    test('typed input does not gain a hundred-fold', () {
+      expect(Money.tryParse('1200', jpy), const Money(1200, jpy));
+    });
+
+    test('typed decimals are rounded away, not carried', () {
+      expect(Money.tryParse('1200,4', jpy), const Money(1200, jpy));
+      expect(Money.tryParse('1200,5', jpy), const Money(1201, jpy));
+    });
+  });
 }

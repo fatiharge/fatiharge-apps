@@ -1,0 +1,161 @@
+{
+  "common": {
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "retry": "Réessayer",
+    "undo": "Annuler",
+    "all": "Tout",
+    "apply": "Appliquer"
+  },
+  "tabs": {
+    "dashboard": "Aperçu",
+    "history": "Historique",
+    "budget": "Budget"
+  },
+  "startup": {
+    "failed_title": "Démarrage impossible",
+    "failed_retryable": "Un problème est survenu. Vous pouvez réessayer.",
+    "failed_fatal": "Une erreur irrécupérable est survenue. Veuillez relancer l'application."
+  },
+  "onboarding": {
+    "welcome_title": "Bienvenue dans Warizo",
+    "welcome_message": "Suivez ce qui entre et ce qui sort, fixez des limites mensuelles et voyez où est passé le mois. Tout reste sur cet appareil.",
+    "language_title": "Quelle langue ?",
+    "theme_title": "Clair ou sombre ?",
+    "currency_title": "Quelle devise ?",
+    "categories_title": "Choisissez vos catégories",
+    "categories_message": "Décochez celles que vous n'utiliserez pas. Rien n'est perdu — vous pourrez les récupérer plus tard dans les réglages.",
+    "skip": "Passer",
+    "next": "Suivant",
+    "back": "Retour",
+    "start": "Commencer",
+    "step": "Étape {current} sur {total}",
+    "reminder_title": "On vous le rappelle ?",
+    "reminder_message": "Une fois par mois, quand le résumé du mois écoulé est prêt. Vous pourrez changer cela plus tard dans les réglages.",
+    "reminder_not_now": "Pas maintenant"
+  },
+  "dashboard": {
+    "net_balance": "Solde ce mois-ci",
+    "income": "Revenus",
+    "expense": "Dépenses",
+    "by_category": "Par catégorie",
+    "other_categories": "Autres",
+    "no_expenses": "Aucune dépense ce mois-ci",
+    "empty_title": "Rien d'enregistré",
+    "empty_month": "Rien ce mois-ci",
+    "empty_message": "Commencez par ajouter votre premier revenu ou dépense.",
+    "reminder_nudge": "Voulez-vous un rappel quand le résumé du mois est prêt ?",
+    "reminder_nudge_accept": "Oui, rappelez-moi",
+    "reminder_nudge_dismiss": "Non merci"
+  },
+  "history": {
+    "filter": "Filtrer",
+    "type": "Type",
+    "categories": "Catégories",
+    "clear_filter": "Effacer le filtre",
+    "no_match": "Aucun enregistrement ne correspond au filtre",
+    "empty_title": "L'historique est vide",
+    "empty_message": "Les revenus et dépenses que vous ajoutez apparaîtront ici.",
+    "deleted": "Enregistrement supprimé",
+    "restored": "Enregistrement restauré"
+  },
+  "entry": {
+    "add_title": "Ajouter un enregistrement",
+    "edit_title": "Modifier l'enregistrement",
+    "amount": "Montant",
+    "category": "Catégorie",
+    "date": "Date",
+    "note": "Note",
+    "type_income": "Revenu",
+    "type_expense": "Dépense",
+    "no_categories": "Créez d'abord une catégorie.",
+    "error_amount_missing": "Saisissez un montant",
+    "error_amount_invalid": "Saisissez un montant valide",
+    "error_amount_positive": "Le montant doit être supérieur à zéro"
+  },
+  "budget": {
+    "title": "Budgets",
+    "add": "Ajouter une limite",
+    "edit": "Modifier la limite",
+    "limit": "Limite mensuelle",
+    "applies_to": "S'applique à",
+    "overall": "Toutes les dépenses",
+    "remaining": "{amount} restant",
+    "over_by": "{amount} de dépassement",
+    "invalid_limit": "Saisissez une limite valide",
+    "empty_title": "Aucun budget",
+    "empty_message": "Fixez une limite mensuelle et nous vous préviendrons lorsqu'elle sera dépassée.",
+    "exceeded_warning": {
+      "one": "Budget {names} dépassé.",
+      "other": "Budgets {names} dépassés."
+    }
+  },
+  "settings": {
+    "title": "Réglages",
+    "appearance": "Apparence",
+    "language": "Langue",
+    "theme": {
+      "system": "Système",
+      "light": "Clair",
+      "dark": "Sombre"
+    },
+    "language_system": "Langue de l'appareil",
+    "currency": "Devise par défaut",
+    "currency_hint": "Les nouveaux enregistrements démarrent avec celle-ci. Les existants gardent la devise avec laquelle ils ont été enregistrés.",
+    "reminder": "Résumé mensuel",
+    "reminder_hint": "Un rappel par mois, quand le résumé du mois écoulé est prêt.",
+    "reminder_enabled": "Me rappeler",
+    "reminder_day": "Jour du mois",
+    "reminder_blocked": "Les notifications sont désactivées pour Warizo. Activez-les dans les réglages système.",
+    "reminder_open_settings": "Ouvrir les réglages",
+    "notification_title": "Warizo",
+    "notification_body": "Votre résumé mensuel est prêt",
+    "notification_channel": "Résumé mensuel"
+  },
+  "about": {
+    "title": "À propos",
+    "tagline": "Suivi personnel des revenus et des dépenses. Vos données restent sur cet appareil.",
+    "made_by": "Réalisé par",
+    "feedback": "Retour",
+    "bug_report": "Signaler un bug",
+    "bug_report_hint": "Ouvre un rapport de bug sur GitHub",
+    "feature_request": "Proposer une fonctionnalité",
+    "feature_request_hint": "Ouvre une demande sur GitHub",
+    "source": "Code source",
+    "legal": "Mentions légales",
+    "privacy": "Politique de confidentialité",
+    "privacy_hint": "Vos données ne quittent jamais cet appareil",
+    "copied": "Copié dans le presse-papiers"
+  },
+  "category": {
+    "food": "Alimentation",
+    "transport": "Transport",
+    "home": "Logement",
+    "bills": "Factures",
+    "health": "Santé",
+    "shopping": "Achats",
+    "entertainment": "Loisirs",
+    "education": "Éducation",
+    "travel": "Voyage",
+    "misc": "Autres",
+    "salary": "Salaire",
+    "gift": "Cadeau",
+    "savings": "Épargne"
+  },
+  "categories": {
+    "title": "Catégories",
+    "add": "Ajouter une catégorie",
+    "edit": "Modifier la catégorie",
+    "name": "Nom",
+    "icon": "Icône",
+    "colour": "Couleur",
+    "invalid_name": "Saisissez un nom",
+    "archived": "Archivées",
+    "archive": "Archiver",
+    "restore": "Restaurer",
+    "archived_hint": "Les catégories archivées n'apparaissent plus dans les sélecteurs. Les enregistrements passés les conservent.",
+    "empty_title": "Aucune catégorie",
+    "empty_message": "Ajoutez-en une pour classer vos revenus et dépenses.",
+    "colour_indexed": "Couleur {index}"
+  }
+}
