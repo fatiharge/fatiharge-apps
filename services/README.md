@@ -64,8 +64,13 @@ Throw, do not catch. A resource never turns an exception into a status code:
 throw new CustomRuntimeException(409, "cooldown_open", "Yeni motto için beklemen gerekiyor.");
 ```
 
-- `code` is stable, snake_case and machine-readable. Clients branch on it;
-  messages are free to change wording.
+- `code` is stable, snake_case and machine-readable, and **it is the contract**.
+  Once a client depends on one it does not change.
+- `message` is English and written for whoever is reading a log or a failing
+  request. **It is never what a user sees.** The client renders its own text
+  from `code`, in its own language — a shared library cannot hold user-facing
+  copy without deciding, on behalf of every app that links it, which language
+  its users speak.
 - **A 5xx never returns its own message.** The real reason goes to the log,
   together with the `traceId` the caller receives — so a user reporting "it
   failed" gives something to search for.
