@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:bootstrap_kit/bootstrap_kit.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wallet/app.dart';
@@ -12,7 +13,12 @@ import 'package:wallet/infrastructure/adapter/bootstrap/bootstrap_adapter.dart';
 import 'package:wallet/infrastructure/repository/settings_repository_impl.dart';
 import 'package:wallet/route/app_router.dart';
 
-Future<void> main() => AppCrashListener().runGuarded(() async {
+Future<void> main() => AppCrashListener().runGuarded(startApp);
+
+/// Split from [main] because `runGuarded` takes over `FlutterError.onError`
+/// and its own zone, both of which the test binding owns.
+@visibleForTesting
+Future<void> startApp() async {
   await EasyLocalization.ensureInitialized();
 
   // Not a bootstrap job: bootstrap runs *inside* the app, so the splash would
@@ -39,4 +45,4 @@ Future<void> main() => AppCrashListener().runGuarded(() async {
       child: const App(),
     ),
   );
-});
+}

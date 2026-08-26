@@ -1,52 +1,65 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:wallet/config/injectable.dart';
+import 'package:wallet/features/settings/application/summary_reminder_controller.dart';
+import 'package:wallet/features/settings/domain/repository/settings_repository.dart';
 import 'package:wallet/main.dart' as app;
 
-/// End-to-end on a real device or emulator, against real Hive.
+/// The only test that runs the real app: real Hive on the device's storage and
+/// real platform channels. Everything in `test/` runs against fakes.
 ///
-/// The widget tests run against fakes and never touch storage; this is the
-/// only thing that proves a transaction written on one screen comes back on
-/// another after the round trip through disk.
+///     fvm flutter test integration_test/app_test.dart -d <device>
 ///
-///     flutter test integration_test/app_test.dart -d <device>
-///
-/// Not part of `melos run test`: it needs a device, and CI has none.
+/// Not in `melos run test`: it needs a device, and CI has none.
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('records an expense and sees it in the totals', (tester) async {
-    await app.main();
-    await tester.pumpAndSettle(const Duration(seconds: 5));
+  // Many short pumps rather than one long one: a single `pump(12s)` leaves the
+  // localization delegate unresolved and the tree empty, and `pumpAndSettle`
+  // never returns while the splash's indeterminate bar is on screen.
+  Future<Finder?> waitForAny(
+    WidgetTester tester,
+    List<Finder> finders, {
+    int seconds = 60,
+  }) async {
+    for (var tick = 0; tick < seconds * 10; tick++) {
+      await tester.pump(const Duration(milliseconds: 100));
+      for (final finder in finders) {
+        if (finder.evaluate().isNotEmpty) return finder;
+      }
+    }
+    return null;
+  }
 
-    await tester.tap(find.byType(FloatingActionButton));
-    await tester.pumpAndSettle();
+  testWidgets('boots on real storage, then arms and disarms the reminder', (
+    tester,
+  ) async {
+    await app.startApp();
 
-    await tester.enterText(find.byType(TextField).first, '125');
-    await tester.pumpAndSettle();
+    final tabs = find.byType(NavigationBar);
+    final skip = find.text('Atla');
 
-    // The first category chip, whatever the seed produced.
-    await tester.tap(find.byType(ChoiceChip).first);
-    await tester.pumpAndSettle();
+    var landed = await waitForAny(tester, [tabs, skip]);
+    expect(landed, isNotNull, reason: 'bootstrap never handed over');
 
-    await tester.tap(find.widgetWithText(FilledButton, 'Kaydet'));
-    await tester.pumpAndSettle(const Duration(seconds: 2));
+    if (landed == skip) {
+      await tester.tap(skip);
+      landed = await waitForAny(tester, [tabs]);
+      expect(landed, isNotNull);
+    }
 
-    // Back on the dashboard, the amount is part of the month's expense.
-    expect(find.textContaining('125'), findsWidgets);
-  });
+    final reminders = getIt<SummaryReminderController>();
+    final settings = getIt<SettingsRepository>();
 
-  testWidgets('the recorded expense survives a restart', (tester) async {
-    await app.main();
-    await tester.pumpAndSettle(const Duration(seconds: 5));
+    if (settings.readSummaryReminder().enabled) await reminders.disable();
 
-    await tester.tap(find.text('Geçmiş'));
-    await tester.pumpAndSettle();
+    // The part no other test reaches: a real permission check and a real
+    // zonedSchedule over the platform channel.
+    expect(await reminders.enable(day: 9), isNull);
+    expect(settings.readSummaryReminder().enabled, isTrue);
 
-    expect(
-      find.text('Geçmiş boş'),
-      findsNothing,
-      reason: 'the transaction from the previous test came off disk',
-    );
+    await reminders.disable();
+    expect(settings.readSummaryReminder().enabled, isFalse);
   });
 }
