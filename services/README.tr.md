@@ -65,8 +65,13 @@ Yakalama, fırlat. Resource bir istisnayı durum koduna çevirmez:
 throw new CustomRuntimeException(409, "cooldown_open", "Yeni motto için beklemen gerekiyor.");
 ```
 
-- `code` sabit, snake_case ve makine tarafından okunabilir. İstemci buna göre
-  dallanır; mesajın ifadesi serbestçe değişebilir.
+- `code` sabit, snake_case, makine tarafından okunabilir ve **sözleşmenin
+  kendisidir**. Bir istemci ona bağlandıktan sonra değişmez.
+- `message` İngilizcedir ve log'a ya da başarısız isteğe bakan kişi içindir.
+  **Kullanıcının gördüğü şey asla o değildir.** Kullanıcıya gösterilen metni
+  istemci `code`'dan üretir, kendi dilinde — paylaşılan bir kütüphane, kendisine
+  bağlanan her uygulama adına kullanıcıların hangi dili konuştuğuna karar
+  vermeden kullanıcı metni tutamaz.
 - **5xx kendi mesajını asla döndürmez.** Gerçek sebep, çağırana verilen
   `traceId` ile birlikte log'a gider — "hata aldım" diyen kullanıcı böylece
   aranabilir bir şey vermiş olur.

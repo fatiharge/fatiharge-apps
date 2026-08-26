@@ -13,13 +13,13 @@ class ErrorPayloadsTest {
   @Test
   @DisplayName("a client error keeps its status, code and message")
   void clientErrorIsPassedThrough() {
-    var exception = new CustomRuntimeException(404, "device_not_found", "Cihaz bulunamadı.");
+    var exception = new CustomRuntimeException(404, "device_not_found", "No such device.");
 
     ErrorPayload payload = ErrorPayloads.of(exception, TRACE);
 
     assertEquals(404, payload.status());
     assertEquals("device_not_found", payload.body().code());
-    assertEquals("Cihaz bulunamadı.", payload.body().message());
+    assertEquals("No such device.", payload.body().message());
     assertEquals(TRACE, payload.body().traceId());
   }
 
