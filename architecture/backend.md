@@ -128,17 +128,27 @@ breaks `/v1`.
 | | where | why |
 | --- | --- | --- |
 | **dev** | local, `quarkus dev` | Dev Services starts PostgreSQL in a container and live reload works. A deployed dev environment is worse than this and costs a container per service. |
-| **stage** | `<app>.stage.dafalabs.com` | real deploy, real database |
+| **stage** | `<app>stage.dafalabs.com` | real deploy, real database |
 | **prod** | `<app>.dafalabs.com` | manual trigger |
+
+One label deep on both, so a wildcard certificate for `*.dafalabs.com` covers
+them. A `<app>.stage.dafalabs.com` would need a certificate of its own.
 
 **An image is built once.** The image that stage runs is promoted to prod by
 digest — prod never rebuilds. Rebuilding is what makes "it worked in stage"
 meaningless. Images live in `ghcr.io`; the repository is public, so
 `GITHUB_TOKEN` is the only credential needed.
 
-Each environment has its own database instance. Configuration comes from Quarkus
-profiles (`%dev`, `%stage`, `%prod`) plus environment variables, held in GitHub
-Environments.
+Each environment has its own database instance.
+
+**Deployed environments do not use profiles.** A native image bakes its
+build-time configuration under the profile it was built with, so handing it a
+different one at runtime is a quiet source of "it worked on stage" — and
+building one image per profile would contradict the promotion above, since
+production would then run a sibling of the artefact stage ran rather than that
+artefact. `%dev` still exists, because dev is not deployed; stage and production
+run the same image under the same profile and differ only by environment
+variables, held in GitHub Environments.
 
 ## CI
 
@@ -154,6 +164,16 @@ Native from the start, but not on every push:
 against the compiled binary, where reflection and resource loading behave
 differently; `@QuarkusTest` runs on the JVM and cannot see those failures.
 Native images are built in a container, so no runner needs GraalVM installed.
+
+**A native binary carries two assumptions about the machine it will run on, and
+both default to the machine that built it.** It is linked against the builder
+image's glibc, so the runtime base image has to be the matching one — the
+builder is pinned for that reason and the two move together. And it targets the
+build machine's instruction set, so it is built with `-march=compatibility`;
+CI runners are newer than the server, and the default produced a binary
+demanding AVX2. Both failures look identical from outside: the container dies at
+exec, restarts forever, and the proxy answers 404 because it has nothing to
+route to.
 
 **Triggering.** One reusable workflow holds the logic; a thin caller per service
 carries only its `paths` filter. A service's filter includes `services/core/**`
