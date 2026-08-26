@@ -44,6 +44,13 @@ for service in "${SERVICES[@]}"; do
   rm -rf "${out}/.travis.yml" "${out}/git_push.sh" "${out}/doc" \
          "${out}/.openapi-generator-ignore" "${out}/.gitignore"
 
+  # The generated tests are empty bodies with a TODO in them. Keeping them would
+  # put this package under the coverage floor that every package with a test
+  # directory has to clear, and it would be measuring the generator rather than
+  # anything we wrote. What actually verifies this package is that regenerating
+  # it produces no diff, which CI checks.
+  rm -rf "${out}/test"
+
   python3 - "$out" "$package" "$service" <<'PY'
 import pathlib, sys
 
