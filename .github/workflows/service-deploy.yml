@@ -113,6 +113,10 @@ jobs:
       - name: Wait for the deployed service to report healthy
         env:
           SERVICE_HOST: ${{ vars.SERVICE_HOST }}
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          USER_NAME: ${{ secrets.DEPLOY_USER }}
+          PORT: ${{ secrets.DEPLOY_PORT }}
+          TARGET: ${{ vars.DEPLOY_PATH }}
         run: |
           if [ -z "${SERVICE_HOST}" ]; then
             echo "SERVICE_HOST is not set for this environment"
@@ -128,10 +132,21 @@ jobs:
           done
 
           echo "never reported healthy — the previous version is still running"
-          # What actually came back, so the first failure explains itself rather
-          # than needing a second run to find out.
+
+          # What came back from outside.
           echo "--- last response from https://${SERVICE_HOST}/q/health ---"
           curl -sS -i --max-time 10 "https://${SERVICE_HOST}/q/health" || true
+
+          # And what the server sees. A container that starts and then dies
+          # leaves `up` looking successful, so this is the only place the crash
+          # is visible — and by the next run the logs are gone.
+          echo "--- on the server ---"
+          ssh -i ~/.ssh/deploy -p "$PORT" -o BatchMode=yes "${USER_NAME}@${HOST}" bash -s <<EOF || true
+            cd "${TARGET}"
+            docker compose ps
+            docker compose logs --tail 120
+          EOF
+
           exit 1
 
       # The key is short-lived anyway, but leaving it on a runner that other
