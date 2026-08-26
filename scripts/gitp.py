@@ -287,8 +287,12 @@ def cmd_pr(args: argparse.Namespace) -> None:
         print("\nnote: still uncommitted on this branch:")
         print(leftover)
 
+    counted = (
+        f"{ahead} commit{'s' if ahead != '1' else ''}" if ahead.isdigit()
+        else "its commits"
+    )
     print(
-        f"\ndone: '{branch}' pushed with {ahead or 'its'} commits and a PR open. "
+        f"\ndone: '{branch}' pushed with {counted} and a PR open. "
         f"Still on the branch — `git switch {MAIN}` once it is merged."
     )
 
