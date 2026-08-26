@@ -17,3 +17,14 @@ updates:
       interval: weekly
     commit-message:
       prefix: ci
+
+  # Maven dependencies for the backend services. The Quarkus platform version is
+  # a property in services/pom.xml; Dependabot follows it there.
+  - package-ecosystem: maven
+    directory: /services
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: chore
+      include: scope

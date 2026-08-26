@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.dafalabs</groupId>
+  <artifactId>services-parent</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>services</name>
+  <description>Backend services. Not a Dart workspace member — Melos does not see this tree.</description>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.release>21</maven.compiler.release>
+
+    <!-- Current release rather than an LTS branch: nothing here is legacy yet,
+         Dependabot keeps it moving and CI catches what a bump breaks. If the
+         monthly bumps turn into noise, moving to an LTS branch is this one
+         property. -->
+    <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
+    <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
+    <quarkus.platform.version>3.39.1</quarkus.platform.version>
+
+    <compiler-plugin.version>3.15.0</compiler-plugin.version>
+    <surefire-plugin.version>3.5.6</surefire-plugin.version>
+    <failsafe-plugin.version>3.5.6</failsafe-plugin.version>
+    <jandex-plugin.version>3.6.0</jandex-plugin.version>
+
+    <!-- Integration tests run against a compiled binary, so they are off by
+         default and turned on where that binary exists. -->
+    <skipITs>true</skipITs>
+  </properties>
+
+  <modules>
+    <module>core</module>
+  </modules>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>${quarkus.platform.group-id}</groupId>
+        <artifactId>${quarkus.platform.artifact-id}</artifactId>
+        <version>${quarkus.platform.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>${quarkus.platform.group-id}</groupId>
+          <artifactId>quarkus-maven-plugin</artifactId>
+          <version>${quarkus.platform.version}</version>
+          <extensions>true</extensions>
+          <executions>
+            <execution>
+              <goals>
+                <goal>build</goal>
+                <goal>generate-code</goal>
+                <goal>generate-code-tests</goal>
+                <goal>native-image-agent</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
+        <!-- Quarkus does not discover CDI beans inside dependency jars without a
+             Jandex index: a library module without this starts cleanly and
+             silently has no beans. Configured here so every library module only
+             has to declare the plugin. -->
+        <plugin>
+          <groupId>io.smallrye</groupId>
+          <artifactId>jandex-maven-plugin</artifactId>
+          <version>${jandex-plugin.version}</version>
+          <executions>
+            <execution>
+              <id>make-index</id>
+              <goals>
+                <goal>jandex</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${compiler-plugin.version}</version>
+          <configuration>
+            <compilerArgs>
+              <arg>-parameters</arg>
+            </compilerArgs>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${surefire-plugin.version}</version>
+          <configuration>
+            <systemPropertyVariables>
+              <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+              <maven.home>${maven.home}</maven.home>
+            </systemPropertyVariables>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>${failsafe-plugin.version}</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>integration-test</goal>
+                <goal>verify</goal>
+              </goals>
+              <configuration>
+                <systemPropertyVariables>
+                  <native.image.path>${project.build.directory}/${project.build.finalName}-runner</native.image.path>
+                  <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                  <maven.home>${maven.home}</maven.home>
+                </systemPropertyVariables>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+</project>

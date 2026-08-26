@@ -19,3 +19,9 @@ coverage/
 
 # Misc
 /.config
+
+# Java / Maven
+target/
+
+# Quarkus CLI registry cache
+.quarkus/
