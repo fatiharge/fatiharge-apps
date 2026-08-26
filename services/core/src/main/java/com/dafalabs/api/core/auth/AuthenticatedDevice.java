@@ -25,7 +25,8 @@ public class AuthenticatedDevice {
   public UUID id() {
     String subject = token.getSubject();
     if (subject == null || subject.isBlank()) {
-      throw new CustomRuntimeException(401, "unauthenticated", "Geçerli bir oturum yok.");
+      throw new CustomRuntimeException(
+          401, "unauthenticated", "The token carries no subject.");
     }
     try {
       return UUID.fromString(subject);
@@ -33,7 +34,7 @@ public class AuthenticatedDevice {
       // A well-signed token with a subject we did not issue. Treat it as no
       // token at all rather than a server fault: the caller is the problem.
       throw new CustomRuntimeException(
-          401, "unauthenticated", "Geçerli bir oturum yok.", malformed);
+          401, "unauthenticated", "The token subject is not a device id.", malformed);
     }
   }
 }

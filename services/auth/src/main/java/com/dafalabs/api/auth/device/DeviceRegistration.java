@@ -51,10 +51,11 @@ public class DeviceRegistration {
   private void validate(String deviceHash, String platform) {
     if (deviceHash == null || !SHA256_HEX.matcher(deviceHash).matches()) {
       throw new CustomRuntimeException(
-          400, "invalid_device_hash", "Cihaz kimliği beklenen biçimde değil.");
+          400, "invalid_device_hash", "deviceHash must be a lowercase SHA-256 hex string.");
     }
     if (platform == null || !PLATFORMS.contains(platform)) {
-      throw new CustomRuntimeException(400, "invalid_platform", "Platform tanınmıyor.");
+      throw new CustomRuntimeException(
+          400, "invalid_platform", "platform must be one of: ios, android.");
     }
   }
 }
