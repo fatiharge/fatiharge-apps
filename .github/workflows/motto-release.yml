@@ -51,13 +51,21 @@ jobs:
           cache-dependency-path: services/**/pom.xml
 
       # The binary is compiled inside a container, so this runner needs no
-      # GraalVM and the result is built against the libc of the image that will
-      # run it. @QuarkusIntegrationTest runs here, against that binary:
+      # GraalVM. @QuarkusIntegrationTest runs here, against that binary:
       # reflection and resource loading behave differently in a native image and
       # the JVM tests cannot see those failures.
+      #
+      # The builder is pinned rather than left to the platform default, because
+      # the binary is linked against this image's glibc and Dockerfile.native
+      # has to ship the matching one. Changing this line means changing that
+      # base image in the same commit.
       - name: Build native and run integration tests
         working-directory: services
-        run: ./mvnw -B -Dnative -Dquarkus.native.container-build=true -pl motto -am verify
+        run: |
+          ./mvnw -B -Dnative \
+            -Dquarkus.native.container-build=true \
+            -Dquarkus.native.builder-image=quay.io/quarkus/ubi9-quarkus-mandrel-builder-image:jdk-25 \
+            -pl motto -am verify
 
       - name: Log in to ghcr.io
         env:

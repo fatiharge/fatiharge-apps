@@ -1,8 +1,15 @@
-# The binary is compiled inside a builder container, so no CI runner needs
-# GraalVM installed and the result is built against the same libc this image
-# ships. Anything else here is deliberate absence: no shell tools, no package
-# manager, nothing to exploit that the application does not need.
-FROM quay.io/quarkus/quarkus-micro-image:2.0
+# UBI 9, because the builder is UBI 9. This pairing is the whole content of this
+# line: a native binary is linked against the glibc of the image it was compiled
+# in, and running it on an older one fails at exec with
+#
+#   ./application: /lib64/libc.so.6: version `GLIBC_2.34' not found
+#
+# in a restart loop that looks, from outside, like a routing problem. The
+# builder is pinned in the release workflow; if it moves, this moves with it.
+#
+# Anything else here is deliberate absence: no shell tools, no package manager,
+# nothing to exploit that the application does not need.
+FROM quay.io/quarkus/ubi9-quarkus-micro-image:2.0
 
 WORKDIR /work/
 RUN chown 1001 /work && chmod "g+rwX" /work && chown 1001:root /work
