@@ -1,0 +1,138 @@
+name: motto release
+
+# Native build, image, stage deploy.
+#
+# A top-level paths filter is safe here in a way it is not on a pull request:
+# this workflow gates nothing, so a run that never happens blocks nothing.
+#
+# workflow_dispatch exists so the native build can be proven from a branch
+# before merging. Dispatched from anywhere but main it builds and pushes the
+# image and stops there — deploying a branch to stage by accident is not a
+# thing that should be one click away.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - services/motto/**
+      - services/core/**
+      - services/pom.xml
+      - .github/workflows/motto-release.yml
+  workflow_dispatch:
+
+concurrency:
+  group: motto-release
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    name: Native build and image
+    runs-on: ubuntu-latest
+    outputs:
+      digest: ${{ steps.push.outputs.digest }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          cache-dependency-path: services/**/pom.xml
+
+      # The binary is compiled inside a container, so this runner needs no
+      # GraalVM and the result is built against the libc of the image that will
+      # run it. @QuarkusIntegrationTest runs here, against that binary:
+      # reflection and resource loading behave differently in a native image and
+      # the JVM tests cannot see those failures.
+      - name: Build native and run integration tests
+        working-directory: services
+        run: ./mvnw -B -Dnative -Dquarkus.native.container-build=true -pl motto -am verify
+
+      - name: Log in to ghcr.io
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: echo "$TOKEN" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      - name: Build and push the image
+        id: push
+        working-directory: services/motto
+        env:
+          OWNER: ${{ github.repository_owner }}
+        run: |
+          set -euo pipefail
+          image="ghcr.io/${OWNER,,}/motto"
+          tag="${image}:${GITHUB_SHA::12}"
+
+          docker build -f src/main/docker/Dockerfile.native -t "$tag" .
+          docker push "$tag"
+
+          # The digest, not the tag, is what production will be given: a tag can
+          # be moved, a digest is the artefact itself.
+          digest=$(docker inspect --format='{{index .RepoDigests 0}}' "$tag")
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
+          echo "pushed $digest"
+
+  deploy:
+    name: Deploy to stage
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: stage
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Prepare the SSH connection
+        env:
+          KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$KEY" > ~/.ssh/deploy && chmod 600 ~/.ssh/deploy
+          # Pinned rather than scanned: every CI run is a first connection, so
+          # accepting whatever answers would accept anything.
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts && chmod 600 ~/.ssh/known_hosts
+
+      - name: Deploy
+        env:
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          USER_NAME: ${{ secrets.DEPLOY_USER }}
+          TARGET: ${{ vars.MOTTO_DEPLOY_PATH }}
+          DIGEST: ${{ needs.build.outputs.digest }}
+        run: |
+          set -euo pipefail
+          scp -i ~/.ssh/deploy services/motto/deploy/compose.yaml \
+            "${USER_NAME}@${HOST}:${TARGET}/compose.yaml"
+
+          ssh -i ~/.ssh/deploy "${USER_NAME}@${HOST}" bash -s <<EOF
+            set -euo pipefail
+            cd "${TARGET}"
+            if grep -q '^MOTTO_IMAGE=' .env; then
+              sed -i "s|^MOTTO_IMAGE=.*|MOTTO_IMAGE=${DIGEST}|" .env
+            else
+              echo "MOTTO_IMAGE=${DIGEST}" >> .env
+            fi
+            docker compose pull
+            docker compose up -d --remove-orphans
+          EOF
+
+      # `up -d` returns as soon as the container starts, which is not the same
+      # as the service working. This is the step that decides the deploy failed.
+      - name: Wait for the deployed service to report healthy
+        env:
+          MOTTO_HOST: ${{ vars.MOTTO_HOST }}
+        run: |
+          for attempt in $(seq 1 30); do
+            if curl -fsS "https://${MOTTO_HOST}/q/health" | grep -q '"status": *"UP"'; then
+              echo "healthy after ${attempt} attempt(s)"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "never reported healthy — the previous version is still running"
+          exit 1
