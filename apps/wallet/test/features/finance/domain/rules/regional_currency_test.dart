@@ -9,16 +9,32 @@ void main() {
     expect(currencyForRegion('DE'), Currency.euro);
     expect(currencyForRegion('HR'), Currency.euro);
     expect(currencyForRegion('US'), Currency.usDollar);
+    expect(currencyForRegion('CH'), Currency.swissFranc);
+    expect(currencyForRegion('LI'), Currency.swissFranc);
+    expect(currencyForRegion('MX'), Currency.mexicanPeso);
+    expect(currencyForRegion('CA'), Currency.canadianDollar);
+    expect(currencyForRegion('JP'), Currency.japaneseYen);
   });
 
   test('falls back to dollars for an unknown or absent region', () {
-    expect(currencyForRegion('JP'), Currency.usDollar);
+    expect(currencyForRegion('AU'), Currency.usDollar);
     expect(currencyForRegion(null), Currency.usDollar);
     expect(currencyForRegion(''), Currency.usDollar);
   });
 
   test('every answer is a currency the app can store', () {
-    for (final code in ['TR', 'GB', 'DE', 'US', 'ZZ', null]) {
+    for (final code in [
+      'TR',
+      'GB',
+      'DE',
+      'US',
+      'CH',
+      'MX',
+      'CA',
+      'JP',
+      'ZZ',
+      null,
+    ]) {
       expect(Currency.values, contains(currencyForRegion(code)));
     }
   });

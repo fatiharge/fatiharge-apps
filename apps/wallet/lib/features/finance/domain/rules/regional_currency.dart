@@ -28,6 +28,10 @@ const _euroArea = {
 Currency currencyForRegion(String? countryCode) => switch (countryCode) {
   'TR' => Currency.turkishLira,
   'GB' => Currency.britishPound,
+  'CH' || 'LI' => Currency.swissFranc,
+  'MX' => Currency.mexicanPeso,
+  'CA' => Currency.canadianDollar,
+  'JP' => Currency.japaneseYen,
   final code? when _euroArea.contains(code) => Currency.euro,
   _ => Currency.usDollar,
 };

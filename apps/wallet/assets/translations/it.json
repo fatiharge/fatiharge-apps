@@ -1,0 +1,161 @@
+{
+  "common": {
+    "save": "Salva",
+    "delete": "Elimina",
+    "retry": "Riprova",
+    "undo": "Annulla",
+    "all": "Tutto",
+    "apply": "Applica"
+  },
+  "tabs": {
+    "dashboard": "Riepilogo",
+    "history": "Cronologia",
+    "budget": "Budget"
+  },
+  "startup": {
+    "failed_title": "Avvio non riuscito",
+    "failed_retryable": "Qualcosa è andato storto. Puoi riprovare.",
+    "failed_fatal": "Si è verificato un errore irreversibile. Riavvia l'app."
+  },
+  "onboarding": {
+    "welcome_title": "Benvenuto in Warizo",
+    "welcome_message": "Tieni traccia di ciò che entra e di ciò che esce, imposta limiti mensili e scopri dov'è finito il mese. Tutto resta su questo dispositivo.",
+    "language_title": "Quale lingua?",
+    "theme_title": "Chiaro o scuro?",
+    "currency_title": "Quale valuta?",
+    "categories_title": "Scegli le tue categorie",
+    "categories_message": "Deseleziona quelle che non userai. Non si perde nulla — potrai recuperarle dalle impostazioni.",
+    "skip": "Salta",
+    "next": "Avanti",
+    "back": "Indietro",
+    "start": "Inizia",
+    "step": "Passo {current} di {total}",
+    "reminder_title": "Vuoi un promemoria?",
+    "reminder_message": "Una volta al mese, quando il riepilogo del mese appena concluso è pronto. Puoi cambiarlo più tardi nelle impostazioni.",
+    "reminder_not_now": "Non ora"
+  },
+  "dashboard": {
+    "net_balance": "Saldo di questo mese",
+    "income": "Entrate",
+    "expense": "Uscite",
+    "by_category": "Per categoria",
+    "other_categories": "Altro",
+    "no_expenses": "Nessuna spesa questo mese",
+    "empty_title": "Ancora nessun dato",
+    "empty_month": "Niente questo mese",
+    "empty_message": "Inizia aggiungendo la tua prima entrata o uscita.",
+    "reminder_nudge": "Vuoi un promemoria quando il riepilogo del mese è pronto?",
+    "reminder_nudge_accept": "Sì, ricordamelo",
+    "reminder_nudge_dismiss": "No, grazie"
+  },
+  "history": {
+    "filter": "Filtra",
+    "type": "Tipo",
+    "categories": "Categorie",
+    "clear_filter": "Rimuovi filtro",
+    "no_match": "Nessun movimento corrisponde al filtro",
+    "empty_title": "La cronologia è vuota",
+    "empty_message": "Le entrate e le uscite che aggiungi compariranno qui.",
+    "deleted": "Movimento eliminato",
+    "restored": "Movimento ripristinato"
+  },
+  "entry": {
+    "add_title": "Aggiungi movimento",
+    "edit_title": "Modifica movimento",
+    "amount": "Importo",
+    "category": "Categoria",
+    "date": "Data",
+    "note": "Nota",
+    "type_income": "Entrata",
+    "type_expense": "Uscita",
+    "no_categories": "Crea prima una categoria.",
+    "error_amount_missing": "Inserisci un importo",
+    "error_amount_invalid": "Inserisci un importo valido",
+    "error_amount_positive": "L'importo deve essere maggiore di zero"
+  },
+  "budget": {
+    "title": "Budget",
+    "add": "Aggiungi limite",
+    "edit": "Modifica limite",
+    "limit": "Limite mensile",
+    "applies_to": "Si applica a",
+    "overall": "Tutte le spese",
+    "remaining": "{amount} rimasti",
+    "over_by": "{amount} in più",
+    "invalid_limit": "Inserisci un limite valido",
+    "empty_title": "Nessun budget",
+    "empty_message": "Imposta un limite mensile e ti avviseremo quando viene superato.",
+    "exceeded_warning": {
+      "one": "Budget {names} superato.",
+      "other": "Budget {names} superati."
+    }
+  },
+  "settings": {
+    "title": "Impostazioni",
+    "appearance": "Aspetto",
+    "language": "Lingua",
+    "theme": {
+      "system": "Sistema",
+      "light": "Chiaro",
+      "dark": "Scuro"
+    },
+    "language_system": "Lingua del dispositivo",
+    "currency": "Valuta predefinita",
+    "currency_hint": "I nuovi movimenti partono da questa. Quelli esistenti mantengono la valuta con cui sono stati salvati.",
+    "reminder": "Riepilogo mensile",
+    "reminder_hint": "Un promemoria al mese, quando il riepilogo del mese appena concluso è pronto.",
+    "reminder_enabled": "Ricordamelo",
+    "reminder_day": "Giorno del mese",
+    "reminder_blocked": "Le notifiche per Warizo sono disattivate. Attivale nelle impostazioni di sistema.",
+    "reminder_open_settings": "Apri impostazioni",
+    "notification_title": "Warizo",
+    "notification_body": "Il tuo riepilogo mensile è pronto",
+    "notification_channel": "Riepilogo mensile"
+  },
+  "about": {
+    "title": "Informazioni",
+    "tagline": "Gestione personale di entrate e uscite. I tuoi dati restano su questo dispositivo.",
+    "made_by": "Realizzato da",
+    "feedback": "Feedback",
+    "bug_report": "Segnala un bug",
+    "bug_report_hint": "Apre una segnalazione su GitHub",
+    "feature_request": "Proponi una funzione",
+    "feature_request_hint": "Apre una proposta su GitHub",
+    "source": "Codice sorgente",
+    "legal": "Note legali",
+    "privacy": "Informativa sulla privacy",
+    "privacy_hint": "I tuoi dati non lasciano mai questo dispositivo",
+    "copied": "Copiato negli appunti"
+  },
+  "category": {
+    "food": "Cibo",
+    "transport": "Trasporti",
+    "home": "Casa",
+    "bills": "Bollette",
+    "health": "Salute",
+    "shopping": "Acquisti",
+    "entertainment": "Svago",
+    "education": "Istruzione",
+    "travel": "Viaggi",
+    "misc": "Altro",
+    "salary": "Stipendio",
+    "gift": "Regalo",
+    "savings": "Risparmi"
+  },
+  "categories": {
+    "title": "Categorie",
+    "add": "Aggiungi categoria",
+    "edit": "Modifica categoria",
+    "name": "Nome",
+    "icon": "Icona",
+    "colour": "Colore",
+    "invalid_name": "Inserisci un nome",
+    "archived": "Archiviate",
+    "archive": "Archivia",
+    "restore": "Ripristina",
+    "archived_hint": "Le categorie archiviate non compaiono nei selettori. I movimenti passati le conservano.",
+    "empty_title": "Nessuna categoria",
+    "empty_message": "Aggiungine una per iniziare a ordinare entrate e uscite.",
+    "colour_indexed": "Colore {index}"
+  }
+}

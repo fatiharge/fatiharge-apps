@@ -1,0 +1,161 @@
+{
+  "common": {
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "retry": "Reintentar",
+    "undo": "Deshacer",
+    "all": "Todo",
+    "apply": "Aplicar"
+  },
+  "tabs": {
+    "dashboard": "Resumen",
+    "history": "Historial",
+    "budget": "Presupuesto"
+  },
+  "startup": {
+    "failed_title": "No se pudo iniciar",
+    "failed_retryable": "Algo salió mal. Puedes intentarlo de nuevo.",
+    "failed_fatal": "Se produjo un error irrecuperable. Reinicia la aplicación."
+  },
+  "onboarding": {
+    "welcome_title": "Bienvenido a Warizo",
+    "welcome_message": "Controla lo que entra y lo que sale, fija límites mensuales y descubre a dónde se fue el mes. Todo se queda en este dispositivo.",
+    "language_title": "¿Qué idioma?",
+    "theme_title": "¿Claro u oscuro?",
+    "currency_title": "¿Qué moneda?",
+    "categories_title": "Elige tus categorías",
+    "categories_message": "Desmarca las que no vayas a usar. No se pierde nada — puedes recuperarlas luego en ajustes.",
+    "skip": "Omitir",
+    "next": "Siguiente",
+    "back": "Atrás",
+    "start": "Empezar",
+    "step": "Paso {current} de {total}",
+    "reminder_title": "¿Te lo recordamos?",
+    "reminder_message": "Una vez al mes, cuando el resumen del mes que termina esté listo. Puedes cambiarlo más tarde en ajustes.",
+    "reminder_not_now": "Ahora no"
+  },
+  "dashboard": {
+    "net_balance": "Saldo de este mes",
+    "income": "Ingresos",
+    "expense": "Gastos",
+    "by_category": "Por categoría",
+    "other_categories": "Otros",
+    "no_expenses": "Sin gastos este mes",
+    "empty_title": "Aún no hay registros",
+    "empty_month": "Nada este mes",
+    "empty_message": "Empieza añadiendo tu primer ingreso o gasto.",
+    "reminder_nudge": "¿Quieres un aviso cuando el resumen del mes esté listo?",
+    "reminder_nudge_accept": "Sí, avísame",
+    "reminder_nudge_dismiss": "No, gracias"
+  },
+  "history": {
+    "filter": "Filtrar",
+    "type": "Tipo",
+    "categories": "Categorías",
+    "clear_filter": "Quitar filtro",
+    "no_match": "Ningún registro coincide con el filtro",
+    "empty_title": "El historial está vacío",
+    "empty_message": "Los ingresos y gastos que añadas aparecerán aquí.",
+    "deleted": "Registro eliminado",
+    "restored": "Registro restaurado"
+  },
+  "entry": {
+    "add_title": "Añadir registro",
+    "edit_title": "Editar registro",
+    "amount": "Importe",
+    "category": "Categoría",
+    "date": "Fecha",
+    "note": "Nota",
+    "type_income": "Ingreso",
+    "type_expense": "Gasto",
+    "no_categories": "Crea primero una categoría.",
+    "error_amount_missing": "Introduce un importe",
+    "error_amount_invalid": "Introduce un importe válido",
+    "error_amount_positive": "El importe debe ser mayor que cero"
+  },
+  "budget": {
+    "title": "Presupuestos",
+    "add": "Añadir límite",
+    "edit": "Editar límite",
+    "limit": "Límite mensual",
+    "applies_to": "Se aplica a",
+    "overall": "Todos los gastos",
+    "remaining": "Quedan {amount}",
+    "over_by": "{amount} de más",
+    "invalid_limit": "Introduce un límite válido",
+    "empty_title": "Todavía no hay presupuestos",
+    "empty_message": "Fija un límite mensual y te avisaremos cuando se supere.",
+    "exceeded_warning": {
+      "one": "Presupuesto {names} superado.",
+      "other": "Presupuestos {names} superados."
+    }
+  },
+  "settings": {
+    "title": "Ajustes",
+    "appearance": "Apariencia",
+    "language": "Idioma",
+    "theme": {
+      "system": "Sistema",
+      "light": "Claro",
+      "dark": "Oscuro"
+    },
+    "language_system": "Idioma del dispositivo",
+    "currency": "Moneda predeterminada",
+    "currency_hint": "Los registros nuevos empiezan con esta. Los existentes mantienen la moneda con la que se guardaron.",
+    "reminder": "Resumen mensual",
+    "reminder_hint": "Un aviso al mes, cuando el resumen del mes que termina esté listo.",
+    "reminder_enabled": "Avísame",
+    "reminder_day": "Día del mes",
+    "reminder_blocked": "Las notificaciones están desactivadas para Warizo. Actívalas en los ajustes del sistema.",
+    "reminder_open_settings": "Abrir ajustes",
+    "notification_title": "Warizo",
+    "notification_body": "Tu resumen mensual está listo",
+    "notification_channel": "Resumen mensual"
+  },
+  "about": {
+    "title": "Acerca de",
+    "tagline": "Control personal de ingresos y gastos. Tus datos se quedan en este dispositivo.",
+    "made_by": "Hecho por",
+    "feedback": "Comentarios",
+    "bug_report": "Informar de un error",
+    "bug_report_hint": "Abre un informe de error en GitHub",
+    "feature_request": "Sugerir una función",
+    "feature_request_hint": "Abre una sugerencia en GitHub",
+    "source": "Código fuente",
+    "legal": "Legal",
+    "privacy": "Política de privacidad",
+    "privacy_hint": "Tus datos nunca salen de este dispositivo",
+    "copied": "Copiado al portapapeles"
+  },
+  "category": {
+    "food": "Comida",
+    "transport": "Transporte",
+    "home": "Hogar",
+    "bills": "Facturas",
+    "health": "Salud",
+    "shopping": "Compras",
+    "entertainment": "Ocio",
+    "education": "Educación",
+    "travel": "Viajes",
+    "misc": "Otros",
+    "salary": "Salario",
+    "gift": "Regalo",
+    "savings": "Ahorro"
+  },
+  "categories": {
+    "title": "Categorías",
+    "add": "Añadir categoría",
+    "edit": "Editar categoría",
+    "name": "Nombre",
+    "icon": "Icono",
+    "colour": "Color",
+    "invalid_name": "Introduce un nombre",
+    "archived": "Archivadas",
+    "archive": "Archivar",
+    "restore": "Restaurar",
+    "archived_hint": "Las categorías archivadas no aparecen en los selectores. Los registros pasados las conservan.",
+    "empty_title": "Sin categorías",
+    "empty_message": "Añade una para empezar a clasificar tus ingresos y gastos.",
+    "colour_indexed": "Color {index}"
+  }
+}

@@ -14,7 +14,14 @@ class LanguageSection extends StatefulWidget {
 
 class _LanguageSectionState extends State<LanguageSection> {
   /// Each written in itself, so someone who switched by accident can get back.
-  static const _names = {'tr': 'Türkçe', 'en': 'English'};
+  static const _names = {
+    'tr': 'Türkçe',
+    'en': 'English',
+    'de': 'Deutsch',
+    'fr': 'Français',
+    'es': 'Español',
+    'it': 'Italiano',
+  };
 
   /// Lazily, not in `initState`: reading it depends on an inherited widget.
   late bool _followsDevice = context.savedLocale == null;
