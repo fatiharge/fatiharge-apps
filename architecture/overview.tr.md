@@ -59,6 +59,8 @@ fatiharge-apps/
 │  ├─ utility_kit/           # UI'dan bağımsız temel sözleşmeler (EffectBloc)
 │  ├─ bootstrap_kit/         # uygulama başlangıç orkestrasyonu (job, cubit, page)
 │  └─ …                      # ui_kit, api_client, paylaşılan feature'lar — aşağıda
+├─ services/                 # backend — Dart workspace üyesi DEĞİL, bkz. backend.tr.md
+├─ contracts/                # üretilmiş OpenAPI şemaları, commit'li ve denetleniyor
 ├─ architecture/             # bu dokümanlar
 └─ .githooks/ .github/       # governance (commit hook, CI)
 ```
