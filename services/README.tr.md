@@ -136,7 +136,9 @@ kadar bloklar.
 
 Native build ve `@QuarkusIntegrationTest` pull request'te değil merge'de,
 **motto release** içinde koşar — pull request hızlı cevap ister. O workflow elle
-de tetiklenebilir; native derlemeyi merge'den önce dalda kanıtlamanın yolu bu.
+de tetiklenebilir; native derlemeyi merge'den önce dalda kanıtlamanın yolu bu —
+ikinci sürümden itibaren, çünkü GitHub elle tetiklemeyi yalnızca varsayılan dalda
+zaten bulunan workflow'lar için sunuyor.
 `main` dışından tetiklenirse imajı basar ve durur, çünkü bir dalı stage'e
 göndermek tek tık uzakta olmamalı.
 

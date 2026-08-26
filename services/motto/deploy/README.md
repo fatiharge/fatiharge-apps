@@ -44,6 +44,12 @@ Repository secrets:
 | `DEPLOY_SSH_KEY` | that user's private key |
 | `DEPLOY_KNOWN_HOSTS` | output of `ssh-keyscan <host>`, so CI is not trusting whatever answers |
 
+Repository variable:
+
+| Variable | What it does |
+|---|---|
+| `DEPLOY_ENABLED` | Set it to `true` when the server is ready. Until then every merge builds and pushes the image and stops, instead of failing at a deploy that cannot work yet. |
+
 Per-environment variables, under GitHub → Settings → Environments (`stage` and
 `prod`):
 

@@ -8,7 +8,13 @@ name: motto release
 # workflow_dispatch exists so the native build can be proven from a branch
 # before merging. Dispatched from anywhere but main it builds and pushes the
 # image and stops there — deploying a branch to stage by accident is not a
-# thing that should be one click away.
+# thing that should be one click away. It only becomes available once this file
+# is on the default branch, which GitHub requires; the very first native build
+# is therefore the one that runs on merge.
+#
+# Deploying waits for the DEPLOY_ENABLED repository variable. Until the server
+# has its secrets and its .env, an enabled deploy would fail on every merge and
+# turn a red run into background noise nobody reads.
 
 on:
   push:
@@ -80,7 +86,7 @@ jobs:
   deploy:
     name: Stage
     needs: build
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && vars.DEPLOY_ENABLED == 'true'
     uses: ./.github/workflows/service-deploy.yml
     with:
       image: ${{ needs.build.outputs.digest }}
