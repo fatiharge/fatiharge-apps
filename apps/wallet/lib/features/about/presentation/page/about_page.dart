@@ -55,6 +55,13 @@ class AboutPage extends StatelessWidget {
           subtitle: repositoryUrl,
           value: repositoryUrl,
         ),
+        _SectionLabel(context.tr(LocaleKeys.about_legal)),
+        _CopyTile(
+          leading: const Icon(Icons.privacy_tip_outlined),
+          title: context.tr(LocaleKeys.about_privacy),
+          subtitle: context.tr(LocaleKeys.about_privacy_hint),
+          value: privacyPolicyUrl,
+        ),
       ],
     ),
   );

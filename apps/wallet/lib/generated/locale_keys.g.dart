@@ -105,6 +105,9 @@ abstract class LocaleKeys {
   static const about_feature_request = 'about.feature_request';
   static const about_feature_request_hint = 'about.feature_request_hint';
   static const about_source = 'about.source';
+  static const about_legal = 'about.legal';
+  static const about_privacy = 'about.privacy';
+  static const about_privacy_hint = 'about.privacy_hint';
   static const about_copied = 'about.copied';
   static const category_food = 'category.food';
   static const category_transport = 'category.transport';
