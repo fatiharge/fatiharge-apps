@@ -54,7 +54,13 @@ services:
     volumes:
       # A path rather than a named volume, so a backup is a path someone can
       # point pg_dump at without asking Docker where it put things.
-      - /var/lib/motto-${MOTTO_ENV}-db:/var/lib/postgresql/data
+      #
+      # Mounted at /var/lib/postgresql, not at .../data. Postgres 18 images
+      # store the cluster in a version-named subdirectory so that pg_upgrade
+      # can work across a single mount, and they refuse to start when the mount
+      # is one level deeper. The 16-era path is the one every older example
+      # shows, which is exactly why this comment is here.
+      - /var/lib/motto-${MOTTO_ENV}-db:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U motto -d motto"]
       interval: 5s
