@@ -49,11 +49,24 @@ Per-environment variables, under GitHub → Settings → Environments (`stage` a
 
 | Variable | Example |
 |---|---|
-| `MOTTO_DEPLOY_PATH` | `/srv/motto-stage` |
-| `MOTTO_HOST` | `motto.stage.dafalabs.com` |
+| `DEPLOY_PATH` | `/srv/motto-stage` |
+| `SERVICE_HOST` | `motto.stage.dafalabs.com` |
 
 Making `prod` a protected environment there is what turns promotion into a
 decision rather than a button.
+
+## The image has to be pullable
+
+After the first release, set the `motto` package's visibility to public under
+GitHub → Packages. Packages start private even when their repository is public,
+and a private one means the server needs its own registry credential — a second
+standing secret for no benefit, since the image contains nothing the public
+repository does not already show.
+
+## Promoting
+
+The release run prints the digest it pushed. Run **motto promote** and paste it.
+Nothing is rebuilt: production is handed the artefact stage has been running.
 
 ## Why the image is a digest
 

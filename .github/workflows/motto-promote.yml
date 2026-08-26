@@ -1,0 +1,27 @@
+name: motto promote
+
+# Production runs an image that already ran on stage, moved there by digest.
+# There is no build step here on purpose: rebuilding from the same source
+# produces a different artefact — a newer base layer, a newer compiler patch —
+# and that is what makes "it worked on stage" stop meaning anything.
+
+on:
+  workflow_dispatch:
+    inputs:
+      digest:
+        description: "Image to promote, e.g. ghcr.io/fatiharge/motto@sha256:… (the release run prints it)"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  promote:
+    name: Production
+    uses: ./.github/workflows/service-deploy.yml
+    with:
+      image: ${{ inputs.digest }}
+      environment: prod
+      compose-file: services/motto/deploy/compose.yaml
+    secrets: inherit
