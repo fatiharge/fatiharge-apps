@@ -1,0 +1,53 @@
+package com.dafalabs.api.auth.device;
+
+import com.dafalabs.api.auth.device.dto.CurrentDeviceResponse;
+import com.dafalabs.api.auth.device.dto.DeviceTokenResponse;
+import com.dafalabs.api.auth.device.dto.RegisterDeviceRequest;
+import com.dafalabs.api.core.auth.AuthenticatedDevice;
+import io.quarkus.security.Authenticated;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+
+/** The only endpoint anyone calls on this service. */
+@Path("/v1/devices")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
+public class DeviceResource {
+
+  private final DeviceRegistration registration;
+  private final AuthenticatedDevice current;
+
+  DeviceResource(DeviceRegistration registration, AuthenticatedDevice current) {
+    this.registration = registration;
+    this.current = current;
+  }
+
+  // The operationId is not decoration: without it the generated Dart method
+  // name is derived from this method's name, and renaming the method here would
+  // silently rename the client's API.
+  @POST
+  @Path("/register")
+  @Operation(operationId = "registerDevice", summary = "Register a device and get a token")
+  public DeviceTokenResponse register(RegisterDeviceRequest request) {
+    IssuedToken issued = registration.register(request.deviceHash(), request.platform());
+    return new DeviceTokenResponse(
+        issued.deviceId().toString(), issued.token(), issued.expiresInSeconds());
+  }
+
+  // Lets a client find out whether the token it is holding is still good
+  // without guessing from the next call's failure. Also the smallest possible
+  // proof that verification works: it reads the subject out of a token this
+  // service signed and another service would verify the same way.
+  @GET
+  @Path("/me")
+  @Authenticated
+  @Operation(operationId = "currentDevice", summary = "Resolve the token holder")
+  public CurrentDeviceResponse me() {
+    return new CurrentDeviceResponse(current.id().toString());
+  }
+}

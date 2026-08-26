@@ -19,17 +19,32 @@ cd services
 ./mvnw -B verify
 ```
 
+### Colima
+
+Testler Dev Services ile bir PostgreSQL konteyneri açar ve Testcontainers'ın
+Docker soketine, konteyner motorunun gördüğü yoldan erişmesi gerekir. Colima'da
+bu varsayılan değildir ve hata alakasız görünür: *"Container startup failed for
+image testcontainers/ryuk"*. Bir kez şunu dışa aktar:
+
+```bash
+export TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock
+```
+
+Docker Desktop, OrbStack ve CI runner'ları için gerekmiyor.
+
 ## Yerleşim
 
 ```
 services/
 ├─ pom.xml     parent: Quarkus BOM, eklenti sürümleri, Jandex
-└─ core/       kütüphane modülü — her servise derlenir, ağ üzerinden çağrılmaz
+├─ core/       kütüphane modülü — her servise derlenir, ağ üzerinden çağrılmaz
+└─ auth/       çalıştırılabilir — cihaz hash'ini kimliğe çevirir ve token'ını imzalar
 ```
 
-Uygulama başına bir çalıştırılabilir modül ilk servisle gelecek. Servisler
-çalışma anında birbiriyle konuşmaz: `auth` bir JWT üretir, her servis onu public
-key ile yerel olarak doğrular.
+Uygulama başına bir çalıştırılabilir modül ilk uygulama servisiyle gelecek.
+Servisler çalışma anında birbiriyle konuşmaz: `auth` bir JWT üretir, her servis
+onu public key ile yerel olarak doğrular — bu yüzden `auth`'a ulaşan tek istek
+bir kayıttır.
 
 ## Yeni modül eklemek
 
@@ -59,6 +74,27 @@ throw new CustomRuntimeException(409, "cooldown_open", "Yeni motto için bekleme
   hepsini kapsar. Gövdesi zaten dolu olan bir `WebApplicationException` olduğu
   gibi geçer; o dal için henüz birim test yok, çünkü çalışan bir uç gerekiyor ve
   ilk servisle birlikte gelecek.
+
+## Kimlik
+
+Bir şey satın alınana kadar hesap yok, dolayısıyla kimlik cihazdır. Uygulama
+Keychain'de ya da `Settings.Secure.ANDROID_ID` içinde tuttuğu kimliği hash'ler
+ve hash'i gönderir; ham kimlik sunucuya hiç ulaşmaz — `devices` tablosunu
+sızdığında bile sıkıcı yapan şey budur.
+
+`POST /v1/devices/register` bilinçli olarak idempotenttir: aynı hash ile tekrar
+kayıt, zaten var olan kimliği döndürür. Bu sürekli olur, çünkü token kısa
+ömürlüdür ve **refresh akışı yoktur** — hesap yokken ayakta tutulacak oturum da
+yoktur, uygulama sadece yeniden kaydolur.
+
+Sonucunu açıkça yazmak gerekir: cihaz hash'i kimlik bilgisinin kendisidir. Onu
+elinde tutan token alabilir. Hesapsız ürünün doğal sonucudur; sertleştirmesi hız
+sınırı ve ileride platform attestation'dır.
+
+İmzalama anahtarları depoda durmaz; tek istisna `auth/dev-keys/` altındaki
+değersiz çifttir (kendi README'sine bak). Paketlenen uygulamada hiç anahtar
+tanımlı değildir: `SMALLRYE_JWT_SIGN_KEY` unutulursa servis bilinen bir
+anahtara düşmek yerine imzalama anında patlar.
 
 ## Konfigürasyon
 

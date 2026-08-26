@@ -18,17 +18,32 @@ cd services
 ./mvnw -B verify
 ```
 
+### Colima
+
+Tests start a PostgreSQL container through Dev Services, and Testcontainers
+needs to reach the Docker socket the way the container engine sees it. Under
+Colima that is not the default, and the failure looks unrelated — *"Container
+startup failed for image testcontainers/ryuk"*. Export this once:
+
+```bash
+export TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock
+```
+
+Docker Desktop, OrbStack and the CI runners need nothing.
+
 ## Layout
 
 ```
 services/
 ├─ pom.xml     parent: Quarkus BOM, plugin versions, Jandex
-└─ core/       library module — compiled into every service, never called over the network
+├─ core/       library module — compiled into every service, never called over the network
+└─ auth/       runnable — turns a device hash into an identity and signs its token
 ```
 
-One runnable module per app arrives with the first service. Services do not talk
-to each other at runtime: `auth` issues a JWT and each service verifies it
-locally against the public key.
+One runnable module per app arrives with the first app service. Services do not
+talk to each other at runtime: `auth` issues a JWT and each service verifies it
+locally against the public key, so the only request that ever reaches `auth` is
+a registration.
 
 ## Adding a module
 
@@ -58,6 +73,27 @@ throw new CustomRuntimeException(409, "cooldown_open", "Yeni motto için bekleme
   covers all of it. A `WebApplicationException` that already carries a body
   passes through untouched; that branch has no unit test yet because it needs a
   running endpoint, and gets one with the first service.
+
+## Identity
+
+There is no account until something is bought, so a device is the identity. The
+app hashes the identifier it keeps in the Keychain or in
+`Settings.Secure.ANDROID_ID` and sends the hash; the raw identifier never
+reaches a server, which is what makes the `devices` table dull if it ever leaks.
+
+`POST /v1/devices/register` is idempotent by design: registering again with the
+same hash returns the identity that already exists. That happens constantly,
+because a token is short-lived and **there is no refresh flow** — with no
+account there is no session to keep alive, so the app simply registers again.
+
+The consequence is worth stating plainly: the device hash is the credential.
+Anyone holding it can obtain a token. That is inherent to an account-free
+product; rate limiting and, later, platform attestation are what harden it.
+
+Signing keys never live in the repository except for the worthless pair in
+`auth/dev-keys/` (see its README). The packaged application has no key
+configured at all, so a deployment that forgets `SMALLRYE_JWT_SIGN_KEY` fails at
+signing rather than falling back to something known.
 
 ## Configuration
 
