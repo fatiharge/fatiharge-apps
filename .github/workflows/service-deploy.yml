@@ -1,0 +1,83 @@
+name: service deploy
+
+# One place holds how a deployment happens; callers say what to deploy and
+# where. Extracted when production promotion became the second caller, because
+# two copies of an SSH deploy drift and only one of them gets fixed.
+
+on:
+  workflow_call:
+    inputs:
+      image:
+        description: Image digest to run, e.g. ghcr.io/owner/motto@sha256:...
+        required: true
+        type: string
+      environment:
+        description: GitHub environment holding this deployment's variables
+        required: true
+        type: string
+      compose-file:
+        description: Path in this repository to the compose file to copy
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy to ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Prepare the SSH connection
+        env:
+          KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$KEY" > ~/.ssh/deploy && chmod 600 ~/.ssh/deploy
+          # Pinned rather than scanned: every CI run is a first connection, so
+          # accepting whatever answers would accept anything.
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts && chmod 600 ~/.ssh/known_hosts
+
+      - name: Deploy
+        env:
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          USER_NAME: ${{ secrets.DEPLOY_USER }}
+          TARGET: ${{ vars.DEPLOY_PATH }}
+          DIGEST: ${{ inputs.image }}
+          COMPOSE_FILE_PATH: ${{ inputs.compose-file }}
+        run: |
+          set -euo pipefail
+          scp -i ~/.ssh/deploy "$COMPOSE_FILE_PATH" "${USER_NAME}@${HOST}:${TARGET}/compose.yaml"
+
+          ssh -i ~/.ssh/deploy "${USER_NAME}@${HOST}" bash -s <<EOF
+            set -euo pipefail
+            cd "${TARGET}"
+            if grep -q '^MOTTO_IMAGE=' .env; then
+              sed -i "s|^MOTTO_IMAGE=.*|MOTTO_IMAGE=${DIGEST}|" .env
+            else
+              echo "MOTTO_IMAGE=${DIGEST}" >> .env
+            fi
+            docker compose pull
+            docker compose up -d --remove-orphans
+          EOF
+
+      # `up -d` returns as soon as the container starts, which is not the same
+      # as the service working. This is the step that decides a deploy failed.
+      - name: Wait for the deployed service to report healthy
+        env:
+          SERVICE_HOST: ${{ vars.SERVICE_HOST }}
+        run: |
+          for attempt in $(seq 1 30); do
+            if curl -fsS "https://${SERVICE_HOST}/q/health" | grep -q '"status": *"UP"'; then
+              echo "healthy after ${attempt} attempt(s)"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "never reported healthy — the previous version is still running"
+          exit 1

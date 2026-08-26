@@ -78,61 +78,12 @@ jobs:
           echo "pushed $digest"
 
   deploy:
-    name: Deploy to stage
+    name: Stage
     needs: build
     if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    environment: stage
-    steps:
-      - uses: actions/checkout@v7
-
-      - name: Prepare the SSH connection
-        env:
-          KEY: ${{ secrets.DEPLOY_SSH_KEY }}
-          KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
-        run: |
-          set -euo pipefail
-          install -d -m 700 ~/.ssh
-          printf '%s\n' "$KEY" > ~/.ssh/deploy && chmod 600 ~/.ssh/deploy
-          # Pinned rather than scanned: every CI run is a first connection, so
-          # accepting whatever answers would accept anything.
-          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts && chmod 600 ~/.ssh/known_hosts
-
-      - name: Deploy
-        env:
-          HOST: ${{ secrets.DEPLOY_HOST }}
-          USER_NAME: ${{ secrets.DEPLOY_USER }}
-          TARGET: ${{ vars.MOTTO_DEPLOY_PATH }}
-          DIGEST: ${{ needs.build.outputs.digest }}
-        run: |
-          set -euo pipefail
-          scp -i ~/.ssh/deploy services/motto/deploy/compose.yaml \
-            "${USER_NAME}@${HOST}:${TARGET}/compose.yaml"
-
-          ssh -i ~/.ssh/deploy "${USER_NAME}@${HOST}" bash -s <<EOF
-            set -euo pipefail
-            cd "${TARGET}"
-            if grep -q '^MOTTO_IMAGE=' .env; then
-              sed -i "s|^MOTTO_IMAGE=.*|MOTTO_IMAGE=${DIGEST}|" .env
-            else
-              echo "MOTTO_IMAGE=${DIGEST}" >> .env
-            fi
-            docker compose pull
-            docker compose up -d --remove-orphans
-          EOF
-
-      # `up -d` returns as soon as the container starts, which is not the same
-      # as the service working. This is the step that decides the deploy failed.
-      - name: Wait for the deployed service to report healthy
-        env:
-          MOTTO_HOST: ${{ vars.MOTTO_HOST }}
-        run: |
-          for attempt in $(seq 1 30); do
-            if curl -fsS "https://${MOTTO_HOST}/q/health" | grep -q '"status": *"UP"'; then
-              echo "healthy after ${attempt} attempt(s)"
-              exit 0
-            fi
-            sleep 5
-          done
-          echo "never reported healthy — the previous version is still running"
-          exit 1
+    uses: ./.github/workflows/service-deploy.yml
+    with:
+      image: ${{ needs.build.outputs.digest }}
+      environment: stage
+      compose-file: services/motto/deploy/compose.yaml
+    secrets: inherit
