@@ -68,6 +68,17 @@ MOTTO_JWT_PUBLIC_KEY=
 `%prod.something` does **not** apply when `MOTTO_PROFILE=stage`. Anything both
 environments need goes in unprefixed.
 
+### If a deploy left a half-made data directory
+
+Postgres refuses to start on a directory it did not lay out itself, so a failed
+first attempt has to be cleared before the next one. There is nothing to lose
+while the database has never held data:
+
+```bash
+cd /srv/motto-stage && docker compose down
+sudo rm -rf /var/lib/motto-stage-db
+```
+
 ## 4. `known_hosts`
 
 Pinned rather than scanned at deploy time: every CI run is a first connection,
