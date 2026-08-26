@@ -92,4 +92,6 @@ jobs:
       image: ${{ needs.build.outputs.digest }}
       environment: stage
       compose-file: services/motto/deploy/compose.yaml
+      image-variable: MOTTO_IMAGE
+      required-variables: MOTTO_ENV MOTTO_PROFILE MOTTO_HOST MOTTO_DB_PASSWORD
     secrets: inherit

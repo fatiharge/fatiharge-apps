@@ -19,6 +19,15 @@ on:
         description: Path in this repository to the compose file to copy
         required: true
         type: string
+      image-variable:
+        description: The .env key this deployment's image is written to
+        required: true
+        type: string
+      required-variables:
+        description: Space-separated .env keys that must be present and non-empty
+        required: false
+        default: ""
+        type: string
 
 permissions:
   contents: read
@@ -51,6 +60,8 @@ jobs:
           TARGET: ${{ vars.DEPLOY_PATH }}
           DIGEST: ${{ inputs.image }}
           COMPOSE_FILE_PATH: ${{ inputs.compose-file }}
+          IMAGE_VAR: ${{ inputs.image-variable }}
+          REQUIRED_VARS: ${{ inputs.required-variables }}
         run: |
           set -euo pipefail
           scp -i ~/.ssh/deploy -P "$PORT" -o BatchMode=yes \
@@ -59,15 +70,31 @@ jobs:
           ssh -i ~/.ssh/deploy -p "$PORT" -o BatchMode=yes "${USER_NAME}@${HOST}" bash -s <<EOF
             set -euo pipefail
             cd "${TARGET}"
-            if grep -q '^MOTTO_IMAGE=' .env; then
-              sed -i "s|^MOTTO_IMAGE=.*|MOTTO_IMAGE=${DIGEST}|" .env
-            else
-              echo "MOTTO_IMAGE=${DIGEST}" >> .env
+
+            # Compose substitutes an empty string for anything the .env forgot,
+            # which turns a missing host into a router rule of Host(\`\`) and a
+            # deploy that looks fine until nothing answers. Say so here instead.
+            missing=""
+            for key in ${REQUIRED_VARS}; do
+              grep -qE "^\${key}=.+" .env || missing="\${missing} \${key}"
+            done
+            if [ -n "\${missing}" ]; then
+              echo "missing or empty in ${TARGET}/.env:\${missing}"
+              exit 1
             fi
+
+            if grep -q "^${IMAGE_VAR}=" .env; then
+              sed -i "s|^${IMAGE_VAR}=.*|${IMAGE_VAR}=${DIGEST}|" .env
+            else
+              echo "${IMAGE_VAR}=${DIGEST}" >> .env
+            fi
+
             docker compose pull
             docker compose up -d --remove-orphans
             # Yesterday's image is still on disk and nothing references it.
             docker image prune -f
+
+            docker compose ps
           EOF
 
       # `up -d` returns as soon as the container starts, which is not the same
@@ -76,6 +103,11 @@ jobs:
         env:
           SERVICE_HOST: ${{ vars.SERVICE_HOST }}
         run: |
+          if [ -z "${SERVICE_HOST}" ]; then
+            echo "SERVICE_HOST is not set for this environment"
+            exit 1
+          fi
+
           for attempt in $(seq 1 30); do
             if curl -fsS "https://${SERVICE_HOST}/q/health" | grep -q '"status": *"UP"'; then
               echo "healthy after ${attempt} attempt(s)"
@@ -83,7 +115,12 @@ jobs:
             fi
             sleep 5
           done
+
           echo "never reported healthy — the previous version is still running"
+          # What actually came back, so the first failure explains itself rather
+          # than needing a second run to find out.
+          echo "--- last response from https://${SERVICE_HOST}/q/health ---"
+          curl -sS -i --max-time 10 "https://${SERVICE_HOST}/q/health" || true
           exit 1
 
       # The key is short-lived anyway, but leaving it on a runner that other
