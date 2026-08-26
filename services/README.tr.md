@@ -107,6 +107,38 @@ değersiz çifttir (kendi README'sine bak). Paketlenen uygulamada hiç anahtar
 tanımlı değildir: `SMALLRYE_JWT_SIGN_KEY` unutulursa servis bilinen bir
 anahtara düşmek yerine imzalama anında patlar.
 
+## Sözleşme
+
+Kaynak, resource'ların kendisi. SmallRye şemayı build sırasında
+`contracts/<servis>.v1.json` dosyasına yazar, o dosya commit'lenir ve
+`packages/api_client_<servis>` içindeki Dart istemci ondan üretilir. Hepsini tek
+komut yapar:
+
+```bash
+./scripts/generate_api_clients.sh
+```
+
+Bir uç ya da DTO değiştiğinde çalıştır ve ürettiğini commit'le. CI aynı script'i
+koşup sonrasında git'in temiz olmadığını görürse PR'ı düşürür — ki bu, commit'li
+istemcinin konuştuğu servisle uyuşmayı bıraktığı an demektir. Yayınlanmış bir
+`/v1`'i kıran değişikliği de reddeder; o değişiklik `/v2` açar.
+
+Şemayı dürüst tutan üç kural:
+
+- **Resource'lar entity değil DTO döner.** Tel üzerindeki entity, veritabanı
+  şeklini sözleşmeye koyar; tablo değiştiğinde sözleşme de değişir.
+- **Her uç `@Operation(operationId = "…")` bildirir.** Yoksa üretilen Dart metot
+  adı Java metot adından türer ve bir metodu yeniden adlandırmak istemcinin
+  API'sini sessizce yeniden adlandırır.
+- **Tip asla `@Schema` ile ezilmez.** DTO ne diyorsa şema odur; bu ikisi
+  anlaşmazlığa düşebildiği anda şema türetilmiş olmaktan çıkıp bakımı yapılan
+  bir şeye dönüşür.
+
+`packages/api_client_*` üretilmiş çıktıdır. Kimse elle düzenlemez, workspace
+lint kümesi ona uygulanmaz ve testi yoktur — onu doğrulayan şey yeniden
+üretildiğinde fark çıkmamasıdır. Taban URL de sözleşmede değildir: dağıtıma
+aittir, istemciye çalışma anında verilir.
+
 ## Konfigürasyon
 
 Paylaşılan varsayılanlar
