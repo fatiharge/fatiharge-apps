@@ -14,14 +14,19 @@ services:
     image: ${MOTTO_IMAGE}
     container_name: motto-${MOTTO_ENV}-api
     restart: unless-stopped
+    # No QUARKUS_PROFILE. A native image bakes its build-time configuration
+    # using the profile it was built under, so handing it a different one at
+    # runtime makes Quarkus warn that the two disagree — and it is right to.
+    # Promoting one image by digest means stage and production run the same
+    # artefact, so they differ by these values and by nothing else.
+    #
+    # MP_JWT_VERIFY_PUBLICKEY is absent rather than empty. Empty is not the same
+    # as unset: Quarkus tries to read it and fails to start. It comes back when
+    # auth is deployed and something here is actually authenticated.
     environment:
-      QUARKUS_PROFILE: ${MOTTO_PROFILE}
       QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://db:5432/motto
       QUARKUS_DATASOURCE_USERNAME: motto
       QUARKUS_DATASOURCE_PASSWORD: ${MOTTO_DB_PASSWORD}
-      # Empty until auth is deployed. Nothing here is authenticated yet, so an
-      # unset key costs a warning at startup and nothing else.
-      MP_JWT_VERIFY_PUBLICKEY: ${MOTTO_JWT_PUBLIC_KEY:-}
     depends_on:
       db:
         condition: service_healthy
