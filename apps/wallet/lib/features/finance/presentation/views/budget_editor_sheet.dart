@@ -7,7 +7,6 @@ import 'package:wallet/features/finance/domain/rules/amount_input.dart';
 import 'package:wallet/features/finance/presentation/format/category_name.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 
-/// What the editor hands back to the cubit.
 class BudgetDraft {
   const BudgetDraft({
     required this.amountText,
@@ -20,11 +19,9 @@ class BudgetDraft {
   /// `null` means the overall monthly limit.
   final String? categoryId;
 
-  /// Set when editing an existing limit.
   final String? budgetId;
 }
 
-/// Create or change a monthly limit.
 class BudgetEditorSheet extends StatefulWidget {
   const BudgetEditorSheet({required this.state, this.existing, super.key});
 

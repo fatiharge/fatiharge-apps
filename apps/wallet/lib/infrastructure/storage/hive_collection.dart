@@ -1,8 +1,6 @@
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:wallet/infrastructure/storage/wallet_storage.dart';
 
-/// A typed, stream-backed view over one Hive box.
-///
 /// Exists so the three repositories do not each re-implement "read every
 /// record, decode it, and re-emit whenever the box changes".
 class HiveCollection<T> {
@@ -18,8 +16,6 @@ class HiveCollection<T> {
   final Map<String, dynamic> Function(T item) encode;
   final String Function(T item) idOf;
 
-  /// Current contents, then a fresh list on every change.
-  ///
   /// The first value is emitted synchronously-ish so a listener never has to
   /// render an empty screen while waiting for the first write.
   Stream<List<T>> watchAll() async* {

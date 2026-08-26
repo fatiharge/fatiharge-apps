@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wallet/theme/finance_colors.dart';
 
-/// The app's Material 3 themes.
-///
 /// Lives in the app rather than a `ui_kit` package: with one consumer there is
 /// nothing to share yet. It moves out the day a second app needs it.
 abstract final class AppTheme {

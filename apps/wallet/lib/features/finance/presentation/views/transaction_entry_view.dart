@@ -10,8 +10,6 @@ import 'package:wallet/features/finance/presentation/format/category_name.dart';
 import 'package:wallet/features/finance/presentation/format/money_format.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 
-/// The add/edit transaction form.
-///
 /// [amountError] arrives already localized: which failure occurred is the
 /// application layer's business, phrasing it is this layer's, and the view
 /// only has to render a string.
@@ -55,7 +53,6 @@ class TransactionEntryView extends StatelessWidget {
   final String? selectedCategoryId;
   final bool submitting;
 
-  /// Localized message under the amount field, or `null` when it is fine.
   final String? amountError;
 
   final ValueChanged<TransactionType> onTypeChanged;
@@ -66,7 +63,6 @@ class TransactionEntryView extends StatelessWidget {
   final ValueChanged<String> onNoteChanged;
   final VoidCallback onSubmit;
 
-  /// Bounds the date picker; injected so a test can pin today.
   final Clock clock;
 
   @override

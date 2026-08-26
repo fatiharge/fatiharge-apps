@@ -7,7 +7,6 @@ import 'package:wallet/features/finance/application/category/category_state.dart
 import 'package:wallet/features/finance/domain/models/category.dart';
 import 'package:wallet/features/finance/domain/repository/category_repository.dart';
 
-/// Adding and archiving categories.
 @injectable
 class CategoryCubit extends Cubit<CategoryState> {
   CategoryCubit(this._categories) : super(const CategoryState());
@@ -24,8 +23,6 @@ class CategoryCubit extends Cubit<CategoryState> {
     );
   }
 
-  /// Returns `false` when [name] is blank.
-  ///
   /// The category is stored with a `name` and no `nameKey`: it is the user's
   /// own, so a language switch must leave it alone.
   Future<bool> add({

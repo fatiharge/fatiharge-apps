@@ -1,8 +1,6 @@
 import 'package:injectable/injectable.dart';
 import 'package:wallet/infrastructure/storage/wallet_storage.dart';
 
-/// Opens the Hive boxes as part of DI setup.
-///
 /// `@preResolve` makes `configureDependencies()` await the boxes, so by the
 /// time any repository is resolved its box is guaranteed to be open.
 @module

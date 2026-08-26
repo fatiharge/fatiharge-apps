@@ -6,7 +6,6 @@ import 'package:wallet/features/finance/presentation/views/budget_progress_tile.
 import 'package:wallet/features/finance/presentation/views/empty_state.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 
-/// The list of monthly limits with this month's spending against each.
 class BudgetView extends StatelessWidget {
   const BudgetView({
     required this.statuses,
@@ -17,7 +16,6 @@ class BudgetView extends StatelessWidget {
     super.key,
   });
 
-  /// Most-at-risk first.
   final List<BudgetStatus> statuses;
   final Map<String, Category> categories;
 

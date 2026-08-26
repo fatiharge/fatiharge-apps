@@ -1,6 +1,5 @@
 import 'package:wallet/features/finance/domain/models/category.dart';
 
-/// Storage contract for categories.
 abstract interface class CategoryRepository {
   /// Every category, archived ones included — history needs them to resolve
   /// the name and colour of past transactions.

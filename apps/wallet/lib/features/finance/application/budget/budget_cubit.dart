@@ -16,7 +16,6 @@ import 'package:wallet/features/finance/domain/rules/clock.dart';
 import 'package:wallet/features/finance/domain/rules/monthly_summary.dart';
 import 'package:wallet/features/settings/domain/repository/settings_repository.dart';
 
-/// Manages monthly limits and shows how far through each one this month is.
 @injectable
 class BudgetCubit extends Cubit<BudgetState> {
   BudgetCubit(

@@ -1,18 +1,12 @@
 import 'package:hive_ce_flutter/hive_flutter.dart';
 
-/// Raw Hive record: what actually lands on disk.
 typedef HiveRecord = Map<dynamic, dynamic>;
 
-/// The app's opened Hive boxes.
+/// One object, not three `Box` registrations: get_it resolves by type, and
+/// three boxes of one type would need names for no benefit.
 ///
-/// One object rather than three separately-registered `Box` instances: get_it
-/// resolves by type, and three boxes of the same type would need named
-/// registrations for no benefit.
-///
-/// Records are plain maps instead of generated `TypeAdapter`s. With three
-/// small collections, an explicit map keeps the persisted shape reviewable in
-/// one place (`*_dto.dart`) and removes a code generator from the loop; the
-/// mappers are covered by round-trip tests.
+/// Plain maps instead of generated `TypeAdapter`s, so the persisted shape
+/// stays reviewable in `*_dto.dart` and there is one less generator.
 class WalletStorage {
   const WalletStorage({
     required this.transactions,
@@ -24,7 +18,6 @@ class WalletStorage {
   static const String categoriesBox = 'categories';
   static const String budgetsBox = 'budgets';
 
-  /// Opens every box. Call after `Hive.initFlutter()`.
   static Future<WalletStorage> open() async => WalletStorage(
     transactions: await Hive.openBox<HiveRecord>(transactionsBox),
     categories: await Hive.openBox<HiveRecord>(categoriesBox),

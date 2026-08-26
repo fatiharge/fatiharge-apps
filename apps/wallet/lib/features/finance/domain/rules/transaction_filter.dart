@@ -3,8 +3,6 @@ import 'package:wallet/features/finance/domain/models/currency.dart';
 import 'package:wallet/features/finance/domain/models/money_transaction.dart';
 import 'package:wallet/features/finance/domain/rules/month_period.dart';
 
-/// The history screen's filter, as a pure predicate.
-///
 /// Every field is optional and they combine with AND. An empty filter matches
 /// everything, which is what the screen opens with.
 @immutable
@@ -53,7 +51,6 @@ class TransactionFilter {
     return true;
   }
 
-  /// Applies the filter and returns the result newest-first.
   List<MoneyTransaction> apply(Iterable<MoneyTransaction> transactions) {
     final result = transactions.where(matches).toList()
       ..sort((a, b) => b.date.compareTo(a.date));

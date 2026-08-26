@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// One choice in a settings group, with a check mark when it is the active one.
-///
 /// A plain [ListTile] rather than [RadioListTile]: the radio API changed shape
 /// across recent Flutter versions, and a check mark reads the same while
 /// staying on widgets this app already uses everywhere else.

@@ -1,11 +1,7 @@
 import 'package:meta/meta.dart';
 
-/// A calendar month — the unit every total and budget in the app is measured
-/// in.
-///
-/// Deliberately a calendar month rather than a configurable cycle (e.g. "from
-/// payday to payday"): a custom cycle start would leak into every aggregation
-/// and budget comparison, so it is a v2 decision, not a v1 default.
+/// A calendar month, not a configurable cycle: a custom start would leak into
+/// every aggregation and budget comparison.
 @immutable
 class MonthPeriod implements Comparable<MonthPeriod> {
   const MonthPeriod(this.year, this.month);
@@ -17,11 +13,9 @@ class MonthPeriod implements Comparable<MonthPeriod> {
   /// 1-based, like [DateTime.month].
   final int month;
 
-  /// First instant of the month, inclusive.
   DateTime get start => DateTime(year, month);
 
-  /// First instant of the *next* month — the end is exclusive, which avoids
-  /// the classic "last millisecond of the month" off-by-one.
+  /// Exclusive, which avoids the "last millisecond of the month" off-by-one.
   DateTime get end => DateTime(year, month + 1);
 
   /// `DateTime(2025, 13)` normalises to January 2026, so rollover is free.

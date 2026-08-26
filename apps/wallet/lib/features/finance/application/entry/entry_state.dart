@@ -7,11 +7,8 @@ import 'package:wallet/features/finance/domain/rules/amount_input.dart';
 
 part 'entry_state.freezed.dart';
 
-/// Why the entry form cannot be submitted yet.
 enum EntryError { amountMissing, amountInvalid, amountNotPositive, noCategory }
 
-/// The add/edit transaction form.
-///
 /// The amount is held as raw [amountText] rather than a parsed [Money]: the
 /// user types `12,` on the way to `12,50`, and a state that cannot represent
 /// half-typed input forces the widget to keep its own shadow copy.
@@ -22,13 +19,11 @@ abstract class EntryState with _$EntryState {
     required Currency currency,
     required DateTime date,
 
-    /// Set when editing an existing transaction; `null` when adding a new one.
     String? editingId,
     @Default('') String amountText,
     String? categoryId,
     @Default('') String note,
 
-    /// Selectable categories (archived ones excluded).
     @Default(<Category>[]) List<Category> categories,
     @Default(false) bool submitting,
     @Default(false) bool saved,
@@ -39,7 +34,6 @@ abstract class EntryState with _$EntryState {
 
   const EntryState._();
 
-  /// A blank form.
   factory EntryState.initial({DateTime? now, Currency? currency}) => EntryState(
     type: TransactionType.expense,
     currency: currency ?? Currency.turkishLira,
@@ -65,6 +59,5 @@ abstract class EntryState with _$EntryState {
 
   bool get isValid => error == null;
 
-  /// The error to render, or `null` while the user has not submitted yet.
   EntryError? get visibleError => showErrors ? error : null;
 }

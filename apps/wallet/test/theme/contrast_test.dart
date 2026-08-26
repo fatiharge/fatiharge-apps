@@ -5,12 +5,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:wallet/theme/app_theme.dart';
 import 'package:wallet/theme/finance_colors.dart';
 
-/// Measures what the palette only claims in comments.
-///
-/// `finance_colors.dart` writes a ratio next to each colour; nothing checked
-/// them, so a nudge to any value would have left the comment saying 5.2:1
-/// while the colour said something else. These are the numbers, computed.
-///
 /// 4.5:1 is the WCAG AA floor for body text, 3:1 for large text and for the
 /// parts of an icon or control that carry its meaning.
 void main() {
@@ -97,8 +91,7 @@ void main() {
           ),
           'primary/surface': (scheme.primary, scheme.surface),
         };
-        // Hint text and secondary labels are lighter by design, so they are
-        // held to the large-text floor rather than the body one.
+        // Lighter by design, so held to the large-text floor.
         final secondary = contrast(scheme.onSurfaceVariant, scheme.surface);
 
         pairs.forEach((label, pair) {
@@ -110,8 +103,8 @@ void main() {
   });
 
   test('the mark teal stays out of text, as its comment says', () {
-    // Kept as a measurement, not a warning: if someone ever reaches for it as
-    // a foreground colour this is the number they are up against.
+    // A measurement, not a warning: the number anyone reaching for it as a
+    // foreground colour is up against.
     final onWhite = contrast(AppTheme.teal, const Color(0xFFFFFFFF));
 
     expect(onWhite, lessThan(3), reason: 'teal is $onWhite:1 on white');

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// Income and expense colours, carried inside [ThemeData].
-///
 /// Not [ColorScheme] slots: none of them means "expense", and lending `error`
 /// to it would tie a failed validation and a spent lira to one colour.
 @immutable

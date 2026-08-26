@@ -6,9 +6,6 @@ import 'package:wallet/features/finance/domain/models/money_transaction.dart';
 import 'package:wallet/features/finance/domain/repository/transaction_repository.dart';
 import 'package:wallet/features/finance/domain/rules/clock.dart';
 
-/// Fills an empty database with a plausible month, for screenshots and manual
-/// testing. Enabled with `--dart-define=SEED_DEMO_DATA=true`.
-///
 /// Lives under `dev/` rather than `seed/` because it is a tool, not product
 /// behaviour: `seed/` is what every install gets on first run, this never
 /// runs unless a developer asks for it.

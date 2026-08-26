@@ -16,10 +16,6 @@ import 'package:wallet/features/settings/domain/repository/settings_repository.d
 import 'package:wallet/generated/locale_keys.g.dart';
 import 'package:wallet/route/app_router.gr.dart';
 
-/// Monthly totals, the category breakdown and any blown budgets.
-///
-/// Wiring only: provides the bloc, resolves the union, and turns the state
-/// into arguments for [DashboardView]. Everything drawn lives in the view.
 @RoutePage()
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -30,9 +26,8 @@ class DashboardPage extends StatelessWidget {
     child: Scaffold(
       appBar: AppBar(
         title: Text(context.tr(LocaleKeys.tabs_dashboard)),
-        // The dashboard is the app's landing tab, so its action bar is the one
-        // place settings are reliably found without adding a fourth
-        // navigation destination for them.
+        // The landing tab's action bar, so settings needs no fourth
+        // navigation destination.
         actions: [
           IconButton(
             onPressed: () => context.router.push(const SettingsRoute()),
@@ -46,7 +41,6 @@ class DashboardPage extends StatelessWidget {
   );
 }
 
-/// The state-driven half, plus the one-shot effect subscription.
 class _DashboardBody extends StatefulWidget {
   const _DashboardBody();
 
@@ -60,8 +54,7 @@ class _DashboardBodyState extends State<_DashboardBody> {
   @override
   void initState() {
     super.initState();
-    // One-shot effects drive the review ask; it is not part of state, so a
-    // rebuild never re-fires it.
+    // Off the state stream, so a rebuild never re-fires the ask.
     _effects = context.read<DashboardBloc>().effects.listen(_onEffect);
   }
 
@@ -109,12 +102,8 @@ class _DashboardBodyState extends State<_DashboardBody> {
         },
       );
 
-  /// The offer, or nothing.
-  ///
-  /// Withheld unless the month has numbers in it: "shall we remind you when
-  /// the summary is ready" only means something to someone who has just been
-  /// shown one. It also stops after a few showings and after being closed —
-  /// see [ReminderNudge.maxShowings].
+  /// Withheld unless the month has numbers in it: the offer only means
+  /// something to someone who has just been shown a summary.
   Widget? _reminderNudge(DashboardReady state) {
     final settings = getIt<SettingsRepository>();
 
@@ -127,8 +116,7 @@ class _DashboardBodyState extends State<_DashboardBody> {
   }
 }
 
-/// Records the showing once, when it is first built, rather than on every
-/// rebuild — a scroll or a theme change is not another offer.
+/// Counts on mount, not on rebuild: a scroll is not another offer.
 class _CountedNudge extends StatefulWidget {
   const _CountedNudge({required this.settings});
 

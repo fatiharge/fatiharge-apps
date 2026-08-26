@@ -9,8 +9,6 @@ import 'package:wallet/features/finance/presentation/views/category_editor_sheet
 import 'package:wallet/features/finance/presentation/views/category_view.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 
-/// Managing the categories transactions are sorted into.
-///
 /// Reached from settings rather than from the tabs: it is set up once and
 /// rarely revisited.
 @RoutePage()

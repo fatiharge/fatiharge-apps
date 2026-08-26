@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wallet/theme/app_mark.dart';
 
-/// What the app shows while the startup jobs run.
-///
 /// Passed to `BootstrapPage` by `StartupPage`. It lives here, next to the
 /// failure view, rather than inside the bootstrap adapter: the adapter belongs
 /// to `infrastructure/` and has no business building widgets.

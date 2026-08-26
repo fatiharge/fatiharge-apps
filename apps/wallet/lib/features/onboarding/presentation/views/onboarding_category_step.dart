@@ -3,7 +3,6 @@ import 'package:wallet/features/finance/domain/models/category.dart';
 import 'package:wallet/features/finance/presentation/format/category_icons.dart';
 import 'package:wallet/features/finance/presentation/format/category_name.dart';
 
-/// The seeded categories, all ticked, for the user to thin out.
 class OnboardingCategoryStep extends StatelessWidget {
   const OnboardingCategoryStep({
     required this.categories,

@@ -7,8 +7,6 @@ import 'package:wallet/config/injectable.dart';
 import 'package:wallet/features/startup/presentation/splash_view.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 
-/// The first route: runs the startup jobs and hands over to the main tabs.
-///
 /// All of the orchestration lives in `bootstrap_kit`; this page only supplies
 /// the port and the localized failure screen.
 @RoutePage()

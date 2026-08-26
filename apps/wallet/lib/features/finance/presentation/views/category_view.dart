@@ -6,7 +6,6 @@ import 'package:wallet/features/finance/presentation/format/category_name.dart';
 import 'package:wallet/features/finance/presentation/views/empty_state.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 
-/// Active categories, then archived ones.
 class CategoryView extends StatelessWidget {
   const CategoryView({
     required this.active,

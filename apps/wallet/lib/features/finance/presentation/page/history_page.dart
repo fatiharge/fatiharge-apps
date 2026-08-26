@@ -14,7 +14,6 @@ import 'package:wallet/features/finance/presentation/views/history_view.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 import 'package:wallet/route/app_router.gr.dart';
 
-/// The full transaction list, with filtering and swipe-to-delete.
 @RoutePage()
 class HistoryPage extends StatelessWidget {
   const HistoryPage({super.key});

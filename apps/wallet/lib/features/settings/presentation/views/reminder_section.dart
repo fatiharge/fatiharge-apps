@@ -5,8 +5,6 @@ import 'package:wallet/features/finance/domain/rules/summary_schedule.dart';
 import 'package:wallet/features/settings/application/summary_reminder_controller.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 
-/// The monthly reminder switch and its day.
-///
 /// Shown both in settings and as a first-run step, so it carries no scaffold
 /// of its own.
 class ReminderSection extends StatefulWidget {
@@ -131,7 +129,6 @@ class _DayPicker extends StatelessWidget {
   );
 }
 
-/// The settings screen's version, with its own heading and explanation.
 class ReminderSettings extends StatelessWidget {
   const ReminderSettings({super.key});
 

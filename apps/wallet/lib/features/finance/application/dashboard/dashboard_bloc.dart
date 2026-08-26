@@ -21,15 +21,7 @@ import 'package:wallet/features/finance/domain/rules/monthly_summary.dart';
 import 'package:wallet/features/settings/application/review_prompt.dart';
 import 'package:wallet/features/settings/domain/repository/settings_repository.dart';
 
-/// Recomputes the dashboard whenever transactions, categories or budgets
-/// change.
-///
-/// Because all three repositories expose streams, adding a transaction on the
-/// entry screen updates the totals, the chart and the overspend warning here
-/// without either screen knowing about the other.
-///
-/// An [EffectBloc] because the screen has one thing to *do* as well as draw:
-/// the store review has to be asked for at a moment, and a moment kept in
+/// An [EffectBloc] because the review ask is a moment, and a moment kept in
 /// state would be asked for again on every rebuild.
 @injectable
 class DashboardBloc
@@ -68,7 +60,6 @@ class DashboardBloc
   bool _hasTransactions = false;
   bool _reviewAnnounced = false;
 
-  /// Subscribes to storage. Safe to raise more than once.
   void _onStarted(DashboardStarted event, Emitter<DashboardState> emit) {
     if (_subscriptions.isNotEmpty) return;
 
@@ -112,7 +103,6 @@ class DashboardBloc
     _emitReady(emit);
   }
 
-  /// Browsing stops at the current month; there is nothing recorded past today.
   void _onNextMonth(
     DashboardNextMonthRequested event,
     Emitter<DashboardState> emit,
@@ -134,8 +124,7 @@ class DashboardBloc
   bool get _canShowNextMonth => _period.isBefore(MonthPeriod.of(clock()));
 
   void _emitReady(Emitter<DashboardState> emit) {
-    // Wait for the first transaction emission so the screen does not flash an
-    // "empty month" before storage has answered.
+    // Otherwise the screen flashes an empty month before storage answers.
     if (!_hasTransactions) return;
 
     final available = currenciesUsed(_allTransactions);
@@ -166,10 +155,8 @@ class DashboardBloc
     _announceReviewMoment(summary);
   }
 
-  /// Raised at most once per screen: [_emitReady] runs on every change to any
-  /// of the three repositories, and the ask is only recorded once whoever
-  /// takes the effect has acted on it — so without this the same moment would
-  /// be announced repeatedly before the first recording lands.
+  /// Once per screen: [_emitReady] runs on every repository change, and the
+  /// ask is not recorded until whoever takes the effect has acted on it.
   void _announceReviewMoment(MonthlySummary summary) {
     if (_reviewAnnounced) return;
 
@@ -183,12 +170,8 @@ class DashboardBloc
     emitEffect(const DashboardReviewMomentReached());
   }
 
-  /// The chip is a view filter, not the preference: switching it here shows
-  /// another currency's month, it does not change what new records default to.
-  ///
-  /// Falls through the preferred currency before the first one on record, so
-  /// someone who keeps a few euro receipts alongside their lira still opens on
-  /// lira.
+  /// Preferred currency before first-on-record, so a few euro receipts do not
+  /// take over a lira account.
   Currency _resolveCurrency(List<Currency> available) {
     final selected = _currency;
     if (selected != null && available.contains(selected)) return selected;

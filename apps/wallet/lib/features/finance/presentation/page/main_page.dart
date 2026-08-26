@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 import 'package:wallet/route/app_router.gr.dart';
 
-/// The tab shell: dashboard, history, budgets.
-///
 /// The add button lives here rather than on each tab so it is reachable from
 /// everywhere — recording a transaction is the app's primary action.
 @RoutePage()

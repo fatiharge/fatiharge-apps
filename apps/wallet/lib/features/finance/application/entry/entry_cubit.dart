@@ -10,7 +10,6 @@ import 'package:wallet/features/finance/domain/repository/category_repository.da
 import 'package:wallet/features/finance/domain/repository/transaction_repository.dart';
 import 'package:wallet/features/settings/domain/repository/settings_repository.dart';
 
-/// Drives the add/edit transaction form.
 @injectable
 class EntryCubit extends Cubit<EntryState> {
   EntryCubit(this._transactions, this._categories, SettingsRepository settings)
@@ -23,7 +22,6 @@ class EntryCubit extends Cubit<EntryState> {
 
   StreamSubscription<void>? _categorySubscription;
 
-  /// Loads categories and, when [existing] is given, the values being edited.
   void start({MoneyTransaction? existing}) {
     if (existing != null) {
       emit(
@@ -69,7 +67,6 @@ class EntryCubit extends Cubit<EntryState> {
 
   void noteChanged(String note) => emit(state.copyWith(note: note));
 
-  /// Validates and persists. Sets `saved` on success so the page can pop.
   Future<void> submit() async {
     if (!state.isValid) {
       emit(state.copyWith(showErrors: true));
@@ -93,7 +90,6 @@ class EntryCubit extends Cubit<EntryState> {
     emit(state.copyWith(submitting: false, saved: true));
   }
 
-  /// Renders minor units back into an editable string (`12345` -> `123.45`).
   String _formatForEditing(MoneyTransaction transaction) {
     final digits = transaction.amount.currency.decimalDigits;
     return transaction.amount.amountMajor.toStringAsFixed(digits);

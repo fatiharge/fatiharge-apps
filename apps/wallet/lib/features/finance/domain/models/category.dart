@@ -2,11 +2,8 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'category.freezed.dart';
 
-/// The icon a category is drawn with.
-///
-/// An enum rather than an `IconData` code point on purpose: the domain must
-/// stay Flutter-free, and non-const `IconData` would break icon tree-shaking.
-/// The presentation layer maps these to concrete icons.
+/// An enum, not an `IconData`: the domain stays Flutter-free, and a non-const
+/// `IconData` would break icon tree-shaking.
 enum CategoryIcon {
   food,
   transport,
@@ -23,11 +20,8 @@ enum CategoryIcon {
   other,
 }
 
-/// A spending/earning category.
-///
-/// Categories are never hard-deleted: past transactions keep pointing at them,
-/// so removal is an [archived] flag. Archived categories disappear from
-/// pickers but historical records still resolve their name and colour.
+/// Never hard-deleted — past transactions keep pointing at them — so removal
+/// is the [archived] flag.
 ///
 /// [name] and [nameKey] are exclusive: a key follows the app language, a name
 /// is the user's own and must survive a language switch.

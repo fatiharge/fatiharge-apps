@@ -5,13 +5,8 @@ import 'package:wallet/features/finance/domain/rules/review_moment.dart';
 import 'package:wallet/features/settings/domain/repository/settings_repository.dart';
 import 'package:wallet/features/settings/domain/review_requester.dart';
 
-/// Decides when to hand the store its one chance to ask for a review, and
-/// takes it when told to.
-///
-/// Deliberately says nothing about what the user should write. Prompting for a
-/// particular score, or steering unhappy users to a feedback form instead of
-/// the store, is grounds for removal from both stores — so the app's only
-/// influence is *when* it asks.
+/// Says nothing about what to write: prompting for a score, or routing unhappy
+/// users elsewhere, is grounds for removal from both stores.
 @injectable
 class ReviewPrompt {
   ReviewPrompt(
@@ -24,26 +19,21 @@ class ReviewPrompt {
   final ReviewRequester _requester;
   final Clock clock;
 
-  /// Records the first launch, so age can be measured later.
   Future<void> start() async {
     if (_settings.installedAt() != null) return;
     await _settings.recordInstall(clock());
   }
 
-  /// Whether now is a moment worth spending the store's quota on.
-  ///
-  /// Synchronous because every input already is: the caller is a cubit
-  /// deciding what to announce while it builds a state, and an await there
-  /// would put the answer a frame behind the screen it belongs to.
+  /// Synchronous: an await here would put the answer a frame behind the
+  /// screen it belongs to.
   bool isMoment({
     required int transactionCount,
     required bool viewingMonthWithData,
   }) {
     final now = clock();
     if (Env.debugGrowth) {
-      // The rule is left exactly as it ships; only the waiting it measures is
-      // moved out of the way. `viewingMonthWithData` is deliberately not
-      // faked — the moment itself is the thing worth seeing.
+      // Only the waiting is moved out of the way; `viewingMonthWithData` is
+      // not faked, since the moment is the thing worth seeing.
       return ReviewMoment.shouldAsk(
         now: now,
         installedAt: now.subtract(ReviewMoment.minimumAge),
@@ -62,11 +52,8 @@ class ReviewPrompt {
     );
   }
 
-  /// Asks the store to show its dialog.
-  ///
-  /// Marked as asked whether or not a dialog appears: the store counts the
-  /// call, not the sighting, so treating a silent call as "did not happen"
-  /// would burn the quota in a loop.
+  /// Recorded whether or not a dialog appears: the store counts the call, not
+  /// the sighting.
   Future<void> ask() async {
     if (!await _requester.isAvailable()) return;
 

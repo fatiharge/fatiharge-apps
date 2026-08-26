@@ -5,20 +5,13 @@ import 'package:wallet/features/settings/domain/monthly_summary_reminder.dart';
 import 'package:wallet/features/settings/domain/repository/settings_repository.dart';
 import 'package:wallet/features/settings/domain/theme_preference.dart';
 
-/// SharedPreferences-backed [SettingsRepository].
-///
-/// Takes an already-loaded [SharedPreferences] rather than calling
-/// `getInstance()` itself, which is what lets [readTheme] be synchronous. It
-/// is registered by hand in `main.dart` for the same reason the router is:
-/// the theme is needed before the DI container is built.
-///
-/// Not annotated for injectable — a generated registration would resolve too
-/// late to be of any use here.
+/// Takes an already-loaded [SharedPreferences], which is what lets the reads
+/// be synchronous. Registered by hand in `main.dart`; a generated registration
+/// would resolve too late.
 class SettingsRepositoryImpl implements SettingsRepository {
   const SettingsRepositoryImpl(this._preferences, {this.region});
 
-  /// Namespaced because easy_localization keeps its own `locale` key in this
-  /// same store.
+  /// Namespaced: easy_localization keeps its own key in this same store.
   static const String themeKey = 'settings.theme';
   static const String currencyKey = 'settings.currency';
   static const String onboardedKey = 'settings.onboarded';
@@ -32,8 +25,8 @@ class SettingsRepositoryImpl implements SettingsRepository {
 
   final SharedPreferences _preferences;
 
-  /// ISO 3166-1 alpha-2 code of the device's region, passed in rather than
-  /// read here so this stays testable without a platform.
+  /// Passed in rather than read here, so this stays testable without a
+  /// platform.
   final String? region;
 
   @override
@@ -48,8 +41,7 @@ class SettingsRepositoryImpl implements SettingsRepository {
   Currency readCurrency() {
     final stored = _preferences.getString(currencyKey);
 
-    // A dropped currency code falls back rather than throwing: a preference is
-    // not worth crashing over, unlike a stored transaction amount.
+    // A preference is not worth crashing over, unlike a stored amount.
     return Currency.values.where((c) => c.code == stored).firstOrNull ??
         currencyForRegion(region);
   }
@@ -112,8 +104,7 @@ class SettingsRepositoryImpl implements SettingsRepository {
   Future<void> recordReviewRequest(DateTime at) =>
       _writeDate(reviewAskedAtKey, at);
 
-  /// Milliseconds rather than an ISO string: shared_preferences has no date
-  /// type, and an int cannot be half-parsed into a wrong day.
+  /// Milliseconds, not ISO: an int cannot be half-parsed into a wrong day.
   DateTime? _readDate(String key) {
     final millis = _preferences.getInt(key);
     return millis == null ? null : DateTime.fromMillisecondsSinceEpoch(millis);

@@ -9,7 +9,6 @@ import 'package:wallet/features/settings/presentation/theme_preference_label.dar
 import 'package:wallet/route/app_router.dart';
 import 'package:wallet/theme/app_theme.dart';
 
-/// The root widget: theme, localization and the router.
 class App extends StatelessWidget {
   const App({super.key});
 

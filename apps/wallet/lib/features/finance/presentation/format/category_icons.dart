@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:wallet/features/finance/domain/models/category.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 
-/// Maps the domain's [CategoryIcon] onto concrete Material icons.
-///
-/// The mapping lives here so the domain never imports Flutter, and so every
-/// icon stays a `const IconData` (a dynamic code point would defeat icon
-/// tree-shaking and bloat the release build).
+/// Here so the domain never imports Flutter, and so every icon stays a
+/// `const IconData` — a dynamic code point defeats icon tree-shaking.
 IconData iconFor(CategoryIcon icon) => switch (icon) {
   CategoryIcon.food => Icons.restaurant_outlined,
   CategoryIcon.transport => Icons.directions_bus_outlined,
@@ -23,12 +20,8 @@ IconData iconFor(CategoryIcon icon) => switch (icon) {
   CategoryIcon.other => Icons.category_outlined,
 };
 
-/// What to call an icon out loud.
-///
-/// Reuses the seeded category names rather than inventing a second set: the
-/// enum was named after them, so "Yemek" is already the right word for the
-/// fork-and-knife. Spelled out per row for the same reason the seeds are —
-/// an interpolated key cannot be checked by anything.
+/// Reuses the seeded names: the enum was named after them. Spelled out per
+/// row for the same reason the seeds are.
 String iconLabelKey(CategoryIcon icon) => switch (icon) {
   CategoryIcon.food => LocaleKeys.category_food,
   CategoryIcon.transport => LocaleKeys.category_transport,

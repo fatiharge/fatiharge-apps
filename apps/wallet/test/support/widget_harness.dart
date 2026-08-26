@@ -7,26 +7,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wallet/theme/app_theme.dart';
 
-/// Pumps a view with the localization and theme it gets in the app.
-///
-/// The views cannot be pumped bare: every amount and date goes through
-/// `context.locale`, and `EasyLocalization.of(context)!` throws without an
-/// ancestor. Loading the shipped `assets/translations` rather than faking them
-/// also means a view naming a key that no longer exists fails here instead of
-/// rendering the raw key on a phone.
-///
-/// The locale is pinned to `tr`: assertions on formatted money and translated
-/// labels have to be reproducible, and CI's device locale is not.
-/// Set [settle] to false for a view that never stops animating — a progress
-/// indicator keeps scheduling frames, so `pumpAndSettle` would spin until it
-/// times out rather than because anything is wrong.
+/// Loads the shipped translations, so a view naming a dead key fails here
+/// rather than rendering the raw key on a phone. Locale pinned to `tr` because
+/// CI's is not. Set [settle] false for a view that never stops animating.
 Future<void> pumpLocalized(
   WidgetTester tester,
   Widget view, {
   bool settle = true,
 }) async {
-  // Stands in for the platform channel easy_localization saves the locale
-  // through; without it initialisation throws.
+  // The platform channel easy_localization saves through; it throws without.
   SharedPreferences.setMockInitialValues({});
   await EasyLocalization.ensureInitialized();
 
@@ -59,18 +48,14 @@ Future<void> pumpLocalized(
   }
 }
 
-/// Grows the test surface so a long page is built in full.
-///
-/// The default 800x600 window leaves anything below the fold unbuilt — a
-/// `ListView` is lazy — so `find.text` misses it and the failure reads as
-/// missing content rather than an off-screen one.
+/// A lazy `ListView` leaves anything below 800x600 unbuilt, so `find.text`
+/// misses it and the failure reads as missing content.
 void useTallSurface(WidgetTester tester) {
   tester.view.physicalSize = const Size(1000, 2400);
   tester.view.devicePixelRatio = 1.0;
   addTearDown(tester.view.reset);
 }
 
-/// For a widget that builds its own MaterialApp, which `App` does.
 Future<void> pumpApp(WidgetTester tester, Widget app) async {
   SharedPreferences.setMockInitialValues({});
   await EasyLocalization.ensureInitialized();
@@ -93,13 +78,8 @@ Future<void> pumpApp(WidgetTester tester, Widget app) async {
 const _locale = Locale('tr');
 const _supported = [Locale('tr'), Locale('en')];
 
-/// Reads the translation files straight off disk.
-///
-/// The shipped loader goes through `rootBundle`, whose real I/O does not
-/// complete inside `pumpAndSettle`'s fake-async zone — the first pump in a file
-/// would resolve and every one after it would hang with MaterialApp waiting on
-/// a delegate, rendering an empty tree. Tests run on the VM, so reading the
-/// same files synchronously is both simpler and still the real content.
+/// `rootBundle` I/O does not complete inside `pumpAndSettle`'s fake-async
+/// zone, so every pump after the first hangs on an unresolved delegate.
 class _FileAssetLoader extends AssetLoader {
   const _FileAssetLoader();
 

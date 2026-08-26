@@ -5,7 +5,6 @@ import 'package:wallet/infrastructure/repository/dto/category_dto.dart';
 import 'package:wallet/infrastructure/storage/hive_collection.dart';
 import 'package:wallet/infrastructure/storage/wallet_storage.dart';
 
-/// Hive-backed [CategoryRepository].
 @LazySingleton(as: CategoryRepository)
 class CategoryRepositoryImpl implements CategoryRepository {
   CategoryRepositoryImpl(WalletStorage storage)

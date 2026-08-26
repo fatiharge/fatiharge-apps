@@ -10,11 +10,8 @@ import 'package:wallet/features/finance/domain/repository/category_repository.da
 import 'package:wallet/features/finance/domain/repository/transaction_repository.dart';
 import 'package:wallet/features/finance/domain/rules/transaction_filter.dart';
 
-/// The transaction history: filtering, and delete with undo.
-///
-/// An [EffectBloc] because deleting has to both change state (the row goes
-/// away) and fire a one-shot action (show the undo snackbar). Putting the
-/// snackbar in state would re-show it on every rebuild.
+/// An [EffectBloc] because deleting both removes a row and shows an undo
+/// snackbar, and a snackbar in state re-shows on every rebuild.
 @injectable
 class HistoryBloc
     extends EffectBloc<HistoryEvent, HistoryState, HistoryEffect> {
@@ -45,10 +42,8 @@ class HistoryBloc
     ]);
   }
 
-  /// Either half of the data can arrive on its own, so anything the event does
-  /// not carry keeps its current value. The fallbacks are spelled out because
-  /// the generated `copyWith` takes non-nullable arguments — it cannot express
-  /// "leave this alone" through a null.
+  /// Either half can arrive alone. Fallbacks are spelled out because the
+  /// generated `copyWith` cannot express "leave this alone" through a null.
   void _onDataReceived(HistoryDataReceived event, Emitter<HistoryState> emit) {
     final categories = event.categories;
     emit(
@@ -77,8 +72,7 @@ class HistoryBloc
     Emitter<HistoryState> emit,
   ) async {
     await _transactions.delete(event.transaction.id);
-    // The list itself refreshes through the stream; this only drives the
-    // snackbar.
+    // The list refreshes through the stream; this only drives the snackbar.
     emitEffect(HistoryTransactionRemoved(event.transaction));
   }
 

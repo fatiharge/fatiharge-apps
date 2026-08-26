@@ -4,8 +4,6 @@ import 'package:wallet/features/finance/domain/models/currency.dart';
 import 'package:wallet/features/finance/domain/models/money.dart';
 import 'package:wallet/features/finance/domain/models/money_transaction.dart';
 
-/// Shorthand builders so tests read as data, not as constructor noise.
-///
 /// The default categories are deliberately meaningless (`misc`): a test that
 /// cares which category a transaction lands in has to say so, and the linter
 /// will not strip an argument that differs from the default.

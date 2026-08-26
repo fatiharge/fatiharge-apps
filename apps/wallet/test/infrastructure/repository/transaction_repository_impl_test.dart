@@ -8,8 +8,6 @@ import 'package:wallet/infrastructure/repository/transaction_repository_impl.dar
 import '../../support/finance_fixtures.dart';
 import '../../support/hive_harness.dart';
 
-/// Exercises the repository against real Hive rather than a fake.
-///
 /// Everything above this layer is tested with in-memory doubles, so without
 /// these tests nothing would notice if the storage layer stopped persisting,
 /// stopped emitting, or started handing back records it could not decode.

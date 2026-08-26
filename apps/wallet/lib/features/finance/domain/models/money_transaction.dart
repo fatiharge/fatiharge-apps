@@ -4,11 +4,8 @@ import 'package:wallet/features/finance/domain/models/money.dart';
 
 part 'money_transaction.freezed.dart';
 
-/// Whether a transaction adds to or subtracts from the balance.
 enum TransactionType { income, expense }
 
-/// A single recorded income or expense.
-///
 /// [amount] is always stored positive; the direction lives in [type]. Keeping
 /// the sign out of the amount means a transaction can be flipped between
 /// income and expense without touching the number.
@@ -29,6 +26,5 @@ abstract class MoneyTransaction with _$MoneyTransaction {
 
   bool get isExpense => type == TransactionType.expense;
 
-  /// The amount as it affects the balance: negative for expenses.
   Money get signedAmount => isExpense ? -amount : amount;
 }

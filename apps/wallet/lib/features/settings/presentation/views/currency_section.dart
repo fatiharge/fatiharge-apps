@@ -4,8 +4,6 @@ import 'package:wallet/features/finance/domain/models/currency.dart';
 import 'package:wallet/features/settings/domain/repository/settings_repository.dart';
 import 'package:wallet/features/settings/presentation/views/setting_option_tile.dart';
 
-/// Which currency new transactions and budgets start in.
-///
 /// Talks to the repository directly rather than through a cubit, the way the
 /// language section does: nothing outside this screen reacts to the choice at
 /// the moment it is made — the cubits read it when they are next built.

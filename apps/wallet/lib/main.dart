@@ -12,23 +12,15 @@ import 'package:wallet/infrastructure/adapter/bootstrap/bootstrap_adapter.dart';
 import 'package:wallet/infrastructure/repository/settings_repository_impl.dart';
 import 'package:wallet/route/app_router.dart';
 
-/// Single entry point — no `main_dev.dart` / `main_prod.dart`.
-///
-/// Flavors, when they arrive, live entirely in the native projects, so adding
-/// them will not touch this file.
 Future<void> main() => AppCrashListener().runGuarded(() async {
   await EasyLocalization.ensureInitialized();
 
-  // Loaded here rather than behind a bootstrap job: the chosen theme has to be
-  // known before the first frame, and bootstrap runs *inside* the app — the
-  // splash would flash in the wrong theme.
+  // Not a bootstrap job: bootstrap runs *inside* the app, so the splash would
+  // flash in the wrong theme.
   final preferences = await SharedPreferences.getInstance();
 
-  // All three are registered by hand, before runApp, because they sit
-  // *upstream* of the container: configureDependencies() is itself one of the
-  // bootstrap jobs, so none can be resolved from a container that does not
-  // exist yet. Registering the port here also lets a widget test swap in a
-  // fake one.
+  // Upstream of the container: configureDependencies() is itself a bootstrap
+  // job, so none of these can come out of it.
   getIt
     ..registerSingleton<RouteManager>(RouteManager())
     ..registerSingleton<BootstrapPort>(const BootstrapAdapter())

@@ -1,6 +1,5 @@
 import 'package:wallet/features/finance/domain/models/category.dart';
 
-/// On-disk shape of a category.
 abstract final class CategoryDto {
   static const _id = 'id';
   static const _name = 'name';

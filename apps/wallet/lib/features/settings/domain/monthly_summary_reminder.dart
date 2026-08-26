@@ -1,6 +1,5 @@
 import 'package:meta/meta.dart';
 
-/// The user's answer to "shall we tell you when the month's summary is ready".
 @immutable
 class MonthlySummaryReminder {
   const MonthlySummaryReminder({required this.enabled, required this.day});

@@ -20,7 +20,6 @@ import 'package:wallet/route/app_router.dart';
 
 import 'in_memory_repositories.dart';
 
-/// The fakes behind a booted `App`.
 class AppHarness {
   AppHarness._(
     this.transactions,
@@ -44,7 +43,6 @@ class AppHarness {
   }
 }
 
-/// Fills `getIt` with everything `App` resolves, backed by in-memory fakes.
 Future<AppHarness> registerAppDependencies({
   ThemePreference theme = ThemePreference.dark,
   Currency currency = Currency.turkishLira,

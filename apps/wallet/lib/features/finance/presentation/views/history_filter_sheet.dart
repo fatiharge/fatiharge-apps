@@ -14,7 +14,6 @@ class TransactionFilterResult {
   final TransactionFilter filter;
 }
 
-/// Type / category filter for the history list.
 class HistoryFilterSheet extends StatefulWidget {
   const HistoryFilterSheet({
     required this.filter,

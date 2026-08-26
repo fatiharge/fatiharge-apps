@@ -1,4 +1,3 @@
-/// One-shot things the dashboard should *do* (as opposed to render).
 sealed class DashboardEffect {
   const DashboardEffect();
 }

@@ -5,7 +5,6 @@ import 'package:wallet/features/finance/domain/rules/transaction_filter.dart';
 
 part 'history_state.freezed.dart';
 
-/// The history screen: the full set, the active filter, and the filtered view.
 @freezed
 abstract class HistoryState with _$HistoryState {
   const factory HistoryState({
@@ -20,7 +19,6 @@ abstract class HistoryState with _$HistoryState {
 
   const HistoryState._();
 
-  /// [all] with [filter] applied, newest first.
   List<MoneyTransaction> get visible => filter.apply(all);
 
   bool get isEmpty => visible.isEmpty;

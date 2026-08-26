@@ -9,8 +9,6 @@ import 'package:wallet/features/finance/presentation/format/money_format.dart';
 import 'package:wallet/features/finance/presentation/views/empty_state.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 
-/// Expense split by category, as a donut plus a legend.
-///
 /// Slices below a minimum share are folded into a single "other" slice —
 /// a dozen 1% slivers are unreadable and unclickable.
 class CategoryPieChart extends StatefulWidget {
@@ -104,7 +102,6 @@ class _CategoryPieChartState extends State<CategoryPieChart> {
         ),
       );
 
-  /// Builds the slice list, merging everything under the threshold.
   List<_Slice> _slices() {
     final total = widget.total.amountMinor;
     final slices = <_Slice>[];

@@ -2,9 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 
-/// Offers the monthly reminder to someone looking at a month that has numbers
-/// in it.
-///
 /// A card rather than a dialog or a delayed popup: the offer is worth making
 /// once the summary above it means something, but not worth interrupting for.
 /// Whoever ignores it scrolls past; whoever is done with it closes it for good.

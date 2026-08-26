@@ -1,16 +1,8 @@
-/// Whether now is a reasonable moment to ask for a store review.
-///
-/// The store APIs decide for themselves whether the dialog actually appears —
-/// Apple allows roughly three a year, Play works to its own quota — and a call
-/// that is thrown away still counts against that. So the app has one job: only
-/// call at a moment worth spending.
-///
-/// The rules below are all about earning the ask. Nothing here nudges anyone
-/// towards a particular score: asking for five stars, or routing unhappy users
-/// somewhere else, is grounds for removal from both stores.
+/// A call the store throws away still counts against its quota, so the app's
+/// only job is to call at a moment worth spending. Nothing here nudges towards
+/// a score — that is grounds for removal from both stores.
 abstract final class ReviewMoment {
-  /// Long enough to have formed an opinion. A day-one prompt asks someone who
-  /// has not used the thing yet.
+  /// Long enough to have formed an opinion.
   static const Duration minimumAge = Duration(days: 14);
 
   /// Enough records that the month's summary is theirs rather than a demo.
@@ -26,9 +18,8 @@ abstract final class ReviewMoment {
     required int transactionCount,
     required bool viewingMonthWithData,
   }) {
-    // The moment itself: the user is looking at a month that has numbers in
-    // it, which is the app having just done its job. Asking mid-task or after
-    // an error is what makes these prompts hated.
+    // The app having just done its job. Asking mid-task or after an error is
+    // what makes these prompts hated.
     if (!viewingMonthWithData) return false;
 
     if (transactionCount < minimumTransactions) return false;
