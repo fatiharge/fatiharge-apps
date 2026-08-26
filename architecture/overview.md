@@ -59,6 +59,8 @@ fatiharge-apps/
 │  ├─ utility_kit/           # UI-independent base contracts (EffectBloc)
 │  ├─ bootstrap_kit/         # app startup orchestration (jobs, cubit, page)
 │  └─ …                      # ui_kit, api_client, shared features — see below
+├─ services/                 # backend — NOT a Dart workspace member, see backend.md
+├─ contracts/                # emitted OpenAPI schemas, committed and gated
 ├─ architecture/             # these docs
 └─ .githooks/ .github/       # governance (commit hook, CI)
 ```

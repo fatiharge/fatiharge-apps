@@ -9,3 +9,4 @@ Fatiharge Flutter monorepo için tasarım dokümanları. Şu sırayla oku:
 3. **[git-workflow.tr.md](git-workflow.tr.md)** — branch'leme, PR'lar, Conventional Commits ve branch protection.
 4. **[testing.tr.md](testing.tr.md)** — neyi nerede test ederiz, araçlar ve nasıl çalıştırılır.
 5. **[dependency-injection.tr.md](dependency-injection.tr.md)** — adapter'ları port'lara `get_it` + `injectable` ile bağlama.
+6. **[backend.tr.md](backend.tr.md)** — workspace'in yanındaki servisler: modüller, OpenAPI sözleşmesi, ortamlar ve CI.
