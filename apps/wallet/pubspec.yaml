@@ -39,7 +39,7 @@ dependencies:
 
   # Notifications. timezone is required by flutter_local_notifications for
   # scheduling — without an initialised database every scheduled time is UTC.
-  flutter_local_notifications: ^19.4.2
+  flutter_local_notifications: ^20.1.0
   timezone: ^0.10.1
 
   # Local storage & charts.
