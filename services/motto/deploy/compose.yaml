@@ -60,6 +60,10 @@ services:
       interval: 5s
       timeout: 3s
       retries: 12
+      # The first start creates the cluster, and every probe that fails while it
+      # does would otherwise count against retries — turning a slow first boot
+      # into a failed deploy.
+      start_period: 60s
     # No proxy network, no published port: the database is reachable only from
     # the service that owns it.
     networks:

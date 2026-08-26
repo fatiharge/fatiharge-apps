@@ -90,7 +90,18 @@ jobs:
             fi
 
             docker compose pull
-            docker compose up -d --remove-orphans
+
+            # When a container never becomes healthy, compose says only which
+            # dependency failed. The logs of the thing that failed are what
+            # anyone actually needs, and by the next run they may be gone.
+            if ! docker compose up -d --remove-orphans; then
+              echo "--- compose ps ---"
+              docker compose ps
+              echo "--- logs ---"
+              docker compose logs --tail 100
+              exit 1
+            fi
+
             # Yesterday's image is still on disk and nothing references it.
             docker image prune -f
 
