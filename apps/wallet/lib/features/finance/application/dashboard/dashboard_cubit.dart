@@ -117,6 +117,7 @@ class DashboardCubit extends Cubit<DashboardState> {
         categories: {
           for (final category in _allCategories) category.id: category,
         },
+        transactionCount: _allTransactions.length,
       ),
     );
   }

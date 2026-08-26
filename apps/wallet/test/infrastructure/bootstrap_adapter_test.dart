@@ -2,6 +2,7 @@ import 'package:bootstrap_kit/bootstrap_kit.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:wallet/config/injectable.dart';
 import 'package:wallet/features/finance/domain/repository/category_repository.dart';
+import 'package:wallet/features/settings/application/review_prompt.dart';
 import 'package:wallet/features/settings/domain/repository/settings_repository.dart';
 import 'package:wallet/infrastructure/adapter/bootstrap/bootstrap_adapter.dart';
 import 'package:wallet/route/app_router.dart';
@@ -11,14 +12,20 @@ import '../support/in_memory_repositories.dart';
 
 void main() {
   late FakeCategoryRepository categories;
+  late FakeSettingsRepository settings;
+  final now = DateTime(2026, 8, 12);
 
   setUp(() async {
     categories = FakeCategoryRepository();
+    settings = FakeSettingsRepository();
     await getIt.reset();
     getIt
       ..registerSingleton<RouteManager>(RouteManager())
       ..registerSingleton<CategoryRepository>(categories)
-      ..registerSingleton<SettingsRepository>(FakeSettingsRepository());
+      ..registerSingleton<SettingsRepository>(settings)
+      ..registerFactory<ReviewPrompt>(
+        () => ReviewPrompt(settings, FakeReviewRequester(), clock: () => now),
+      );
   });
 
   tearDown(() async {
@@ -84,6 +91,18 @@ void main() {
 
       final after = await categories.fetchAll();
       expect(after.map((c) => c.id), ['mine']);
+    });
+
+    test('stamps the install date on a first launch, once', () async {
+      await run('first_launch');
+      expect(settings.installed, now);
+
+      settings.installed = DateTime(2020);
+      await run('first_launch');
+
+      // A later launch must not move it, or the app would never be old enough
+      // to ask for a review.
+      expect(settings.installed, DateTime(2020));
     });
   });
 }

@@ -1,4 +1,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Asked for at runtime from Android 13 on; without it the monthly
+         reminder is dropped silently rather than refused. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
+    <!-- Scheduled notifications do not survive a restart on their own. Without
+         this the reminder stops the first time the phone is rebooted, which is
+         a fault nobody would report — they would just never hear from us. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
+    <!-- No SCHEDULE_EXACT_ALARM on purpose: Play restricts it to alarm and
+         calendar apps, and the reminder is scheduled inexactly. -->
+
     <application
         android:label="Warizo"
         android:name="${applicationName}"

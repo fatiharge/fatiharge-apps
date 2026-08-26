@@ -4,6 +4,7 @@ import 'package:wallet/config/env.dart';
 import 'package:wallet/config/injectable.dart';
 import 'package:wallet/features/finance/default_categories.dart';
 import 'package:wallet/features/finance/domain/repository/category_repository.dart';
+import 'package:wallet/features/settings/application/review_prompt.dart';
 import 'package:wallet/features/settings/domain/repository/settings_repository.dart';
 import 'package:wallet/infrastructure/dev/demo_transactions.dart';
 import 'package:wallet/route/app_router.dart';
@@ -37,6 +38,15 @@ class BootstrapAdapter implements BootstrapPort {
       'seed_categories',
       _seedCategories,
       retries: 1,
+      errorPolicy: BootstrapErrorPolicy.skip,
+    ),
+
+    // Stamps the install date the first time it runs. The review prompt
+    // measures age from it, so without this it never reaches a moment worth
+    // asking at.
+    BootstrapJob(
+      'first_launch',
+      () => getIt<ReviewPrompt>().start(),
       errorPolicy: BootstrapErrorPolicy.skip,
     ),
 

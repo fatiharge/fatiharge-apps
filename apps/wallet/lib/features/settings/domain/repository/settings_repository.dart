@@ -56,4 +56,15 @@ abstract interface class SettingsRepository {
   bool isSummaryNudgeDismissed();
 
   Future<void> dismissSummaryNudge();
+
+  /// When the app first ran, so "has used it for a while" can be answered.
+  /// Null until the first launch records it.
+  DateTime? installedAt();
+
+  Future<void> recordInstall(DateTime at);
+
+  /// When the store review dialog was last asked for. Null if never.
+  DateTime? lastReviewRequestAt();
+
+  Future<void> recordReviewRequest(DateTime at);
 }

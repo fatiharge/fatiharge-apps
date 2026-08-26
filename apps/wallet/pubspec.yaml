@@ -33,6 +33,10 @@ dependencies:
   intl: any
   meta: any
 
+  # Store review prompt: wraps SKStoreReviewController and Play's In-App
+  # Review API, neither of which lets the app choose whether the dialog shows.
+  in_app_review: ^2.0.12
+
   # Notifications. timezone is required by flutter_local_notifications for
   # scheduling — without an initialised database every scheduled time is UTC.
   flutter_local_notifications: ^19.4.2
