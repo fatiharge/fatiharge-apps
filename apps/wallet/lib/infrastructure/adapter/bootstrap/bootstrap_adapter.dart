@@ -5,6 +5,7 @@ import 'package:wallet/config/injectable.dart';
 import 'package:wallet/features/finance/default_categories.dart';
 import 'package:wallet/features/finance/domain/repository/category_repository.dart';
 import 'package:wallet/features/settings/application/review_prompt.dart';
+import 'package:wallet/features/settings/application/summary_reminder_controller.dart';
 import 'package:wallet/features/settings/domain/repository/settings_repository.dart';
 import 'package:wallet/infrastructure/dev/demo_transactions.dart';
 import 'package:wallet/route/app_router.dart';
@@ -47,6 +48,16 @@ class BootstrapAdapter implements BootstrapPort {
     BootstrapJob(
       'first_launch',
       () => getIt<ReviewPrompt>().start(),
+      errorPolicy: BootstrapErrorPolicy.skip,
+    ),
+
+    // Only a fixed number of reminders are scheduled at a time, so the window
+    // has to be pushed forward on launch — which is also where a permission
+    // revoked in system settings is noticed. Costs a reminder if it fails,
+    // not the app.
+    BootstrapJob(
+      'reminder_window',
+      () => getIt<SummaryReminderController>().refresh(),
       errorPolicy: BootstrapErrorPolicy.skip,
     ),
 

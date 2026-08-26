@@ -20,7 +20,23 @@ Useful flags:
 ```bash
 fvm flutter run --dart-define=SEED_DEMO_DATA=true   # fill an empty database
 fvm flutter run --dart-define=FEATURE_DEBUG_LOGS=false
+
+# Both growth features are built to wait — a fortnight before the review ask,
+# a month between reminders. This collapses that waiting so they can be seen
+# in one sitting. Debug builds only; the define is ignored in release.
+fvm flutter run --dart-define=DEBUG_GROWTH=true --dart-define=SEED_DEMO_DATA=true
 ```
+
+With `DEBUG_GROWTH` on, the review dialog appears as soon as a month with
+numbers in it is on the dashboard, and turning the monthly reminder on
+posts the notification straight away instead of scheduling it for the chosen
+day — an inexact alarm cannot be aimed at the next minute on Android, and a
+reinstall cancels pending alarms anyway. What the flag does *not* do is fake
+the moment itself: an empty month still asks for nothing.
+
+On Android the review dialog needs the app to have come from Play, so it shows
+nothing on a sideloaded build — the iOS simulator is where to look.
+
 
 ## Translations
 

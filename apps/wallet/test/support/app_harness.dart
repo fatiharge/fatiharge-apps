@@ -1,7 +1,7 @@
 import 'package:bootstrap_kit/bootstrap_kit.dart';
 import 'package:wallet/config/injectable.dart';
 import 'package:wallet/features/finance/application/budget/budget_cubit.dart';
-import 'package:wallet/features/finance/application/dashboard/dashboard_cubit.dart';
+import 'package:wallet/features/finance/application/dashboard/dashboard_bloc.dart';
 import 'package:wallet/features/finance/application/entry/entry_cubit.dart';
 import 'package:wallet/features/finance/application/history/history_bloc.dart';
 import 'package:wallet/features/finance/domain/models/currency.dart';
@@ -79,12 +79,13 @@ Future<AppHarness> registerAppDependencies({
     ..registerSingleton<SummaryReminderController>(
       SummaryReminderController(settings, notifier),
     )
-    ..registerFactory<DashboardCubit>(
-      () => DashboardCubit(
+    ..registerFactory<DashboardBloc>(
+      () => DashboardBloc(
         transactions,
         categories,
         budgets,
         settings,
+        ReviewPrompt(settings, reviewRequester, clock: now),
         clock: now,
       ),
     )

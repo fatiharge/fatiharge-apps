@@ -88,6 +88,13 @@ class DashboardView extends StatelessWidget {
           net: summary.net,
         ),
         const SizedBox(height: 16),
+        // Under the summary, because that is what the offer refers to: being
+        // told when the month is done only means something to someone who has
+        // just been shown one.
+        if (reminderNudge != null) ...[
+          reminderNudge!,
+          const SizedBox(height: 16),
+        ],
         CategoryPieChart(
           breakdown: summary.expenseBreakdown,
           total: summary.expense,

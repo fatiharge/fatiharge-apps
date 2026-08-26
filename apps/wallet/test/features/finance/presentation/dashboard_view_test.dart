@@ -27,6 +27,7 @@ void main() {
     MonthlySummary? summary,
     List<Currency> available = const [Currency.turkishLira],
     List<BudgetStatus> budgetStatuses = const [],
+    Widget? reminderNudge,
   }) => pumpLocalized(
     tester,
     DashboardView(
@@ -42,6 +43,7 @@ void main() {
       onNextMonth: () {},
       onCurrencySelected: (_) {},
       onAddTransaction: () => addTapped++,
+      reminderNudge: reminderNudge,
     ),
   );
 
@@ -149,6 +151,27 @@ void main() {
       await tester.tap(find.byIcon(Icons.chevron_left));
 
       expect(previousTapped, 1);
+    });
+
+    testWidgets('draws the reminder offer it is handed', (tester) async {
+      // The regression: the parameter existed, was passed in by the page and
+      // was never placed in the tree, so the whole nudge — card, counter,
+      // dismissal — was unreachable and no test noticed.
+      await pump(
+        tester,
+        summary: summaryOf([expenseOf(1000)]),
+        reminderNudge: const Text('offer-here'),
+      );
+
+      expect(find.text('offer-here'), findsOneWidget);
+    });
+
+    testWidgets('draws nothing where the offer would go when there is none', (
+      tester,
+    ) async {
+      await pump(tester, summary: summaryOf([expenseOf(1000)]));
+
+      expect(find.text('offer-here'), findsNothing);
     });
   });
 }

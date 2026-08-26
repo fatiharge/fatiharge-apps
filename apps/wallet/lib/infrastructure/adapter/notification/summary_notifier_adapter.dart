@@ -3,20 +3,25 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:injectable/injectable.dart';
 import 'package:timezone/data/latest_all.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:wallet/config/env.dart';
 import 'package:wallet/features/finance/domain/rules/summary_schedule.dart';
 import 'package:wallet/features/settings/domain/summary_notifier.dart';
 
 /// [SummaryNotifier] over `flutter_local_notifications`.
 @LazySingleton(as: SummaryNotifier)
 class SummaryNotifierAdapter implements SummaryNotifier {
-  SummaryNotifierAdapter(this._plugin);
+  SummaryNotifierAdapter();
 
   /// One channel, one id space: rescheduling cancels the lot and writes the
   /// window again, so ids only have to be unique within a single window.
   static const String channelId = 'monthly_summary';
   static const int firstNotificationId = 1000;
 
-  final FlutterLocalNotificationsPlugin _plugin;
+  /// Reached for rather than injected: the constructor is a factory over a
+  /// single instance the package already owns, so registering it would only
+  /// re-singleton a singleton. The seam tests use is [SummaryNotifier].
+  final FlutterLocalNotificationsPlugin _plugin =
+      FlutterLocalNotificationsPlugin();
 
   bool _prepared = false;
 
@@ -62,6 +67,22 @@ class SummaryNotifierAdapter implements SummaryNotifier {
   }) async {
     await _prepare();
     await cancel();
+
+    // Posted outright rather than scheduled, because scheduling cannot be
+    // checked by hand on Android: an inexact alarm is routinely deferred past
+    // the minute it was aimed at, and reinstalling the app — which every
+    // `flutter run` does — cancels pending alarms outright. What is worth
+    // seeing by hand is the wording, the channel and the permission, and this
+    // shows all three at once. Delivery itself belongs to the closed test.
+    if (Env.debugGrowth) {
+      await _plugin.show(
+        firstNotificationId,
+        title,
+        body,
+        _detailsFor(channelName),
+      );
+      return;
+    }
 
     final occurrences = SummarySchedule.occurrencesAfter(
       DateTime.now(),

@@ -34,6 +34,20 @@ Uygulama ince bir **composition root**'tur. Bağımlılıkları bağlar ve featu
 
 Paylaşılan `ui_kit`; `atoms → molecules → organisms → templates` ve enine kesen `core / constant / extensions` olarak düzenlenir.
 
+### 4. Varsayılan Cubit, efekt varsa Bloc
+
+Application katmanındaki state tutucular **cubit**'tir — ekran ayrıca tek seferlik bir şey *yapmak* zorunda değilse: snackbar göstermek, platforma bir diyalog devretmek, yönlendirmek. State neyin çizileceğini anlatır; state'e konan bir eylem her rebuild'de yeniden tetiklenir.
+
+Tek atımlık eylemler efekt kanalından geçer; `utility_kit` bunu `EffectBloc<Event, State, Effect>` olarak sunar. O sınıf `Bloc`'u extend ettiği için **cubit'i bloc'a çeviren şey efekt ihtiyacıdır** — metot sayısı değil.
+
+| Ekran yalnızca state'ten çiziliyor        | `Cubit<State>`                     |
+| ----------------------------------------- | ---------------------------------- |
+| Ekran ayrıca tek atımlık eylem tetikliyor | `EffectBloc<Event, State, Effect>` |
+
+Yani soru ekranın ne kadar iş yaptığı değil, yaptıklarından birinin *bir kez* olup olmadığıdır: satırın kaybolması state, ona eşlik eden geri-al snackbar'ı efekttir — ve tipi belirleyen snackbar'dır.
+
+İki şey yapılmaz: kuralı atlatmak için cubit'e kendi `StreamController`'ını koymak, ya da kanalı `Cubit`'e taşımak için `utility_kit`'i genişletmek. Tek mekanizma, tek yer.
+
 ## Monorepo yerleşimi
 
 ```

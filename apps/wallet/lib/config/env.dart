@@ -17,4 +17,14 @@ abstract final class Env {
   /// Fills an empty database with a month of sample transactions.
   /// `--dart-define=SEED_DEMO_DATA=true`
   static const bool seedDemoData = bool.fromEnvironment('SEED_DEMO_DATA');
+
+  /// Collapses the waiting built into the review prompt and the monthly
+  /// reminder, so both can be seen in one sitting rather than in a fortnight.
+  /// `--dart-define=DEBUG_GROWTH=true`
+  ///
+  /// Gated on [kDebugMode] as well as the define: a release build that asked
+  /// for a review on first launch, or notified every minute, is the kind of
+  /// thing both stores remove apps for.
+  static const bool debugGrowth =
+      kDebugMode && bool.fromEnvironment('DEBUG_GROWTH');
 }

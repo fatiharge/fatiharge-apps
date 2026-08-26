@@ -5,14 +5,6 @@ import 'package:wallet/features/finance/domain/rules/summary_schedule.dart';
 import 'package:wallet/features/settings/application/summary_reminder_controller.dart';
 import 'package:wallet/generated/locale_keys.g.dart';
 
-/// Translated words for a notification that will be delivered months from now.
-SummaryNotificationText summaryTextOf(BuildContext context) =>
-    SummaryNotificationText(
-      title: context.tr(LocaleKeys.settings_notification_title),
-      body: context.tr(LocaleKeys.settings_notification_body),
-      channelName: context.tr(LocaleKeys.settings_notification_channel),
-    );
-
 /// The monthly reminder switch and its day.
 ///
 /// Shown both in settings and as a first-run step, so it carries no scaffold
@@ -44,10 +36,7 @@ class _ReminderSectionState extends State<ReminderSection> {
       return;
     }
 
-    final refusal = await _controller.enable(
-      day: _day,
-      text: summaryTextOf(context),
-    );
+    final refusal = await _controller.enable(day: _day);
     if (!mounted) return;
 
     setState(() {
@@ -61,7 +50,7 @@ class _ReminderSectionState extends State<ReminderSection> {
   Future<void> _setDay(int day) async {
     setState(() => _day = day);
     if (_enabled) {
-      await _controller.enable(day: day, text: summaryTextOf(context));
+      await _controller.enable(day: day);
     }
   }
 

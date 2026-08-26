@@ -1,7 +1,9 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:injectable/injectable.dart';
 import 'package:wallet/features/settings/domain/monthly_summary_reminder.dart';
 import 'package:wallet/features/settings/domain/repository/settings_repository.dart';
 import 'package:wallet/features/settings/domain/summary_notifier.dart';
+import 'package:wallet/generated/locale_keys.g.dart';
 
 /// Why turning the reminder on did not work, so the screen can say something
 /// more useful than nothing.
@@ -30,10 +32,7 @@ class SummaryReminderController {
 
   /// Turns the reminder on for [day], asking for permission if it has not been
   /// asked for yet. Returns `null` on success, or why it could not be done.
-  Future<ReminderRefusal?> enable({
-    required int day,
-    required SummaryNotificationText text,
-  }) async {
+  Future<ReminderRefusal?> enable({required int day}) async {
     // Read before asking, not after: _permitted() spends the prompt and marks
     // it as spent, so afterwards every refusal would look like an old one.
     final askedBefore = _settings.wasNotificationPromptShown();
@@ -47,12 +46,7 @@ class SummaryReminderController {
     await _settings.writeSummaryReminder(
       MonthlySummaryReminder(enabled: true, day: day),
     );
-    await _notifier.schedule(
-      day: day,
-      title: text.title,
-      body: text.body,
-      channelName: text.channelName,
-    );
+    await _schedule(day);
     return null;
   }
 
@@ -65,9 +59,9 @@ class SummaryReminderController {
   ///
   /// Only a fixed number of occurrences are scheduled at a time — the day has
   /// to be clamped per month, so there is no single repeating rule to hand the
-  /// platform. Called on launch. Also the moment a language change reaches the
-  /// notification text, which was written when it was last scheduled.
-  Future<void> refresh(SummaryNotificationText text) async {
+  /// platform. Called on launch, which is also when a language change since
+  /// the last scheduling reaches the notification text.
+  Future<void> refresh() async {
     final current = reminder;
     if (!current.enabled) return;
 
@@ -78,15 +72,20 @@ class SummaryReminderController {
       return;
     }
 
-    await _notifier.schedule(
-      day: current.day,
-      title: text.title,
-      body: text.body,
-      channelName: text.channelName,
-    );
+    await _schedule(current.day);
   }
 
   Future<void> openSystemSettings() => _notifier.openSystemSettings();
+
+  /// Translated here rather than passed in: a scheduled notification carries
+  /// its words as literal text, and `tr` resolves them off the loaded
+  /// localization without needing a widget to hand them over.
+  Future<void> _schedule(int day) => _notifier.schedule(
+    day: day,
+    title: tr(LocaleKeys.settings_notification_title),
+    body: tr(LocaleKeys.settings_notification_body),
+    channelName: tr(LocaleKeys.settings_notification_channel),
+  );
 
   Future<bool> _permitted() async {
     if (await _notifier.hasPermission()) return true;
@@ -97,18 +96,4 @@ class SummaryReminderController {
     await _settings.markNotificationPromptShown();
     return _notifier.requestPermission();
   }
-}
-
-/// The words a scheduled notification carries, resolved by the caller because
-/// only a widget has the context to translate them.
-class SummaryNotificationText {
-  const SummaryNotificationText({
-    required this.title,
-    required this.body,
-    required this.channelName,
-  });
-
-  final String title;
-  final String body;
-  final String channelName;
 }

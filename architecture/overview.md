@@ -34,6 +34,20 @@ The app is a thin **composition root**. It wires dependencies and hosts feature 
 
 The shared `ui_kit` is organised as `atoms → molecules → organisms → templates`, plus cross-cutting `core / constant / extensions`.
 
+### 4. Cubit by default, Bloc when there are effects
+
+Application-layer state holders are **cubits** unless the screen also has to *do* something once — show a snackbar, hand a dialog to the platform, navigate. State describes what to render; an action stored in state fires again on every rebuild.
+
+One-shot actions travel on the effect channel, which `utility_kit` exposes as `EffectBloc<Event, State, Effect>`. That class extends `Bloc`, so **needing an effect is what turns a cubit into a bloc** — not how many methods it has.
+
+| The screen renders from state only     | `Cubit<State>`                          |
+| -------------------------------------- | --------------------------------------- |
+| The screen also fires one-shot actions | `EffectBloc<Event, State, Effect>`      |
+
+So the question is never how much a screen does, but whether any of it happens *once*: a row disappearing is state, the undo snackbar that goes with it is an effect, and it is the snackbar that decides the type.
+
+Two things not to do: give a cubit its own `StreamController` to sidestep the rule, or widen `utility_kit` so the channel reaches `Cubit`. One mechanism, one place.
+
 ## Monorepo layout
 
 ```
