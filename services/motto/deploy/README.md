@@ -25,8 +25,12 @@ obtain a certificate before the record resolves, so this comes first.
 
 | Record | Type | Value |
 |---|---|---|
-| `motto.stage.dafalabs.com` | A | the server's address |
+| `mottostage.dafalabs.com` | A | the server's address |
 | `motto.dafalabs.com` | A | the server's address |
+
+Both are one label deep on purpose. A wildcard certificate for `*.dafalabs.com`
+covers `mottostage.dafalabs.com` and does **not** cover a
+`motto.stage.dafalabs.com`, which would need a certificate of its own.
 
 ## 2. Directories on the server
 
@@ -45,7 +49,7 @@ Never committed, never leaves the server.
 ```dotenv
 MOTTO_ENV=stage
 MOTTO_PROFILE=stage
-MOTTO_HOST=motto.stage.dafalabs.com
+MOTTO_HOST=mottostage.dafalabs.com
 MOTTO_IMAGE=
 MOTTO_DB_PASSWORD=<openssl rand -base64 24>
 MOTTO_JWT_PUBLIC_KEY=
@@ -100,7 +104,7 @@ and one named `production`, each with:
 | Variable | `stage` | `production` |
 |---|---|---|
 | `DEPLOY_PATH` | `/srv/motto-stage` | `/srv/motto-prod` |
-| `SERVICE_HOST` | `motto.stage.dafalabs.com` | `motto.dafalabs.com` |
+| `SERVICE_HOST` | `mottostage.dafalabs.com` | `motto.dafalabs.com` |
 
 Adding a required reviewer to `production` there is what turns promotion into a
 decision rather than a button.
