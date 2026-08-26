@@ -1,3 +1,8 @@
+## 0.2.9+13
+
+ - **REFACTOR**(wallet): raise the review ask as an effect, and fix what that uncovered ([#62](https://github.com/fatiharge/fatiharge-apps/issues/62)). ([e1301d02](https://github.com/fatiharge/fatiharge-apps/commit/e1301d02b6d33281f28491ff932d25aad8efbf23))
+ - **FEAT**(wallet): ask for a store review at a moment worth spending ([#54](https://github.com/fatiharge/fatiharge-apps/issues/54)). ([e8e2d08b](https://github.com/fatiharge/fatiharge-apps/commit/e8e2d08bdad901e09a0f3dabee4a774f27cb98f5))
+
 ## 0.2.8+12
 
  - **FEAT**(wallet): offer a monthly summary reminder ([#53](https://github.com/fatiharge/fatiharge-apps/issues/53)). ([de4b86b9](https://github.com/fatiharge/fatiharge-apps/commit/de4b86b9a736f0fe5bae71ddc31130ce9f10da71))

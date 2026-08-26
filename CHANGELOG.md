@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2026-08-26
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`wallet` - `v0.2.9+13`](#wallet---v02913)
+
+---
+
+#### `wallet` - `v0.2.9+13`
+
+ - **REFACTOR**(wallet): raise the review ask as an effect, and fix what that uncovered ([#62](https://github.com/fatiharge/fatiharge-apps/issues/62)). ([e1301d02](https://github.com/fatiharge/fatiharge-apps/commit/e1301d02b6d33281f28491ff932d25aad8efbf23))
+ - **FEAT**(wallet): ask for a store review at a moment worth spending ([#54](https://github.com/fatiharge/fatiharge-apps/issues/54)). ([e8e2d08b](https://github.com/fatiharge/fatiharge-apps/commit/e8e2d08bdad901e09a0f3dabee4a774f27cb98f5))
+
+
 ## 2026-08-19
 
 ### Changes
