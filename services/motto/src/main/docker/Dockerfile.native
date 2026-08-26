@@ -1,0 +1,17 @@
+# The binary is compiled inside a builder container, so no CI runner needs
+# GraalVM installed and the result is built against the same libc this image
+# ships. Anything else here is deliberate absence: no shell tools, no package
+# manager, nothing to exploit that the application does not need.
+FROM quay.io/quarkus/quarkus-micro-image:2.0
+
+WORKDIR /work/
+RUN chown 1001 /work && chmod "g+rwX" /work && chown 1001:root /work
+
+COPY --chown=1001:root target/*-runner /work/application
+
+EXPOSE 8080
+USER 1001
+
+# Binding to the container's own loopback would make the port unreachable from
+# outside it, which looks exactly like a crashed service.
+ENTRYPOINT ["./application", "-Dquarkus.http.host=0.0.0.0"]
