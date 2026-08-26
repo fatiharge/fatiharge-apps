@@ -1,8 +1,12 @@
 package com.dafalabs.api.auth.device;
 
+import com.dafalabs.api.auth.device.dto.CurrentDeviceResponse;
 import com.dafalabs.api.auth.device.dto.DeviceTokenResponse;
 import com.dafalabs.api.auth.device.dto.RegisterDeviceRequest;
+import com.dafalabs.api.core.auth.AuthenticatedDevice;
+import io.quarkus.security.Authenticated;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -16,9 +20,11 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 public class DeviceResource {
 
   private final DeviceRegistration registration;
+  private final AuthenticatedDevice current;
 
-  DeviceResource(DeviceRegistration registration) {
+  DeviceResource(DeviceRegistration registration, AuthenticatedDevice current) {
     this.registration = registration;
+    this.current = current;
   }
 
   // The operationId is not decoration: without it the generated Dart method
@@ -31,5 +37,17 @@ public class DeviceResource {
     IssuedToken issued = registration.register(request.deviceHash(), request.platform());
     return new DeviceTokenResponse(
         issued.deviceId().toString(), issued.token(), issued.expiresInSeconds());
+  }
+
+  // Lets a client find out whether the token it is holding is still good
+  // without guessing from the next call's failure. Also the smallest possible
+  // proof that verification works: it reads the subject out of a token this
+  // service signed and another service would verify the same way.
+  @GET
+  @Path("/me")
+  @Authenticated
+  @Operation(operationId = "currentDevice", summary = "Resolve the token holder")
+  public CurrentDeviceResponse me() {
+    return new CurrentDeviceResponse(current.id().toString());
   }
 }
