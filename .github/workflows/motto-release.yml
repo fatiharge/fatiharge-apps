@@ -55,16 +55,28 @@ jobs:
       # reflection and resource loading behave differently in a native image and
       # the JVM tests cannot see those failures.
       #
-      # The builder is pinned rather than left to the platform default, because
-      # the binary is linked against this image's glibc and Dockerfile.native
-      # has to ship the matching one. Changing this line means changing that
-      # base image in the same commit.
+      # Two things are pinned here rather than left to defaults, and both are
+      # about the machine this binary will actually run on rather than the one
+      # that builds it.
+      #
+      # The builder, because the binary is linked against its glibc and
+      # Dockerfile.native has to ship the matching base image. Changing that
+      # line means changing this one in the same commit.
+      #
+      # -march=compatibility, because native-image otherwise targets the build
+      # machine's instruction set. GitHub's runners are newer than our server,
+      # so the default produced a binary demanding AVX2 and BMI2 and the
+      # container died at exec with "does not support all of the following CPU
+      # features" — in a restart loop that looks like a routing problem from
+      # outside. Baseline x86-64 costs some vectorisation this service will
+      # never notice, and runs anywhere.
       - name: Build native and run integration tests
         working-directory: services
         run: |
           ./mvnw -B -Dnative \
             -Dquarkus.native.container-build=true \
             -Dquarkus.native.builder-image=quay.io/quarkus/ubi9-quarkus-mandrel-builder-image:jdk-25 \
+            -Dquarkus.native.additional-build-args=-march=compatibility \
             -pl motto -am verify
 
       - name: Log in to ghcr.io
