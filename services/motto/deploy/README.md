@@ -48,25 +48,24 @@ Never committed, never leaves the server.
 
 ```dotenv
 MOTTO_ENV=stage
-MOTTO_PROFILE=stage
 MOTTO_HOST=mottostage.dafalabs.com
 MOTTO_IMAGE=
 MOTTO_DB_PASSWORD=<openssl rand -base64 24>
-MOTTO_JWT_PUBLIC_KEY=
 ```
 
-`/srv/motto-prod/.env` is the same with `prod`, `prod`,
-`motto.dafalabs.com`, and its own password.
+`/srv/motto-prod/.env` is the same with `prod`, `motto.dafalabs.com`, and its
+own password.
 
 - `MOTTO_IMAGE` stays empty. Every deploy rewrites it.
-- `MOTTO_JWT_PUBLIC_KEY` stays empty until `auth` is deployed. Nothing in motto
-  is authenticated yet; an unset key costs a startup warning and nothing else.
 - `PROXY_NETWORK`, `TRAEFIK_ENTRYPOINT` and `TRAEFIK_CERTRESOLVER` only need a
   line if the server's Traefik ever stops matching the defaults above.
 
-**A trap worth knowing:** Quarkus profiles do not inherit. A property written as
-`%prod.something` does **not** apply when `MOTTO_PROFILE=stage`. Anything both
-environments need goes in unprefixed.
+**There is no profile variable, on purpose.** A native image bakes its
+build-time configuration using the profile it was built under, and running it
+under a different one makes Quarkus say so. Since production is handed the very
+image stage ran, both environments run the same artefact under the same profile
+and differ only by the values above. Anything that has to differ becomes an
+environment variable, not a profile.
 
 ### If a deploy left a half-made data directory
 
