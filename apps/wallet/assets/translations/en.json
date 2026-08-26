@@ -122,6 +122,9 @@
     "feature_request": "Request a feature",
     "feature_request_hint": "Opens a feature request on GitHub",
     "source": "Source code",
+    "legal": "Legal",
+    "privacy": "Privacy policy",
+    "privacy_hint": "Your data never leaves this device",
     "copied": "Copied to clipboard"
   },
   "category": {

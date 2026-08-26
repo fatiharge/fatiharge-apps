@@ -122,6 +122,9 @@
     "feature_request": "Özellik iste",
     "feature_request_hint": "GitHub'da özellik isteği açar",
     "source": "Kaynak kod",
+    "legal": "Yasal",
+    "privacy": "Gizlilik politikası",
+    "privacy_hint": "Verilerin bu cihazdan çıkmıyor",
     "copied": "Panoya kopyalandı"
   },
   "category": {

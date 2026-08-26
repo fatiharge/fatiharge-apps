@@ -21,6 +21,8 @@ const maintainers = [
   Maintainer('Damla Saymaz', 'damlasaymaz'),
 ];
 
+const privacyPolicyUrl = 'https://warizo.dafalabs.com/privacy';
+
 const repositoryUrl = 'https://github.com/fatiharge/fatiharge-apps';
 
 /// `template` values are filenames under `.github/ISSUE_TEMPLATE/`. Renaming

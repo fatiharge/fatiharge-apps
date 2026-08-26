@@ -170,6 +170,16 @@ void main() {
       expect(find.text('Özellik iste'), findsOneWidget);
     });
 
+    testWidgets('carries the privacy policy, which the stores ask for', (
+      tester,
+    ) async {
+      useTallSurface(tester);
+      await pumpLocalized(tester, const AboutPage());
+
+      expect(find.text('Gizlilik politikası'), findsOneWidget);
+      expect(find.text('Verilerin bu cihazdan çıkmıyor'), findsOneWidget);
+    });
+
     testWidgets('a row copies its link and says so', (tester) async {
       final copied = <String>[];
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
