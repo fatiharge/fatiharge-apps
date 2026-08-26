@@ -21,6 +21,9 @@ lands rather than reconstructed from paths at the end:
     gitp.py commit -m "feat(motto): add the device registration endpoint"
     gitp.py pr -m "feat(motto): stand up the backend service" --wp 152
 
+Run `pr` again after it is open and it just pushes the new commits onto the
+same pull request.
+
 Both shapes end in one pull request holding however many commits were made.
 Commit messages go through the commit-msg hook, so Conventional Commits are
 enforced per commit; the PR title is the one that lands on main, because
@@ -260,6 +263,15 @@ def cmd_pr(args: argparse.Namespace) -> None:
             f"no commits on '{branch}' yet — `gitp.py commit` at least once first."
         )
 
+    # Re-running this after the pull request is open is how commits are added
+    # to it, so settle whether there is anything to create before pushing.
+    existing = read(
+        ["gh", "pr", "view", branch, "--json", "url", "--jq", ".url"],
+        allow_fail=True,
+    )
+    if not existing and not args.message:
+        sys.exit("-m is required to open a pull request.")
+
     upstream = read(
         ["git", "rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{u}"],
         allow_fail=True,
@@ -273,19 +285,24 @@ def cmd_pr(args: argparse.Namespace) -> None:
     except CommandFailed as failure:
         sys.exit(str(failure))
 
-    try:
-        open_pr(branch, args.message, args.base, args.draft, args.work_package)
-    except CommandFailed as failure:
-        print(f"\n{failure}", file=sys.stderr)
-        sys.exit(
-            f"the branch is pushed but no PR was opened. Retry with:\n"
-            f"  gh pr create --base {args.base} --head {branch}"
-        )
+    if not existing:
+        try:
+            open_pr(branch, args.message, args.base, args.draft, args.work_package)
+        except CommandFailed as failure:
+            print(f"\n{failure}", file=sys.stderr)
+            sys.exit(
+                f"the branch is pushed but no PR was opened. Retry with:\n"
+                f"  gh pr create --base {args.base} --head {branch}"
+            )
 
     leftover = read(["git", "status", "--porcelain"])
     if leftover and not DRY_RUN:
         print("\nnote: still uncommitted on this branch:")
         print(leftover)
+
+    if existing:
+        print(f"\ndone: '{branch}' pushed to its open pull request: {existing}")
+        return
 
     counted = (
         f"{ahead} commit{'s' if ahead != '1' else ''}" if ahead.isdigit()
@@ -410,7 +427,11 @@ def parse_stepwise(argv: list[str]) -> argparse.Namespace:
     pr = subparsers.add_parser(
         "pr", help="Push the current branch and open its pull request."
     )
-    pr.add_argument("-m", "--message", required=True, help="PR title (+ body).")
+    pr.add_argument(
+        "-m",
+        "--message",
+        help="PR title (+ body). Required only when the PR does not exist yet.",
+    )
     pr.add_argument("--base", default=MAIN)
     pr.add_argument("--draft", action="store_true")
     pr.add_argument(
