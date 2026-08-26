@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
-"""Branch -> commit(s) -> push -> PR, from a clean start on main.
+"""Branch -> commit(s) -> push -> PR.
 
-Single commit (unchanged behaviour):
+**One shot**, from a clean start on main. Everything is already in the working
+tree and gets split into commits by path; -m describes the PR:
 
     gitp.py -b chore/thing -m "chore: do the thing" [PATH ...]
-
-Several commits in ONE pull request: repeat -c, each with its own message and
-the paths that belong to it. -m then describes the PR, not a commit.
 
     gitp.py -b feat/wallet -m "feat(wallet): add expense tracker" \\
       -c "fix(bootstrap_kit): complete runGuarded when the body throws" \\
@@ -14,8 +12,19 @@ the paths that belong to it. -m then describes the PR, not a commit.
       -c "feat(wallet): add local-first expense tracker" apps/wallet
 
 A -c with no paths stages whatever is left ("everything else goes here").
+
+**Step by step**, when the work spans days and each piece is committed as it
+lands rather than reconstructed from paths at the end:
+
+    gitp.py branch feature/motto-service-skeleton
+    gitp.py commit -m "feat(motto): add the Quarkus module" services/motto
+    gitp.py commit -m "feat(motto): add the device registration endpoint"
+    gitp.py pr -m "feat(motto): stand up the backend service" --wp 152
+
+Both shapes end in one pull request holding however many commits were made.
 Commit messages go through the commit-msg hook, so Conventional Commits are
-enforced per commit as usual.
+enforced per commit; the PR title is the one that lands on main, because
+main only takes squash merges.
 """
 
 from __future__ import annotations
@@ -27,6 +36,9 @@ import sys
 
 EXPECTED_EMAIL = "fatih@fatiharge.com"
 MAIN = "main"
+WORK_PACKAGE_URL = "https://op.dafatek.com/work_packages"
+
+SUBCOMMANDS = ("branch", "commit", "pr")
 
 DRY_RUN = False
 
@@ -64,6 +76,23 @@ def do(cmd: list[str], *, allow_fail: bool = False) -> None:
     result = subprocess.run(cmd, text=True)
     if result.returncode != 0 and not allow_fail:
         raise CommandFailed(cmd, result.returncode)
+
+
+def require_identity() -> None:
+    email = read(["git", "config", "user.email"])
+    if email != EXPECTED_EMAIL:
+        sys.exit(
+            f"refusing: git user.email is '{email}', expected '{EXPECTED_EMAIL}'."
+        )
+
+
+def require_gh() -> None:
+    if shutil.which("gh") is None:
+        sys.exit("gh (GitHub CLI) is required.")
+
+
+def current_branch() -> str:
+    return read(["git", "branch", "--show-current"])
 
 
 def diagnose(paths: list[str]) -> None:
@@ -120,53 +149,155 @@ def abort(branch: str, base_sha: str, reason: str) -> None:
     sys.exit(1)
 
 
-def main() -> None:
-    global DRY_RUN
+def open_pr(
+    branch: str, message: str, base: str, draft: bool, work_package: str | None
+) -> None:
+    """Creates the pull request. Raises CommandFailed so callers can unwind."""
+    lines = message.splitlines()
+    title = lines[0].strip()
+    body = "\n".join(lines[1:]).strip() or title
+    # The OpenProject GitHub integration keys off this URL in the body: it posts
+    # the PR onto that work package. A link added later is not picked up.
+    if work_package:
+        body = f"{body}\n\n{WORK_PACKAGE_URL}/{work_package}"
 
-    parser = argparse.ArgumentParser(
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        description=__doc__,
-    )
-    parser.add_argument("-b", "--branch", required=True)
-    parser.add_argument(
-        "-m",
-        "--message",
-        required=True,
-        help="PR title (+ body after the first line). Also the commit "
-        "message when no -c is given.",
-    )
-    parser.add_argument(
-        "-c",
-        "--commit",
-        action="append",
-        nargs="+",
-        dest="commits",
-        metavar=("MESSAGE", "PATH"),
-        help="One commit: a message followed by its paths. Repeatable. "
-        "Omit the paths to sweep up everything still uncommitted.",
-    )
-    parser.add_argument("--base", default=MAIN)
-    parser.add_argument("--draft", action="store_true")
-    parser.add_argument(
-        "--dry-run",
-        action="store_true",
-        help="Print what would run without touching the repo or GitHub.",
-    )
-    parser.add_argument("paths", nargs="*")
-    args = parser.parse_args()
+    cmd = [
+        "gh", "pr", "create",
+        "--base", base,
+        "--head", branch,
+        "--title", title,
+        "--body", body,
+    ]
+    if draft:
+        cmd.append("--draft")
+    do(cmd)
 
-    DRY_RUN = args.dry_run
 
-    if shutil.which("gh") is None:
-        sys.exit("gh (GitHub CLI) is required.")
+def stage(paths: list[str]) -> bool:
+    """Stages paths (or everything) and reports whether anything landed."""
+    do(["git", "add", *paths] if paths else ["git", "add", "-A"])
+    if DRY_RUN:
+        return True
+    return bool(read(["git", "diff", "--cached", "--name-only"]))
 
-    email = read(["git", "config", "user.email"])
-    if email != EXPECTED_EMAIL:
+
+def cmd_branch(args: argparse.Namespace) -> None:
+    require_identity()
+
+    current = current_branch()
+    if current != MAIN:
         sys.exit(
-            f"refusing: git user.email is '{email}', expected '{EXPECTED_EMAIL}'."
+            f"refusing: branch off '{MAIN}' (currently on '{current}'). "
+            f"Finish that branch with `gitp.py pr` first."
         )
 
-    current = read(["git", "branch", "--show-current"])
+    # Only fast-forward a clean tree. With work in progress the switch below
+    # carries it onto the new branch, which is the point; pulling first would
+    # risk a conflict against changes that are not committed anywhere yet.
+    if not read(["git", "status", "--porcelain"]):
+        do(["git", "pull", "--ff-only", "origin", MAIN], allow_fail=True)
+
+    do(["git", "switch", "-c", args.name])
+    print(
+        f"\non '{args.name}'. Commit as you go:\n"
+        f"  gitp.py commit -m \"type(scope): what changed\" [PATH ...]\n"
+        f"then open the pull request with:\n"
+        f"  gitp.py pr -m \"type(scope): what the PR delivers\""
+    )
+
+
+def cmd_commit(args: argparse.Namespace) -> None:
+    require_identity()
+
+    branch = current_branch()
+    if branch == MAIN:
+        sys.exit(
+            f"refusing: nothing is committed straight to '{MAIN}'. "
+            f"Start with `gitp.py branch <type>/<name>`."
+        )
+
+    if not read(["git", "status", "--porcelain"]):
+        sys.exit("nothing to commit.")
+
+    try:
+        staged = stage(args.paths)
+    except CommandFailed as failure:
+        # `git add` on a path that matches nothing exits 128 and stages
+        # nothing, so there is no half-made commit to unwind — only a message
+        # to report.
+        sys.exit(str(failure))
+
+    if not staged:
+        diagnose(args.paths)
+        sys.exit("staged nothing — check the paths.")
+
+    try:
+        do(["git", "commit", "-m", args.message])
+    except CommandFailed as failure:
+        # Nothing is unwound here: the branch holds earlier commits that are
+        # still wanted, and the files stay staged for a retry.
+        sys.exit(
+            f"{failure}\nthe files are still staged — fix the message and rerun."
+        )
+
+    print(f"\ncommitted on '{branch}'.")
+
+
+def cmd_pr(args: argparse.Namespace) -> None:
+    require_gh()
+    require_identity()
+
+    branch = current_branch()
+    if branch == MAIN:
+        sys.exit(f"refusing: '{MAIN}' has no pull request to open.")
+
+    do(["git", "fetch", "origin", args.base], allow_fail=True)
+    ahead = read(
+        ["git", "rev-list", "--count", f"origin/{args.base}..HEAD"], allow_fail=True
+    )
+    if ahead == "0":
+        sys.exit(
+            f"no commits on '{branch}' yet — `gitp.py commit` at least once first."
+        )
+
+    upstream = read(
+        ["git", "rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{u}"],
+        allow_fail=True,
+    )
+    push = ["git", "push"] if upstream else [
+        "git", "push", "--set-upstream", "origin", branch
+    ]
+
+    try:
+        do(push)
+    except CommandFailed as failure:
+        sys.exit(str(failure))
+
+    try:
+        open_pr(branch, args.message, args.base, args.draft, args.work_package)
+    except CommandFailed as failure:
+        print(f"\n{failure}", file=sys.stderr)
+        sys.exit(
+            f"the branch is pushed but no PR was opened. Retry with:\n"
+            f"  gh pr create --base {args.base} --head {branch}"
+        )
+
+    leftover = read(["git", "status", "--porcelain"])
+    if leftover and not DRY_RUN:
+        print("\nnote: still uncommitted on this branch:")
+        print(leftover)
+
+    print(
+        f"\ndone: '{branch}' pushed with {ahead or 'its'} commits and a PR open. "
+        f"Still on the branch — `git switch {MAIN}` once it is merged."
+    )
+
+
+def run_one_shot(args: argparse.Namespace) -> None:
+    require_gh()
+    require_identity()
+
+    current = current_branch()
     if current != MAIN:
         sys.exit(f"refusing: start from '{MAIN}' (currently on '{current}').")
 
@@ -187,11 +318,7 @@ def main() -> None:
     try:
         for index, spec in enumerate(specs, start=1):
             message, paths = spec[0], spec[1:]
-            do(["git", "add", *paths] if paths else ["git", "add", "-A"])
-
-            if not DRY_RUN and not read(
-                ["git", "diff", "--cached", "--name-only"]
-            ):
+            if not stage(paths):
                 diagnose(paths)
                 abort(
                     args.branch,
@@ -210,23 +337,12 @@ def main() -> None:
     except CommandFailed as failure:
         abort(args.branch, base_sha, str(failure))
 
-    lines = args.message.splitlines()
-    title = lines[0].strip()
-    body = "\n".join(lines[1:]).strip() or title
-    pr = [
-        "gh", "pr", "create",
-        "--base", args.base,
-        "--head", args.branch,
-        "--title", title,
-        "--body", body,
-    ]
-    if args.draft:
-        pr.append("--draft")
-
     # Past the push, rolling back would delete a local branch that already
     # exists on the remote. The commits are safe; only the PR is missing.
     try:
-        do(pr)
+        open_pr(
+            args.branch, args.message, args.base, args.draft, args.work_package
+        )
     except CommandFailed as failure:
         print(f"\n{failure}", file=sys.stderr)
         sys.exit(
@@ -252,6 +368,105 @@ def main() -> None:
         f"\ndone: '{args.branch}' pushed with {count} "
         f"commit{'s' if count != 1 else ''}, PR opened, back on {MAIN}."
     )
+
+
+def add_dry_run(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Print what would run without touching the repo or GitHub.",
+    )
+
+
+def parse_stepwise(argv: list[str]) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        prog="gitp.py",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description=__doc__,
+    )
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    branch = subparsers.add_parser("branch", help="Open a branch off main.")
+    branch.add_argument("name", help="<type>/<short-kebab-description>")
+    add_dry_run(branch)
+    branch.set_defaults(func=cmd_branch)
+
+    commit = subparsers.add_parser(
+        "commit", help="Commit part of the work on the current branch."
+    )
+    commit.add_argument("-m", "--message", required=True)
+    commit.add_argument(
+        "paths",
+        nargs="*",
+        help="What belongs in this commit. Omit to take everything pending.",
+    )
+    add_dry_run(commit)
+    commit.set_defaults(func=cmd_commit)
+
+    pr = subparsers.add_parser(
+        "pr", help="Push the current branch and open its pull request."
+    )
+    pr.add_argument("-m", "--message", required=True, help="PR title (+ body).")
+    pr.add_argument("--base", default=MAIN)
+    pr.add_argument("--draft", action="store_true")
+    pr.add_argument(
+        "--wp",
+        dest="work_package",
+        help="OpenProject work package id to link in the PR body.",
+    )
+    add_dry_run(pr)
+    pr.set_defaults(func=cmd_pr)
+
+    return parser.parse_args(argv)
+
+
+def parse_one_shot() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description=__doc__,
+    )
+    parser.add_argument("-b", "--branch", required=True)
+    parser.add_argument(
+        "-m",
+        "--message",
+        required=True,
+        help="PR title (+ body after the first line). Also the commit "
+        "message when no -c is given.",
+    )
+    parser.add_argument(
+        "-c",
+        "--commit",
+        action="append",
+        nargs="+",
+        dest="commits",
+        metavar=("MESSAGE", "PATH"),
+        help="One commit: a message followed by its paths. Repeatable. "
+        "Omit the paths to sweep up everything still uncommitted.",
+    )
+    parser.add_argument("--base", default=MAIN)
+    parser.add_argument("--draft", action="store_true")
+    parser.add_argument(
+        "--wp",
+        dest="work_package",
+        help="OpenProject work package id to link in the PR body.",
+    )
+    add_dry_run(parser)
+    parser.add_argument("paths", nargs="*")
+    return parser.parse_args()
+
+
+def main() -> None:
+    global DRY_RUN
+
+    if len(sys.argv) > 1 and sys.argv[1] in SUBCOMMANDS:
+        args = parse_stepwise(sys.argv[1:])
+        DRY_RUN = args.dry_run
+        args.func(args)
+        return
+
+    args = parse_one_shot()
+    DRY_RUN = args.dry_run
+    run_one_shot(args)
 
 
 if __name__ == "__main__":
