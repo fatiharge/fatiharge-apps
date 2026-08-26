@@ -1,0 +1,5 @@
+# Generated code. The workspace lint set is deliberately not applied: nobody
+# edits this package, so a style rule here would only ever be noise.
+analyzer:
+  errors:
+    todo: ignore
