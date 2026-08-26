@@ -127,7 +127,7 @@ kırdığında build'i düşürür.
 | | nerede | neden |
 | --- | --- | --- |
 | **dev** | lokal, `quarkus dev` | Dev Services PostgreSQL'i container'da kaldırıyor ve canlı yeniden yükleme çalışıyor. Deploy edilmiş bir dev ortamı bundan kötü ve servis başına bir container daha demek. |
-| **stage** | `<app>.stage.dafalabs.com` | gerçek deploy, gerçek veritabanı |
+| **stage** | `<app>stage.dafalabs.com` | gerçek deploy, gerçek veritabanı |
 | **prod** | `<app>.dafalabs.com` | elle tetiklenir |
 
 **İmaj bir kez derlenir.** Stage'in çalıştırdığı imaj prod'a digest ile terfi
@@ -135,9 +135,15 @@ eder — prod asla yeniden derlemez. Yeniden derlemek, "stage'de çalışıyordu
 cümlesini anlamsız kılan şeydir. İmajlar `ghcr.io`'da durur; repo public olduğu
 için tek gereken kimlik `GITHUB_TOKEN`.
 
-Her ortamın kendi veritabanı instance'ı var. Konfigürasyon Quarkus profilleri
-(`%dev`, `%stage`, `%prod`) artı ortam değişkenlerinden gelir, GitHub
-Environments içinde tutulur.
+Her ortamın kendi veritabanı instance'ı var.
+
+**Dağıtılan ortamlar profil kullanmaz.** Native imaj, derlendiği profilin
+build-time konfigürasyonunu içine pişirir; çalışma anında başka bir profil
+vermek "stage'de çalışıyordu"nun sessiz kaynağıdır. Profil başına ayrı imaj
+üretmek ise yukarıdaki terfi kuralıyla çelişir: prod, stage'in koştuğu
+artefaktın kendisini değil kardeşini çalıştırmış olur. `%dev` duruyor, çünkü dev
+dağıtılmıyor; stage ve prod aynı imajı aynı profille koşar ve yalnızca GitHub
+Environments'ta tutulan ortam değişkenleriyle ayrışır.
 
 ## CI
 
@@ -153,6 +159,16 @@ Hedef native olduğunda `@QuarkusIntegrationTest` isteğe bağlı değil. Derlen
 binary'ye karşı koşuyor; orada yansıma ve kaynak yükleme farklı davranıyor.
 `@QuarkusTest` JVM'de koşar ve o hataları göremez. Native imajlar container'da
 derlenir, hiçbir runner'a GraalVM kurulmaz.
+
+**Native binary, üzerinde koşacağı makineye dair iki varsayım taşır ve ikisi de
+varsayılan olarak onu derleyen makineyi kabul eder.** Derleyici imajının
+glibc'sine bağlanır, dolayısıyla çalışma zamanı taban imajı onunla eşleşmek
+zorundadır — derleyici bu yüzden sabitlendi ve ikisi birlikte hareket eder. Bir
+de derleyen makinenin komut kümesini hedefler, bu yüzden `-march=compatibility`
+ile derlenir; CI runner'ları sunucudan yeni ve varsayılan ayar AVX2 isteyen bir
+binary üretmişti. İki hata da dışarıdan aynı görünür: konteyner exec anında
+ölür, sonsuz yeniden başlar ve proxy yönlendirecek bir şey bulamadığı için 404
+döner.
 
 **Tetikleme.** Mantığı tek bir yeniden kullanılabilir workflow taşır; servis
 başına ince bir çağırıcı yalnızca kendi `paths` filtresini taşır. Bir servisin
