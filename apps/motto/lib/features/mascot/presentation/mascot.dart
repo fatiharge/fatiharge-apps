@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/physics.dart';
 import 'package:motto/features/mascot/application/mascot_controller.dart';
 import 'package:motto/features/mascot/application/rive_mascot_controller.dart';
 import 'package:rive/rive.dart';
@@ -39,7 +40,8 @@ class Mascot extends StatefulWidget {
   State<Mascot> createState() => _MascotState();
 }
 
-class _MascotState extends State<Mascot> with WidgetsBindingObserver {
+class _MascotState extends State<Mascot>
+    with WidgetsBindingObserver, SingleTickerProviderStateMixin {
   RiveMascotController? _mascot;
   Artboard? _artboard;
 
@@ -48,10 +50,21 @@ class _MascotState extends State<Mascot> with WidgetsBindingObserver {
   DateTime _lastTouched = DateTime.now();
   bool _offering = false;
 
+  /// How far the finger has pulled it from where it sits. The file has a
+  /// "held" pose but no idea where the hand is; moving it is the app's job.
+  Offset _pulled = Offset.zero;
+  late final AnimationController _spring;
+  Offset _releasedFrom = Offset.zero;
+
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    // Built here rather than lazily: a controller first touched in dispose()
+    // asks for a ticker from a widget that is already deactivated.
+    _spring = AnimationController.unbounded(vsync: this)
+      ..addListener(_followSpring);
     unawaited(_load());
   }
 
@@ -60,6 +73,7 @@ class _MascotState extends State<Mascot> with WidgetsBindingObserver {
     WidgetsBinding.instance.removeObserver(this);
     _idle?.cancel();
     _decay?.cancel();
+    _spring.dispose();
     super.dispose();
   }
 
@@ -86,7 +100,10 @@ class _MascotState extends State<Mascot> with WidgetsBindingObserver {
     // and no screen depends on it enough to go down with it.
     try {
       final file = await widget.loadFile(Mascot.asset);
-      artboard = file.mainArtboard;
+      // An instance, not the file's own artboard: the shared one is not
+      // advanced by the widget, which draws the first frame and then nothing —
+      // a mascot that is there and never moves.
+      artboard = file.mainArtboard.instance();
 
       final machine = StateMachineController.fromArtboard(
         artboard,
@@ -147,6 +164,28 @@ class _MascotState extends State<Mascot> with WidgetsBindingObserver {
     );
   }
 
+  void _followSpring() {
+    setState(() => _pulled = _releasedFrom * _spring.value);
+  }
+
+  /// Let go and it snaps back, overshooting once. A linear return reads as a
+  /// UI element sliding home; this reads as something with weight.
+  void _release() {
+    _mascot?.drag(held: false);
+    _releasedFrom = _pulled;
+    _spring.value = 1;
+    unawaited(
+      _spring.animateWith(
+        SpringSimulation(
+          const SpringDescription(mass: 1, stiffness: 340, damping: 18),
+          1,
+          0,
+          0,
+        ),
+      ),
+    );
+  }
+
   void _touched() {
     _lastTouched = DateTime.now();
     _offering = false;
@@ -182,17 +221,23 @@ class _MascotState extends State<Mascot> with WidgetsBindingObserver {
         onTap: _onTap,
         onPanStart: (_) {
           _touched();
+          _spring.stop();
           _mascot?.drag(held: true);
         },
-        onPanUpdate: (details) => _mascot?.drag(
-          held: true,
-          x: details.localPosition.dx - widget.size / 2,
-          y: details.localPosition.dy - widget.size / 2,
-        ),
-        onPanEnd: (_) => _mascot?.drag(held: false),
-        child: SizedBox.square(
-          dimension: widget.size,
-          child: Rive(artboard: artboard),
+        onPanUpdate: (details) {
+          setState(
+            () => _pulled = MascotRules.pulledTo(_pulled, details.delta),
+          );
+          _mascot?.drag(held: true, x: _pulled.dx, y: _pulled.dy);
+        },
+        onPanEnd: (_) => _release(),
+        onPanCancel: _release,
+        child: Transform.translate(
+          offset: _pulled,
+          child: SizedBox.square(
+            dimension: widget.size,
+            child: Rive(artboard: artboard),
+          ),
         ),
       ),
     );

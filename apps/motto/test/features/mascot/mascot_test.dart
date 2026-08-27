@@ -96,4 +96,27 @@ void main() {
       expect(find.byType(Mascot), findsOneWidget);
     });
   });
+
+  group('being pulled', () {
+    test('it follows the finger', () {
+      expect(
+        MascotRules.pulledTo(Offset.zero, const Offset(10, 20)),
+        const Offset(10, 20),
+      );
+    });
+
+    test('but only so far', () {
+      final pulled = MascotRules.pulledTo(Offset.zero, const Offset(400, 400));
+
+      // One dragged off the screen is one somebody has to go looking for.
+      expect(pulled.distance, closeTo(MascotRules.maxPull, 0.01));
+    });
+
+    test('and the direction of a long pull is kept', () {
+      final pulled = MascotRules.pulledTo(Offset.zero, const Offset(0, 500));
+
+      expect(pulled.dx, 0);
+      expect(pulled.dy, closeTo(MascotRules.maxPull, 0.01));
+    });
+  });
 }
