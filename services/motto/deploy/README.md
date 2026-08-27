@@ -143,3 +143,22 @@ repository does not already show.
    workflow. That deploy is the first one that touches the server.
 4. Promote to production by running **motto promote** with the digest the
    release run printed.
+
+## Reaching the database from a laptop
+
+The port is published to the server's loopback only, so nothing on the internet
+can reach it and neither can another container. An SSH tunnel is the whole
+access story:
+
+| DBeaver | value |
+|---|---|
+| SSH host / port | the deploy host, port `1675` |
+| SSH user | your own account |
+| Database host | `localhost` |
+| Database port | `5433` on the server (`MOTTO_DB_PORT` in `.env` overrides it) |
+| Database / user | `motto` |
+| Password | `MOTTO_DB_PASSWORD` from the `.env` beside the compose file |
+
+DBeaver opens the tunnel itself — "SSH" tab, "Use SSH Tunnel" — and then
+connects as if the database were local. Nothing needs to be published wider for
+this to work, and if it ever is, that is the mistake.

@@ -76,8 +76,13 @@ services:
       # does would otherwise count against retries — turning a slow first boot
       # into a failed deploy.
       start_period: 60s
-    # No proxy network, no published port: the database is reachable only from
-    # the service that owns it.
+    # Bound to the server's loopback and nowhere else. Not on the proxy
+    # network, and not on 0.0.0.0: the only way in from outside is an SSH
+    # tunnel, which means the database is reachable exactly by whoever already
+    # has a shell on that machine. See the README for the DBeaver side.
+    ports:
+      - "127.0.0.1:${AUTH_DB_PORT:-5434}:5432"
+    # No proxy network: nothing else on this box can route to it.
     networks:
       - internal
     logging:

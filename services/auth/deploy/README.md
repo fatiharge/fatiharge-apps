@@ -68,3 +68,22 @@ environment variable per environment:
 Those names collide with motto's: one GitHub environment cannot hold two values
 for the same variable. So auth gets its own environments — `auth-stage` and
 `auth-production` — and its workflows point at those.
+
+## Reaching the database from a laptop
+
+The port is published to the server's loopback only, so nothing on the internet
+can reach it and neither can another container. An SSH tunnel is the whole
+access story:
+
+| DBeaver | value |
+|---|---|
+| SSH host / port | the deploy host, port `1675` |
+| SSH user | your own account |
+| Database host | `localhost` |
+| Database port | `5434` on the server (`AUTH_DB_PORT` in `.env` overrides it) |
+| Database / user | `auth` |
+| Password | `AUTH_DB_PASSWORD` from the `.env` beside the compose file |
+
+DBeaver opens the tunnel itself — "SSH" tab, "Use SSH Tunnel" — and then
+connects as if the database were local. Nothing needs to be published wider for
+this to work, and if it ever is, that is the mistake.
