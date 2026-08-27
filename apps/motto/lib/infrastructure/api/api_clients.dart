@@ -65,4 +65,8 @@ abstract class ApiClients {
   @lazySingleton
   motto.TaskResourceApi tasks(motto.ApiClient client) =>
       motto.TaskResourceApi(client);
+
+  @lazySingleton
+  motto.ReportResourceApi reports(motto.ApiClient client) =>
+      motto.ReportResourceApi(client);
 }
