@@ -57,6 +57,42 @@
           }
         }
       },
+      "ChainState" : {
+        "type" : "object",
+        "required" : [ "started", "markedDays", "streak", "markedToday", "broken", "canFreeze" ],
+        "properties" : {
+          "started" : {
+            "type" : "boolean"
+          },
+          "startedOn" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          },
+          "markedDays" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "format" : "date",
+              "examples" : [ "2022-03-10" ]
+            }
+          },
+          "freezeUsedOn" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          },
+          "streak" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "markedToday" : {
+            "type" : "boolean"
+          },
+          "broken" : {
+            "type" : "boolean"
+          },
+          "canFreeze" : {
+            "type" : "boolean"
+          }
+        }
+      },
       "Connector" : {
         "type" : "object",
         "required" : [ "id", "text" ],
@@ -259,6 +295,24 @@
         "format" : "date-time",
         "examples" : [ "2022-03-10T16:15:50Z" ]
       },
+      "LocalDate" : {
+        "type" : "string",
+        "format" : "date",
+        "examples" : [ "2022-03-10" ]
+      },
+      "MarkDayRequest" : {
+        "type" : "object",
+        "required" : [ "day" ],
+        "properties" : {
+          "day" : {
+            "type" : "string",
+            "$ref" : "#/components/schemas/LocalDate"
+          },
+          "today" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        }
+      },
       "MottoContent" : {
         "type" : "object",
         "required" : [ "id", "archetypeId", "motto", "detail", "reminder" ],
@@ -277,6 +331,32 @@
           },
           "reminder" : {
             "type" : "string"
+          }
+        }
+      },
+      "ProfileScores" : {
+        "type" : "object",
+        "required" : [ "openness", "conscientiousness", "extraversion", "agreeableness", "neuroticism" ],
+        "properties" : {
+          "openness" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "conscientiousness" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "extraversion" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "agreeableness" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "neuroticism" : {
+            "type" : "number",
+            "format" : "double"
           }
         }
       },
@@ -308,6 +388,18 @@
           }
         }
       },
+      "ResultHistory" : {
+        "type" : "object",
+        "required" : [ "results" ],
+        "properties" : {
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ResultSummary"
+            }
+          }
+        }
+      },
       "ResultResponse" : {
         "type" : "object",
         "required" : [ "archetype", "entitlement" ],
@@ -317,6 +409,26 @@
           },
           "entitlement" : {
             "$ref" : "#/components/schemas/EntitlementResponse"
+          }
+        }
+      },
+      "ResultSummary" : {
+        "type" : "object",
+        "required" : [ "id", "archetype", "profile", "claimedAt" ],
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "archetype" : {
+            "$ref" : "#/components/schemas/ArchetypeResponse"
+          },
+          "profile" : {
+            "$ref" : "#/components/schemas/ProfileScores"
+          },
+          "claimedAt" : {
+            "type" : "string",
+            "$ref" : "#/components/schemas/Instant"
           }
         }
       }
@@ -331,6 +443,164 @@
     }
   },
   "paths" : {
+    "/v1/chain" : {
+      "get" : {
+        "summary" : "The chain as it stands",
+        "operationId" : "currentChain",
+        "parameters" : [ {
+          "name" : "today",
+          "in" : "query",
+          "schema" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ChainState"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "tags" : [ "Chain Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
+    "/v1/chain/days" : {
+      "post" : {
+        "summary" : "Mark a day",
+        "operationId" : "markChainDay",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/MarkDayRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ChainState"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        },
+        "tags" : [ "Chain Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
+    "/v1/chain/freeze" : {
+      "post" : {
+        "summary" : "Spend the month's make-up",
+        "operationId" : "spendChainFreeze",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/MarkDayRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ChainState"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        },
+        "tags" : [ "Chain Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
+    "/v1/chain/start" : {
+      "post" : {
+        "summary" : "Start the chain and mark today",
+        "operationId" : "startChain",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/MarkDayRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ChainState"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        },
+        "tags" : [ "Chain Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
     "/v1/content" : {
       "get" : {
         "summary" : "The content package",
@@ -500,6 +770,34 @@
           }
         },
         "tags" : [ "Entitlement Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
+    "/v1/me/results" : {
+      "get" : {
+        "summary" : "Past results, newest first",
+        "operationId" : "resultHistory",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResultHistory"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "tags" : [ "Result Resource" ],
         "security" : [ {
           "SecurityScheme" : [ ]
         } ]

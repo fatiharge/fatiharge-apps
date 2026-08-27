@@ -47,14 +47,14 @@ import 'package:api_client_motto/api.dart';
 // String yourTokenGeneratorFunction() { ... }
 //defaultApiClient.getAuthentication<HttpBearerAuth>('SecurityScheme').setAccessToken(yourTokenGeneratorFunction);
 
-final api_instance = ContentResourceApi();
-final ifNoneMatch = ifNoneMatch_example; // String | 
+final api_instance = ChainResourceApi();
+final today = 2013-10-20; // DateTime | 
 
 try {
-    final result = api_instance.contentBundle(ifNoneMatch);
+    final result = api_instance.currentChain(today);
     print(result);
 } catch (e) {
-    print('Exception when calling ContentResourceApi->contentBundle: $e\n');
+    print('Exception when calling ChainResourceApi->currentChain: $e\n');
 }
 
 ```
@@ -65,12 +65,17 @@ All URIs are relative to *http://localhost*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
+*ChainResourceApi* | [**currentChain**](doc//ChainResourceApi.md#currentchain) | **GET** /v1/chain | The chain as it stands
+*ChainResourceApi* | [**markChainDay**](doc//ChainResourceApi.md#markchainday) | **POST** /v1/chain/days | Mark a day
+*ChainResourceApi* | [**spendChainFreeze**](doc//ChainResourceApi.md#spendchainfreeze) | **POST** /v1/chain/freeze | Spend the month's make-up
+*ChainResourceApi* | [**startChain**](doc//ChainResourceApi.md#startchain) | **POST** /v1/chain/start | Start the chain and mark today
 *ContentResourceApi* | [**contentBundle**](doc//ContentResourceApi.md#contentbundle) | **GET** /v1/content | The content package
 *EntitlementResourceApi* | [**currentEntitlement**](doc//EntitlementResourceApi.md#currententitlement) | **GET** /v1/entitlements | What this device may do now
 *EntitlementResourceApi* | [**deleteMyData**](doc//EntitlementResourceApi.md#deletemydata) | **DELETE** /v1/me | Delete this device's data
 *EventResourceApi* | [**recordEvents**](doc//EventResourceApi.md#recordevents) | **POST** /v1/events | Report what happened
 *FeedbackResourceApi* | [**submitFeedback**](doc//FeedbackResourceApi.md#submitfeedback) | **POST** /v1/feedback | Send feedback
 *MottoResourceApi* | [**claimMotto**](doc//MottoResourceApi.md#claimmotto) | **POST** /v1/mottos/claim | Spend a use and get a motto
+*ResultResourceApi* | [**resultHistory**](doc//ResultResourceApi.md#resulthistory) | **GET** /v1/me/results | Past results, newest first
 *TestResourceApi* | [**partialResult**](doc//TestResourceApi.md#partialresult) | **POST** /v1/tests/partial | A first look, without spending anything
 *TestResourceApi* | [**testQuestions**](doc//TestResourceApi.md#testquestions) | **GET** /v1/tests/questions | The questions to ask
 
@@ -80,6 +85,7 @@ Class | Method | HTTP request | Description
  - [AnswerSubmission](doc//AnswerSubmission.md)
  - [ArchetypeContent](doc//ArchetypeContent.md)
  - [ArchetypeResponse](doc//ArchetypeResponse.md)
+ - [ChainState](doc//ChainState.md)
  - [Connector](doc//Connector.md)
  - [ContentBundle](doc//ContentBundle.md)
  - [DailySkeleton](doc//DailySkeleton.md)
@@ -91,10 +97,14 @@ Class | Method | HTTP request | Description
  - [FeedbackKind](doc//FeedbackKind.md)
  - [FeedbackRequest](doc//FeedbackRequest.md)
  - [Fragment](doc//Fragment.md)
+ - [MarkDayRequest](doc//MarkDayRequest.md)
  - [MottoContent](doc//MottoContent.md)
+ - [ProfileScores](doc//ProfileScores.md)
  - [Question](doc//Question.md)
  - [QuestionResponse](doc//QuestionResponse.md)
+ - [ResultHistory](doc//ResultHistory.md)
  - [ResultResponse](doc//ResultResponse.md)
+ - [ResultSummary](doc//ResultSummary.md)
 
 
 ## Documentation For Authorization
