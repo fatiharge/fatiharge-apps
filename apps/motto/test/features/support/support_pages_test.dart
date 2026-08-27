@@ -4,8 +4,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/features/chain/application/chain_cubit.dart';
+import 'package:motto/features/chain/application/chain_repository.dart';
 import 'package:motto/features/chain/application/chain_store.dart';
 import 'package:motto/features/chain/application/reminder_scheduler.dart';
+import 'package:motto/features/chain/domain/chain.dart';
 import 'package:motto/features/chain/domain/reminder.dart';
 import 'package:motto/features/support/application/data_deletion.dart';
 import 'package:motto/features/support/application/feedback_cubit.dart';
@@ -26,6 +28,8 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class _MockScheduler extends Mock implements ReminderScheduler {}
+
+class _MockChains extends Mock implements ChainRepository {}
 
 class _MockEvents extends Mock implements api.EventResourceApi {}
 
@@ -82,9 +86,13 @@ void main() {
     entitlements = _MockEntitlements();
     when(entitlements.deleteMyData).thenAnswer((_) async => null);
 
+    final chains = _MockChains();
+    when(() => chains.cached).thenReturn(const Chain());
+    when(() => chains.load(any())).thenAnswer((_) async => const Chain());
+
     getIt
       ..registerFactory<ChainCubit>(
-        () => ChainCubit(ChainStore(preferences), scheduler, analytics),
+        () => ChainCubit(chains, ChainStore(preferences), scheduler, analytics),
       )
       ..registerFactory<FeedbackCubit>(
         () => FeedbackCubit(

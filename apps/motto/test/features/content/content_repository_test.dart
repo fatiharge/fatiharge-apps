@@ -29,20 +29,18 @@ void main() {
     repository = ContentRepository(content, store);
   });
 
-  test('what was downloaded wins over what shipped', () async {
-    when(store.readCached).thenAnswer((_) async => {'version': 'downloaded'});
-    when(store.readBundled).thenAnswer((_) async => {'version': 'shipped'});
+  test('a phone that has never been online has no content', () async {
+    when(store.readCached).thenAnswer((_) async => null);
 
-    expect((await repository.current())['version'], 'downloaded');
-    verifyNever(store.readBundled);
+    // Nothing ships inside the app, so this state is reachable and the flow
+    // has to stop rather than open on an empty screen.
+    expect(await repository.current(), isNull);
   });
 
-  test('a first launch with no network still has content', () async {
-    when(store.readCached).thenAnswer((_) async => null);
-    when(store.readBundled).thenAnswer((_) async => {'version': 'shipped'});
+  test('what was downloaded is what gets shown', () async {
+    when(store.readCached).thenAnswer((_) async => {'version': 'downloaded'});
 
-    // An empty first day is the last day someone opens this.
-    expect((await repository.current())['version'], 'shipped');
+    expect((await repository.current())!['version'], 'downloaded');
   });
 
   test('the held version is what gets sent back', () async {
@@ -53,16 +51,6 @@ void main() {
     await repository.refresh();
 
     verify(() => content.contentBundle(ifNoneMatch: '"abc123"')).called(1);
-  });
-
-  test('nothing new means nothing written', () async {
-    when(() => store.version).thenReturn('abc123');
-    when(() => content.contentBundle(ifNoneMatch: any(named: 'ifNoneMatch')))
-        .thenAnswer((_) async => null);
-
-    await repository.refresh();
-
-    // A 304 comes back as null, which is exactly the answer wanted.
     verifyNever(() => store.save(any(), any()));
   });
 
@@ -75,18 +63,27 @@ void main() {
     await repository.refresh();
 
     verify(() => store.save(any(), 'new')).called(1);
-    expect((await repository.current())['version'], 'new');
+    expect((await repository.current())!['version'], 'new');
   });
 
-  test('a refresh that fails is not a failure anyone sees', () async {
-    when(() => store.version).thenReturn(null);
+  test('a refresh that fails with a package on the phone is not a failure',
+      () async {
+    when(() => store.version).thenReturn('old');
+    when(store.readCached).thenAnswer((_) async => {'version': 'old'});
     when(() => content.contentBundle(ifNoneMatch: any(named: 'ifNoneMatch')))
         .thenThrow(Exception('offline'));
-    when(store.readCached).thenAnswer((_) async => {'version': 'old'});
 
-    await repository.refresh();
+    await expectLater(repository.refresh(), completes);
+  });
 
-    expect((await repository.current())['version'], 'old');
+  test('a refresh that fails with nothing on the phone stops the flow',
+      () async {
+    when(() => store.version).thenReturn(null);
+    when(store.readCached).thenAnswer((_) async => null);
+    when(() => content.contentBundle(ifNoneMatch: any(named: 'ifNoneMatch')))
+        .thenThrow(Exception('offline'));
+
+    await expectLater(repository.refresh(), throwsA(isA<Exception>()));
   });
 
   test('a device with nothing yet asks without a version', () async {

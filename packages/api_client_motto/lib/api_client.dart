@@ -210,6 +210,8 @@ class ApiClient {
           return ArchetypeContent.fromJson(value);
         case 'ArchetypeResponse':
           return ArchetypeResponse.fromJson(value);
+        case 'ChainState':
+          return ChainState.fromJson(value);
         case 'Connector':
           return Connector.fromJson(value);
         case 'ContentBundle':
@@ -232,14 +234,24 @@ class ApiClient {
           return FeedbackRequest.fromJson(value);
         case 'Fragment':
           return Fragment.fromJson(value);
+        case 'MarkDayRequest':
+          return MarkDayRequest.fromJson(value);
+        case 'MarkedDay':
+          return MarkedDay.fromJson(value);
         case 'MottoContent':
           return MottoContent.fromJson(value);
+        case 'ProfileScores':
+          return ProfileScores.fromJson(value);
         case 'Question':
           return Question.fromJson(value);
         case 'QuestionResponse':
           return QuestionResponse.fromJson(value);
+        case 'ResultHistory':
+          return ResultHistory.fromJson(value);
         case 'ResultResponse':
           return ResultResponse.fromJson(value);
+        case 'ResultSummary':
+          return ResultSummary.fromJson(value);
         default:
           dynamic match;
           if (value is List &&

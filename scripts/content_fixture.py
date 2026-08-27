@@ -1,15 +1,13 @@
 #!/usr/bin/env python3
-"""Writes the content package the app ships with, from the same files the server reads.
+"""Writes the content fixture the app's tests read, from the files the server serves.
 
-The app has to show something on a first launch with no network — an empty
-today screen on the first day is the last day someone opens it. So the package
-is baked into the assets, and replaced by the served one the moment there is a
-connection.
+Nothing ships inside the app any more — a phone that has never been online has
+no content and says so. But the assembler test has to run against real content:
+a test that invents its own proves the assembler works on content nobody
+publishes.
 
-Two copies of the text would drift, which is the thing content/ exists to
-prevent. There is only one copy: this script derives the asset from the YAML,
-and the version it stamps is computed exactly as ContentCatalog computes it, so
-a phone that ships current does not re-download on first launch.
+`ContentFixtureTest` on the service side fails when this file falls behind, so
+the fixture cannot quietly stop being what the server would send.
 
 Run it after editing anything in content/, and commit the result.
 """
@@ -25,12 +23,12 @@ import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
 CONTENT = ROOT / "content"
-OUTPUT = ROOT / "apps/motto/assets/content/bundle.json"
+OUTPUT = ROOT / "apps/motto/test/fixtures/content_bundle.json"
 
 LANGUAGE = "tr"
 
-# Order matters: the version is a hash over these, read in this sequence. It
-# has to match ContentCatalog.FILES exactly or every first launch re-downloads.
+# Order matters: the version is a hash over these, read in this sequence, and
+# it has to match ContentCatalog.FILES exactly.
 FILES = [
     "archetypes.yaml",
     "mottos.yaml",

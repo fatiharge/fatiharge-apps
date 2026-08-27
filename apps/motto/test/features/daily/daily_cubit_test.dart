@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:api_client_motto/api.dart' as api;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:motto/features/chain/application/chain_store.dart';
+import 'package:motto/features/chain/application/chain_repository.dart';
 import 'package:motto/features/chain/domain/chain.dart';
 import 'package:motto/features/content/application/content_repository.dart';
 import 'package:motto/features/daily/application/daily_cubit.dart';
@@ -22,6 +22,8 @@ class _MockEvents extends Mock implements api.EventResourceApi {}
 
 class _MockWidget extends Mock implements DailyWidget {}
 
+class _MockChains extends Mock implements ChainRepository {}
+
 class _FakeContent extends Fake implements DailyContent {}
 
 void main() {
@@ -38,17 +40,15 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     preferences = await SharedPreferences.getInstance();
 
-    final store = ChainStore(preferences);
-    if (marked > 0) {
-      await store.write(
-        Chain(
-          startedOn: DateTime(2026, 3),
-          markedDays: {
-            for (var day = 1; day <= marked; day++) DateTime(2026, 3, day),
-          },
-        ),
-      );
-    }
+    final chains = _MockChains();
+    when(() => chains.cached).thenReturn(
+      Chain(
+        startedOn: marked > 0 ? DateTime(2026, 3) : null,
+        markedDays: {
+          for (var day = 1; day <= marked; day++) DateTime(2026, 3, day),
+        },
+      ),
+    );
 
     final lastArchetype = LastArchetype(preferences);
     if (archetype != null) await lastArchetype.remember(archetype);
@@ -56,7 +56,7 @@ void main() {
     content = _MockContent();
     when(content.current).thenAnswer(
       (_) async =>
-          jsonDecode(File('assets/content/bundle.json').readAsStringSync())
+          jsonDecode(File('test/fixtures/content_bundle.json').readAsStringSync())
               as Map<String, dynamic>,
     );
 
@@ -72,7 +72,7 @@ void main() {
     return DailyCubit(
       content,
       lastArchetype,
-      store,
+      chains,
       Analytics(EventQueue(preferences), events),
       widget,
     );

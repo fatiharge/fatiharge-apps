@@ -24,10 +24,13 @@ class BootstrapAdapter implements BootstrapPort {
       // better than a splash that will not move.
       errorPolicy: BootstrapErrorPolicy.skip,
     ),
+    // Not skipped: nothing ships inside the app, so a phone that has never
+    // had a package has nothing to show and should say so rather than open on
+    // an empty screen.
     BootstrapJob(
       'content',
       () => getIt<ContentRepository>().refresh(),
-      errorPolicy: BootstrapErrorPolicy.skip,
+      retries: 2,
     ),
     // Last: it needs the token, and this is where anything collected while
     // offline gets a chance to leave.

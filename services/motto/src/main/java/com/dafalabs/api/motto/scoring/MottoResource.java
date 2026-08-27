@@ -4,6 +4,7 @@ import com.dafalabs.api.core.auth.AuthenticatedDevice;
 import com.dafalabs.api.motto.entitlement.EntitlementState;
 import com.dafalabs.api.motto.entitlement.Entitlements;
 import com.dafalabs.api.motto.entitlement.dto.EntitlementResponse;
+import com.dafalabs.api.motto.result.Results;
 import com.dafalabs.api.motto.scoring.dto.AnswerSubmission;
 import com.dafalabs.api.motto.scoring.dto.ArchetypeResponse;
 import com.dafalabs.api.motto.scoring.dto.ResultResponse;
@@ -27,6 +28,7 @@ public class MottoResource {
   private final ArchetypeRules rules;
   private final ArchetypeCatalog catalog;
   private final Entitlements entitlements;
+  private final Results results;
   private final AuthenticatedDevice current;
 
   MottoResource(
@@ -34,11 +36,13 @@ public class MottoResource {
       ArchetypeRules rules,
       ArchetypeCatalog catalog,
       Entitlements entitlements,
+      Results results,
       AuthenticatedDevice current) {
     this.scoring = scoring;
     this.rules = rules;
     this.catalog = catalog;
     this.entitlements = entitlements;
+    this.results = results;
     this.current = current;
   }
 
@@ -59,6 +63,10 @@ public class MottoResource {
 
     EntitlementState left = entitlements.spendUse(current.id(), submission.spendSkip());
     Archetype archetype = catalog.byId(rules.match(profile));
+
+    // In the same transaction as the spend: a result that was returned but not
+    // recorded is a use that cannot be shown again.
+    results.record(current.id(), archetype.id(), profile);
 
     return new ResultResponse(
         new ArchetypeResponse(
