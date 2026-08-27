@@ -1,4 +1,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Asked for at runtime from Android 13 on, when the chain starts.
+         Without it the reminders are dropped silently rather than refused. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
+    <!-- Scheduled notifications do not survive a restart on their own. Without
+         this the chain goes quiet the first time the phone reboots, which is a
+         fault nobody would report — they would just stop hearing from us and
+         lose the streak. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
+    <!-- No SCHEDULE_EXACT_ALARM on purpose: Play restricts it to alarm and
+         calendar apps, and every reminder here is scheduled inexactly. -->
+
     <application
         android:label="${appName}"
         android:name="${applicationName}"

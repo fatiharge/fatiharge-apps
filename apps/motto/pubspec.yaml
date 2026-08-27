@@ -35,6 +35,13 @@ dependencies:
   share_plus: ^13.3.0
   path_provider: ^2.1.5
   uuid: ^4.5.1
+
+  # The chain's reminders are scheduled on the device: every one of them is a
+  # function of a date the phone already knows, so push would add a server that
+  # has to stay up and stay free for no gain. timezone is not optional — without
+  # an initialised database every scheduled time is read as UTC.
+  flutter_local_notifications: ^19.4.2
+  timezone: ^0.10.1
   meta: any
 
 dev_dependencies:
