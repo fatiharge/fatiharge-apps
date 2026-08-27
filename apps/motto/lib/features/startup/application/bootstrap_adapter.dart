@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bootstrap_kit/bootstrap_kit.dart';
 import 'package:motto/config/injectable.dart';
+import 'package:motto/features/content/application/content_repository.dart';
 import 'package:motto/infrastructure/analytics/analytics.dart';
 import 'package:motto/infrastructure/analytics/motto_event.dart';
 import 'package:motto/infrastructure/session/device_session.dart';
@@ -23,6 +24,14 @@ class BootstrapAdapter implements BootstrapPort {
       // token — the welcome screen reads fine — and the first screen that needs
       // the server is a better place to explain a network problem than a
       // splash that will not move.
+      errorPolicy: BootstrapErrorPolicy.skip,
+    ),
+    // Skipped rather than retried, like the session above: the app already
+    // ships with a content package, so a refresh that cannot happen costs
+    // nothing anyone can see.
+    BootstrapJob(
+      'content',
+      () => getIt<ContentRepository>().refresh(),
       errorPolicy: BootstrapErrorPolicy.skip,
     ),
     // Last, because it needs the token the job above fetches — and because

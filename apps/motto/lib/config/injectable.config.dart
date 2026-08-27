@@ -20,6 +20,9 @@ import 'package:motto/features/chain/application/chain_cubit.dart' as _i41;
 import 'package:motto/features/chain/application/chain_store.dart' as _i625;
 import 'package:motto/features/chain/application/reminder_scheduler.dart'
     as _i632;
+import 'package:motto/features/content/application/content_repository.dart'
+    as _i876;
+import 'package:motto/features/content/application/content_store.dart' as _i432;
 import 'package:motto/features/result/application/card_exporter.dart' as _i111;
 import 'package:motto/features/support/application/data_deletion.dart' as _i729;
 import 'package:motto/features/support/application/feedback_cubit.dart'
@@ -66,6 +69,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i625.ChainStore>(
       () => _i625.ChainStore(gh<_i460.SharedPreferences>()),
     );
+    gh.lazySingleton<_i432.ContentStore>(
+      () => _i432.ContentStore(gh<_i460.SharedPreferences>()),
+    );
     gh.lazySingleton<_i1019.LastArchetype>(
       () => _i1019.LastArchetype(gh<_i460.SharedPreferences>()),
     );
@@ -108,6 +114,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i66.FeedbackResourceApi>(
       () => apiClients.feedback(gh<_i66.ApiClient>()),
     );
+    gh.lazySingleton<_i66.ContentResourceApi>(
+      () => apiClients.content(gh<_i66.ApiClient>()),
+    );
     gh.lazySingleton<_i503.DeviceSession>(
       () => _i503.DeviceSession(
         gh<_i37.DeviceIdentity>(),
@@ -131,6 +140,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i547.TestDraft>(),
         gh<_i190.Analytics>(),
         gh<_i1019.LastArchetype>(),
+      ),
+    );
+    gh.lazySingleton<_i876.ContentRepository>(
+      () => _i876.ContentRepository(
+        gh<_i66.ContentResourceApi>(),
+        gh<_i432.ContentStore>(),
       ),
     );
     gh.lazySingleton<_i729.DataDeletion>(
