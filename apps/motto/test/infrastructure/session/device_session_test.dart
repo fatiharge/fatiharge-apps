@@ -45,7 +45,10 @@ void main() {
   group('DeviceSession', () {
     test('registers when there is no token yet', () async {
       when(
-        () => storage.read(key: any(named: 'key'), iOptions: any(named: 'iOptions')),
+        () => storage.read(
+          key: any(named: 'key'),
+          iOptions: any(named: 'iOptions'),
+        ),
       ).thenAnswer((_) async => null);
       when(() => devices.registerDevice(any())).thenAnswer(
         (_) async => auth.DeviceTokenResponse(
@@ -62,7 +65,10 @@ void main() {
 
     test('does not register when a token is already held', () async {
       when(
-        () => storage.read(key: any(named: 'key'), iOptions: any(named: 'iOptions')),
+        () => storage.read(
+          key: any(named: 'key'),
+          iOptions: any(named: 'iOptions'),
+        ),
       ).thenAnswer((_) async => 'existing');
 
       await session.ensure();
@@ -72,7 +78,10 @@ void main() {
 
     test('an empty token is not stored as if it were one', () async {
       when(
-        () => storage.read(key: any(named: 'key'), iOptions: any(named: 'iOptions')),
+        () => storage.read(
+          key: any(named: 'key'),
+          iOptions: any(named: 'iOptions'),
+        ),
       ).thenAnswer((_) async => null);
       when(() => devices.registerDevice(any())).thenAnswer((_) async => null);
 

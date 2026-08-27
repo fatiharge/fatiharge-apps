@@ -1,0 +1,172 @@
+import 'package:api_client_motto/api.dart' as api;
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:motto/features/test/application/test_cubit.dart';
+import 'package:motto/features/test/application/test_draft.dart';
+import 'package:motto/features/test/application/test_state.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class _MockTests extends Mock implements api.TestResourceApi {}
+
+class _MockMottos extends Mock implements api.MottoResourceApi {}
+
+/// spendSkip is required by the generated model even though the schema gives
+/// it a default, so it cannot be left out — and writing it inline trips a lint
+/// that is reading the schema rather than the constructor.
+api.AnswerSubmission _submission() =>
+    api.AnswerSubmission(answers: const {}, spendSkip: false);
+
+api.QuestionResponse _questions(int count) => api.QuestionResponse(
+  likertPoints: 5,
+  questions: [
+    for (var i = 1; i <= count; i++) api.Question(id: 'q$i', text: 'soru $i'),
+  ],
+);
+
+void main() {
+  late _MockTests tests;
+  late _MockMottos mottos;
+  late TestDraft draft;
+  late TestCubit cubit;
+
+  setUp(() async {
+    SharedPreferences.setMockInitialValues({});
+    tests = _MockTests();
+    mottos = _MockMottos();
+    draft = TestDraft(await SharedPreferences.getInstance());
+    cubit = TestCubit(tests, mottos, draft);
+
+    registerFallbackValue(_submission());
+  });
+
+  group('start', () {
+    test('asks the server for the questions', () async {
+      when(() => tests.testQuestions()).thenAnswer((_) async => _questions(3));
+
+      await cubit.start();
+
+      expect(cubit.state.status, TestStatus.asking);
+      expect(cubit.state.questions, hasLength(3));
+    });
+
+    test('resumes at the first unanswered question', () async {
+      when(() => tests.testQuestions()).thenAnswer((_) async => _questions(5));
+      await draft.write({'q1': 4, 'q2': 2});
+
+      await cubit.start();
+
+      // Asking the same twenty questions twice is how a half-finished test
+      // becomes an abandoned one.
+      expect(cubit.state.index, 2);
+      expect(cubit.state.answers, {'q1': 4, 'q2': 2});
+    });
+
+    test('a server that will not answer leaves a retryable failure', () async {
+      when(() => tests.testQuestions()).thenThrow(Exception('offline'));
+
+      await cubit.start();
+
+      expect(cubit.state.status, TestStatus.failed);
+      expect(cubit.state.errorCode, 'questions_unavailable');
+    });
+  });
+
+  group('answering', () {
+    setUp(() {
+      when(() => tests.testQuestions()).thenAnswer((_) async => _questions(20));
+    });
+
+    test('records the answer and moves on', () async {
+      await cubit.start();
+
+      await cubit.answer(5);
+
+      expect(cubit.state.answers, {'q1': 5});
+      expect(cubit.state.index, 1);
+      expect(draft.read(), {'q1': 5});
+    });
+
+    test('the glimpse is offered once, partway through', () async {
+      when(() => tests.partialResult(any())).thenAnswer(
+        (_) async => api.ArchetypeResponse(
+          id: 'spark',
+          name: 'Kıvılcım',
+          summary: 'özet',
+          motto: 'motto',
+          confident: false,
+        ),
+      );
+      await cubit.start();
+
+      for (var i = 0; i < TestCubit.glimpseAfter; i++) {
+        await cubit.answer(4);
+      }
+
+      expect(cubit.state.glimpse?.name, 'Kıvılcım');
+      verify(() => tests.partialResult(any())).called(1);
+    });
+
+    test('a glimpse that fails does not stop the test', () async {
+      when(() => tests.partialResult(any())).thenThrow(Exception('offline'));
+      await cubit.start();
+
+      for (var i = 0; i < TestCubit.glimpseAfter; i++) {
+        await cubit.answer(4);
+      }
+
+      expect(cubit.state.glimpse, isNull);
+      expect(cubit.state.index, TestCubit.glimpseAfter);
+      expect(cubit.state.status, TestStatus.asking);
+    });
+
+    test('going back does not go before the first question', () async {
+      await cubit.start();
+
+      cubit.back();
+
+      expect(cubit.state.index, 0);
+    });
+  });
+
+  group('submitting', () {
+    test('the draft is cleared only once the answers are spent', () async {
+      await draft.write({'q1': 3});
+      when(() => mottos.claimMotto(any())).thenAnswer(
+        (_) async => api.ResultResponse(
+          archetype: api.ArchetypeResponse(
+            id: 'spark',
+            name: 'Kıvılcım',
+            summary: 'özet',
+            motto: 'motto',
+            confident: true,
+          ),
+          entitlement: api.EntitlementResponse(
+            remainingUses: 1,
+            skipsLeft: 1,
+            premium: false,
+          ),
+        ),
+      );
+
+      await cubit.submitSaved();
+
+      expect(cubit.state.result, isNotNull);
+      // A draft that outlived a successful claim could be resumed into a
+      // second charge.
+      expect(draft.read(), isEmpty);
+    });
+
+    test('a refusal keeps its code, so the app can say which rule refused',
+        () async {
+      await draft.write({'q1': 3});
+      when(() => mottos.claimMotto(any())).thenThrow(
+        api.ApiException(409, '{"code":"cooldown_open","message":"x"}'),
+      );
+
+      await cubit.submitSaved();
+
+      expect(cubit.state.status, TestStatus.failed);
+      expect(cubit.state.errorCode, 'cooldown_open');
+    });
+  });
+}
