@@ -37,6 +37,7 @@ import 'package:motto/features/support/application/last_archetype.dart'
     as _i1019;
 import 'package:motto/features/support/application/support_context.dart'
     as _i922;
+import 'package:motto/features/tasks/application/task_cubit.dart' as _i249;
 import 'package:motto/features/test/application/test_cubit.dart' as _i89;
 import 'package:motto/features/test/application/test_draft.dart' as _i547;
 import 'package:motto/infrastructure/analytics/analytics.dart' as _i190;
@@ -133,6 +134,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i66.ResultResourceApi>(
       () => apiClients.results(gh<_i66.ApiClient>()),
     );
+    gh.lazySingleton<_i66.TaskResourceApi>(
+      () => apiClients.tasks(gh<_i66.ApiClient>()),
+    );
     gh.lazySingleton<_i503.DeviceSession>(
       () => _i503.DeviceSession(
         gh<_i37.DeviceIdentity>(),
@@ -163,6 +167,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i190.Analytics>(),
         gh<_i1019.LastArchetype>(),
       ),
+    );
+    gh.factory<_i249.TaskCubit>(
+      () => _i249.TaskCubit(gh<_i66.TaskResourceApi>()),
     );
     gh.factory<_i41.ChainCubit>(
       () => _i41.ChainCubit(

@@ -9,6 +9,7 @@ import 'package:motto/features/daily/application/daily_cubit.dart';
 import 'package:motto/features/daily/application/daily_state.dart';
 import 'package:motto/features/daily/presentation/widgets/chain_calendar.dart';
 import 'package:motto/features/mascot/presentation/mascot_host.dart';
+import 'package:motto/features/tasks/application/task_cubit.dart';
 import 'package:motto/route/app_router.gr.dart';
 
 /// One screen and one scroll. The calendar is under the day rather than behind
@@ -24,6 +25,7 @@ class TodayPage extends StatelessWidget {
       providers: [
         BlocProvider(create: (_) => getIt<ChainCubit>()..unawaitedLoad()),
         BlocProvider(create: (_) => getIt<DailyCubit>()..unawaitedLoad()),
+        BlocProvider(create: (_) => getIt<TaskCubit>()..unawaitedLoad()),
       ],
       child: const _TodayView(),
     );
@@ -67,6 +69,10 @@ class _TodayViewState extends State<_TodayView> {
                 BlocBuilder<DailyCubit, DailyState>(
                   builder: (context, daily) =>
                       _day(context, daily, text, scheme),
+                ),
+                const SizedBox(height: 24),
+                BlocBuilder<TaskCubit, TaskState>(
+                  builder: (context, tasks) => _tasks(context, tasks, text),
                 ),
                 const SizedBox(height: 32),
                 if (!chainState.chain.started)
@@ -171,6 +177,38 @@ class _TodayViewState extends State<_TodayView> {
     );
   }
 
+  /// The three things today asks for. Below the day rather than behind it:
+  /// the day says why, and these are what to do about it.
+  Widget _tasks(BuildContext context, TaskState state, TextTheme text) {
+    if (state.tasks.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Bugünün üç şeyi', style: text.titleMedium),
+        const SizedBox(height: 4),
+        for (final task in state.tasks)
+          CheckboxListTile(
+            value: task.done,
+            contentPadding: EdgeInsets.zero,
+            controlAffinity: ListTileControlAffinity.leading,
+            onChanged: (_) => context.read<TaskCubit>().complete(task),
+            title: Text(task.title),
+            secondary: IconButton(
+              icon: const Icon(Icons.chevron_right),
+              onPressed: () => context.router.push(
+                TaskDetailRoute(
+                  task: task,
+                  day: state.day,
+                  onDone: () => context.read<TaskCubit>().complete(task),
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
   Widget _day(
     BuildContext context,
     DailyState state,
@@ -231,9 +269,15 @@ class _TodayViewState extends State<_TodayView> {
           child: Text(content.action, style: text.bodyMedium),
         ),
         const SizedBox(height: 16),
-        Text(
-          '“${content.motto}”',
-          style: text.titleMedium?.copyWith(color: scheme.primary),
+        InkWell(
+          onTap: () => context.router.push(const MottoDetailRoute()),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Text(
+              '“${content.motto}”',
+              style: text.titleMedium?.copyWith(color: scheme.primary),
+            ),
+          ),
         ),
       ],
     );
@@ -242,11 +286,13 @@ class _TodayViewState extends State<_TodayView> {
   Future<void> _mark(BuildContext context) async {
     final daily = context.read<DailyCubit>();
     final mascot = MascotHost.of(context);
+    final tasks = context.read<TaskCubit>();
     await context.read<ChainCubit>().markToday();
     mascot?.celebrate();
     // The day moves with the chain, so marking it is what makes tomorrow's
-    // content tomorrow's.
+    // content tomorrow's — and tomorrow's tasks tomorrow's.
     await daily.load();
+    await tasks.load();
   }
 
 
