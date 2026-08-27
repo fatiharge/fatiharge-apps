@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 /// What the app can ask the mascot to do.
 ///
 /// An interface rather than the Rive controller itself, so the screens never
@@ -44,6 +46,17 @@ class MascotRules {
 
   /// How fast being left alone calms it down, per second.
   static const decayPerSecond = 8.0;
+
+  /// Far enough to feel elastic, near enough that it never leaves its corner
+  /// of the screen — one dragged off it is one somebody has to go looking for.
+  static const maxPull = 48.0;
+
+  /// Where a pull of [delta] from [from] lands.
+  static Offset pulledTo(Offset from, Offset delta) {
+    final pulled = from + delta;
+    final distance = pulled.distance;
+    return distance > maxPull ? pulled * (maxPull / distance) : pulled;
+  }
 
   /// Untouched for this long and it does something to be noticed.
   static const idleBeforeAttention = Duration(seconds: 20);
