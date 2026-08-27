@@ -18,6 +18,24 @@
           }
         }
       },
+      "ArchetypeContent" : {
+        "type" : "object",
+        "required" : [ "id", "name", "summary", "motto" ],
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "summary" : {
+            "type" : "string"
+          },
+          "motto" : {
+            "type" : "string"
+          }
+        }
+      },
       "ArchetypeResponse" : {
         "type" : "object",
         "required" : [ "id", "name", "summary", "motto", "confident" ],
@@ -36,6 +54,76 @@
           },
           "confident" : {
             "type" : "boolean"
+          }
+        }
+      },
+      "Connector" : {
+        "type" : "object",
+        "required" : [ "id", "text" ],
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "text" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ContentBundle" : {
+        "type" : "object",
+        "required" : [ "version", "archetypes", "mottos", "skeletons", "fragments", "connectors" ],
+        "properties" : {
+          "version" : {
+            "type" : "string"
+          },
+          "archetypes" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ArchetypeContent"
+            }
+          },
+          "mottos" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/MottoContent"
+            }
+          },
+          "skeletons" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/DailySkeleton"
+            }
+          },
+          "fragments" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Fragment"
+            }
+          },
+          "connectors" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Connector"
+            }
+          }
+        }
+      },
+      "DailySkeleton" : {
+        "type" : "object",
+        "required" : [ "day", "title", "body", "action" ],
+        "properties" : {
+          "day" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "title" : {
+            "type" : "string"
+          },
+          "body" : {
+            "type" : "string"
+          },
+          "action" : {
+            "type" : "string"
           }
         }
       },
@@ -150,10 +238,47 @@
           }
         }
       },
+      "Fragment" : {
+        "type" : "object",
+        "required" : [ "archetypeId", "index", "text" ],
+        "properties" : {
+          "archetypeId" : {
+            "type" : "string"
+          },
+          "index" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "text" : {
+            "type" : "string"
+          }
+        }
+      },
       "Instant" : {
         "type" : "string",
         "format" : "date-time",
         "examples" : [ "2022-03-10T16:15:50Z" ]
+      },
+      "MottoContent" : {
+        "type" : "object",
+        "required" : [ "id", "archetypeId", "motto", "detail", "reminder" ],
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "archetypeId" : {
+            "type" : "string"
+          },
+          "motto" : {
+            "type" : "string"
+          },
+          "detail" : {
+            "type" : "string"
+          },
+          "reminder" : {
+            "type" : "string"
+          }
+        }
       },
       "Question" : {
         "type" : "object",
@@ -206,6 +331,44 @@
     }
   },
   "paths" : {
+    "/v1/content" : {
+      "get" : {
+        "summary" : "The content package",
+        "operationId" : "contentBundle",
+        "parameters" : [ {
+          "name" : "If-None-Match",
+          "in" : "header",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ContentBundle"
+                }
+              }
+            }
+          },
+          "304" : {
+            "description" : "The version you hold is current"
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "tags" : [ "Content Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
     "/v1/entitlements" : {
       "get" : {
         "summary" : "What this device may do now",

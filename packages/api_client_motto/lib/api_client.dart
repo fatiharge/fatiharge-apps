@@ -206,8 +206,16 @@ class ApiClient {
           return value is DateTime ? value : DateTime.tryParse(value);
         case 'AnswerSubmission':
           return AnswerSubmission.fromJson(value);
+        case 'ArchetypeContent':
+          return ArchetypeContent.fromJson(value);
         case 'ArchetypeResponse':
           return ArchetypeResponse.fromJson(value);
+        case 'Connector':
+          return Connector.fromJson(value);
+        case 'ContentBundle':
+          return ContentBundle.fromJson(value);
+        case 'DailySkeleton':
+          return DailySkeleton.fromJson(value);
         case 'DeletionResponse':
           return DeletionResponse.fromJson(value);
         case 'EntitlementResponse':
@@ -222,6 +230,10 @@ class ApiClient {
           return FeedbackKindTypeTransformer().decode(value);
         case 'FeedbackRequest':
           return FeedbackRequest.fromJson(value);
+        case 'Fragment':
+          return Fragment.fromJson(value);
+        case 'MottoContent':
+          return MottoContent.fromJson(value);
         case 'Question':
           return Question.fromJson(value);
         case 'QuestionResponse':
