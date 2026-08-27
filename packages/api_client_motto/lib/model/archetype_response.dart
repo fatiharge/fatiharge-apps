@@ -13,52 +13,22 @@ part of openapi.api;
 class ArchetypeResponse {
   /// Returns a new [ArchetypeResponse] instance.
   ArchetypeResponse({
-    this.id,
-    this.name,
-    this.summary,
-    this.motto,
-    this.confident,
+    required this.id,
+    required this.name,
+    required this.summary,
+    required this.motto,
+    required this.confident,
   });
 
-  ///
-  /// Please note: This property should have been non-nullable! Since the specification file
-  /// does not include a default value (using the "default:" property), however, the generated
-  /// source code must fall back to having a nullable type.
-  /// Consider adding a "default:" property in the specification file to hide this note.
-  ///
-  String? id;
+  String id;
 
-  ///
-  /// Please note: This property should have been non-nullable! Since the specification file
-  /// does not include a default value (using the "default:" property), however, the generated
-  /// source code must fall back to having a nullable type.
-  /// Consider adding a "default:" property in the specification file to hide this note.
-  ///
-  String? name;
+  String name;
 
-  ///
-  /// Please note: This property should have been non-nullable! Since the specification file
-  /// does not include a default value (using the "default:" property), however, the generated
-  /// source code must fall back to having a nullable type.
-  /// Consider adding a "default:" property in the specification file to hide this note.
-  ///
-  String? summary;
+  String summary;
 
-  ///
-  /// Please note: This property should have been non-nullable! Since the specification file
-  /// does not include a default value (using the "default:" property), however, the generated
-  /// source code must fall back to having a nullable type.
-  /// Consider adding a "default:" property in the specification file to hide this note.
-  ///
-  String? motto;
+  String motto;
 
-  ///
-  /// Please note: This property should have been non-nullable! Since the specification file
-  /// does not include a default value (using the "default:" property), however, the generated
-  /// source code must fall back to having a nullable type.
-  /// Consider adding a "default:" property in the specification file to hide this note.
-  ///
-  bool? confident;
+  bool confident;
 
   @override
   bool operator ==(Object other) =>
@@ -73,11 +43,11 @@ class ArchetypeResponse {
   @override
   int get hashCode =>
       // ignore: unnecessary_parenthesis
-      (id == null ? 0 : id!.hashCode) +
-      (name == null ? 0 : name!.hashCode) +
-      (summary == null ? 0 : summary!.hashCode) +
-      (motto == null ? 0 : motto!.hashCode) +
-      (confident == null ? 0 : confident!.hashCode);
+      (id.hashCode) +
+      (name.hashCode) +
+      (summary.hashCode) +
+      (motto.hashCode) +
+      (confident.hashCode);
 
   @override
   String toString() =>
@@ -85,31 +55,11 @@ class ArchetypeResponse {
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (this.id != null) {
-      json[r'id'] = this.id;
-    } else {
-      json[r'id'] = null;
-    }
-    if (this.name != null) {
-      json[r'name'] = this.name;
-    } else {
-      json[r'name'] = null;
-    }
-    if (this.summary != null) {
-      json[r'summary'] = this.summary;
-    } else {
-      json[r'summary'] = null;
-    }
-    if (this.motto != null) {
-      json[r'motto'] = this.motto;
-    } else {
-      json[r'motto'] = null;
-    }
-    if (this.confident != null) {
-      json[r'confident'] = this.confident;
-    } else {
-      json[r'confident'] = null;
-    }
+    json[r'id'] = this.id;
+    json[r'name'] = this.name;
+    json[r'summary'] = this.summary;
+    json[r'motto'] = this.motto;
+    json[r'confident'] = this.confident;
     return json;
   }
 
@@ -124,15 +74,35 @@ class ArchetypeResponse {
       // Note 1: the values aren't checked for validity beyond being non-null.
       // Note 2: this code is stripped in release mode!
       assert(() {
+        assert(json.containsKey(r'id'),
+            'Required key "ArchetypeResponse[id]" is missing from JSON.');
+        assert(json[r'id'] != null,
+            'Required key "ArchetypeResponse[id]" has a null value in JSON.');
+        assert(json.containsKey(r'name'),
+            'Required key "ArchetypeResponse[name]" is missing from JSON.');
+        assert(json[r'name'] != null,
+            'Required key "ArchetypeResponse[name]" has a null value in JSON.');
+        assert(json.containsKey(r'summary'),
+            'Required key "ArchetypeResponse[summary]" is missing from JSON.');
+        assert(json[r'summary'] != null,
+            'Required key "ArchetypeResponse[summary]" has a null value in JSON.');
+        assert(json.containsKey(r'motto'),
+            'Required key "ArchetypeResponse[motto]" is missing from JSON.');
+        assert(json[r'motto'] != null,
+            'Required key "ArchetypeResponse[motto]" has a null value in JSON.');
+        assert(json.containsKey(r'confident'),
+            'Required key "ArchetypeResponse[confident]" is missing from JSON.');
+        assert(json[r'confident'] != null,
+            'Required key "ArchetypeResponse[confident]" has a null value in JSON.');
         return true;
       }());
 
       return ArchetypeResponse(
-        id: mapValueOfType<String>(json, r'id'),
-        name: mapValueOfType<String>(json, r'name'),
-        summary: mapValueOfType<String>(json, r'summary'),
-        motto: mapValueOfType<String>(json, r'motto'),
-        confident: mapValueOfType<bool>(json, r'confident'),
+        id: mapValueOfType<String>(json, r'id')!,
+        name: mapValueOfType<String>(json, r'name')!,
+        summary: mapValueOfType<String>(json, r'summary')!,
+        motto: mapValueOfType<String>(json, r'motto')!,
+        confident: mapValueOfType<bool>(json, r'confident')!,
       );
     }
     return null;
@@ -188,5 +158,11 @@ class ArchetypeResponse {
   }
 
   /// The list of required keys that must be present in a JSON.
-  static const requiredKeys = <String>{};
+  static const requiredKeys = <String>{
+    'id',
+    'name',
+    'summary',
+    'motto',
+    'confident',
+  };
 }

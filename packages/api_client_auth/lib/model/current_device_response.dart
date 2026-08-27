@@ -13,16 +13,10 @@ part of openapi.api;
 class CurrentDeviceResponse {
   /// Returns a new [CurrentDeviceResponse] instance.
   CurrentDeviceResponse({
-    this.deviceId,
+    required this.deviceId,
   });
 
-  ///
-  /// Please note: This property should have been non-nullable! Since the specification file
-  /// does not include a default value (using the "default:" property), however, the generated
-  /// source code must fall back to having a nullable type.
-  /// Consider adding a "default:" property in the specification file to hide this note.
-  ///
-  String? deviceId;
+  String deviceId;
 
   @override
   bool operator ==(Object other) =>
@@ -32,18 +26,14 @@ class CurrentDeviceResponse {
   @override
   int get hashCode =>
       // ignore: unnecessary_parenthesis
-      (deviceId == null ? 0 : deviceId!.hashCode);
+      (deviceId.hashCode);
 
   @override
   String toString() => 'CurrentDeviceResponse[deviceId=$deviceId]';
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (this.deviceId != null) {
-      json[r'deviceId'] = this.deviceId;
-    } else {
-      json[r'deviceId'] = null;
-    }
+    json[r'deviceId'] = this.deviceId;
     return json;
   }
 
@@ -58,11 +48,15 @@ class CurrentDeviceResponse {
       // Note 1: the values aren't checked for validity beyond being non-null.
       // Note 2: this code is stripped in release mode!
       assert(() {
+        assert(json.containsKey(r'deviceId'),
+            'Required key "CurrentDeviceResponse[deviceId]" is missing from JSON.');
+        assert(json[r'deviceId'] != null,
+            'Required key "CurrentDeviceResponse[deviceId]" has a null value in JSON.');
         return true;
       }());
 
       return CurrentDeviceResponse(
-        deviceId: mapValueOfType<String>(json, r'deviceId'),
+        deviceId: mapValueOfType<String>(json, r'deviceId')!,
       );
     }
     return null;
@@ -118,5 +112,7 @@ class CurrentDeviceResponse {
   }
 
   /// The list of required keys that must be present in a JSON.
-  static const requiredKeys = <String>{};
+  static const requiredKeys = <String>{
+    'deviceId',
+  };
 }

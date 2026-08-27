@@ -17,7 +17,7 @@ void main() {
     storage = _MockStorage();
     identity = DeviceIdentityImpl(storage, _MockAndroidId());
     written.clear();
-    registerFallbackValue(const IOSOptions());
+    registerFallbackValue(IOSOptions.defaultOptions);
 
     when(
       () => storage.write(
@@ -34,7 +34,10 @@ void main() {
   group('DeviceIdentityImpl', () {
     test('what leaves the phone is a SHA-256, not the identifier', () async {
       when(
-        () => storage.read(key: any(named: 'key'), iOptions: any(named: 'iOptions')),
+        () => storage.read(
+          key: any(named: 'key'),
+          iOptions: any(named: 'iOptions'),
+        ),
       ).thenAnswer((_) async => 'a-known-identifier');
 
       final hash = await identity.hash();
@@ -46,7 +49,10 @@ void main() {
 
     test('the same device hashes to the same thing every time', () async {
       when(
-        () => storage.read(key: any(named: 'key'), iOptions: any(named: 'iOptions')),
+        () => storage.read(
+          key: any(named: 'key'),
+          iOptions: any(named: 'iOptions'),
+        ),
       ).thenAnswer((_) async => 'stable');
 
       expect(await identity.hash(), await identity.hash());
@@ -54,7 +60,10 @@ void main() {
 
     test('a device with no identifier gets one, and keeps it', () async {
       when(
-        () => storage.read(key: any(named: 'key'), iOptions: any(named: 'iOptions')),
+        () => storage.read(
+          key: any(named: 'key'),
+          iOptions: any(named: 'iOptions'),
+        ),
       ).thenAnswer((_) async => null);
 
       await identity.hash();

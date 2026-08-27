@@ -13,25 +13,13 @@ part of openapi.api;
 class RegisterDeviceRequest {
   /// Returns a new [RegisterDeviceRequest] instance.
   RegisterDeviceRequest({
-    this.deviceHash,
-    this.platform,
+    required this.deviceHash,
+    required this.platform,
   });
 
-  ///
-  /// Please note: This property should have been non-nullable! Since the specification file
-  /// does not include a default value (using the "default:" property), however, the generated
-  /// source code must fall back to having a nullable type.
-  /// Consider adding a "default:" property in the specification file to hide this note.
-  ///
-  String? deviceHash;
+  String deviceHash;
 
-  ///
-  /// Please note: This property should have been non-nullable! Since the specification file
-  /// does not include a default value (using the "default:" property), however, the generated
-  /// source code must fall back to having a nullable type.
-  /// Consider adding a "default:" property in the specification file to hide this note.
-  ///
-  String? platform;
+  String platform;
 
   @override
   bool operator ==(Object other) =>
@@ -43,8 +31,7 @@ class RegisterDeviceRequest {
   @override
   int get hashCode =>
       // ignore: unnecessary_parenthesis
-      (deviceHash == null ? 0 : deviceHash!.hashCode) +
-      (platform == null ? 0 : platform!.hashCode);
+      (deviceHash.hashCode) + (platform.hashCode);
 
   @override
   String toString() =>
@@ -52,16 +39,8 @@ class RegisterDeviceRequest {
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (this.deviceHash != null) {
-      json[r'deviceHash'] = this.deviceHash;
-    } else {
-      json[r'deviceHash'] = null;
-    }
-    if (this.platform != null) {
-      json[r'platform'] = this.platform;
-    } else {
-      json[r'platform'] = null;
-    }
+    json[r'deviceHash'] = this.deviceHash;
+    json[r'platform'] = this.platform;
     return json;
   }
 
@@ -76,12 +55,20 @@ class RegisterDeviceRequest {
       // Note 1: the values aren't checked for validity beyond being non-null.
       // Note 2: this code is stripped in release mode!
       assert(() {
+        assert(json.containsKey(r'deviceHash'),
+            'Required key "RegisterDeviceRequest[deviceHash]" is missing from JSON.');
+        assert(json[r'deviceHash'] != null,
+            'Required key "RegisterDeviceRequest[deviceHash]" has a null value in JSON.');
+        assert(json.containsKey(r'platform'),
+            'Required key "RegisterDeviceRequest[platform]" is missing from JSON.');
+        assert(json[r'platform'] != null,
+            'Required key "RegisterDeviceRequest[platform]" has a null value in JSON.');
         return true;
       }());
 
       return RegisterDeviceRequest(
-        deviceHash: mapValueOfType<String>(json, r'deviceHash'),
-        platform: mapValueOfType<String>(json, r'platform'),
+        deviceHash: mapValueOfType<String>(json, r'deviceHash')!,
+        platform: mapValueOfType<String>(json, r'platform')!,
       );
     }
     return null;
@@ -137,5 +124,8 @@ class RegisterDeviceRequest {
   }
 
   /// The list of required keys that must be present in a JSON.
-  static const requiredKeys = <String>{};
+  static const requiredKeys = <String>{
+    'deviceHash',
+    'platform',
+  };
 }

@@ -12,13 +12,16 @@ void main() {
   setUp(() {
     storage = _MockStorage();
     store = TokenStore(storage);
-    registerFallbackValue(const IOSOptions());
+    registerFallbackValue(IOSOptions.defaultOptions);
   });
 
   group('TokenStore', () {
     test('reads the token from storage once and then from memory', () async {
       when(
-        () => storage.read(key: any(named: 'key'), iOptions: any(named: 'iOptions')),
+        () => storage.read(
+          key: any(named: 'key'),
+          iOptions: any(named: 'iOptions'),
+        ),
       ).thenAnswer((_) async => 'a.b.c');
 
       expect(await store.load(), 'a.b.c');
@@ -26,7 +29,10 @@ void main() {
 
       // Every request asks for this; the Keychain is not free.
       verify(
-        () => storage.read(key: any(named: 'key'), iOptions: any(named: 'iOptions')),
+        () => storage.read(
+          key: any(named: 'key'),
+          iOptions: any(named: 'iOptions'),
+        ),
       ).called(1);
     });
 
@@ -43,7 +49,10 @@ void main() {
 
       expect(store.current, 'fresh');
       verifyNever(
-        () => storage.read(key: any(named: 'key'), iOptions: any(named: 'iOptions')),
+        () => storage.read(
+          key: any(named: 'key'),
+          iOptions: any(named: 'iOptions'),
+        ),
       );
     });
 
@@ -56,7 +65,10 @@ void main() {
         ),
       ).thenAnswer((_) async {});
       when(
-        () => storage.delete(key: any(named: 'key'), iOptions: any(named: 'iOptions')),
+        () => storage.delete(
+          key: any(named: 'key'),
+          iOptions: any(named: 'iOptions'),
+        ),
       ).thenAnswer((_) async {});
 
       await store.save('fresh');
@@ -64,7 +76,10 @@ void main() {
 
       expect(store.current, isNull);
       verify(
-        () => storage.delete(key: any(named: 'key'), iOptions: any(named: 'iOptions')),
+        () => storage.delete(
+          key: any(named: 'key'),
+          iOptions: any(named: 'iOptions'),
+        ),
       ).called(1);
     });
   });

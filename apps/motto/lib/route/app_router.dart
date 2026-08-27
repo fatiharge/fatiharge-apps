@@ -8,6 +8,10 @@ import 'package:motto/route/app_router.gr.dart';
 class AppRouter extends RootStackRouter {
   @override
   List<AutoRoute> get routes => [
-    AutoRoute(page: WelcomeRoute.page, initial: true),
+    AutoRoute(page: StartupRoute.page, initial: true),
+    AutoRoute(page: WelcomeRoute.page),
+    AutoRoute(page: QuestionRoute.page),
+    AutoRoute(page: CalculatingRoute.page),
+    AutoRoute(page: ResultRoute.page),
   ];
 }

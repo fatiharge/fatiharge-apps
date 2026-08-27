@@ -13,25 +13,13 @@ part of openapi.api;
 class ResultResponse {
   /// Returns a new [ResultResponse] instance.
   ResultResponse({
-    this.archetype,
-    this.entitlement,
+    required this.archetype,
+    required this.entitlement,
   });
 
-  ///
-  /// Please note: This property should have been non-nullable! Since the specification file
-  /// does not include a default value (using the "default:" property), however, the generated
-  /// source code must fall back to having a nullable type.
-  /// Consider adding a "default:" property in the specification file to hide this note.
-  ///
-  ArchetypeResponse? archetype;
+  ArchetypeResponse archetype;
 
-  ///
-  /// Please note: This property should have been non-nullable! Since the specification file
-  /// does not include a default value (using the "default:" property), however, the generated
-  /// source code must fall back to having a nullable type.
-  /// Consider adding a "default:" property in the specification file to hide this note.
-  ///
-  EntitlementResponse? entitlement;
+  EntitlementResponse entitlement;
 
   @override
   bool operator ==(Object other) =>
@@ -43,8 +31,7 @@ class ResultResponse {
   @override
   int get hashCode =>
       // ignore: unnecessary_parenthesis
-      (archetype == null ? 0 : archetype!.hashCode) +
-      (entitlement == null ? 0 : entitlement!.hashCode);
+      (archetype.hashCode) + (entitlement.hashCode);
 
   @override
   String toString() =>
@@ -52,16 +39,8 @@ class ResultResponse {
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (this.archetype != null) {
-      json[r'archetype'] = this.archetype;
-    } else {
-      json[r'archetype'] = null;
-    }
-    if (this.entitlement != null) {
-      json[r'entitlement'] = this.entitlement;
-    } else {
-      json[r'entitlement'] = null;
-    }
+    json[r'archetype'] = this.archetype;
+    json[r'entitlement'] = this.entitlement;
     return json;
   }
 
@@ -76,12 +55,20 @@ class ResultResponse {
       // Note 1: the values aren't checked for validity beyond being non-null.
       // Note 2: this code is stripped in release mode!
       assert(() {
+        assert(json.containsKey(r'archetype'),
+            'Required key "ResultResponse[archetype]" is missing from JSON.');
+        assert(json[r'archetype'] != null,
+            'Required key "ResultResponse[archetype]" has a null value in JSON.');
+        assert(json.containsKey(r'entitlement'),
+            'Required key "ResultResponse[entitlement]" is missing from JSON.');
+        assert(json[r'entitlement'] != null,
+            'Required key "ResultResponse[entitlement]" has a null value in JSON.');
         return true;
       }());
 
       return ResultResponse(
-        archetype: ArchetypeResponse.fromJson(json[r'archetype']),
-        entitlement: EntitlementResponse.fromJson(json[r'entitlement']),
+        archetype: ArchetypeResponse.fromJson(json[r'archetype'])!,
+        entitlement: EntitlementResponse.fromJson(json[r'entitlement'])!,
       );
     }
     return null;
@@ -137,5 +124,8 @@ class ResultResponse {
   }
 
   /// The list of required keys that must be present in a JSON.
-  static const requiredKeys = <String>{};
+  static const requiredKeys = <String>{
+    'archetype',
+    'entitlement',
+  };
 }

@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:motto/route/app_router.gr.dart';
 
 /// A placeholder with the shape of the real one: this is where the mascot
 /// introduces itself, "Başla" sits, and the invite code line will go — never
@@ -29,7 +30,10 @@ class WelcomePage extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              const FilledButton(onPressed: null, child: Text('Başla')),
+              FilledButton(
+                onPressed: () => context.router.push(const QuestionRoute()),
+                child: const Text('Başla'),
+              ),
             ],
           ),
         ),

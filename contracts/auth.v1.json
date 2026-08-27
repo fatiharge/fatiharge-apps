@@ -4,6 +4,7 @@
     "schemas" : {
       "CurrentDeviceResponse" : {
         "type" : "object",
+        "required" : [ "deviceId" ],
         "properties" : {
           "deviceId" : {
             "type" : "string"
@@ -12,6 +13,7 @@
       },
       "DeviceTokenResponse" : {
         "type" : "object",
+        "required" : [ "deviceId", "token", "expiresInSeconds" ],
         "properties" : {
           "deviceId" : {
             "type" : "string"
@@ -27,6 +29,7 @@
       },
       "RegisterDeviceRequest" : {
         "type" : "object",
+        "required" : [ "deviceHash", "platform" ],
         "properties" : {
           "deviceHash" : {
             "type" : "string"

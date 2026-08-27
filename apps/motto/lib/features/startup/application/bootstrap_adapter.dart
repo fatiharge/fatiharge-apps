@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:bootstrap_kit/bootstrap_kit.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/infrastructure/session/device_session.dart';
+import 'package:motto/route/app_router.dart';
+import 'package:motto/route/app_router.gr.dart';
 
 /// What has to happen before the first screen means anything.
 class BootstrapAdapter implements BootstrapPort {
@@ -21,6 +25,9 @@ class BootstrapAdapter implements BootstrapPort {
     ),
   ];
 
+  /// Replaces rather than pushes: the splash is not somewhere to come back to.
   @override
-  void bootstrapFinished() {}
+  void bootstrapFinished() {
+    unawaited(getIt<AppRouter>().replaceAll([const WelcomeRoute()]));
+  }
 }

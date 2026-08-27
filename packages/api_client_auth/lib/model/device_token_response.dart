@@ -13,34 +13,16 @@ part of openapi.api;
 class DeviceTokenResponse {
   /// Returns a new [DeviceTokenResponse] instance.
   DeviceTokenResponse({
-    this.deviceId,
-    this.token,
-    this.expiresInSeconds,
+    required this.deviceId,
+    required this.token,
+    required this.expiresInSeconds,
   });
 
-  ///
-  /// Please note: This property should have been non-nullable! Since the specification file
-  /// does not include a default value (using the "default:" property), however, the generated
-  /// source code must fall back to having a nullable type.
-  /// Consider adding a "default:" property in the specification file to hide this note.
-  ///
-  String? deviceId;
+  String deviceId;
 
-  ///
-  /// Please note: This property should have been non-nullable! Since the specification file
-  /// does not include a default value (using the "default:" property), however, the generated
-  /// source code must fall back to having a nullable type.
-  /// Consider adding a "default:" property in the specification file to hide this note.
-  ///
-  String? token;
+  String token;
 
-  ///
-  /// Please note: This property should have been non-nullable! Since the specification file
-  /// does not include a default value (using the "default:" property), however, the generated
-  /// source code must fall back to having a nullable type.
-  /// Consider adding a "default:" property in the specification file to hide this note.
-  ///
-  int? expiresInSeconds;
+  int expiresInSeconds;
 
   @override
   bool operator ==(Object other) =>
@@ -53,9 +35,7 @@ class DeviceTokenResponse {
   @override
   int get hashCode =>
       // ignore: unnecessary_parenthesis
-      (deviceId == null ? 0 : deviceId!.hashCode) +
-      (token == null ? 0 : token!.hashCode) +
-      (expiresInSeconds == null ? 0 : expiresInSeconds!.hashCode);
+      (deviceId.hashCode) + (token.hashCode) + (expiresInSeconds.hashCode);
 
   @override
   String toString() =>
@@ -63,21 +43,9 @@ class DeviceTokenResponse {
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (this.deviceId != null) {
-      json[r'deviceId'] = this.deviceId;
-    } else {
-      json[r'deviceId'] = null;
-    }
-    if (this.token != null) {
-      json[r'token'] = this.token;
-    } else {
-      json[r'token'] = null;
-    }
-    if (this.expiresInSeconds != null) {
-      json[r'expiresInSeconds'] = this.expiresInSeconds;
-    } else {
-      json[r'expiresInSeconds'] = null;
-    }
+    json[r'deviceId'] = this.deviceId;
+    json[r'token'] = this.token;
+    json[r'expiresInSeconds'] = this.expiresInSeconds;
     return json;
   }
 
@@ -92,13 +60,25 @@ class DeviceTokenResponse {
       // Note 1: the values aren't checked for validity beyond being non-null.
       // Note 2: this code is stripped in release mode!
       assert(() {
+        assert(json.containsKey(r'deviceId'),
+            'Required key "DeviceTokenResponse[deviceId]" is missing from JSON.');
+        assert(json[r'deviceId'] != null,
+            'Required key "DeviceTokenResponse[deviceId]" has a null value in JSON.');
+        assert(json.containsKey(r'token'),
+            'Required key "DeviceTokenResponse[token]" is missing from JSON.');
+        assert(json[r'token'] != null,
+            'Required key "DeviceTokenResponse[token]" has a null value in JSON.');
+        assert(json.containsKey(r'expiresInSeconds'),
+            'Required key "DeviceTokenResponse[expiresInSeconds]" is missing from JSON.');
+        assert(json[r'expiresInSeconds'] != null,
+            'Required key "DeviceTokenResponse[expiresInSeconds]" has a null value in JSON.');
         return true;
       }());
 
       return DeviceTokenResponse(
-        deviceId: mapValueOfType<String>(json, r'deviceId'),
-        token: mapValueOfType<String>(json, r'token'),
-        expiresInSeconds: mapValueOfType<int>(json, r'expiresInSeconds'),
+        deviceId: mapValueOfType<String>(json, r'deviceId')!,
+        token: mapValueOfType<String>(json, r'token')!,
+        expiresInSeconds: mapValueOfType<int>(json, r'expiresInSeconds')!,
       );
     }
     return null;
@@ -154,5 +134,9 @@ class DeviceTokenResponse {
   }
 
   /// The list of required keys that must be present in a JSON.
-  static const requiredKeys = <String>{};
+  static const requiredKeys = <String>{
+    'deviceId',
+    'token',
+    'expiresInSeconds',
+  };
 }
