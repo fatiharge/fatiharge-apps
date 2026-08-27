@@ -56,6 +56,13 @@ hangi sonucu aldığını değiştirebilmesin diye.
 Yazıldı · ertesi gün bir kez daha okundu · yukarıdaki 1.4.1 tablosundan geçti ·
 göründüğü ekrana sığıyor · tanımsa bir bedel söylüyor.
 
+## Bir parça ne zaman biter
+
+`scripts/content_words.py`, 1.4.1 tablosunu hem bu klasörde hem uygulamanın
+içindeki metinlerde tarar — kılavuz, cümlenin ağın hangi tarafından geldiğini
+umursamıyor. Tek istisnası betiğin içinde yazılı: yöntem ekranı sonucun bir
+teşhis **olmadığını** söylüyor ve iddiayı reddetmek için o kelime gerekiyor.
+
 ## Burada olmayan: çevrimdışı çalışmak zorunda olan metinler
 
 Bazı metinler, bir haftadır çevrimdışı olan bir telefonda, ihtiyaç duyulduğu

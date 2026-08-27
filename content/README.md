@@ -9,6 +9,17 @@ change ships without a store release.
 | File | What it holds |
 |---|---|
 | `archetypes.yaml` | the eight archetypes: name, summary, motto |
+| `items.yaml` | the short form: twenty statements, four per dimension |
+| `mottos.yaml` | four mottos per archetype, each with what it means and its reminder line |
+| `daily_skeletons.yaml` | the fourteen days, without the person in them |
+| `fragments.yaml` | four per archetype, the part that makes a day theirs |
+| `connectors.yaml` | the hand-written joins between the two |
+
+A day someone reads is `skeleton.body` + a connector + a fragment. Fourteen
+bodies and eight sets of four fragments is a hundred and twelve days of text
+from forty-six pieces — which only works while the connectors are written by
+hand. The moment they become a template, every day reads like the same
+sentence with a different ending, and that is what a horoscope is.
 
 ## The voice
 
@@ -55,6 +66,12 @@ change who gets which result.
 
 Written · read once more the next day · passes the 1.4.1 table above · fits the
 screen it appears on · names a cost, where it is a description.
+
+`scripts/content_words.py` checks the table over this directory and over the
+copy that ships inside the app — the guideline does not care which side of the
+network a sentence came from. It has one exception, written down in the script:
+the method screen says the result is **not** a diagnosis, and denying the claim
+needs the word.
 
 ## What is not here: copy that has to work offline
 
