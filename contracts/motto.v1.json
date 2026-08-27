@@ -1,0 +1,18 @@
+{
+  "openapi" : "3.1.0",
+  "components" : {
+    "securitySchemes" : {
+      "SecurityScheme" : {
+        "type" : "http",
+        "scheme" : "bearer",
+        "bearerFormat" : "JWT",
+        "description" : "Authentication"
+      }
+    }
+  },
+  "info" : {
+    "title" : "motto API",
+    "version" : "1.0.0"
+  },
+  "paths" : { }
+}

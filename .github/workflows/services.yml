@@ -50,7 +50,7 @@ jobs:
 
           # The workflow file counts as backend work: a change to how the build
           # runs is exactly the change worth running.
-          if echo "$changed" | grep -qE '^services/|^\.github/workflows/services\.yml$'; then
+          if echo "$changed" | grep -qE '^services/|^contracts/|^packages/api_client_|^\.github/workflows/services\.yml$'; then
             echo "services=true" >> "$GITHUB_OUTPUT"
           else
             echo "services=false" >> "$GITHUB_OUTPUT"
@@ -79,24 +79,90 @@ jobs:
       - name: Build and test
         run: ./mvnw -B verify
 
+  contract:
+    name: Contract and clients
+    needs: changes
+    if: needs.changes.outputs.services == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          cache-dependency-path: services/**/pom.xml
+
+      - name: Read Flutter version from .fvmrc
+        id: fvm
+        run: echo "version=$(jq -r .flutter .fvmrc)" >> "$GITHUB_OUTPUT"
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ steps.fvm.outputs.version }}
+          channel: stable
+          cache: true
+
+      - name: Cache the generator
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/openapi-generator
+          key: openapi-generator-${{ hashFiles('scripts/generate_api_clients.sh') }}
+
+      - name: Regenerate
+        run: ./scripts/generate_api_clients.sh
+
+      # The contract is emitted from the resources, so this fails exactly when
+      # someone changed an endpoint and did not run the script — which is the
+      # moment the committed client stops matching the service it talks to.
+      - name: The committed contract and clients are up to date
+        run: |
+          if ! git diff --exit-code -- contracts packages/api_client_auth packages/api_client_motto; then
+            echo
+            echo "contracts/ or a generated client is stale."
+            echo "run ./scripts/generate_api_clients.sh and commit what it changes."
+            exit 1
+          fi
+
+      # /v1 is never mutated. A change that breaks it opens /v2 instead, and
+      # this is what makes that a rule rather than an intention.
+      - name: No breaking change to a published contract
+        run: |
+          for contract in contracts/*.v1.json; do
+            name=$(basename "$contract")
+            if ! git show "origin/${{ github.base_ref || 'main' }}:${contract}" > "/tmp/base-${name}" 2>/dev/null; then
+              echo "${name}: new, nothing to compare"
+              continue
+            fi
+            echo "--- ${name}"
+            docker run --rm -v /tmp:/base -v "$PWD/contracts:/head" \
+              tufin/oasdiff breaking "/base/base-${name}" "/head/${name}" --fail-on ERR
+          done
+
   # This job is the one to require in the ruleset. It is reached on every run,
-  # including the ones where the build was skipped, so it always reports.
+  # including the ones where the work was skipped, so it always reports.
   gate:
     name: Build & test services
-    needs: [changes, build]
+    needs: [changes, build, contract]
     if: always()
     runs-on: ubuntu-latest
     steps:
       - name: Fail only when something that ran failed
         run: |
-          echo "changes: ${{ needs.changes.result }}"
-          echo "build:   ${{ needs.build.result }}"
+          echo "changes:  ${{ needs.changes.result }}"
+          echo "build:    ${{ needs.build.result }}"
+          echo "contract: ${{ needs.contract.result }}"
 
           if [ "${{ needs.changes.result }}" != "success" ]; then
             exit 1
           fi
 
-          case "${{ needs.build.result }}" in
-            success|skipped) exit 0 ;;
-            *) exit 1 ;;
-          esac
+          for result in "${{ needs.build.result }}" "${{ needs.contract.result }}"; do
+            case "$result" in
+              success|skipped) ;;
+              *) exit 1 ;;
+            esac
+          done

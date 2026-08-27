@@ -25,3 +25,7 @@ target/
 
 # Quarkus CLI registry cache
 .quarkus/
+
+# The contract is the JSON. Quarkus writes a YAML twin beside it; two files that
+# can disagree is one too many.
+contracts/*.yaml

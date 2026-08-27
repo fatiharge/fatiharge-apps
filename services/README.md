@@ -105,6 +105,38 @@ Signing keys never live in the repository except for the worthless pair in
 configured at all, so a deployment that forgets `SMALLRYE_JWT_SIGN_KEY` fails at
 signing rather than falling back to something known.
 
+## The contract
+
+The resources are the source. SmallRye emits the schema at build time into
+`contracts/<service>.v1.json`, that file is committed, and the Dart client in
+`packages/api_client_<service>` is generated from it. One command does all of
+it:
+
+```bash
+./scripts/generate_api_clients.sh
+```
+
+Run it whenever an endpoint or a DTO changes, and commit what it produces. CI
+runs the same script and fails when git is not clean afterwards — which is
+exactly the moment a committed client stopped matching the service it talks to.
+It also refuses a change that breaks a published `/v1`; that opens `/v2`.
+
+Three rules keep the schema honest:
+
+- **Resources return DTOs, never entities.** An entity on the wire puts the
+  database shape into the contract, where it changes whenever the table does.
+- **Every endpoint declares `@Operation(operationId = "…")`.** Without it the
+  generated Dart method name comes from the Java method name, so renaming a
+  method silently renames the client's API.
+- **Never override a type with `@Schema`.** Whatever the DTO says is what the
+  schema says; the moment those two can disagree, the schema stops being derived
+  and starts being maintained.
+
+`packages/api_client_*` is generated output. Nobody edits it, the workspace lint
+set does not apply to it, and it carries no tests — what verifies it is that
+regenerating produces no diff. The base URL is not in the contract either: it
+belongs to the deployment, so the client is given one at runtime.
+
 ## Configuration
 
 Shared defaults live in
