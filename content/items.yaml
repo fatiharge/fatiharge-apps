@@ -1,0 +1,95 @@
+# The short form: twenty statements, four per dimension.
+#
+# Adapted from the IPIP item pool, which is public domain. Adapted, not
+# translated-and-validated — the method page says so in those words, because a
+# Turkish adaptation nobody has run a reliability study on is not a validated
+# Turkish instrument and claiming otherwise is the kind of sentence that ends up
+# in a screenshot.
+#
+# `reverse: true` means agreement counts against the dimension. Roughly half of
+# them are, on purpose: someone who agrees with everything should not come out
+# extreme on everything.
+
+version: 1
+likert: 5
+
+items:
+  # Dışadönüklük
+  - id: e1
+    dimension: extraversion
+    tr: Kalabalık ortamlarda kendimi rahat hissederim.
+  - id: e2
+    dimension: extraversion
+    tr: Tanımadığım insanlarla konuşmaya ilk ben başlarım.
+  - id: e3
+    dimension: extraversion
+    reverse: true
+    tr: Uzun süre yalnız kalmak beni dinlendirir.
+  - id: e4
+    dimension: extraversion
+    reverse: true
+    tr: Bir gruptayken çoğunlukla dinlemeyi tercih ederim.
+
+  # Uyumluluk
+  - id: a1
+    dimension: agreeableness
+    tr: Başkalarının nasıl hissettiğini kolayca fark ederim.
+  - id: a2
+    dimension: agreeableness
+    tr: Birinin işi zorlaşınca yardım etmek içimden gelir.
+  - id: a3
+    dimension: agreeableness
+    reverse: true
+    tr: Haklı olduğuma inanıyorsam tartışmayı sürdürürüm.
+  - id: a4
+    dimension: agreeableness
+    reverse: true
+    tr: İnsanların çoğu, gerekirse kendi çıkarını gözetir diye düşünürüm.
+
+  # Düzenlilik
+  - id: c1
+    dimension: conscientiousness
+    tr: Başladığım işi bitirmeden rahat edemem.
+  - id: c2
+    dimension: conscientiousness
+    tr: Bir işe başlamadan önce nasıl yapacağımı planlarım.
+  - id: c3
+    dimension: conscientiousness
+    reverse: true
+    tr: İşleri son ana bırakırım.
+  - id: c4
+    dimension: conscientiousness
+    reverse: true
+    tr: Eşyalarımın yerini sık sık kaybederim.
+
+  # Duygusal tepkisellik
+  - id: n1
+    dimension: neuroticism
+    tr: Küçük aksilikler bile canımı sıkabiliyor.
+  - id: n2
+    dimension: neuroticism
+    tr: Olabilecek kötü şeyleri önceden düşünürüm.
+  - id: n3
+    dimension: neuroticism
+    reverse: true
+    tr: Baskı altında sakin kalırım.
+  - id: n4
+    dimension: neuroticism
+    reverse: true
+    tr: Bir şey ters gittiğinde çabuk toparlanırım.
+
+  # Açıklık
+  - id: o1
+    dimension: openness
+    tr: Yeni fikirler beni kolayca meraklandırır.
+  - id: o2
+    dimension: openness
+    tr: Alışılmadık, denenmemiş çözümler ilgimi çeker.
+  - id: o3
+    dimension: openness
+    reverse: true
+    tr: Bildiğim yöntemi değiştirmek için iyi bir sebep isterim.
+  - id: o4
+    dimension: openness
+    reverse: true
+    tr: Hayal kurmaktansa elimdeki işe odaklanırım.
