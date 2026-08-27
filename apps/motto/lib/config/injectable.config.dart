@@ -23,6 +23,8 @@ import 'package:motto/features/chain/application/reminder_scheduler.dart'
 import 'package:motto/features/content/application/content_repository.dart'
     as _i876;
 import 'package:motto/features/content/application/content_store.dart' as _i432;
+import 'package:motto/features/daily/application/daily_cubit.dart' as _i1068;
+import 'package:motto/features/daily/application/daily_widget.dart' as _i113;
 import 'package:motto/features/result/application/card_exporter.dart' as _i111;
 import 'package:motto/features/support/application/data_deletion.dart' as _i729;
 import 'package:motto/features/support/application/feedback_cubit.dart'
@@ -62,6 +64,7 @@ extension GetItInjectableX on _i174.GetIt {
       () => storageModule.secureStorage,
     );
     gh.lazySingleton<_i76.AndroidId>(() => storageModule.androidId);
+    gh.lazySingleton<_i113.DailyWidget>(() => const _i113.DailyWidget());
     gh.lazySingleton<_i111.CardExporter>(() => const _i111.CardExporter());
     gh.lazySingleton<_i759.TokenStore>(
       () => _i759.TokenStore(gh<_i558.FlutterSecureStorage>()),
@@ -166,6 +169,15 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i625.ChainStore>(),
         gh<_i632.ReminderScheduler>(),
         gh<_i190.Analytics>(),
+      ),
+    );
+    gh.factory<_i1068.DailyCubit>(
+      () => _i1068.DailyCubit(
+        gh<_i876.ContentRepository>(),
+        gh<_i1019.LastArchetype>(),
+        gh<_i625.ChainStore>(),
+        gh<_i190.Analytics>(),
+        gh<_i113.DailyWidget>(),
       ),
     );
     return this;

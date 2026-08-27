@@ -14,20 +14,20 @@ import 'dart:async' as _i17;
 import 'package:api_client_motto/api.dart' as _i16;
 import 'package:auto_route/auto_route.dart' as _i14;
 import 'package:flutter/material.dart' as _i15;
-import 'package:motto/features/chain/presentation/chain_page.dart' as _i2;
-import 'package:motto/features/result/presentation/result_page.dart' as _i9;
+import 'package:motto/features/daily/presentation/today_page.dart' as _i12;
+import 'package:motto/features/result/presentation/result_page.dart' as _i8;
 import 'package:motto/features/result/presentation/share_card_page.dart'
-    as _i11;
-import 'package:motto/features/startup/presentation/startup_page.dart' as _i12;
+    as _i10;
+import 'package:motto/features/startup/presentation/startup_page.dart' as _i11;
 import 'package:motto/features/support/presentation/data_deletion_page.dart'
-    as _i3;
-import 'package:motto/features/support/presentation/faq_page.dart' as _i4;
-import 'package:motto/features/support/presentation/feedback_page.dart' as _i5;
-import 'package:motto/features/support/presentation/method_page.dart' as _i6;
-import 'package:motto/features/support/presentation/privacy_page.dart' as _i7;
-import 'package:motto/features/support/presentation/settings_page.dart' as _i10;
+    as _i2;
+import 'package:motto/features/support/presentation/faq_page.dart' as _i3;
+import 'package:motto/features/support/presentation/feedback_page.dart' as _i4;
+import 'package:motto/features/support/presentation/method_page.dart' as _i5;
+import 'package:motto/features/support/presentation/privacy_page.dart' as _i6;
+import 'package:motto/features/support/presentation/settings_page.dart' as _i9;
 import 'package:motto/features/test/presentation/calculating_page.dart' as _i1;
-import 'package:motto/features/test/presentation/question_page.dart' as _i8;
+import 'package:motto/features/test/presentation/question_page.dart' as _i7;
 import 'package:motto/features/welcome/presentation/welcome_page.dart' as _i13;
 
 /// generated route for
@@ -47,23 +47,7 @@ class CalculatingRoute extends _i14.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i2.ChainPage]
-class ChainRoute extends _i14.PageRouteInfo<void> {
-  const ChainRoute({List<_i14.PageRouteInfo>? children})
-    : super(ChainRoute.name, initialChildren: children);
-
-  static const String name = 'ChainRoute';
-
-  static _i14.PageInfo page = _i14.PageInfo(
-    name,
-    builder: (data) {
-      return const _i2.ChainPage();
-    },
-  );
-}
-
-/// generated route for
-/// [_i3.DataDeletionPage]
+/// [_i2.DataDeletionPage]
 class DataDeletionRoute extends _i14.PageRouteInfo<void> {
   const DataDeletionRoute({List<_i14.PageRouteInfo>? children})
     : super(DataDeletionRoute.name, initialChildren: children);
@@ -73,13 +57,13 @@ class DataDeletionRoute extends _i14.PageRouteInfo<void> {
   static _i14.PageInfo page = _i14.PageInfo(
     name,
     builder: (data) {
-      return const _i3.DataDeletionPage();
+      return const _i2.DataDeletionPage();
     },
   );
 }
 
 /// generated route for
-/// [_i4.FaqPage]
+/// [_i3.FaqPage]
 class FaqRoute extends _i14.PageRouteInfo<FaqRouteArgs> {
   FaqRoute({
     String? openItem,
@@ -101,7 +85,7 @@ class FaqRoute extends _i14.PageRouteInfo<FaqRouteArgs> {
       final args = data.argsAs<FaqRouteArgs>(
         orElse: () => FaqRouteArgs(openItem: queryParams.optString('item')),
       );
-      return _i4.FaqPage(openItem: args.openItem, key: args.key);
+      return _i3.FaqPage(openItem: args.openItem, key: args.key);
     },
   );
 }
@@ -130,7 +114,7 @@ class FaqRouteArgs {
 }
 
 /// generated route for
-/// [_i5.FeedbackPage]
+/// [_i4.FeedbackPage]
 class FeedbackRoute extends _i14.PageRouteInfo<void> {
   const FeedbackRoute({List<_i14.PageRouteInfo>? children})
     : super(FeedbackRoute.name, initialChildren: children);
@@ -140,13 +124,13 @@ class FeedbackRoute extends _i14.PageRouteInfo<void> {
   static _i14.PageInfo page = _i14.PageInfo(
     name,
     builder: (data) {
-      return const _i5.FeedbackPage();
+      return const _i4.FeedbackPage();
     },
   );
 }
 
 /// generated route for
-/// [_i6.MethodPage]
+/// [_i5.MethodPage]
 class MethodRoute extends _i14.PageRouteInfo<void> {
   const MethodRoute({List<_i14.PageRouteInfo>? children})
     : super(MethodRoute.name, initialChildren: children);
@@ -156,13 +140,13 @@ class MethodRoute extends _i14.PageRouteInfo<void> {
   static _i14.PageInfo page = _i14.PageInfo(
     name,
     builder: (data) {
-      return const _i6.MethodPage();
+      return const _i5.MethodPage();
     },
   );
 }
 
 /// generated route for
-/// [_i7.PrivacyPage]
+/// [_i6.PrivacyPage]
 class PrivacyRoute extends _i14.PageRouteInfo<void> {
   const PrivacyRoute({List<_i14.PageRouteInfo>? children})
     : super(PrivacyRoute.name, initialChildren: children);
@@ -172,13 +156,13 @@ class PrivacyRoute extends _i14.PageRouteInfo<void> {
   static _i14.PageInfo page = _i14.PageInfo(
     name,
     builder: (data) {
-      return const _i7.PrivacyPage();
+      return const _i6.PrivacyPage();
     },
   );
 }
 
 /// generated route for
-/// [_i8.QuestionPage]
+/// [_i7.QuestionPage]
 class QuestionRoute extends _i14.PageRouteInfo<void> {
   const QuestionRoute({List<_i14.PageRouteInfo>? children})
     : super(QuestionRoute.name, initialChildren: children);
@@ -188,13 +172,13 @@ class QuestionRoute extends _i14.PageRouteInfo<void> {
   static _i14.PageInfo page = _i14.PageInfo(
     name,
     builder: (data) {
-      return _i14.WrappedRoute(child: const _i8.QuestionPage());
+      return _i14.WrappedRoute(child: const _i7.QuestionPage());
     },
   );
 }
 
 /// generated route for
-/// [_i9.ResultPage]
+/// [_i8.ResultPage]
 class ResultRoute extends _i14.PageRouteInfo<ResultRouteArgs> {
   ResultRoute({
     required _i16.ResultResponse result,
@@ -214,7 +198,7 @@ class ResultRoute extends _i14.PageRouteInfo<ResultRouteArgs> {
     name,
     builder: (data) {
       final args = data.argsAs<ResultRouteArgs>();
-      return _i9.ResultPage(
+      return _i8.ResultPage(
         result: args.result,
         offerCard: args.offerCard,
         key: args.key,
@@ -250,7 +234,7 @@ class ResultRouteArgs {
 }
 
 /// generated route for
-/// [_i10.SettingsPage]
+/// [_i9.SettingsPage]
 class SettingsRoute extends _i14.PageRouteInfo<void> {
   const SettingsRoute({List<_i14.PageRouteInfo>? children})
     : super(SettingsRoute.name, initialChildren: children);
@@ -260,13 +244,13 @@ class SettingsRoute extends _i14.PageRouteInfo<void> {
   static _i14.PageInfo page = _i14.PageInfo(
     name,
     builder: (data) {
-      return const _i10.SettingsPage();
+      return const _i9.SettingsPage();
     },
   );
 }
 
 /// generated route for
-/// [_i11.ShareCardPage]
+/// [_i10.ShareCardPage]
 class ShareCardRoute extends _i14.PageRouteInfo<ShareCardRouteArgs> {
   ShareCardRoute({
     required _i16.ArchetypeResponse archetype,
@@ -284,7 +268,7 @@ class ShareCardRoute extends _i14.PageRouteInfo<ShareCardRouteArgs> {
     name,
     builder: (data) {
       final args = data.argsAs<ShareCardRouteArgs>();
-      return _i11.ShareCardPage(archetype: args.archetype, key: args.key);
+      return _i10.ShareCardPage(archetype: args.archetype, key: args.key);
     },
   );
 }
@@ -313,7 +297,7 @@ class ShareCardRouteArgs {
 }
 
 /// generated route for
-/// [_i12.StartupPage]
+/// [_i11.StartupPage]
 class StartupRoute extends _i14.PageRouteInfo<void> {
   const StartupRoute({List<_i14.PageRouteInfo>? children})
     : super(StartupRoute.name, initialChildren: children);
@@ -323,7 +307,23 @@ class StartupRoute extends _i14.PageRouteInfo<void> {
   static _i14.PageInfo page = _i14.PageInfo(
     name,
     builder: (data) {
-      return const _i12.StartupPage();
+      return const _i11.StartupPage();
+    },
+  );
+}
+
+/// generated route for
+/// [_i12.TodayPage]
+class TodayRoute extends _i14.PageRouteInfo<void> {
+  const TodayRoute({List<_i14.PageRouteInfo>? children})
+    : super(TodayRoute.name, initialChildren: children);
+
+  static const String name = 'TodayRoute';
+
+  static _i14.PageInfo page = _i14.PageInfo(
+    name,
+    builder: (data) {
+      return const _i12.TodayPage();
     },
   );
 }
