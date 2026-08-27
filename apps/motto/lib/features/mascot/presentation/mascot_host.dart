@@ -31,9 +31,32 @@ class MascotHost extends StatefulWidget {
       .dependOnInheritedWidgetOfExactType<_MascotScope>()
       ?.controller;
 
+  /// Walks the mascot somewhere by itself. Onboarding uses it to introduce the
+  /// app: a mascot that only ever moves when dragged is a decoration.
+  static MascotMovement? movementOf(BuildContext context) => context
+      .dependOnInheritedWidgetOfExactType<_MascotScope>()
+      ?.movement;
+
   @override
   State<MascotHost> createState() => _MascotHostState();
 }
+
+/// Where the mascot can be sent, in fractions of the area it may occupy.
+enum MascotSpot {
+  home(Alignment.bottomRight),
+  centre(Alignment.center),
+  topLeft(Alignment.topLeft),
+  topRight(Alignment.topRight),
+  bottomLeft(Alignment.bottomLeft);
+
+  const MascotSpot(this.at);
+
+  final Alignment at;
+}
+
+/// Moves the mascot on its own, and answers when it has arrived.
+typedef MascotMovement =
+    Future<void> Function(MascotSpot spot, {Duration over});
 
 class _MascotHostState extends State<MascotHost>
     with SingleTickerProviderStateMixin {
@@ -44,6 +67,7 @@ class _MascotHostState extends State<MascotHost>
 
   MascotController? _controller;
   Offset? _position;
+  Rect _bounds = Rect.zero;
   late final AnimationController _settle;
   Offset _from = Offset.zero;
   Offset _to = Offset.zero;
@@ -67,9 +91,27 @@ class _MascotHostState extends State<MascotHost>
     setState(() => _position = Offset.lerp(_from, _to, _settle.value));
   }
 
+  Future<void> goTo(
+    MascotSpot spot, {
+    Duration over = const Duration(milliseconds: 700),
+  }) {
+    if (_bounds.isEmpty) return Future.value();
+
+    final alignment = spot.at;
+    _from = _resolved(_bounds);
+    _to = Offset(
+      _bounds.left + (alignment.x + 1) / 2 * _bounds.width,
+      _bounds.top + (alignment.y + 1) / 2 * _bounds.height,
+    );
+    _settle
+      ..duration = over
+      ..value = 0;
+    return _settle.forward();
+  }
+
   /// The area the mascot may occupy, inset so it never sits under a notch or
   /// half off the bottom.
-  Rect _bounds(BoxConstraints box, EdgeInsets safe) => Rect.fromLTRB(
+  Rect _boundsIn(BoxConstraints box, EdgeInsets safe) => Rect.fromLTRB(
     safe.left + 8,
     safe.top + 8,
     box.maxWidth - safe.right - _size - 8,
@@ -101,13 +143,16 @@ class _MascotHostState extends State<MascotHost>
   /// go. Left in the middle it covers what someone is reading; against an edge
   /// it is still reachable and out of the way.
   void _release(Rect bounds) {
+    _controller?.drag(held: false);
     final at = _resolved(bounds);
     final left = (at.dx - bounds.left).abs();
     final right = (bounds.right - at.dx).abs();
 
     _from = at;
     _to = Offset(left < right ? bounds.left : bounds.right, at.dy);
-    _settle.value = 0;
+    _settle
+      ..duration = const Duration(milliseconds: 420)
+      ..value = 0;
     unawaited(
       _settle.animateWith(
         SpringSimulation(
@@ -126,9 +171,11 @@ class _MascotHostState extends State<MascotHost>
 
     return _MascotScope(
       controller: _controller,
+      movement: goTo,
       child: LayoutBuilder(
         builder: (context, box) {
-          final bounds = _bounds(box, safe);
+          _bounds = _boundsIn(box, safe);
+          final bounds = _bounds;
           final at = _resolved(bounds);
 
           return Stack(
@@ -142,10 +189,11 @@ class _MascotHostState extends State<MascotHost>
                   // round thing on a transparent square, and a pull that only
                   // works on the ink is a pull that mostly does not work.
                   behavior: HitTestBehavior.opaque,
-                  onPanUpdate: (details) {
+                  onPanStart: (_) {
                     _settle.stop();
-                    _dragTo(details.delta, bounds);
+                    _controller?.drag(held: true);
                   },
+                  onPanUpdate: (details) => _dragTo(details.delta, bounds),
                   onPanEnd: (_) => _release(bounds),
                   onPanCancel: () => _release(bounds),
                   child: Mascot(
@@ -167,9 +215,14 @@ class _MascotHostState extends State<MascotHost>
 }
 
 class _MascotScope extends InheritedWidget {
-  const _MascotScope({required this.controller, required super.child});
+  const _MascotScope({
+    required this.controller,
+    required this.movement,
+    required super.child,
+  });
 
   final MascotController? controller;
+  final MascotMovement movement;
 
   @override
   bool updateShouldNotify(_MascotScope old) => controller != old.controller;

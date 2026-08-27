@@ -134,7 +134,9 @@ class _MascotState extends State<Mascot>
       _artboard = artboard;
       _mascot = mascot;
     });
-    widget.onReady?.call(mascot);
+    // Wrapped, so that a drag driven from outside still counts as somebody
+    // paying attention — otherwise the mascot asks for it while being held.
+    widget.onReady?.call(_TouchAware(mascot, _touched));
     _startTimers();
   }
 
@@ -197,6 +199,8 @@ class _MascotState extends State<Mascot>
     _offering = false;
   }
 
+
+
   void _onTap() {
     final mascot = _mascot;
     if (mascot == null) return;
@@ -233,17 +237,12 @@ class _MascotState extends State<Mascot>
     );
 
     if (!widget.followsFinger) {
-      // The host owns the pan; this still owns the pose and the tap.
-      return GestureDetector(
-        onTap: _onTap,
-        onPanDown: (_) {
-          _touched();
-          _mascot?.drag(held: true);
-        },
-        onPanEnd: (_) => _mascot?.drag(held: false),
-        onPanCancel: () => _mascot?.drag(held: false),
-        child: drawn,
-      );
+      // No pan recogniser at all. The host has one, and the inner detector is
+      // closer to the touch — declaring a pan here won the arena and the
+      // host's drag never fired, which looked like a mascot that does not
+      // move. Taps still work: a pan only claims the gesture once the finger
+      // travels.
+      return GestureDetector(onTap: _onTap, child: drawn);
     }
 
     return GestureDetector(
@@ -261,5 +260,46 @@ class _MascotState extends State<Mascot>
       onPanCancel: _release,
       child: drawn,
     );
+  }
+}
+
+/// Everything anyone outside asks of the mascot, with the idle clock reset.
+class _TouchAware implements MascotController {
+  _TouchAware(this._inner, this._touched);
+
+  final MascotController _inner;
+  final VoidCallback _touched;
+
+  @override
+  double get annoyance => _inner.annoyance;
+
+  @override
+  set annoyance(double value) => _inner.annoyance = value;
+
+  @override
+  void poke() {
+    _touched();
+    _inner.poke();
+  }
+
+  @override
+  void drag({required bool held, double x = 0, double y = 0}) {
+    _touched();
+    _inner.drag(held: held, x: x, y: y);
+  }
+
+  @override
+  void flee() => _inner.flee();
+
+  @override
+  void attention() => _inner.attention();
+
+  @override
+  void offerGame() => _inner.offerGame();
+
+  @override
+  void celebrate() {
+    _touched();
+    _inner.celebrate();
   }
 }

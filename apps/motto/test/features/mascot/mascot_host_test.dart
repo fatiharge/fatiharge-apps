@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:motto/features/mascot/presentation/mascot.dart';
@@ -86,5 +88,37 @@ void main() {
     // screen underneath carries on.
     expect(tester.takeException(), isA<StateError>());
     expect(find.text('a screen'), findsOneWidget);
+  });
+
+  testWidgets('it walks to a spot on its own', (tester) async {
+    late MascotMovement move;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Builder(
+          builder: (context) {
+            move = MascotHost.movementOf(context)!;
+            return const Scaffold(body: SizedBox());
+          },
+        ),
+        builder: (context, child) => MascotHost(
+          loadFile: (_) => Future<RiveFile>.error(StateError('no renderer')),
+          child: child ?? const SizedBox(),
+        ),
+      ),
+    );
+    await tester.pump();
+    tester.takeException();
+
+    final started = tester.getTopLeft(find.byType(Mascot));
+    // A mascot that only ever moves when dragged is a decoration; onboarding
+    // has to be able to walk it around while it explains itself.
+    unawaited(move(MascotSpot.topLeft));
+    await tester.pumpAndSettle();
+
+    final arrived = tester.getTopLeft(find.byType(Mascot));
+    expect(arrived.dx, lessThan(started.dx));
+    expect(arrived.dy, lessThan(started.dy));
+    expect(arrived.dx, lessThan(24));
   });
 }
