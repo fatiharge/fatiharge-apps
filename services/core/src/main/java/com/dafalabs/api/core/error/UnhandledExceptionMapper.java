@@ -30,8 +30,22 @@ public class UnhandledExceptionMapper implements ExceptionMapper<Throwable> {
       return web.getResponse();
     }
 
-    LOG.errorf(throwable, "%s unhandled", traceId);
-    ErrorPayload payload = ErrorPayloads.of(traceId);
+    ErrorPayload payload;
+    if (throwable instanceof WebApplicationException web) {
+      // The framework already decided the status: an unknown path, the wrong
+      // method, a body it would not parse. Answering 500 to those turns a
+      // caller's typo into an hour spent looking for a broken server — and
+      // fills the log with stack traces for requests that were simply wrong.
+      payload = ErrorPayloads.ofStatus(web.getResponse().getStatus(), traceId);
+      if (payload.status() >= 500) {
+        LOG.errorf(throwable, "%s unhandled", traceId);
+      } else {
+        LOG.debugf("%s %d %s", traceId, payload.status(), throwable.getMessage());
+      }
+    } else {
+      LOG.errorf(throwable, "%s unhandled", traceId);
+      payload = ErrorPayloads.of(traceId);
+    }
 
     return Response.status(payload.status())
         .entity(payload.body())

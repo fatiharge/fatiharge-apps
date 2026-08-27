@@ -56,4 +56,34 @@ class ErrorPayloadsTest {
     assertEquals(ErrorPayloads.SERVER_MESSAGE, payload.body().message());
     assertEquals(TRACE, payload.body().traceId());
   }
+
+  @Test
+  @DisplayName("a framework failure keeps its own status instead of becoming a 500")
+  void frameworkStatusSurvives() {
+    // A caller asking for a path that does not exist spent an hour looking for
+    // a broken server the first time this answered 500.
+    ErrorPayload payload = ErrorPayloads.ofStatus(404, TRACE);
+
+    assertEquals(404, payload.status());
+    assertEquals("not_found", payload.body().code());
+    assertEquals(TRACE, payload.body().traceId());
+  }
+
+  @Test
+  @DisplayName("the code is derived, so a status nobody listed is still branchable")
+  void codeIsDerivedFromTheStatus() {
+    assertEquals("method_not_allowed", ErrorPayloads.ofStatus(405, TRACE).body().code());
+    assertEquals("unsupported_media_type", ErrorPayloads.ofStatus(415, TRACE).body().code());
+    assertEquals("http_499", ErrorPayloads.ofStatus(499, TRACE).body().code());
+  }
+
+  @Test
+  @DisplayName("a framework 5xx still says nothing")
+  void frameworkServerErrorSaysNothing() {
+    ErrorPayload payload = ErrorPayloads.ofStatus(503, TRACE);
+
+    assertEquals(500, payload.status());
+    assertEquals(ErrorPayloads.SERVER_CODE, payload.body().code());
+    assertEquals(ErrorPayloads.SERVER_MESSAGE, payload.body().message());
+  }
 }
