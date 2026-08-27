@@ -1,0 +1,7 @@
+include: package:lint_kit/analysis_options.yaml
+
+analyzer:
+  exclude:
+    - lib/generated/**
+    - "**/*.g.dart"
+    - "**/*.gr.dart"

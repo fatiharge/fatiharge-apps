@@ -1,0 +1,39 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:flutter/material.dart';
+
+/// A placeholder with the shape of the real one: this is where the mascot
+/// introduces itself, "Başla" sits, and the invite code line will go — never
+/// in the middle of the test, where it would interrupt the funnel.
+@RoutePage()
+class WelcomePage extends StatelessWidget {
+  const WelcomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+
+    return Scaffold(
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Spacer(),
+              Text('Motto', style: text.displaySmall),
+              const SizedBox(height: 12),
+              Text(
+                'Kısa bir envanter, sana ait bir motto.',
+                style: text.bodyLarge?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const Spacer(),
+              const FilledButton(onPressed: null, child: Text('Başla')),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

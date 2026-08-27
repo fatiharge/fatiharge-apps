@@ -15,6 +15,7 @@ workspace:
   - packages/api_client_auth
   - packages/api_client_motto
   - apps/wallet
+  - apps/motto
 
 dev_dependencies:
   melos: ^8.3.0
