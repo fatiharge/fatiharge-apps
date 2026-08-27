@@ -13,8 +13,7 @@ import java.util.UUID;
 @ApplicationScoped
 public class Feedbacks {
 
-  /// Long enough for a real report, short enough that the column is not a
-  /// place to paste a log file.
+  /// Not a place to paste a log file.
   static final int maxMessage = 4000;
 
   static final int maxEmail = 320;
@@ -49,8 +48,7 @@ public class Feedbacks {
             serialise(request.context())));
   }
 
-  /// Blank is the same as absent. An empty string stored as an address is one
-  /// nobody can reply to and everybody has to check for.
+  /// Blank is the same as absent.
   private String normalise(String email) {
     if (email == null) {
       return null;

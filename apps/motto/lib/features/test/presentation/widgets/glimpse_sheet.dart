@@ -1,12 +1,9 @@
 import 'package:api_client_motto/api.dart' as api;
 import 'package:flutter/material.dart';
 
-/// The look partway through.
-///
-/// A sheet rather than a screen: the test keeps its place underneath, so
-/// dismissing it returns to the next question instead of navigating back into
-/// the flow. It costs nothing to see — a glimpse that spent a use would be a
-/// trick, and its whole job is to make finishing feel worth it.
+/// A sheet rather than a screen, so dismissing it returns to the next question
+/// instead of navigating back into the flow. Costs no use: its whole job is to
+/// make finishing feel worth it.
 class GlimpseSheet extends StatelessWidget {
   const GlimpseSheet({
     required this.archetype,

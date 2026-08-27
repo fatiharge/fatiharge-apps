@@ -4,34 +4,23 @@ import 'package:motto/features/chain/domain/reminder_copy.dart';
 
 /// Decides which reminders exist, and when.
 ///
-/// Pure, and deliberately so: every rule below is something someone will want
-/// to argue about later, and arguing is cheaper against a test than against a
-/// phone that has to wait until 21:00 to disagree.
-///
-/// Nothing here is conditional at delivery time, because a scheduled
-/// notification cannot check anything when it fires. Correctness comes from
-/// rescheduling instead: the whole plan is cancelled and rebuilt whenever the
-/// chain changes or the app opens.
+/// Nothing here is conditional at delivery time: a scheduled notification
+/// cannot check anything when it fires, so the whole plan is rebuilt whenever
+/// the chain changes or the app opens.
 abstract final class ReminderPlan {
-  /// How far ahead to schedule. Long enough to survive a fortnight of not
-  /// opening the app, short enough that the rebuilt plan is small.
+  /// Long enough to survive a fortnight of not opening the app.
   static const horizonDays = 14;
 
-  /// Nothing arrives between these hours.
   static const quietFrom = 22;
   static const quietUntil = 8;
 
-  /// The evening warning, for a day that is nearly gone and still unmarked.
   static const dayEndingHour = 21;
 
   static const milestones = [7, 21, 30];
 
-  /// After this many reminders in a row that nobody opened, the daily one
-  /// stops being daily. Someone ignoring three notifications is not someone
-  /// who needs a fourth.
+  /// Someone ignoring three notifications is not someone who needs a fourth.
   static const fatigueThreshold = 3;
 
-  /// How often the daily reminder arrives once fatigue has set in.
   static const fatigueEveryDays = 3;
 
   static List<Reminder> build({
@@ -68,11 +57,8 @@ abstract final class ReminderPlan {
           kind == ReminderKind.dayEnding ? dayEndingHour : hour,
         ),
       );
-      // A slot the day has already passed cannot be scheduled, only missed.
       if (!at.isAfter(now)) continue;
 
-      // The streak as it stands today, not as it would be on that day: the
-      // number a person recognises is the one they last saw.
       final words = copy(kind, chain.streakOn(today));
       reminders.add(
         Reminder(kind: kind, at: at, title: words.title, body: words.body),
@@ -84,8 +70,7 @@ abstract final class ReminderPlan {
       ..sort((a, b) => a.at.compareTo(b.at));
   }
 
-  /// At most one per day, so the priority here is the whole of the one-a-day
-  /// rule: the most informative thing wins and the rest are simply not sent.
+  /// At most one a day: the most informative wins, the rest are not sent.
   static ReminderKind? _kindFor({
     required Chain chain,
     required DateTime today,
@@ -98,10 +83,9 @@ abstract final class ReminderPlan {
     final isToday = day == today;
     final markedToday = chain.isMarked(today);
 
-    // Only today and the next morning can be known to be broken. Further out
-    // the chain is assumed intact — every unmarked future day would otherwise
-    // read as a miss, and the horizon would fill with bad news about days that
-    // have not happened. The plan is rebuilt the moment that stops being true.
+    // Only today and tomorrow can be known to be broken. Further out every
+    // unmarked day would read as a miss and fill the horizon with bad news
+    // about days that have not happened.
     final tomorrow = today.add(const Duration(days: 1));
     if (isToday && chain.isBrokenOn(today) && !markedToday) {
       return ReminderKind.broken;
@@ -114,8 +98,6 @@ abstract final class ReminderPlan {
       return ReminderKind.mottoReady;
     }
 
-    // Today's own reminder hour has gone by unmarked; the evening warning is
-    // what is left of the day.
     if (isToday && !markedToday && now.hour >= hour) {
       return ReminderKind.dayEnding;
     }
@@ -127,7 +109,6 @@ abstract final class ReminderPlan {
     return ReminderKind.daily;
   }
 
-  /// The month after the one the make-up was spent in, on its first day.
   static bool _isFreezeRenewalDay(Chain chain, DateTime day) {
     final spent = chain.freezeUsedOn;
     if (spent == null || day.day != 1) return false;
@@ -140,9 +121,8 @@ abstract final class ReminderPlan {
     return day.difference(today).inDays % fatigueEveryDays != 0;
   }
 
-  /// Only the milestones still ahead, and only if the chain reaches them
-  /// inside the horizon. They are exempt from the one-a-day rule: a
-  /// celebration landing on a day that already had a nudge is the point.
+  /// Exempt from the one-a-day rule: a celebration landing on a day that
+  /// already had a nudge is the point.
   static List<Reminder> _milestones(
     Chain chain,
     DateTime today,
@@ -181,8 +161,6 @@ abstract final class ReminderPlan {
     return result;
   }
 
-  /// Moves anything landing in the quiet hours to the start of the next waking
-  /// one. Late enough at night and it is tomorrow's problem, literally.
   static DateTime _wake(DateTime at) {
     if (at.hour >= quietFrom) {
       final next = at.add(const Duration(days: 1));

@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/features/support/application/feedback_cubit.dart';
 
-/// Three options and nothing to type.
-///
 /// Which archetype gets rejected, and in which direction, is the only
 /// correction signal the mapping table has — and asking someone who just said
 /// "this is not me" to write an essay returns nothing at all.

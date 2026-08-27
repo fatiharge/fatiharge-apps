@@ -8,11 +8,8 @@ import 'package:motto/infrastructure/analytics/analytics.dart';
 import 'package:motto/infrastructure/analytics/motto_event.dart';
 import 'package:share_plus/share_plus.dart';
 
-/// The card, and the one button that matters in this whole app.
-///
-/// Opened automatically once the result is shown rather than waiting to be
-/// found: the share rate is the only thing the first version is trying to
-/// measure, and a screen nobody navigates to measures nothing.
+/// The card, and the one button that matters in this whole app. Opened by
+/// itself, because a screen nobody navigates to measures nothing.
 @RoutePage()
 class ShareCardPage extends StatefulWidget {
   const ShareCardPage({required this.archetype, super.key});
@@ -44,10 +41,9 @@ class _ShareCardPageState extends State<ShareCardPage> {
         archetypeName: widget.archetype.name,
       );
 
-      // A sheet that was opened and dismissed is not a share. Android's
-      // `unavailable` counts, because Android says that whenever it cannot see
-      // which app was picked — the status rides along as a property so the
-      // number can be read with that in mind rather than trusted blindly.
+      // Dismissed is not a share. Android answers `unavailable` whenever it
+      // cannot see which app was picked, so that counts — and the status rides
+      // along so the number can be read with that in mind.
       if (outcome != ShareResultStatus.dismissed) {
         await analytics.record(
           MottoEvent.shareComplete,
@@ -70,9 +66,8 @@ class _ShareCardPageState extends State<ShareCardPage> {
             children: [
               Expanded(
                 child: Center(
-                  // The boundary wraps exactly the card and nothing else, so
-                  // the exported image has no padding and no background that
-                  // belongs to the screen around it.
+                  // Wraps exactly the card, so the export has none of the
+                  // screen around it.
                   child: RepaintBoundary(
                     key: _boundaryKey,
                     child: ShareCard(archetype: widget.archetype),

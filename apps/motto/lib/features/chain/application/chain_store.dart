@@ -4,8 +4,6 @@ import 'package:injectable/injectable.dart';
 import 'package:motto/features/chain/domain/chain.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Where the chain lives.
-///
 /// Preferences, because the whole thing is a start date, a set of days and one
 /// make-up: nothing here is a credential and nothing here is big.
 @lazySingleton

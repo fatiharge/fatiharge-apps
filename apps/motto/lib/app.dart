@@ -15,9 +15,7 @@ class MottoApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: MottoTheme.light,
       darkTheme: MottoTheme.dark,
-      // themeMode is left at its default, which is ThemeMode.system: the phone
-      // decides. See the note in MottoTheme for why that is worth the second
-      // pass over every screen.
+      // themeMode stays at its default: the phone decides.
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,

@@ -21,10 +21,9 @@ class TestCubit extends Cubit<TestState> {
     this._lastArchetype,
   ) : super(const TestState());
 
-  /// Where the glimpse is offered. Early enough that it arrives before anyone
-  /// gets bored, late enough that it is not noise: drop-off in a quiz runs a
-  /// few percent per question, and this is the answer to it.
-  static const glimpseAfter = 5;
+  /// Where the glimpse is offered: past halfway, just before the point where
+  /// answering starts to feel like it is going nowhere.
+  static const glimpseAfter = 10;
 
   final api.TestResourceApi _tests;
   final api.MottoResourceApi _mottos;
@@ -32,9 +31,6 @@ class TestCubit extends Cubit<TestState> {
   final Analytics _analytics;
   final LastArchetype _lastArchetype;
 
-  /// For call sites that cannot await — a widget constructor, a callback.
-  /// Named rather than silently discarded so that "nobody is waiting for this"
-  /// is a decision on the page rather than a lint suppressed in passing.
   void unawaitedStart() => unawaited(start());
 
   void unawaitedSubmit() => unawaited(submitSaved());
@@ -52,16 +48,13 @@ class TestCubit extends Cubit<TestState> {
           status: TestStatus.asking,
           questions: questions,
           answers: resumed,
-          // Resuming lands on the first unanswered question rather than at the
-          // start: asking someone the same twenty questions twice is how a
-          // half-finished test becomes an abandoned one.
+          // Asking the same twenty questions twice abandons the test.
           index: _firstUnanswered(questions, resumed),
         ),
       );
 
-      // Only a test that starts from nothing is a start. A resumed one was
-      // counted when it began, and counting it again would make the funnel
-      // widen at the step where people drop out.
+      // A resumed test was counted when it began; counting it twice would
+      // widen the funnel at the step where people drop out.
       if (resumed.isEmpty) {
         await _analytics.record(MottoEvent.testStart);
       }
@@ -103,11 +96,8 @@ class TestCubit extends Cubit<TestState> {
 
   void dismissGlimpse() => emit(state.copyWith(clearGlimpse: true));
 
-  /// Submits what a previous screen collected.
-  ///
-  /// The answers come from the draft rather than being carried between routes:
-  /// the flow spans two pages, and a cubit that has to survive a route change
-  /// is a cubit that has to be hoisted above both of them for no other reason.
+  /// The answers come from the draft rather than being carried between routes,
+  /// so no cubit has to survive the route change.
   Future<void> submitSaved({bool spendSkip = false}) async {
     emit(state.copyWith(answers: _draft.read()));
     await submit(spendSkip: spendSkip);
@@ -121,20 +111,19 @@ class TestCubit extends Cubit<TestState> {
       final result = await _mottos.claimMotto(
         api.AnswerSubmission(answers: state.answers, spendSkip: spendSkip),
       );
-      // Cleared only once the answers have been spent: a draft that outlived a
-      // successful claim could be resumed into a second charge.
+      // A draft that outlived a successful claim could be resumed into a
+      // second charge.
       await _draft.clear();
       emit(state.copyWith(status: TestStatus.asking, result: result));
 
-      // Remembered so that a bug report or a rejection knows what it is about.
       if (result?.archetype.id case final String archetype) {
         await _lastArchetype.remember(archetype);
       }
 
+      // The form names itself by its length, so a longer one later reports as
+      // a different type without anyone inventing a word for it.
       await _analytics.record(
         MottoEvent.testComplete,
-        // The form names itself by its length, so a longer one later reports
-        // as a different type without anyone inventing a word for it.
         properties: {'form_type': '${state.answers.length}_item'},
       );
     } on api.ApiException catch (failure) {
@@ -151,8 +140,7 @@ class TestCubit extends Cubit<TestState> {
     }
   }
 
-  /// The glimpse never blocks the flow: if it fails, the overlay simply does
-  /// not appear and the person keeps answering.
+  /// Never blocks the flow: if it fails the overlay does not appear.
   Future<void> _peek(Map<String, int> answers) async {
     try {
       final glimpse = await _tests.partialResult(
@@ -174,7 +162,7 @@ class TestCubit extends Cubit<TestState> {
     return questions.length;
   }
 
-  /// The API answers with a stable code; the message is for a log, not a user.
+  /// The API answers with a stable code; the message is for a log.
   static String? _codeOf(api.ApiException failure) {
     final body = failure.message;
     if (body == null) return null;

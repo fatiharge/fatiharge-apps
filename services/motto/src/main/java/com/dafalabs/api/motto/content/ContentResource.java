@@ -15,11 +15,8 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 
 /**
- * The whole content package, or nothing new.
- *
- * <p>The client assembles a day offline, so it needs every piece or none of
- * them; five endpoints that can half-succeed would give it a fourth state to
- * handle for no gain.
+ * The whole content package, or nothing new. The client assembles a day
+ * offline, so it needs every piece or none of them.
  */
 @Path("/v1/content")
 @Produces(MediaType.APPLICATION_JSON)
@@ -35,9 +32,8 @@ public class ContentResource {
   /**
    * @param ifNoneMatch the version the client already holds
    */
-  // The response type is declared because the method returns `Response` — it
-  // has to, for the 304 — and the schema would otherwise come out empty, which
-  // generates a client that hands the app a Map.
+  // Declared because the method returns `Response` for the 304, and the schema
+  // would otherwise come out empty and generate a client returning a Map.
   @GET
   @Operation(operationId = "contentBundle", summary = "The content package")
   @APIResponse(
@@ -48,8 +44,6 @@ public class ContentResource {
     ContentBundle bundle = catalog.bundle();
     EntityTag tag = new EntityTag(bundle.version());
 
-    // 304 rather than a body: this package is most of what the app downloads,
-    // and it changes when someone edits a sentence — which is rarely.
     if (matches(ifNoneMatch, bundle.version())) {
       return Response.notModified(tag).build();
     }
@@ -57,9 +51,8 @@ public class ContentResource {
     return Response.ok(bundle).tag(tag).build();
   }
 
-  /// The header arrives quoted, and some clients send it weakly validated.
-  /// Comparing the raw string would answer 200 to a client that is already up
-  /// to date, every single time.
+  /// The header arrives quoted, and proxies weaken it. Comparing raw strings
+  /// would answer 200 to a client that is already current.
   private boolean matches(String header, String version) {
     if (header == null) {
       return false;

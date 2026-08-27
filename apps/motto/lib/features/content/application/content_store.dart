@@ -24,7 +24,6 @@ class ContentStore {
 
   final SharedPreferences _preferences;
 
-  /// The version held on this device, or null before anything was saved.
   String? get version => _preferences.getString(_versionKey);
 
   Future<Map<String, dynamic>?> readCached() async {

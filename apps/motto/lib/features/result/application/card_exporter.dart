@@ -8,18 +8,12 @@ import 'package:injectable/injectable.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
-/// Turns the card on screen into a file the share sheet can carry.
 @lazySingleton
 class CardExporter {
   const CardExporter();
 
-  /// Captures whatever the boundary is painting, at [targetWidth] regardless of
-  /// the phone's own resolution.
-  ///
-  /// Scaled from the rendered size rather than a fixed pixel ratio: the card is
-  /// laid out to fit the screen, so a phone with a small display would
-  /// otherwise export a small image, and a feed re-compressing a small image is
-  /// how a card ends up looking cheap.
+  /// Scaled from the rendered size rather than a fixed pixel ratio, so a small
+  /// display does not export a small image.
   Future<Uint8List?> capture(
     GlobalKey boundaryKey, {
     required double targetWidth,
@@ -35,12 +29,8 @@ class CardExporter {
     return data?.buffer.asUint8List();
   }
 
-  /// Writes the image out and opens the system share sheet.
-  ///
-  /// Returns what the platform says came of it. Android usually says
-  /// [ShareResultStatus.unavailable] — it cannot see which app was picked —
-  /// so the caller has to treat that as "probably shared" rather than as a
-  /// failure, and the difference is worth keeping visible.
+  /// Android usually answers [ShareResultStatus.unavailable] — it cannot see
+  /// which app was picked — so the caller treats that as probably shared.
   Future<ShareResultStatus> share(
     Uint8List png, {
     required String archetypeName,

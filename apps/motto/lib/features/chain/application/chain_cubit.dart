@@ -13,9 +13,8 @@ import 'package:motto/infrastructure/analytics/motto_event.dart';
 
 /// Starts the chain, marks the days, and keeps the reminders true.
 ///
-/// Every path that changes the chain ends in [_reschedule], because a
-/// notification already sitting in the system cannot check anything when it
-/// fires — the plan is only ever correct because it is rebuilt.
+/// Every path that changes the chain ends in [_reschedule]: a notification
+/// already in the system cannot check anything when it fires.
 @injectable
 class ChainCubit extends Cubit<ChainState> {
   ChainCubit(this._store, this._scheduler, this._analytics)
@@ -25,12 +24,10 @@ class ChainCubit extends Cubit<ChainState> {
   final ReminderScheduler _scheduler;
   final Analytics _analytics;
 
-  /// Overridable so tests are not at the mercy of the clock.
   @visibleForTesting
   DateTime Function() now = DateTime.now;
 
-  /// Read on every open, which is also when the plan gets rebuilt: a chain
-  /// that broke while the app was closed is discovered here.
+  /// A chain that broke while the app was closed is discovered here.
   Future<void> load() async {
     emit(
       state.copyWith(
@@ -48,11 +45,9 @@ class ChainCubit extends Cubit<ChainState> {
     }
   }
 
-  /// The only place the notification permission is asked for.
-  ///
-  /// Asked here rather than at launch because this is the first moment the app
-  /// has earned it — and because iOS gives exactly one prompt. Saying no does
-  /// not stop the chain.
+  /// The only place the permission is asked for: iOS gives exactly one prompt
+  /// and this is the first moment the app has earned it. Saying no does not
+  /// stop the chain.
   Future<void> start({required int hour}) async {
     final chain = _store.read().start(now());
     await _store.write(chain);
@@ -81,7 +76,6 @@ class ChainCubit extends Cubit<ChainState> {
 
     final chain = state.chain.mark(now());
     await _store.write(chain);
-    // Someone who came back and marked a day is someone the reminders reached.
     await _store.resetUnopened();
     emit(state.copyWith(chain: chain));
 
@@ -92,7 +86,6 @@ class ChainCubit extends Cubit<ChainState> {
     await _reschedule();
   }
 
-  /// Spends the month's make-up on the one missed day.
   Future<void> useFreeze() async {
     if (!state.canFreeze(now())) return;
 

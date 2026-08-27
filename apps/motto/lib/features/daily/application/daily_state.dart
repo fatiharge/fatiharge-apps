@@ -9,6 +9,5 @@ class DailyState {
 
   final DailyStatus status;
 
-  /// Null until there is a result to build a day out of.
   final DailyContent? content;
 }

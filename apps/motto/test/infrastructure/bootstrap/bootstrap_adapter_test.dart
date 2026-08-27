@@ -1,6 +1,6 @@
 import 'package:bootstrap_kit/bootstrap_kit.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:motto/features/startup/application/bootstrap_adapter.dart';
+import 'package:motto/infrastructure/bootstrap/bootstrap_adapter.dart';
 
 void main() {
   group('BootstrapAdapter', () {

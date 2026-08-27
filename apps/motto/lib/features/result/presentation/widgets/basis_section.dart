@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
 
-/// What this is built on, in the open.
+/// What this is built on, in the open. Never behind a paywall: a claim you
+/// have to pay to check is not one.
 ///
-/// Never behind a paywall: the claim that this is an inventory rather than a
-/// horoscope is the product's whole differentiation, and a claim you have to
-/// pay to check is not one.
-///
-/// The wording is careful in a way that is not decoration. "Uyarlanmıştır" and
-/// not "doğrulanmıştır": items translated for this app are not a validated
-/// Turkish instrument, and saying otherwise is the sentence that ends up in a
-/// screenshot next to a complaint.
+/// "Uyarlanmıştır", not "doğrulanmıştır" — items translated for this app are
+/// not a validated Turkish instrument.
 class BasisSection extends StatelessWidget {
   const BasisSection({super.key});
 

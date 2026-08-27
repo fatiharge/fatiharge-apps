@@ -12,12 +12,8 @@ import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 
 /**
- * The only way anyone can say anything to us.
- *
- * <p>With no accounts and no support inbox, a complaint with nowhere to go goes
- * to the store review instead — and a one-star review cannot be answered with a
- * fix. First-party rather than a third-party form, so it costs nothing and the
- * answers sit beside everything they would be read against.
+ * The only way anyone can say anything to us. A complaint with nowhere to go
+ * goes to the store review instead, and that cannot be answered with a fix.
  */
 @Path("/v1/feedback")
 @Consumes(MediaType.APPLICATION_JSON)

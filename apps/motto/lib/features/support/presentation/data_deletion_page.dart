@@ -4,8 +4,6 @@ import 'package:motto/config/injectable.dart';
 import 'package:motto/features/support/application/data_deletion.dart';
 import 'package:motto/features/support/domain/deletion_text.dart';
 
-/// The confirmation, which is the whole screen.
-///
 /// What survives is said before the button, not after: the usage counter stays
 /// and finding that out afterwards is how a deletion screen becomes a one-star
 /// review.
@@ -58,7 +56,7 @@ class _DataDeletionPageState extends State<DataDeletionPage> {
               for (final item in deletionGoes)
                 Text('• $item', style: text.bodyMedium),
               const SizedBox(height: 8),
-              Text(deletionChainNote, style: text.bodyMedium),
+              Text(deletionAnswersNote, style: text.bodyMedium),
               const SizedBox(height: 24),
               Text('Kalacaklar', style: text.titleMedium),
               const SizedBox(height: 8),

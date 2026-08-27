@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:motto/features/chain/domain/chain.dart';
 
-/// The last four weeks, as dots.
-///
 /// Below the day rather than in a tab of its own: a calendar someone has to
 /// navigate to is a calendar nobody looks at, and what is worth seeing here is
 /// the shape of the run, not the dates.
