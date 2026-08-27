@@ -16,6 +16,10 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+        // flutter_local_notifications schedules with java.time, which does not
+        // exist below API 26. Desugaring back-fills it; without this the build
+        // fails outright rather than misbehaving at runtime.
+        isCoreLibraryDesugaringEnabled = true
     }
 
     defaultConfig {
@@ -67,4 +71,8 @@ kotlin {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }
