@@ -1,0 +1,36 @@
+name: Dart workspace
+description: >-
+  Flutter at the pinned version, with the workspace resolved and melos ready to
+  run. Shared so that two jobs can do it in parallel without the setup being
+  written twice and drifting.
+
+runs:
+  using: composite
+  steps:
+    - name: Read Flutter version from .fvmrc
+      id: fvm
+      shell: bash
+      run: echo "version=$(jq -r .flutter .fvmrc)" >> "$GITHUB_OUTPUT"
+
+    - uses: subosito/flutter-action@v2
+      with:
+        flutter-version: ${{ steps.fvm.outputs.version }}
+        channel: stable
+        cache: true
+
+    # Packages, not just the SDK. Without this every job downloads the whole
+    # dependency set again, which was most of what `melos bootstrap` spent.
+    - uses: actions/cache@v4
+      with:
+        path: ~/.pub-cache
+        key: pub-${{ runner.os }}-${{ hashFiles('pubspec.lock') }}
+        restore-keys: pub-${{ runner.os }}-
+
+    # melos is a dev dependency of the workspace root, so `dart run melos` uses
+    # the pinned version. `dart pub global activate melos` downloaded and
+    # compiled it from scratch on every job.
+    - name: Bootstrap the workspace
+      shell: bash
+      run: |
+        flutter pub get
+        dart run melos bootstrap
