@@ -8,6 +8,10 @@ doc/ArchetypeResponse.md
 doc/DeletionResponse.md
 doc/EntitlementResourceApi.md
 doc/EntitlementResponse.md
+doc/EventBatch.md
+doc/EventBatchResponse.md
+doc/EventEntry.md
+doc/EventResourceApi.md
 doc/MottoResourceApi.md
 doc/Question.md
 doc/QuestionResponse.md
@@ -16,6 +20,7 @@ doc/TestResourceApi.md
 git_push.sh
 lib/api.dart
 lib/api/entitlement_resource_api.dart
+lib/api/event_resource_api.dart
 lib/api/motto_resource_api.dart
 lib/api/test_resource_api.dart
 lib/api_client.dart
@@ -30,6 +35,9 @@ lib/model/answer_submission.dart
 lib/model/archetype_response.dart
 lib/model/deletion_response.dart
 lib/model/entitlement_response.dart
+lib/model/event_batch.dart
+lib/model/event_batch_response.dart
+lib/model/event_entry.dart
 lib/model/question.dart
 lib/model/question_response.dart
 lib/model/result_response.dart
@@ -39,6 +47,10 @@ test/archetype_response_test.dart
 test/deletion_response_test.dart
 test/entitlement_resource_api_test.dart
 test/entitlement_response_test.dart
+test/event_batch_response_test.dart
+test/event_batch_test.dart
+test/event_entry_test.dart
+test/event_resource_api_test.dart
 test/motto_resource_api_test.dart
 test/question_response_test.dart
 test/question_test.dart

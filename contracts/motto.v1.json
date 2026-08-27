@@ -77,6 +77,54 @@
           }
         }
       },
+      "EventBatch" : {
+        "type" : "object",
+        "required" : [ "events" ],
+        "properties" : {
+          "events" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/EventEntry"
+            }
+          }
+        }
+      },
+      "EventBatchResponse" : {
+        "type" : "object",
+        "required" : [ "accepted", "duplicates" ],
+        "properties" : {
+          "accepted" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "duplicates" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "EventEntry" : {
+        "type" : "object",
+        "required" : [ "clientId", "name", "occurredAt" ],
+        "properties" : {
+          "clientId" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "occurredAt" : {
+            "type" : "string",
+            "$ref" : "#/components/schemas/Instant"
+          },
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
       "Instant" : {
         "type" : "string",
         "format" : "date-time",
@@ -156,6 +204,47 @@
           }
         },
         "tags" : [ "Entitlement Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
+    "/v1/events" : {
+      "post" : {
+        "summary" : "Report what happened",
+        "operationId" : "recordEvents",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/EventBatch"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/EventBatchResponse"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        },
+        "tags" : [ "Event Resource" ],
         "security" : [ {
           "SecurityScheme" : [ ]
         } ]
