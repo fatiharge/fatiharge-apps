@@ -20,24 +20,59 @@ void main() {
     ),
   );
 
+  Widget page({
+    Future<void> Function(BuildContext, api.ArchetypeResponse)? offerCard,
+  }) => MaterialApp(
+    theme: MottoTheme.dark,
+    home: ResultPage(
+      result: result,
+      offerCard: offerCard ?? (_, _) async {},
+    ),
+  );
+
   testWidgets('shows the archetype, what it means and the motto', (
     tester,
   ) async {
-    await tester.pumpWidget(
-      MaterialApp(theme: MottoTheme.dark, home: ResultPage(result: result)),
-    );
+    await tester.pumpWidget(page());
 
     expect(find.text('Sessiz İnşacı'), findsOneWidget);
     expect(find.text('Gürültü çıkarmadan biriktirirsin.'), findsOneWidget);
-    expect(find.text('"Acele etmeyen ama durmayan."'), findsOneWidget);
+    expect(find.text('“Acele etmeyen ama durmayan.”'), findsOneWidget);
+
+    // The page schedules the card offer; let it fire so no timer outlives the
+    // tree.
+    await tester.pumpAndSettle(const Duration(seconds: 2));
   });
 
   testWidgets('renders in both themes', (tester) async {
     for (final theme in [MottoTheme.light, MottoTheme.dark]) {
       await tester.pumpWidget(
-        MaterialApp(theme: theme, home: ResultPage(result: result)),
+        MaterialApp(
+          theme: theme,
+          home: ResultPage(result: result, offerCard: (_, _) async {}),
+        ),
       );
       expect(tester.takeException(), isNull);
+      await tester.pumpAndSettle(const Duration(seconds: 2));
     }
+  });
+
+  testWidgets('offers the card by itself, after the result has been read', (
+    tester,
+  ) async {
+    api.ArchetypeResponse? offered;
+    await tester.pumpWidget(
+      page(offerCard: (_, archetype) async => offered = archetype),
+    );
+
+    // Not immediately: the result is what was asked for, and a sheet that
+    // arrives on top of it reads as an interruption.
+    expect(offered, isNull);
+
+    await tester.pumpAndSettle(const Duration(seconds: 2));
+
+    // And not never: the share rate is the only thing this version measures,
+    // and a screen someone has to go looking for measures nothing.
+    expect(offered?.name, 'Sessiz İnşacı');
   });
 }

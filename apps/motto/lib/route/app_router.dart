@@ -13,5 +13,6 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: QuestionRoute.page),
     AutoRoute(page: CalculatingRoute.page),
     AutoRoute(page: ResultRoute.page),
+    AutoRoute(page: ShareCardRoute.page),
   ];
 }

@@ -10,11 +10,9 @@ class _MockTests extends Mock implements api.TestResourceApi {}
 
 class _MockMottos extends Mock implements api.MottoResourceApi {}
 
-/// spendSkip is required by the generated model even though the schema gives
-/// it a default, so it cannot be left out — and writing it inline trips a lint
-/// that is reading the schema rather than the constructor.
-api.AnswerSubmission _submission() =>
-    api.AnswerSubmission(answers: const {}, spendSkip: false);
+/// spendSkip has no default in the generated constructor, so it is named here;
+/// answers does, so it is not.
+api.AnswerSubmission _submission() => api.AnswerSubmission(spendSkip: false);
 
 api.QuestionResponse _questions(int count) => api.QuestionResponse(
   likertPoints: 5,

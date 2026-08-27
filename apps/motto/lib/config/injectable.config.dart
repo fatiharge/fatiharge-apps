@@ -16,6 +16,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i558;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:motto/config/storage_module.dart' as _i909;
+import 'package:motto/features/result/application/card_exporter.dart' as _i111;
 import 'package:motto/features/test/application/test_cubit.dart' as _i89;
 import 'package:motto/features/test/application/test_draft.dart' as _i547;
 import 'package:motto/infrastructure/api/api_clients.dart' as _i366;
@@ -43,6 +44,7 @@ extension GetItInjectableX on _i174.GetIt {
       () => storageModule.secureStorage,
     );
     gh.lazySingleton<_i76.AndroidId>(() => storageModule.androidId);
+    gh.lazySingleton<_i111.CardExporter>(() => const _i111.CardExporter());
     gh.lazySingleton<_i759.TokenStore>(
       () => _i759.TokenStore(gh<_i558.FlutterSecureStorage>()),
     );
