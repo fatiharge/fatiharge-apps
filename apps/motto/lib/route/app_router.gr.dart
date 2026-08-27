@@ -9,9 +9,11 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'dart:async' as _i9;
+
 import 'package:api_client_motto/api.dart' as _i8;
 import 'package:auto_route/auto_route.dart' as _i7;
-import 'package:flutter/material.dart' as _i9;
+import 'package:flutter/material.dart' as _i10;
 import 'package:motto/features/result/presentation/result_page.dart' as _i3;
 import 'package:motto/features/result/presentation/share_card_page.dart' as _i4;
 import 'package:motto/features/startup/presentation/startup_page.dart' as _i5;
@@ -56,11 +58,13 @@ class QuestionRoute extends _i7.PageRouteInfo<void> {
 class ResultRoute extends _i7.PageRouteInfo<ResultRouteArgs> {
   ResultRoute({
     required _i8.ResultResponse result,
-    _i9.Key? key,
+    _i9.Future<void> Function(_i10.BuildContext, _i8.ArchetypeResponse)?
+    offerCard,
+    _i10.Key? key,
     List<_i7.PageRouteInfo>? children,
   }) : super(
          ResultRoute.name,
-         args: ResultRouteArgs(result: result, key: key),
+         args: ResultRouteArgs(result: result, offerCard: offerCard, key: key),
          initialChildren: children,
        );
 
@@ -70,21 +74,28 @@ class ResultRoute extends _i7.PageRouteInfo<ResultRouteArgs> {
     name,
     builder: (data) {
       final args = data.argsAs<ResultRouteArgs>();
-      return _i3.ResultPage(result: args.result, key: args.key);
+      return _i3.ResultPage(
+        result: args.result,
+        offerCard: args.offerCard,
+        key: args.key,
+      );
     },
   );
 }
 
 class ResultRouteArgs {
-  const ResultRouteArgs({required this.result, this.key});
+  const ResultRouteArgs({required this.result, this.offerCard, this.key});
 
   final _i8.ResultResponse result;
 
-  final _i9.Key? key;
+  final _i9.Future<void> Function(_i10.BuildContext, _i8.ArchetypeResponse)?
+  offerCard;
+
+  final _i10.Key? key;
 
   @override
   String toString() {
-    return 'ResultRouteArgs{result: $result, key: $key}';
+    return 'ResultRouteArgs{result: $result, offerCard: $offerCard, key: $key}';
   }
 
   @override
@@ -103,7 +114,7 @@ class ResultRouteArgs {
 class ShareCardRoute extends _i7.PageRouteInfo<ShareCardRouteArgs> {
   ShareCardRoute({
     required _i8.ArchetypeResponse archetype,
-    _i9.Key? key,
+    _i10.Key? key,
     List<_i7.PageRouteInfo>? children,
   }) : super(
          ShareCardRoute.name,
@@ -127,7 +138,7 @@ class ShareCardRouteArgs {
 
   final _i8.ArchetypeResponse archetype;
 
-  final _i9.Key? key;
+  final _i10.Key? key;
 
   @override
   String toString() {

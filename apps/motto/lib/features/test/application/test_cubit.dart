@@ -5,12 +5,15 @@ import 'package:bloc/bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:motto/features/test/application/test_draft.dart';
 import 'package:motto/features/test/application/test_state.dart';
+import 'package:motto/infrastructure/analytics/analytics.dart';
+import 'package:motto/infrastructure/analytics/motto_event.dart';
 
 /// Drives the test: fetches the questions, collects the answers, and spends a
 /// use at the end.
 @injectable
 class TestCubit extends Cubit<TestState> {
-  TestCubit(this._tests, this._mottos, this._draft) : super(const TestState());
+  TestCubit(this._tests, this._mottos, this._draft, this._analytics)
+    : super(const TestState());
 
   /// Where the glimpse is offered. Early enough that it arrives before anyone
   /// gets bored, late enough that it is not noise: drop-off in a quiz runs a
@@ -20,6 +23,7 @@ class TestCubit extends Cubit<TestState> {
   final api.TestResourceApi _tests;
   final api.MottoResourceApi _mottos;
   final TestDraft _draft;
+  final Analytics _analytics;
 
   /// For call sites that cannot await — a widget constructor, a callback.
   /// Named rather than silently discarded so that "nobody is waiting for this"
@@ -47,6 +51,13 @@ class TestCubit extends Cubit<TestState> {
           index: _firstUnanswered(questions, resumed),
         ),
       );
+
+      // Only a test that starts from nothing is a start. A resumed one was
+      // counted when it began, and counting it again would make the funnel
+      // widen at the step where people drop out.
+      if (resumed.isEmpty) {
+        await _analytics.record(MottoEvent.testStart);
+      }
     } on Object {
       emit(
         state.copyWith(
@@ -67,6 +78,11 @@ class TestCubit extends Cubit<TestState> {
 
     final index = state.index + 1;
     emit(state.copyWith(answers: answers, index: index, clearGlimpse: true));
+
+    await _analytics.record(
+      MottoEvent.questionAnswered,
+      properties: {'n': '$index'},
+    );
 
     if (index == glimpseAfter) {
       await _peek(answers);
@@ -102,6 +118,13 @@ class TestCubit extends Cubit<TestState> {
       // successful claim could be resumed into a second charge.
       await _draft.clear();
       emit(state.copyWith(status: TestStatus.asking, result: result));
+
+      await _analytics.record(
+        MottoEvent.testComplete,
+        // The form names itself by its length, so a longer one later reports
+        // as a different type without anyone inventing a word for it.
+        properties: {'form_type': '${state.answers.length}_item'},
+      );
     } on api.ApiException catch (failure) {
       emit(
         state.copyWith(

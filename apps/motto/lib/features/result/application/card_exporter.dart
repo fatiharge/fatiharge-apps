@@ -36,12 +36,20 @@ class CardExporter {
   }
 
   /// Writes the image out and opens the system share sheet.
-  Future<void> share(Uint8List png, {required String archetypeName}) async {
+  ///
+  /// Returns what the platform says came of it. Android usually says
+  /// [ShareResultStatus.unavailable] — it cannot see which app was picked —
+  /// so the caller has to treat that as "probably shared" rather than as a
+  /// failure, and the difference is worth keeping visible.
+  Future<ShareResultStatus> share(
+    Uint8List png, {
+    required String archetypeName,
+  }) async {
     final directory = await getTemporaryDirectory();
     final file = File('${directory.path}/motto-karti.png');
     await file.writeAsBytes(png, flush: true);
 
-    await SharePlus.instance.share(
+    final result = await SharePlus.instance.share(
       ShareParams(
         files: [XFile(file.path, mimeType: 'image/png')],
         // No link and no hashtags: the picture is the message, and a caption
@@ -49,5 +57,7 @@ class CardExporter {
         text: archetypeName,
       ),
     );
+
+    return result.status;
   }
 }

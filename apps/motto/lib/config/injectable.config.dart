@@ -19,6 +19,8 @@ import 'package:motto/config/storage_module.dart' as _i909;
 import 'package:motto/features/result/application/card_exporter.dart' as _i111;
 import 'package:motto/features/test/application/test_cubit.dart' as _i89;
 import 'package:motto/features/test/application/test_draft.dart' as _i547;
+import 'package:motto/infrastructure/analytics/analytics.dart' as _i190;
+import 'package:motto/infrastructure/analytics/event_queue.dart' as _i98;
 import 'package:motto/infrastructure/api/api_clients.dart' as _i366;
 import 'package:motto/infrastructure/identity/device_identity.dart' as _i37;
 import 'package:motto/infrastructure/identity/device_identity_impl.dart'
@@ -51,6 +53,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i547.TestDraft>(
       () => _i547.TestDraft(gh<_i460.SharedPreferences>()),
     );
+    gh.lazySingleton<_i98.EventQueue>(
+      () => _i98.EventQueue(gh<_i460.SharedPreferences>()),
+    );
     gh.lazySingleton<_i37.DeviceIdentity>(
       () => _i917.DeviceIdentityImpl(
         gh<_i558.FlutterSecureStorage>(),
@@ -75,6 +80,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i66.EntitlementResourceApi>(
       () => apiClients.entitlements(gh<_i66.ApiClient>()),
     );
+    gh.lazySingleton<_i66.EventResourceApi>(
+      () => apiClients.events(gh<_i66.ApiClient>()),
+    );
     gh.lazySingleton<_i503.DeviceSession>(
       () => _i503.DeviceSession(
         gh<_i37.DeviceIdentity>(),
@@ -82,11 +90,15 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i759.TokenStore>(),
       ),
     );
+    gh.lazySingleton<_i190.Analytics>(
+      () => _i190.Analytics(gh<_i98.EventQueue>(), gh<_i66.EventResourceApi>()),
+    );
     gh.factory<_i89.TestCubit>(
       () => _i89.TestCubit(
         gh<_i66.TestResourceApi>(),
         gh<_i66.MottoResourceApi>(),
         gh<_i547.TestDraft>(),
+        gh<_i190.Analytics>(),
       ),
     );
     return this;

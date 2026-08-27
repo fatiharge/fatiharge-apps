@@ -4,11 +4,15 @@ import 'package:mocktail/mocktail.dart';
 import 'package:motto/features/test/application/test_cubit.dart';
 import 'package:motto/features/test/application/test_draft.dart';
 import 'package:motto/features/test/application/test_state.dart';
+import 'package:motto/infrastructure/analytics/analytics.dart';
+import 'package:motto/infrastructure/analytics/event_queue.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class _MockTests extends Mock implements api.TestResourceApi {}
 
 class _MockMottos extends Mock implements api.MottoResourceApi {}
+
+class _MockEvents extends Mock implements api.EventResourceApi {}
 
 /// spendSkip has no default in the generated constructor, so it is named here;
 /// answers does, so it is not.
@@ -25,16 +29,34 @@ void main() {
   late _MockTests tests;
   late _MockMottos mottos;
   late TestDraft draft;
+  late _MockEvents events;
   late TestCubit cubit;
 
   setUp(() async {
     SharedPreferences.setMockInitialValues({});
+    final preferences = await SharedPreferences.getInstance();
+
     tests = _MockTests();
     mottos = _MockMottos();
-    draft = TestDraft(await SharedPreferences.getInstance());
-    cubit = TestCubit(tests, mottos, draft);
+    events = _MockEvents();
+    draft = TestDraft(preferences);
 
     registerFallbackValue(_submission());
+    registerFallbackValue(api.EventBatch());
+
+    when(() => events.recordEvents(any())).thenAnswer(
+      (_) async => api.EventBatchResponse(accepted: 1, duplicates: 0),
+    );
+
+    // The real Analytics rather than a mock: nothing a screen does should get
+    // slower or fail because a measurement could not be sent, and the only way
+    // these tests can prove that is by having it in the way.
+    cubit = TestCubit(
+      tests,
+      mottos,
+      draft,
+      Analytics(EventQueue(preferences), events),
+    );
   });
 
   group('start', () {
