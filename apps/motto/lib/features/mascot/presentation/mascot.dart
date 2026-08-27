@@ -78,31 +78,40 @@ class _MascotState extends State<Mascot> with WidgetsBindingObserver {
   }
 
   Future<void> _load() async {
-    final RiveFile file;
+    final Artboard artboard;
+    final RiveMascotController mascot;
+
+    // Everything that can go wrong with the file is in here, including reading
+    // its inputs: a mascot that cannot be drawn is a mascot that is not there,
+    // and no screen depends on it enough to go down with it.
     try {
-      file = await widget.loadFile(Mascot.asset);
-    } on Object {
-      // A mascot that cannot be drawn is a mascot that is not there. Nothing
-      // on any screen depends on it enough to fail with it.
+      final file = await widget.loadFile(Mascot.asset);
+      artboard = file.mainArtboard;
+
+      final machine = StateMachineController.fromArtboard(
+        artboard,
+        Mascot.machine,
+      );
+      if (machine == null) {
+        throw StateError('mascot.riv has no "${Mascot.machine}" machine');
+      }
+      artboard.addController(machine);
+      mascot = RiveMascotController(machine);
+    } on Object catch (broken, trace) {
+      // Reported rather than swallowed: silence here is a mascot that quietly
+      // stops existing on some devices and nowhere else.
+      FlutterError.reportError(
+        FlutterErrorDetails(exception: broken, stack: trace, library: 'mascot'),
+      );
       return;
     }
-
-    final artboard = file.mainArtboard;
-    final machine = StateMachineController.fromArtboard(
-      artboard,
-      Mascot.machine,
-    );
-    if (machine == null) {
-      throw StateError('mascot.riv has no "${Mascot.machine}" state machine');
-    }
-    artboard.addController(machine);
 
     if (!mounted) return;
     setState(() {
       _artboard = artboard;
-      _mascot = RiveMascotController(machine);
+      _mascot = mascot;
     });
-    widget.onReady?.call(_mascot!);
+    widget.onReady?.call(mascot);
     _startTimers();
   }
 
