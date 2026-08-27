@@ -1,5 +1,5 @@
 # Deployed by the release workflow, which copies this file to the server and
-# rewrites MOTTO_IMAGE to the digest it just built. Everything environment
+# rewrites AUTH_IMAGE to the digest it just built. Everything environment
 # specific comes from the .env beside it, which lives only on the server.
 #
 # The proxy settings match what already runs on that box: the reverse-proxy
@@ -7,27 +7,27 @@
 # They stay overridable because the day they change, editing one .env beats
 # editing every service.
 
-name: motto-${MOTTO_ENV}
+name: auth-${AUTH_ENV}
 
 services:
   api:
-    image: ${MOTTO_IMAGE}
-    container_name: motto-${MOTTO_ENV}-api
+    image: ${AUTH_IMAGE}
+    container_name: auth-${AUTH_ENV}-api
     restart: unless-stopped
-    # No QUARKUS_PROFILE. A native image bakes its build-time configuration
-    # using the profile it was built under, so handing it a different one at
-    # runtime makes Quarkus warn that the two disagree — and it is right to.
-    # Promoting one image by digest means stage and production run the same
-    # artefact, so they differ by these values and by nothing else.
+    # No QUARKUS_PROFILE, for the reason in services/README.md: a native image
+    # bakes its build-time configuration under the profile it was built with, so
+    # stage and production run the same artefact and differ only by what is
+    # below.
     #
-    # MP_JWT_VERIFY_PUBLICKEY is auth's public key, and it must be set: this
-    # service has authenticated endpoints now. Empty is not the same as unset —
-    # Quarkus reads an empty value, fails to parse it and does not start.
+    # This service holds the private key. It is the only place that has one, and
+    # it never leaves the .env on the server — the pair in dev-keys/ is worthless
+    # and exists so a fresh clone can run its tests.
     environment:
-      QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://db:5432/motto
-      QUARKUS_DATASOURCE_USERNAME: motto
-      QUARKUS_DATASOURCE_PASSWORD: ${MOTTO_DB_PASSWORD}
-      MP_JWT_VERIFY_PUBLICKEY: ${MOTTO_JWT_PUBLIC_KEY}
+      QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://db:5432/auth
+      QUARKUS_DATASOURCE_USERNAME: auth
+      QUARKUS_DATASOURCE_PASSWORD: ${AUTH_DB_PASSWORD}
+      SMALLRYE_JWT_SIGN_KEY: ${AUTH_JWT_PRIVATE_KEY}
+      MP_JWT_VERIFY_PUBLICKEY: ${AUTH_JWT_PUBLIC_KEY}
     depends_on:
       db:
         condition: service_healthy
@@ -39,10 +39,10 @@ services:
       # Named explicitly: this container sits on two networks and Traefik would
       # otherwise have to guess which address to route to.
       - traefik.docker.network=${PROXY_NETWORK:-reverse-proxy}
-      - traefik.http.routers.motto-${MOTTO_ENV}.rule=Host(`${MOTTO_HOST}`)
-      - traefik.http.routers.motto-${MOTTO_ENV}.entrypoints=${TRAEFIK_ENTRYPOINT:-websecure}
-      - traefik.http.routers.motto-${MOTTO_ENV}.tls.certresolver=${TRAEFIK_CERTRESOLVER:-myresolver}
-      - traefik.http.services.motto-${MOTTO_ENV}.loadbalancer.server.port=8080
+      - traefik.http.routers.auth-${AUTH_ENV}.rule=Host(`${AUTH_HOST}`)
+      - traefik.http.routers.auth-${AUTH_ENV}.entrypoints=${TRAEFIK_ENTRYPOINT:-websecure}
+      - traefik.http.routers.auth-${AUTH_ENV}.tls.certresolver=${TRAEFIK_CERTRESOLVER:-myresolver}
+      - traefik.http.services.auth-${AUTH_ENV}.loadbalancer.server.port=8081
     logging:
       driver: json-file
       options:
@@ -51,12 +51,12 @@ services:
 
   db:
     image: postgres:18-alpine
-    container_name: motto-${MOTTO_ENV}-db
+    container_name: auth-${AUTH_ENV}-db
     restart: unless-stopped
     environment:
-      POSTGRES_DB: motto
-      POSTGRES_USER: motto
-      POSTGRES_PASSWORD: ${MOTTO_DB_PASSWORD}
+      POSTGRES_DB: auth
+      POSTGRES_USER: auth
+      POSTGRES_PASSWORD: ${AUTH_DB_PASSWORD}
     volumes:
       # A path rather than a named volume, so a backup is a path someone can
       # point pg_dump at without asking Docker where it put things.
@@ -66,9 +66,9 @@ services:
       # can work across a single mount, and they refuse to start when the mount
       # is one level deeper. The 16-era path is the one every older example
       # shows, which is exactly why this comment is here.
-      - /var/lib/motto-${MOTTO_ENV}-db:/var/lib/postgresql
+      - /var/lib/auth-${AUTH_ENV}-db:/var/lib/postgresql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U motto -d motto"]
+      test: ["CMD-SHELL", "pg_isready -U auth -d auth"]
       interval: 5s
       timeout: 3s
       retries: 12
