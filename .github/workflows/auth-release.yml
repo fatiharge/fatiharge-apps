@@ -1,4 +1,4 @@
-name: motto release
+name: auth release
 
 # Native build, image, stage deploy.
 #
@@ -20,14 +20,14 @@ on:
   push:
     branches: [main]
     paths:
-      - services/motto/**
+      - services/auth/**
       - services/core/**
       - services/pom.xml
-      - .github/workflows/motto-release.yml
+      - .github/workflows/auth-release.yml
   workflow_dispatch:
 
 concurrency:
-  group: motto-release
+  group: auth-release
   cancel-in-progress: false
 
 permissions:
@@ -77,7 +77,7 @@ jobs:
             -Dquarkus.native.container-build=true \
             -Dquarkus.native.builder-image=quay.io/quarkus/ubi9-quarkus-mandrel-builder-image:jdk-25 \
             -Dquarkus.native.additional-build-args=-march=compatibility \
-            -pl motto -am verify
+            -pl auth -am verify
 
       - name: Log in to ghcr.io
         env:
@@ -86,12 +86,12 @@ jobs:
 
       - name: Build and push the image
         id: push
-        working-directory: services/motto
+        working-directory: services/auth
         env:
           OWNER: ${{ github.repository_owner }}
         run: |
           set -euo pipefail
-          image="ghcr.io/${OWNER,,}/motto"
+          image="ghcr.io/${OWNER,,}/auth"
           tag="${image}:${GITHUB_SHA::12}"
 
           docker build -f src/main/docker/Dockerfile.native -t "$tag" .
@@ -110,8 +110,8 @@ jobs:
     uses: ./.github/workflows/service-deploy.yml
     with:
       image: ${{ needs.build.outputs.digest }}
-      environment: stage
-      compose-file: services/motto/deploy/compose.yaml
-      image-variable: MOTTO_IMAGE
-      required-variables: MOTTO_ENV MOTTO_HOST MOTTO_DB_PASSWORD MOTTO_JWT_PUBLIC_KEY
+      environment: auth-stage
+      compose-file: services/auth/deploy/compose.yaml
+      image-variable: AUTH_IMAGE
+      required-variables: AUTH_ENV AUTH_HOST AUTH_DB_PASSWORD AUTH_JWT_PRIVATE_KEY AUTH_JWT_PUBLIC_KEY
     secrets: inherit

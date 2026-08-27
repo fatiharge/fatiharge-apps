@@ -1,4 +1,4 @@
-name: motto promote
+name: auth promote
 
 # Sends an image that already exists to an environment. There is no build step
 # on purpose: rebuilding from the same source produces a different artefact — a
@@ -13,15 +13,15 @@ on:
   workflow_dispatch:
     inputs:
       digest:
-        description: "Image to deploy, e.g. ghcr.io/fatiharge/motto@sha256:… (the release run prints it)"
+        description: "Image to deploy, e.g. ghcr.io/fatiharge/auth@sha256:… (the release run prints it)"
         required: true
         type: string
       environment:
         description: Where to send it
         required: true
-        default: production
+        default: auth-production
         type: choice
-        options: [stage, production]
+        options: [auth-stage, auth-production]
 
 permissions:
   contents: read
@@ -33,7 +33,7 @@ jobs:
     with:
       image: ${{ inputs.digest }}
       environment: ${{ inputs.environment }}
-      compose-file: services/motto/deploy/compose.yaml
-      image-variable: MOTTO_IMAGE
-      required-variables: MOTTO_ENV MOTTO_HOST MOTTO_DB_PASSWORD MOTTO_JWT_PUBLIC_KEY
+      compose-file: services/auth/deploy/compose.yaml
+      image-variable: AUTH_IMAGE
+      required-variables: AUTH_ENV AUTH_HOST AUTH_DB_PASSWORD AUTH_JWT_PRIVATE_KEY AUTH_JWT_PUBLIC_KEY
     secrets: inherit
