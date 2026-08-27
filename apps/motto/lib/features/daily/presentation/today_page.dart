@@ -8,6 +8,8 @@ import 'package:motto/features/chain/application/chain_store.dart';
 import 'package:motto/features/daily/application/daily_cubit.dart';
 import 'package:motto/features/daily/application/daily_state.dart';
 import 'package:motto/features/daily/presentation/widgets/chain_calendar.dart';
+import 'package:motto/features/mascot/application/mascot_controller.dart';
+import 'package:motto/features/mascot/presentation/mascot.dart';
 import 'package:motto/route/app_router.gr.dart';
 
 /// One screen and one scroll. The calendar is under the day rather than behind
@@ -29,8 +31,15 @@ class TodayPage extends StatelessWidget {
   }
 }
 
-class _TodayView extends StatelessWidget {
+class _TodayView extends StatefulWidget {
   const _TodayView();
+
+  @override
+  State<_TodayView> createState() => _TodayViewState();
+}
+
+class _TodayViewState extends State<_TodayView> {
+  MascotController? _mascot;
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +64,13 @@ class _TodayView extends StatelessWidget {
             return ListView(
               padding: const EdgeInsets.fromLTRB(24, 16, 24, 40),
               children: [
+                Center(
+                  child: Mascot(
+                    onReady: (mascot) => _mascot = mascot,
+                    onGameOffered: () => _offerGame(context),
+                  ),
+                ),
+                const SizedBox(height: 16),
                 BlocBuilder<DailyCubit, DailyState>(
                   builder: (context, daily) =>
                       _day(context, daily, text, scheme),
@@ -210,9 +226,17 @@ class _TodayView extends StatelessWidget {
   Future<void> _mark(BuildContext context) async {
     final daily = context.read<DailyCubit>();
     await context.read<ChainCubit>().markToday();
+    _mascot?.celebrate();
     // The day moves with the chain, so marking it is what makes tomorrow's
     // content tomorrow's.
     await daily.load();
+  }
+
+  // TODO(fcetin): open the sorting game — T28. The mascot already offers it.
+  void _offerGame(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Oyun yakında.')),
+    );
   }
 
   /// The hour is asked for rather than assumed: a reminder at the wrong time

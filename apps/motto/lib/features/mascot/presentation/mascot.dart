@@ -1,0 +1,191 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:motto/features/mascot/application/mascot_controller.dart';
+import 'package:motto/features/mascot/application/rive_mascot_controller.dart';
+import 'package:rive/rive.dart';
+
+/// The mascot, and everything it does on its own.
+///
+/// Kept in its own [RepaintBoundary] and given its own ticker: it animates
+/// constantly, and without the boundary every frame of it would repaint the
+/// screen behind it.
+class Mascot extends StatefulWidget {
+  const Mascot({
+    this.size = 140,
+    this.onGameOffered,
+    this.onReady,
+    this.loadFile = RiveFile.asset,
+    super.key,
+  });
+
+  static const asset = 'assets/mascot/mascot.riv';
+  static const machine = 'Mascot';
+
+  final double size;
+
+  /// Called when someone accepts the question-mark bubble.
+  final VoidCallback? onGameOffered;
+
+  /// Hands the controller out so a screen can celebrate a finished task.
+  final void Function(MascotController)? onReady;
+
+  /// A seam, because rive's renderer needs a native library that a unit test
+  /// does not have — and "the file would not load" is exactly the case worth
+  /// proving does not break a screen.
+  final Future<RiveFile> Function(String) loadFile;
+
+  @override
+  State<Mascot> createState() => _MascotState();
+}
+
+class _MascotState extends State<Mascot> with WidgetsBindingObserver {
+  RiveMascotController? _mascot;
+  Artboard? _artboard;
+
+  Timer? _idle;
+  Timer? _decay;
+  DateTime _lastTouched = DateTime.now();
+  bool _offering = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    unawaited(_load());
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _idle?.cancel();
+    _decay?.cancel();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // A state machine running while the app is backgrounded is a frame budget
+    // spent on a screen nobody is looking at.
+    if (state == AppLifecycleState.resumed) {
+      _mascot?.resume();
+      _startTimers();
+    } else {
+      _mascot?.pause();
+      _idle?.cancel();
+      _decay?.cancel();
+    }
+  }
+
+  Future<void> _load() async {
+    final RiveFile file;
+    try {
+      file = await widget.loadFile(Mascot.asset);
+    } on Object {
+      // A mascot that cannot be drawn is a mascot that is not there. Nothing
+      // on any screen depends on it enough to fail with it.
+      return;
+    }
+
+    final artboard = file.mainArtboard;
+    final machine = StateMachineController.fromArtboard(
+      artboard,
+      Mascot.machine,
+    );
+    if (machine == null) {
+      throw StateError('mascot.riv has no "${Mascot.machine}" state machine');
+    }
+    artboard.addController(machine);
+
+    if (!mounted) return;
+    setState(() {
+      _artboard = artboard;
+      _mascot = RiveMascotController(machine);
+    });
+    widget.onReady?.call(_mascot!);
+    _startTimers();
+  }
+
+  void _startTimers() {
+    _idle?.cancel();
+    _decay?.cancel();
+
+    _idle = Timer.periodic(const Duration(seconds: 5), (_) => _whenIdle());
+    _decay = Timer.periodic(const Duration(seconds: 1), (_) => _calmDown());
+  }
+
+  void _whenIdle() {
+    final mascot = _mascot;
+    if (mascot == null) return;
+
+    final alone = DateTime.now().difference(_lastTouched);
+    if (alone > MascotRules.idleBeforeOffer && !_offering) {
+      _offering = true;
+      mascot.offerGame();
+      return;
+    }
+    if (alone > MascotRules.idleBeforeAttention) {
+      mascot.attention();
+    }
+  }
+
+  void _calmDown() {
+    final mascot = _mascot;
+    if (mascot == null || mascot.annoyance == 0) return;
+    mascot.annoyance = MascotRules.decayed(
+      mascot.annoyance,
+      const Duration(seconds: 1),
+    );
+  }
+
+  void _touched() {
+    _lastTouched = DateTime.now();
+    _offering = false;
+  }
+
+  void _onTap() {
+    final mascot = _mascot;
+    if (mascot == null) return;
+
+    // An accepted offer opens the game; a poke on top of an offer is not one.
+    if (_offering) {
+      _touched();
+      widget.onGameOffered?.call();
+      return;
+    }
+
+    _touched();
+    mascot.annoyance = mascot.annoyance + MascotRules.perPoke;
+    if (mascot.annoyance >= MascotRules.fleeAt) {
+      mascot.flee();
+      return;
+    }
+    mascot.poke();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final artboard = _artboard;
+    if (artboard == null) return SizedBox.square(dimension: widget.size);
+
+    return RepaintBoundary(
+      child: GestureDetector(
+        onTap: _onTap,
+        onPanStart: (_) {
+          _touched();
+          _mascot?.drag(held: true);
+        },
+        onPanUpdate: (details) => _mascot?.drag(
+          held: true,
+          x: details.localPosition.dx - widget.size / 2,
+          y: details.localPosition.dy - widget.size / 2,
+        ),
+        onPanEnd: (_) => _mascot?.drag(held: false),
+        child: SizedBox.square(
+          dimension: widget.size,
+          child: Rive(artboard: artboard),
+        ),
+      ),
+    );
+  }
+}

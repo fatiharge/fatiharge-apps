@@ -50,6 +50,10 @@ dependencies:
   # The home screen widget. It needs no permission, which is the whole point:
   # for someone who said no to notifications it is the only daily contact left.
   home_widget: ^0.9.0
+
+  # The mascot. Rive rather than Lottie because the behaviour is interactive —
+  # a state machine the file drives itself, rather than frames Dart has to push.
+  rive: ^0.13.20
   meta: any
 
 dev_dependencies:
@@ -66,3 +70,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/translations/
+    - assets/mascot/
