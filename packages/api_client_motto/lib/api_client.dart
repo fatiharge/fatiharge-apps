@@ -218,6 +218,10 @@ class ApiClient {
           return ContentBundle.fromJson(value);
         case 'DailySkeleton':
           return DailySkeleton.fromJson(value);
+        case 'DailyTask':
+          return DailyTask.fromJson(value);
+        case 'DailyTasks':
+          return DailyTasks.fromJson(value);
         case 'DeletionResponse':
           return DeletionResponse.fromJson(value);
         case 'EntitlementResponse':
@@ -240,6 +244,8 @@ class ApiClient {
           return MarkedDay.fromJson(value);
         case 'MottoContent':
           return MottoContent.fromJson(value);
+        case 'PeriodReport':
+          return PeriodReport.fromJson(value);
         case 'ProfileScores':
           return ProfileScores.fromJson(value);
         case 'Question':

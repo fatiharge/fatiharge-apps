@@ -161,6 +161,45 @@
           }
         }
       },
+      "DailyTask" : {
+        "type" : "object",
+        "required" : [ "id", "ordinal", "title", "detail", "done" ],
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "ordinal" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "title" : {
+            "type" : "string"
+          },
+          "detail" : {
+            "type" : "string"
+          },
+          "done" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "DailyTasks" : {
+        "type" : "object",
+        "required" : [ "day", "tasks" ],
+        "properties" : {
+          "day" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "tasks" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/DailyTask"
+            }
+          }
+        }
+      },
       "DeletionResponse" : {
         "type" : "object",
         "required" : [ "deleted", "kept" ],
@@ -342,6 +381,35 @@
           },
           "reminder" : {
             "type" : "string"
+          }
+        }
+      },
+      "PeriodReport" : {
+        "type" : "object",
+        "required" : [ "day", "daysMarked", "daysMadeUp", "tasksDone", "tasksOffered", "complete" ],
+        "properties" : {
+          "day" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "daysMarked" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "daysMadeUp" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "tasksDone" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "tasksOffered" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "complete" : {
+            "type" : "boolean"
           }
         }
       },
@@ -850,6 +918,117 @@
           }
         },
         "tags" : [ "Motto Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
+    "/v1/tasks" : {
+      "get" : {
+        "summary" : "The three things today asks for",
+        "operationId" : "dailyTasks",
+        "parameters" : [ {
+          "name" : "today",
+          "in" : "query",
+          "schema" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DailyTasks"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "tags" : [ "Task Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
+    "/v1/tasks/report" : {
+      "get" : {
+        "summary" : "What the period came to",
+        "operationId" : "periodReport",
+        "parameters" : [ {
+          "name" : "today",
+          "in" : "query",
+          "schema" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PeriodReport"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "tags" : [ "Task Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
+    "/v1/tasks/{id}/complete" : {
+      "post" : {
+        "summary" : "Tick a task off",
+        "operationId" : "completeTask",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }, {
+          "name" : "today",
+          "in" : "query",
+          "schema" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "tags" : [ "Task Resource" ],
         "security" : [ {
           "SecurityScheme" : [ ]
         } ]
