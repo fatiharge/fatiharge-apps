@@ -5,6 +5,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/features/result/presentation/widgets/basis_section.dart';
+import 'package:motto/features/support/presentation/widgets/rejection_sheet.dart';
 import 'package:motto/infrastructure/analytics/analytics.dart';
 import 'package:motto/infrastructure/analytics/motto_event.dart';
 import 'package:motto/route/app_router.gr.dart';
@@ -95,7 +96,15 @@ class _ResultPageState extends State<ResultPage> {
               onPressed: () => context.router.push(const ChainRoute()),
               child: const Text('Zincirini başlat'),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 8),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton(
+                onPressed: () => showRejectionSheet(context),
+                child: const Text('Bana uymadı'),
+              ),
+            ),
+            const SizedBox(height: 24),
             const BasisSection(),
           ],
         ),
