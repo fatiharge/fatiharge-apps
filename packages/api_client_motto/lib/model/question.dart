@@ -13,25 +13,13 @@ part of openapi.api;
 class Question {
   /// Returns a new [Question] instance.
   Question({
-    this.id,
-    this.text,
+    required this.id,
+    required this.text,
   });
 
-  ///
-  /// Please note: This property should have been non-nullable! Since the specification file
-  /// does not include a default value (using the "default:" property), however, the generated
-  /// source code must fall back to having a nullable type.
-  /// Consider adding a "default:" property in the specification file to hide this note.
-  ///
-  String? id;
+  String id;
 
-  ///
-  /// Please note: This property should have been non-nullable! Since the specification file
-  /// does not include a default value (using the "default:" property), however, the generated
-  /// source code must fall back to having a nullable type.
-  /// Consider adding a "default:" property in the specification file to hide this note.
-  ///
-  String? text;
+  String text;
 
   @override
   bool operator ==(Object other) =>
@@ -41,23 +29,15 @@ class Question {
   @override
   int get hashCode =>
       // ignore: unnecessary_parenthesis
-      (id == null ? 0 : id!.hashCode) + (text == null ? 0 : text!.hashCode);
+      (id.hashCode) + (text.hashCode);
 
   @override
   String toString() => 'Question[id=$id, text=$text]';
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (this.id != null) {
-      json[r'id'] = this.id;
-    } else {
-      json[r'id'] = null;
-    }
-    if (this.text != null) {
-      json[r'text'] = this.text;
-    } else {
-      json[r'text'] = null;
-    }
+    json[r'id'] = this.id;
+    json[r'text'] = this.text;
     return json;
   }
 
@@ -72,12 +52,20 @@ class Question {
       // Note 1: the values aren't checked for validity beyond being non-null.
       // Note 2: this code is stripped in release mode!
       assert(() {
+        assert(json.containsKey(r'id'),
+            'Required key "Question[id]" is missing from JSON.');
+        assert(json[r'id'] != null,
+            'Required key "Question[id]" has a null value in JSON.');
+        assert(json.containsKey(r'text'),
+            'Required key "Question[text]" is missing from JSON.');
+        assert(json[r'text'] != null,
+            'Required key "Question[text]" has a null value in JSON.');
         return true;
       }());
 
       return Question(
-        id: mapValueOfType<String>(json, r'id'),
-        text: mapValueOfType<String>(json, r'text'),
+        id: mapValueOfType<String>(json, r'id')!,
+        text: mapValueOfType<String>(json, r'text')!,
       );
     }
     return null;
@@ -133,5 +121,8 @@ class Question {
   }
 
   /// The list of required keys that must be present in a JSON.
-  static const requiredKeys = <String>{};
+  static const requiredKeys = <String>{
+    'id',
+    'text',
+  };
 }

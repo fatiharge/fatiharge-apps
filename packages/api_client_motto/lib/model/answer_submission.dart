@@ -14,18 +14,12 @@ class AnswerSubmission {
   /// Returns a new [AnswerSubmission] instance.
   AnswerSubmission({
     this.answers = const {},
-    this.spendSkip,
+    required this.spendSkip,
   });
 
   Map<String, int> answers;
 
-  ///
-  /// Please note: This property should have been non-nullable! Since the specification file
-  /// does not include a default value (using the "default:" property), however, the generated
-  /// source code must fall back to having a nullable type.
-  /// Consider adding a "default:" property in the specification file to hide this note.
-  ///
-  bool? spendSkip;
+  bool spendSkip;
 
   @override
   bool operator ==(Object other) =>
@@ -37,7 +31,7 @@ class AnswerSubmission {
   @override
   int get hashCode =>
       // ignore: unnecessary_parenthesis
-      (answers.hashCode) + (spendSkip == null ? 0 : spendSkip!.hashCode);
+      (answers.hashCode) + (spendSkip.hashCode);
 
   @override
   String toString() =>
@@ -46,11 +40,7 @@ class AnswerSubmission {
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
     json[r'answers'] = this.answers;
-    if (this.spendSkip != null) {
-      json[r'spendSkip'] = this.spendSkip;
-    } else {
-      json[r'spendSkip'] = null;
-    }
+    json[r'spendSkip'] = this.spendSkip;
     return json;
   }
 
@@ -65,12 +55,20 @@ class AnswerSubmission {
       // Note 1: the values aren't checked for validity beyond being non-null.
       // Note 2: this code is stripped in release mode!
       assert(() {
+        assert(json.containsKey(r'answers'),
+            'Required key "AnswerSubmission[answers]" is missing from JSON.');
+        assert(json[r'answers'] != null,
+            'Required key "AnswerSubmission[answers]" has a null value in JSON.');
+        assert(json.containsKey(r'spendSkip'),
+            'Required key "AnswerSubmission[spendSkip]" is missing from JSON.');
+        assert(json[r'spendSkip'] != null,
+            'Required key "AnswerSubmission[spendSkip]" has a null value in JSON.');
         return true;
       }());
 
       return AnswerSubmission(
-        answers: mapCastOfType<String, int>(json, r'answers') ?? const {},
-        spendSkip: mapValueOfType<bool>(json, r'spendSkip'),
+        answers: mapCastOfType<String, int>(json, r'answers')!,
+        spendSkip: mapValueOfType<bool>(json, r'spendSkip')!,
       );
     }
     return null;
@@ -126,5 +124,8 @@ class AnswerSubmission {
   }
 
   /// The list of required keys that must be present in a JSON.
-  static const requiredKeys = <String>{};
+  static const requiredKeys = <String>{
+    'answers',
+    'spendSkip',
+  };
 }

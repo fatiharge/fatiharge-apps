@@ -54,6 +54,14 @@ class DeletionResponse {
       // Note 1: the values aren't checked for validity beyond being non-null.
       // Note 2: this code is stripped in release mode!
       assert(() {
+        assert(json.containsKey(r'deleted'),
+            'Required key "DeletionResponse[deleted]" is missing from JSON.');
+        assert(json[r'deleted'] != null,
+            'Required key "DeletionResponse[deleted]" has a null value in JSON.');
+        assert(json.containsKey(r'kept'),
+            'Required key "DeletionResponse[kept]" is missing from JSON.');
+        assert(json[r'kept'] != null,
+            'Required key "DeletionResponse[kept]" has a null value in JSON.');
         return true;
       }());
 
@@ -121,5 +129,8 @@ class DeletionResponse {
   }
 
   /// The list of required keys that must be present in a JSON.
-  static const requiredKeys = <String>{};
+  static const requiredKeys = <String>{
+    'deleted',
+    'kept',
+  };
 }

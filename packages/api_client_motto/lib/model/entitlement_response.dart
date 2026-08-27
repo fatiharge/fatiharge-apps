@@ -13,19 +13,13 @@ part of openapi.api;
 class EntitlementResponse {
   /// Returns a new [EntitlementResponse] instance.
   EntitlementResponse({
-    this.remainingUses,
+    required this.remainingUses,
     this.cooldownUntil,
-    this.skipsLeft,
-    this.premium,
+    required this.skipsLeft,
+    required this.premium,
   });
 
-  ///
-  /// Please note: This property should have been non-nullable! Since the specification file
-  /// does not include a default value (using the "default:" property), however, the generated
-  /// source code must fall back to having a nullable type.
-  /// Consider adding a "default:" property in the specification file to hide this note.
-  ///
-  int? remainingUses;
+  int remainingUses;
 
   ///
   /// Please note: This property should have been non-nullable! Since the specification file
@@ -35,21 +29,9 @@ class EntitlementResponse {
   ///
   DateTime? cooldownUntil;
 
-  ///
-  /// Please note: This property should have been non-nullable! Since the specification file
-  /// does not include a default value (using the "default:" property), however, the generated
-  /// source code must fall back to having a nullable type.
-  /// Consider adding a "default:" property in the specification file to hide this note.
-  ///
-  int? skipsLeft;
+  int skipsLeft;
 
-  ///
-  /// Please note: This property should have been non-nullable! Since the specification file
-  /// does not include a default value (using the "default:" property), however, the generated
-  /// source code must fall back to having a nullable type.
-  /// Consider adding a "default:" property in the specification file to hide this note.
-  ///
-  bool? premium;
+  bool premium;
 
   @override
   bool operator ==(Object other) =>
@@ -63,10 +45,10 @@ class EntitlementResponse {
   @override
   int get hashCode =>
       // ignore: unnecessary_parenthesis
-      (remainingUses == null ? 0 : remainingUses!.hashCode) +
+      (remainingUses.hashCode) +
       (cooldownUntil == null ? 0 : cooldownUntil!.hashCode) +
-      (skipsLeft == null ? 0 : skipsLeft!.hashCode) +
-      (premium == null ? 0 : premium!.hashCode);
+      (skipsLeft.hashCode) +
+      (premium.hashCode);
 
   @override
   String toString() =>
@@ -74,26 +56,14 @@ class EntitlementResponse {
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (this.remainingUses != null) {
-      json[r'remainingUses'] = this.remainingUses;
-    } else {
-      json[r'remainingUses'] = null;
-    }
+    json[r'remainingUses'] = this.remainingUses;
     if (this.cooldownUntil != null) {
       json[r'cooldownUntil'] = this.cooldownUntil!.toUtc().toIso8601String();
     } else {
       json[r'cooldownUntil'] = null;
     }
-    if (this.skipsLeft != null) {
-      json[r'skipsLeft'] = this.skipsLeft;
-    } else {
-      json[r'skipsLeft'] = null;
-    }
-    if (this.premium != null) {
-      json[r'premium'] = this.premium;
-    } else {
-      json[r'premium'] = null;
-    }
+    json[r'skipsLeft'] = this.skipsLeft;
+    json[r'premium'] = this.premium;
     return json;
   }
 
@@ -108,14 +78,26 @@ class EntitlementResponse {
       // Note 1: the values aren't checked for validity beyond being non-null.
       // Note 2: this code is stripped in release mode!
       assert(() {
+        assert(json.containsKey(r'remainingUses'),
+            'Required key "EntitlementResponse[remainingUses]" is missing from JSON.');
+        assert(json[r'remainingUses'] != null,
+            'Required key "EntitlementResponse[remainingUses]" has a null value in JSON.');
+        assert(json.containsKey(r'skipsLeft'),
+            'Required key "EntitlementResponse[skipsLeft]" is missing from JSON.');
+        assert(json[r'skipsLeft'] != null,
+            'Required key "EntitlementResponse[skipsLeft]" has a null value in JSON.');
+        assert(json.containsKey(r'premium'),
+            'Required key "EntitlementResponse[premium]" is missing from JSON.');
+        assert(json[r'premium'] != null,
+            'Required key "EntitlementResponse[premium]" has a null value in JSON.');
         return true;
       }());
 
       return EntitlementResponse(
-        remainingUses: mapValueOfType<int>(json, r'remainingUses'),
+        remainingUses: mapValueOfType<int>(json, r'remainingUses')!,
         cooldownUntil: mapDateTime(json, r'cooldownUntil', r''),
-        skipsLeft: mapValueOfType<int>(json, r'skipsLeft'),
-        premium: mapValueOfType<bool>(json, r'premium'),
+        skipsLeft: mapValueOfType<int>(json, r'skipsLeft')!,
+        premium: mapValueOfType<bool>(json, r'premium')!,
       );
     }
     return null;
@@ -171,5 +153,9 @@ class EntitlementResponse {
   }
 
   /// The list of required keys that must be present in a JSON.
-  static const requiredKeys = <String>{};
+  static const requiredKeys = <String>{
+    'remainingUses',
+    'skipsLeft',
+    'premium',
+  };
 }

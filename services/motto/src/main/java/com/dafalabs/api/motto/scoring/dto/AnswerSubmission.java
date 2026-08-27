@@ -1,6 +1,7 @@
 package com.dafalabs.api.motto.scoring.dto;
 
 import java.util.Map;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 /**
  * @param answers item id to a point on the scale, 1 to likertPoints
@@ -8,4 +9,6 @@ import java.util.Map;
  *     because burning something scarce on someone who only wanted to look is
  *     not a thing to do quietly.
  */
-public record AnswerSubmission(Map<String, Integer> answers, boolean spendSkip) {}
+public record AnswerSubmission(
+    @Schema(required = true) Map<String, Integer> answers,
+    @Schema(required = true) boolean spendSkip) {}

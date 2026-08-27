@@ -4,6 +4,7 @@
     "schemas" : {
       "AnswerSubmission" : {
         "type" : "object",
+        "required" : [ "answers", "spendSkip" ],
         "properties" : {
           "answers" : {
             "type" : "object",
@@ -19,6 +20,7 @@
       },
       "ArchetypeResponse" : {
         "type" : "object",
+        "required" : [ "id", "name", "summary", "motto", "confident" ],
         "properties" : {
           "id" : {
             "type" : "string"
@@ -39,6 +41,7 @@
       },
       "DeletionResponse" : {
         "type" : "object",
+        "required" : [ "deleted", "kept" ],
         "properties" : {
           "deleted" : {
             "type" : "array",
@@ -56,6 +59,7 @@
       },
       "EntitlementResponse" : {
         "type" : "object",
+        "required" : [ "remainingUses", "skipsLeft", "premium" ],
         "properties" : {
           "remainingUses" : {
             "type" : "integer",
@@ -80,6 +84,7 @@
       },
       "Question" : {
         "type" : "object",
+        "required" : [ "id", "text" ],
         "properties" : {
           "id" : {
             "type" : "string"
@@ -91,6 +96,7 @@
       },
       "QuestionResponse" : {
         "type" : "object",
+        "required" : [ "likertPoints", "questions" ],
         "properties" : {
           "likertPoints" : {
             "type" : "integer",
@@ -106,6 +112,7 @@
       },
       "ResultResponse" : {
         "type" : "object",
+        "required" : [ "archetype", "entitlement" ],
         "properties" : {
           "archetype" : {
             "$ref" : "#/components/schemas/ArchetypeResponse"

@@ -13,17 +13,11 @@ part of openapi.api;
 class QuestionResponse {
   /// Returns a new [QuestionResponse] instance.
   QuestionResponse({
-    this.likertPoints,
+    required this.likertPoints,
     this.questions = const [],
   });
 
-  ///
-  /// Please note: This property should have been non-nullable! Since the specification file
-  /// does not include a default value (using the "default:" property), however, the generated
-  /// source code must fall back to having a nullable type.
-  /// Consider adding a "default:" property in the specification file to hide this note.
-  ///
-  int? likertPoints;
+  int likertPoints;
 
   List<Question> questions;
 
@@ -37,8 +31,7 @@ class QuestionResponse {
   @override
   int get hashCode =>
       // ignore: unnecessary_parenthesis
-      (likertPoints == null ? 0 : likertPoints!.hashCode) +
-      (questions.hashCode);
+      (likertPoints.hashCode) + (questions.hashCode);
 
   @override
   String toString() =>
@@ -46,11 +39,7 @@ class QuestionResponse {
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (this.likertPoints != null) {
-      json[r'likertPoints'] = this.likertPoints;
-    } else {
-      json[r'likertPoints'] = null;
-    }
+    json[r'likertPoints'] = this.likertPoints;
     json[r'questions'] = this.questions;
     return json;
   }
@@ -66,11 +55,19 @@ class QuestionResponse {
       // Note 1: the values aren't checked for validity beyond being non-null.
       // Note 2: this code is stripped in release mode!
       assert(() {
+        assert(json.containsKey(r'likertPoints'),
+            'Required key "QuestionResponse[likertPoints]" is missing from JSON.');
+        assert(json[r'likertPoints'] != null,
+            'Required key "QuestionResponse[likertPoints]" has a null value in JSON.');
+        assert(json.containsKey(r'questions'),
+            'Required key "QuestionResponse[questions]" is missing from JSON.');
+        assert(json[r'questions'] != null,
+            'Required key "QuestionResponse[questions]" has a null value in JSON.');
         return true;
       }());
 
       return QuestionResponse(
-        likertPoints: mapValueOfType<int>(json, r'likertPoints'),
+        likertPoints: mapValueOfType<int>(json, r'likertPoints')!,
         questions: Question.listFromJson(json[r'questions']),
       );
     }
@@ -127,5 +124,8 @@ class QuestionResponse {
   }
 
   /// The list of required keys that must be present in a JSON.
-  static const requiredKeys = <String>{};
+  static const requiredKeys = <String>{
+    'likertPoints',
+    'questions',
+  };
 }
