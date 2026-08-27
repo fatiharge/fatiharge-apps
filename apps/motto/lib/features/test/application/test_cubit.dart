@@ -21,10 +21,9 @@ class TestCubit extends Cubit<TestState> {
     this._lastArchetype,
   ) : super(const TestState());
 
-  /// Where the glimpse is offered. Early enough that it arrives before anyone
-  /// gets bored, late enough that it is not noise: drop-off in a quiz runs a
-  /// few percent per question, and this is the answer to it.
-  static const glimpseAfter = 5;
+  /// Where the glimpse is offered: past halfway, just before the point where
+  /// answering starts to feel like it is going nowhere.
+  static const glimpseAfter = 10;
 
   final api.TestResourceApi _tests;
   final api.MottoResourceApi _mottos;
