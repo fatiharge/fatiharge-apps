@@ -12,9 +12,7 @@ abstract class StorageModule {
   @lazySingleton
   AndroidId get androidId => const AndroidId();
 
-  /// Resolved during initialisation rather than on first use: it is the only
-  /// one of these that has to be awaited, and everything downstream of it is
-  /// synchronous.
+  /// Awaited here so everything downstream of it stays synchronous.
   @preResolve
   Future<SharedPreferences> get preferences => SharedPreferences.getInstance();
 }

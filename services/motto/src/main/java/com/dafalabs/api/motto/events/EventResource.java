@@ -12,12 +12,8 @@ import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 
 /**
- * Where the app reports what happened.
- *
- * <p>First-party on purpose: the eighteen names the product asks questions
- * about fit in one table, a third-party tool costs money above its free tier,
- * and this keeps the answers in the same database as everything they would be
- * compared against.
+ * Where the app reports what happened. First-party: eighteen names fit in one
+ * table, and the answers stay beside everything they would be compared against.
  */
 @Path("/v1/events")
 @Consumes(MediaType.APPLICATION_JSON)

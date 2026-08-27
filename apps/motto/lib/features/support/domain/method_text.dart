@@ -8,12 +8,9 @@ class MethodSection {
   final String body;
 }
 
-/// What the result is built on, and what it is not.
-///
-/// The limitations section is the point of this screen, not an appendix.
-/// Saying plainly that an archetype is an editorial reading rather than a
-/// scientific category is what keeps the app on the right side of App Review's
-/// 1.4.1 line — and it is also simply true.
+/// What the result is built on, and what it is not. The limitations section is
+/// the point of the screen, not an appendix: saying plainly that an archetype
+/// is an editorial reading is what keeps this on the right side of 1.4.1.
 const methodSections = <MethodSection>[
   MethodSection(
     'Ölçek',

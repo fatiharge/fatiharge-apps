@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:motto/theme/motto_palette.dart';
 
-/// Both themes, built from one scheme.
-///
-/// The app follows the system rather than choosing, which costs a second pass
-/// over every screen and one more golden per widget. It is worth it here: the
-/// screenshot people share is taken in whichever mode their phone is in, and a
-/// card that only works in one of them is a card half the audience will not
-/// post.
+/// Both themes from one scheme. Following the system costs a second pass over
+/// every screen, and is worth it: the screenshot people share is taken in
+/// whichever mode their phone is in.
 abstract final class MottoTheme {
   static ThemeData get light => _build(Brightness.light);
 

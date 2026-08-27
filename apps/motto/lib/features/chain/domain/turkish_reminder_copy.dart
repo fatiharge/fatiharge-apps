@@ -1,15 +1,10 @@
 import 'package:motto/features/chain/domain/reminder.dart';
 
-/// Everything a reminder says.
+/// Everything a reminder says. Lives here rather than in `content/` because a
+/// notification has to render with no network; that README points at this file.
 ///
-/// This file is the home for reminder copy — `content/README.md` points here
-/// rather than holding it, because a notification has to render with no
-/// network and nothing served can be relied on at the moment it fires.
-///
-/// The rule the whole file follows: **the chain is waiting for you, never how
-/// many days you have missed.** A reminder that keeps score is a reminder that
-/// gets the app deleted, and the one it would scold is the one already having
-/// a bad week.
+/// The rule: the chain is waiting for you, never how many days you have
+/// missed. One that keeps score gets the app deleted.
 ({String title, String body}) turkishReminderCopy(
   ReminderKind kind,
   int streak,
@@ -24,9 +19,8 @@ import 'package:motto/features/chain/domain/reminder.dart';
     title: 'Gün bitmeden',
     body: 'Bir dakika yeter, zincirin duruyor.',
   ),
-  // The offer is in the same notification as the news, on purpose: telling
-  // someone their chain stopped and then asking them to come back for the fix
-  // is two interruptions about one thing.
+  // The offer rides with the news: two notifications about one thing is two
+  // interruptions.
   ReminderKind.broken => (
     title: 'Zincirin durdu',
     body: 'Bir günlük telafi hakkın var. Kaldığın yerden devam edebilirsin.',

@@ -6,8 +6,6 @@ import 'package:motto/features/chain/application/chain_cubit.dart';
 import 'package:motto/features/chain/application/chain_state.dart';
 import 'package:motto/route/app_router.gr.dart';
 
-/// Where everything that is not the test lives.
-///
 /// With no account this screen and the ones it links to are the only channel
 /// there is. A complaint with no way out goes to the store review, and a
 /// one-star review cannot be answered with a fix.

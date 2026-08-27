@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 
-/// The five points, as five targets rather than a slider.
-///
-/// A slider looks tidier and is worse here: it asks for a gesture where a tap
-/// will do, twenty times, and it hides which point is selected until you let
-/// go. The labels sit at the ends only — labelling all five turns the screen
-/// into a form.
+/// Five targets rather than a slider: a slider asks for a gesture where a tap
+/// will do, twenty times. Labels at the ends only; labelling all five turns
+/// the screen into a form.
 class LikertScale extends StatelessWidget {
   const LikertScale({required this.onSelected, this.selected, super.key});
 

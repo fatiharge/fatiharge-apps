@@ -5,8 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/features/support/application/feedback_cubit.dart';
 
-/// The only way anyone can say anything to us.
-///
 /// The email field is optional and stays optional: making it required
 /// collapses the submission rate, and a complaint with nowhere to go goes to
 /// the store review instead.

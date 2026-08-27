@@ -4,8 +4,6 @@ import 'package:motto/config/injectable.dart';
 import 'package:motto/features/support/application/data_deletion.dart';
 import 'package:motto/features/support/domain/deletion_text.dart';
 
-/// The confirmation, which is the whole screen.
-///
 /// What survives is said before the button, not after: the usage counter stays
 /// and finding that out afterwards is how a deletion screen becomes a one-star
 /// review.

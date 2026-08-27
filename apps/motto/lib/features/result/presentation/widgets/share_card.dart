@@ -4,21 +4,15 @@ import 'package:motto/theme/motto_palette.dart';
 
 /// The thing people actually post.
 ///
-/// It does not follow the phone's theme, and that is the one place in this app
-/// where the system is ignored on purpose: an exported image is looked at in
-/// someone else's feed, not in the app. It has one deliberate look, and dark is
-/// the one that survives a story background.
-///
-/// 9:16, because that is the shape every feed wants. Typography carries the
-/// identity — there is no illustration to lean on, and a card that needs one is
-/// a card that ships late.
+/// The only place in this app that ignores the phone's theme: an exported
+/// image is looked at in someone else's feed, and dark is what survives a
+/// story background. 9:16 because that is the shape every feed wants.
 class ShareCard extends StatelessWidget {
   const ShareCard({required this.archetype, super.key});
 
   static const double aspectRatio = 9 / 16;
 
-  /// What the exported image is scaled to. Wide enough that the name stays
-  /// sharp when a feed re-compresses it.
+  /// Wide enough that the name stays sharp when a feed re-compresses it.
   static const exportWidth = 1080.0;
 
   final api.ArchetypeResponse archetype;
@@ -29,9 +23,8 @@ class ShareCard extends StatelessWidget {
       aspectRatio: aspectRatio,
       child: LayoutBuilder(
         builder: (context, constraints) {
-          // Everything scales from the card's own width, so the preview and the
-          // exported image are the same picture at two sizes rather than two
-          // layouts that drifted.
+          // Scaled from the card's own width, so the preview and the export
+          // are one picture at two sizes.
           final unit = constraints.maxWidth / 100;
 
           return ColoredBox(
@@ -98,8 +91,7 @@ class _Eyebrow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // "Kişilik envanteri", never "test sonucun" — guideline 1.4.1 is about
-    // which words were used, and this card is the most screenshotted of them.
+    // "Kişilik envanteri", never "test sonucun" — guideline 1.4.1.
     return Text(
       'KİŞİLİK ENVANTERİ',
       style: TextStyle(
@@ -119,8 +111,7 @@ class _Footer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // The app's name, not a QR code. A QR in a story is a thing nobody scans
-    // and everybody notices as an advert.
+    // Not a QR: nobody scans one in a story and everybody reads it as an ad.
     return Text(
       'motto',
       style: TextStyle(

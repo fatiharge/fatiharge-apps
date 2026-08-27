@@ -5,7 +5,6 @@ import 'package:meta/meta.dart';
 class FaqItem {
   const FaqItem(this.id, this.question, this.answer);
 
-  /// Stable, so another screen can link straight to one entry.
   final String id;
   final String question;
   final String answer;
@@ -13,15 +12,10 @@ class FaqItem {
 
 /// The questions, answered before they are asked.
 ///
-/// Static and offline on purpose, and this file is why: "verilerim kayboldu"
-/// is not a bug report, it is the natural consequence of an app with no
-/// accounts, and the moment someone has that thought they have no network
-/// guarantee and no patience. An FAQ that needs a server is an FAQ that is
-/// missing exactly when it is needed.
-///
-/// Copy rules: `content/README.md`. Every answer says the cost plainly rather
-/// than working around it — the complaint that gets a straight answer here is
-/// the one that does not become a one-star review.
+/// Offline on purpose: the moment someone wonders where their data went they
+/// have neither a network guarantee nor patience. Copy rules in
+/// `content/README.md` — every answer names the cost rather than working
+/// around it.
 const faq = <FaqItem>[
   FaqItem(
     'data_on_device',

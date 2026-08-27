@@ -1,7 +1,5 @@
 import 'package:meta/meta.dart';
 
-/// The content package, as the app actually uses it.
-///
 /// Parsed once from whatever the content repository handed over — downloaded,
 /// shipped or fresh — so that everything above this line works on typed values
 /// rather than on a map full of dynamic.
@@ -67,8 +65,6 @@ class DaySkeleton {
   final String title;
   final String body;
 
-  /// The minute. Doable while standing in a queue, or the chain breaks on the
-  /// first bad day.
   final String action;
 }
 

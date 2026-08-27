@@ -14,8 +14,8 @@ import java.util.UUID;
 @ApplicationScoped
 public class Events {
 
-  /// Long enough for a phone that was offline for a while, short enough that a
-  /// single request cannot be used to fill the table.
+  /// Long enough for a phone that was offline, short enough that one request
+  /// cannot fill the table.
   static final int maxBatch = 100;
 
   private final EventRepository repository;
@@ -45,9 +45,8 @@ public class Events {
     for (EventEntry entry : entries) {
       UUID clientId = parse(entry.clientId());
 
-      // Checked rather than caught: a constraint violation would roll the whole
-      // batch back, and one duplicate should not lose the ninety-nine events
-      // that arrived with it.
+      // A constraint violation would roll the whole batch back, and one
+      // duplicate should not lose the ninety-nine that arrived with it.
       if (repository.count("clientId", clientId) > 0) {
         duplicates++;
         continue;

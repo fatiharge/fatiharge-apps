@@ -2,9 +2,8 @@ import 'dart:developer' as developer;
 
 import 'package:bootstrap_kit/bootstrap_kit.dart';
 
-/// Crashes go to the local log for now. Once the events endpoint is wired this
-/// is the only file that changes — `runGuarded` and every call site stay as
-/// they are.
+/// Crashes go to the local log for now. Wiring the events endpoint changes
+/// only this file.
 class AppCrashListener extends CrashListener {
   @override
   Future<void> onCrash({

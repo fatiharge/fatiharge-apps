@@ -6,13 +6,9 @@ import java.util.Locale;
 /**
  * Turns a throwable into the response body.
  *
- * <p>Separate from the mappers on purpose: deciding what to return is pure, and
- * pure code can be tested without standing up a server.
- *
- * <p>Messages here are English and written for whoever is reading a log or a
- * failing request. They are never what a user sees: the client renders its own
- * text from {@code code}, which is why the code is the part that may not change
- * once something depends on it.
+ * <p>Separate from the mappers so it can be tested without a server. Messages
+ * are for whoever reads a log; the client renders its own text from {@code
+ * code}, which is why the code may not change once something depends on it.
  */
 final class ErrorPayloads {
 
@@ -35,12 +31,9 @@ final class ErrorPayloads {
   }
 
   /**
-   * For a failure the framework raised before any of our code ran — an unknown
-   * path, the wrong method, a body it would not parse.
-   *
-   * <p>The code is derived from the status rather than listed, so a status we
-   * have never thought about still arrives as something a client can branch on
-   * instead of as {@code internal_error}.
+   * For a failure the framework raised before any of our code ran. The code is
+   * derived from the status, so one nobody listed still arrives as something a
+   * client can branch on.
    */
   static ErrorPayload ofStatus(int status, String traceId) {
     if (status >= 500) {

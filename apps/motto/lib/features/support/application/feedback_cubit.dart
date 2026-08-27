@@ -22,7 +22,6 @@ class FeedbackState {
       FeedbackState(kind: kind ?? this.kind, status: status ?? this.status);
 }
 
-/// Sends what someone wrote.
 @injectable
 class FeedbackCubit extends Cubit<FeedbackState> {
   FeedbackCubit(this._feedback, this._context, this._analytics)

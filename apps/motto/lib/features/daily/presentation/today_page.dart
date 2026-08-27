@@ -10,8 +10,6 @@ import 'package:motto/features/daily/application/daily_state.dart';
 import 'package:motto/features/daily/presentation/widgets/chain_calendar.dart';
 import 'package:motto/route/app_router.gr.dart';
 
-/// Today: what to read, the chain, and the run so far.
-///
 /// One screen and one scroll. The calendar is under the day rather than behind
 /// a tab, because a tab is a place people do not go and the run is the part
 /// that makes the day worth marking.

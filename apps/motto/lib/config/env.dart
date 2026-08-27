@@ -1,6 +1,5 @@
 import 'package:flutter/services.dart';
 
-/// Which deployment this build talks to.
 enum MottoEnvironment {
   stage('https://authstage.dafalabs.com', 'https://mottostage.dafalabs.com'),
   production('https://auth.dafalabs.com', 'https://motto.dafalabs.com');
@@ -11,12 +10,9 @@ enum MottoEnvironment {
   final String mottoBaseUrl;
 }
 
-/// Where the app points, decided by the flavor it was built with.
-///
-/// Both platforms declare flavors, so a build without one does not happen by
-/// accident — and if it somehow does, this refuses to guess. Defaulting either
-/// way is worse than failing: pick production and a developer quietly writes to
-/// the real database, pick stage and a released build quietly does not.
+/// Where the app points. A build without a flavor refuses to guess: pick
+/// production and a developer writes to the real database, pick stage and a
+/// released build quietly does not.
 abstract final class Env {
   static MottoEnvironment get current => switch (appFlavor) {
     'stage' => MottoEnvironment.stage,
@@ -33,7 +29,7 @@ abstract final class Env {
 
   static bool get isStage => current == MottoEnvironment.stage;
 
-  /// The full policy, which the store listing needs as a public URL anyway.
-  /// The app opens this one rather than shipping a second copy of the text.
+  /// The store listing needs a public URL anyway; the app opens that one
+  /// rather than shipping a second copy.
   static const privacyPolicyUrl = 'https://dafalabs.com/motto/privacy';
 }

@@ -12,8 +12,6 @@ import 'package:motto/features/support/application/last_archetype.dart';
 import 'package:motto/infrastructure/analytics/analytics.dart';
 import 'package:motto/infrastructure/analytics/motto_event.dart';
 
-/// Builds today out of the package on the phone.
-///
 /// Assembled here rather than on the server, so a plane or a dead cell is not
 /// a reason to show nothing — which is the whole reason the package is
 /// downloaded whole rather than a day at a time.

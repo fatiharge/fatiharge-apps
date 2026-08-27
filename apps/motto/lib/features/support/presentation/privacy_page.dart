@@ -7,7 +7,6 @@ import 'package:motto/features/chain/application/chain_state.dart';
 import 'package:motto/features/support/domain/privacy_text.dart';
 import 'package:motto/route/app_router.gr.dart';
 
-/// What is kept, where, and the way out.
 @RoutePage()
 class PrivacyPage extends StatelessWidget {
   const PrivacyPage({super.key});

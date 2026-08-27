@@ -10,11 +10,9 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
  * @param message for people. Never carries internal detail on a 5xx.
  * @param traceId ties this response to the server log line that explains it.
  */
-// Registered by hand because nothing declares this type. Quarkus finds the
-// bodies to keep reflection metadata for by reading resource method
-// signatures, and this one is only ever built inside an exception mapper — so
-// in a native image Jackson had no metadata for it, serialisation failed, and
-// the caller got the framework's own text/plain error page with a 500 instead
-// of this contract. The JVM tests cannot see that; ErrorContractIT can.
+// Registered by hand: Quarkus finds bodies to keep reflection metadata for by
+// reading resource signatures, and this one is only built inside an exception
+// mapper. Without it the native image cannot serialise this and answers the
+// framework's own error page instead. ErrorContractIT is what catches it.
 @RegisterForReflection
 public record ErrorResponse(String code, String message, String traceId) {}

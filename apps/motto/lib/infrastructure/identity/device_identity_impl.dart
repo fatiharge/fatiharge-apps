@@ -28,21 +28,16 @@ class DeviceIdentityImpl implements DeviceIdentity {
     return sha256.convert(utf8.encode(identifier)).toString();
   }
 
-  /// The two platforms survive a reinstall in different ways.
-  ///
-  /// On Android `Settings.Secure.ANDROID_ID` outlives the app; secure storage
-  /// does not, because it is backed by preferences the system clears on
-  /// uninstall. On iOS the Keychain is the only thing that survives — the
-  /// documented "delete the app and get your free uses back" hole is closed
-  /// there and nowhere else.
+  /// Android: `Settings.Secure.ANDROID_ID` outlives the app, secure storage
+  /// does not. iOS: only the Keychain survives, which is the only place the
+  /// "reinstall for free uses" hole is closed.
   Future<String> _identifier() async {
     if (Platform.isAndroid) {
       final androidId = await _androidId.getId();
       if (androidId != null && androidId.isNotEmpty) {
         return androidId;
       }
-      // Rare, but real on some devices. A stored id is better than a new one
-      // per launch.
+      // Rare but real. A stored id beats a new one per launch.
     }
 
     final stored = await _storage.read(key: _key, iOptions: _iosOptions);
@@ -55,12 +50,9 @@ class DeviceIdentityImpl implements DeviceIdentity {
     return fresh;
   }
 
-  /// `first_unlock` because the app may be woken by a notification before the
-  /// phone has been unlocked since boot.
-  ///
-  /// Synchronizable is left off — its default — and that matters here: with it
-  /// on, a second device on the same Apple ID would be the same user and share
-  /// one set of free uses.
+  /// `first_unlock` because a notification can wake the app before the phone
+  /// has been unlocked since boot. Synchronizable stays off: with it on, a
+  /// second device on the same Apple ID would share one set of free uses.
   static const _iosOptions = IOSOptions(
     accessibility: KeychainAccessibility.first_unlock,
   );

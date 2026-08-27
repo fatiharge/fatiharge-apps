@@ -1,12 +1,5 @@
-/// Every question the product asks of itself, named once.
-///
-/// An enum rather than free strings because an event name misspelled in one
-/// call site is a hole in a funnel that nobody notices for weeks — the numbers
-/// still look plausible, they are just wrong.
-///
-/// MVP has one question above the others: does the result card get shared.
-/// [resultView], [shareSheetOpen] and [shareComplete] are that funnel; the rest
-/// exist so the answer can be read against how many people got that far.
+/// Every question the product asks of itself, named once. An enum because a
+/// misspelled event name is a hole in a funnel that still looks plausible.
 enum MottoEvent {
   appOpen('app_open'),
   testStart('test_start'),

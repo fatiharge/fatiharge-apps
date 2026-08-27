@@ -22,16 +22,13 @@ import java.util.List;
 /**
  * The words, read once at startup from the files the writers edit.
  *
- * <p>No tables and no seed migration, deliberately. The point of serving
- * content rather than shipping it inside the app is that a wording change does
- * not need a store release — and that is already true here, because the build
- * copies {@code content/} onto this service's classpath and a merge to main
- * deploys in minutes. Putting the same text in six tables would add a second
- * copy that can disagree with git, in exchange for the ability to edit copy by
- * hand in production, which is not something anyone should be able to do.
+ * <p>No tables and no seed migration: the build copies {@code content/} onto
+ * the classpath and a merge to main deploys in minutes, so a wording change
+ * already ships without a store release. Tables would add a second copy that
+ * can disagree with git.
  *
- * <p>The version is a hash of the files themselves. Nothing to bump, nothing to
- * forget to bump.
+ * <p>The version is a hash of the files, so there is nothing to remember to
+ * bump.
  */
 @ApplicationScoped
 public class ContentCatalog {
@@ -121,8 +118,6 @@ public class ContentCatalog {
     }
   }
 
-  /// Derived rather than declared: a version someone has to remember to bump
-  /// is a version that is wrong the first time somebody forgets.
   private String hashOfFiles() {
     try {
       MessageDigest digest = MessageDigest.getInstance("SHA-256");
