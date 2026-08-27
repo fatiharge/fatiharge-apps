@@ -222,6 +222,8 @@ class ApiClient {
           return DailyTask.fromJson(value);
         case 'DailyTasks':
           return DailyTasks.fromJson(value);
+        case 'DeepReport':
+          return DeepReport.fromJson(value);
         case 'DeletionResponse':
           return DeletionResponse.fromJson(value);
         case 'EntitlementResponse':
@@ -252,6 +254,8 @@ class ApiClient {
           return Question.fromJson(value);
         case 'QuestionResponse':
           return QuestionResponse.fromJson(value);
+        case 'ReportSection':
+          return ReportSection.fromJson(value);
         case 'ResultHistory':
           return ResultHistory.fromJson(value);
         case 'ResultResponse':

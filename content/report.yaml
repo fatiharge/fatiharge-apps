@@ -1,0 +1,37 @@
+# The deep report, in pieces.
+#
+# Seventy-two short parts rather than eight long texts, because the report is
+# assembled against the reader's profile — two people with the same archetype
+# read different reports, and that difference is what makes it worth paying
+# for.
+#
+# Only the parts that are the same for everybody are written here so far: the
+# four section skeletons and the limitations. The rest is generated as
+# placeholders and replaced one at a time, findable by
+# `select * from report_pieces where placeholder`.
+
+version: 1
+
+# The shape of every report. Each section takes a dimension reading and an
+# archetype fragment; the skeleton is what holds them together.
+sections:
+  - section: 1
+    tr: >-
+      Bu bölüm nasıl karar verdiğinle ilgili — neye bakarak, neyi atlayarak.
+  - section: 2
+    tr: >-
+      Bu bölüm başkalarıyla olan kısmın: yakınlaşma, mesafe ve ikisi arasında
+      durduğun yer.
+  - section: 3
+    tr: >-
+      Bu bölüm iş bittiğinde değil, ortasında ne yaptığınla ilgili.
+  - section: 4
+    tr: >-
+      Bu bölüm sana ne pahalıya mal olduğuyla ilgili. Güçlü tarafın bedava
+      gelmiyor.
+
+limitation:
+  tr: >-
+    Bu rapor yirmi maddelik bir envanterden çıkıyor. Kısa form kaba çözünürlük
+    verir, özbildirim yanlıdır, ve arketip sınırları keskin değildir. Buradaki
+    hiçbir cümle bir teşhis değil; beş boyutlu bir profilin okunabilir hâli.

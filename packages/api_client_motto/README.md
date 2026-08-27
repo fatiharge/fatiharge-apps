@@ -75,6 +75,7 @@ Class | Method | HTTP request | Description
 *EventResourceApi* | [**recordEvents**](doc//EventResourceApi.md#recordevents) | **POST** /v1/events | Report what happened
 *FeedbackResourceApi* | [**submitFeedback**](doc//FeedbackResourceApi.md#submitfeedback) | **POST** /v1/feedback | Send feedback
 *MottoResourceApi* | [**claimMotto**](doc//MottoResourceApi.md#claimmotto) | **POST** /v1/mottos/claim | Spend a use and get a motto
+*ReportResourceApi* | [**deepReport**](doc//ReportResourceApi.md#deepreport) | **GET** /v1/reports/{resultId} | The deep report for a result
 *ResultResourceApi* | [**resultHistory**](doc//ResultResourceApi.md#resulthistory) | **GET** /v1/me/results | Past results, newest first
 *TaskResourceApi* | [**completeTask**](doc//TaskResourceApi.md#completetask) | **POST** /v1/tasks/{id}/complete | Tick a task off
 *TaskResourceApi* | [**dailyTasks**](doc//TaskResourceApi.md#dailytasks) | **GET** /v1/tasks | The three things today asks for
@@ -94,6 +95,7 @@ Class | Method | HTTP request | Description
  - [DailySkeleton](doc//DailySkeleton.md)
  - [DailyTask](doc//DailyTask.md)
  - [DailyTasks](doc//DailyTasks.md)
+ - [DeepReport](doc//DeepReport.md)
  - [DeletionResponse](doc//DeletionResponse.md)
  - [EntitlementResponse](doc//EntitlementResponse.md)
  - [EventBatch](doc//EventBatch.md)
@@ -109,6 +111,7 @@ Class | Method | HTTP request | Description
  - [ProfileScores](doc//ProfileScores.md)
  - [Question](doc//Question.md)
  - [QuestionResponse](doc//QuestionResponse.md)
+ - [ReportSection](doc//ReportSection.md)
  - [ResultHistory](doc//ResultHistory.md)
  - [ResultResponse](doc//ResultResponse.md)
  - [ResultSummary](doc//ResultSummary.md)
