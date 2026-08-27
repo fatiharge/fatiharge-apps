@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bootstrap_kit/bootstrap_kit.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/features/content/application/content_repository.dart';
+import 'package:motto/features/onboarding/application/onboarding_store.dart';
 import 'package:motto/features/support/application/last_archetype.dart';
 import 'package:motto/infrastructure/analytics/analytics.dart';
 import 'package:motto/infrastructure/analytics/motto_event.dart';
@@ -41,15 +42,20 @@ class BootstrapAdapter implements BootstrapPort {
     ),
   ];
 
-  /// Somebody who already has a result lands on today, not on a welcome screen
-  /// inviting them to do what they have done.
+  /// Three doors, and which one opens says what the app thinks of you: never
+  /// been here, been here and has no result, or has one.
   @override
   void bootstrapFinished() {
-    final started = getIt<LastArchetype>().id != null;
-    unawaited(
-      getIt<AppRouter>().replaceAll([
-        if (started) const TodayRoute() else const WelcomeRoute(),
-      ]),
-    );
+    final router = getIt<AppRouter>();
+
+    if (!getIt<OnboardingStore>().seen) {
+      unawaited(router.replaceAll([OnboardingRoute()]));
+      return;
+    }
+    if (getIt<LastArchetype>().id == null) {
+      unawaited(router.replaceAll([const WelcomeRoute()]));
+      return;
+    }
+    unawaited(router.replaceAll([const ShellRoute()]));
   }
 }

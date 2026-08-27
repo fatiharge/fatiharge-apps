@@ -93,7 +93,7 @@ class _ResultPageState extends State<ResultPage> {
             // something. A chain proposed on a later screen is a chain
             // proposed to someone who has already put the phone down.
             OutlinedButton(
-              onPressed: () => context.router.push(const TodayRoute()),
+              onPressed: () => context.router.push(const ShellRoute()),
               child: const Text('Zincirini başlat'),
             ),
             const SizedBox(height: 8),
