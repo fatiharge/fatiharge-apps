@@ -66,13 +66,12 @@ class RiveMascotController implements MascotController {
 }
 
 extension MascotInputs on StateMachineController {
-  /// The inputs are part of the contract with whoever made the file; a missing
-  /// one is a broken asset, not a runtime condition to handle. Rive's own
-  /// `findSMI` answers null and would leave that to be discovered on the first
-  /// tap.
-  T requireInput<T extends SMIInput<dynamic>>(String name) {
-    final input = findInput<dynamic>(name);
-    if (input is! T) {
+  /// `findSMI` matches the concrete input type; `findInput` matches the value
+  /// behind it and answers nothing at all for `dynamic`. Using the wrong one
+  /// looked like a file with no inputs.
+  T requireInput<T>(String name) {
+    final input = findSMI<T>(name);
+    if (input == null) {
       throw StateError('mascot.riv has no $T named "$name"');
     }
     return input;

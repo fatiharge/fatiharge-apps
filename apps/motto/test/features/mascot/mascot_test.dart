@@ -89,8 +89,10 @@ void main() {
       );
       await tester.pump();
 
-      // Nothing on any screen depends on the mascot enough to fail with it.
-      expect(tester.takeException(), isNull);
+      // Reported, so a mascot that quietly stops existing on some devices is
+      // not something anyone has to notice by eye — and the screen it sits on
+      // carries on regardless.
+      expect(tester.takeException(), isA<StateError>());
       expect(find.byType(Mascot), findsOneWidget);
     });
   });
