@@ -204,10 +204,20 @@ class ApiClient {
           return valueString == 'true' || valueString == '1';
         case 'DateTime':
           return value is DateTime ? value : DateTime.tryParse(value);
+        case 'AnswerSubmission':
+          return AnswerSubmission.fromJson(value);
+        case 'ArchetypeResponse':
+          return ArchetypeResponse.fromJson(value);
         case 'DeletionResponse':
           return DeletionResponse.fromJson(value);
         case 'EntitlementResponse':
           return EntitlementResponse.fromJson(value);
+        case 'Question':
+          return Question.fromJson(value);
+        case 'QuestionResponse':
+          return QuestionResponse.fromJson(value);
+        case 'ResultResponse':
+          return ResultResponse.fromJson(value);
         default:
           dynamic match;
           if (value is List &&

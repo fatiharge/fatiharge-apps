@@ -29,9 +29,16 @@ part 'auth/http_basic_auth.dart';
 part 'auth/http_bearer_auth.dart';
 
 part 'api/entitlement_resource_api.dart';
+part 'api/motto_resource_api.dart';
+part 'api/test_resource_api.dart';
 
+part 'model/answer_submission.dart';
+part 'model/archetype_response.dart';
 part 'model/deletion_response.dart';
 part 'model/entitlement_response.dart';
+part 'model/question.dart';
+part 'model/question_response.dart';
+part 'model/result_response.dart';
 
 /// An [ApiClient] instance that uses the default values obtained from
 /// the OpenAPI specification file.
