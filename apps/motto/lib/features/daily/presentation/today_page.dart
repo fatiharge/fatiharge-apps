@@ -44,15 +44,9 @@ class _TodayViewState extends State<_TodayView> {
     final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Bugün'),
-        actions: [
-          IconButton(
-            onPressed: () => context.router.push(const SettingsRoute()),
-            icon: const Icon(Icons.settings_outlined),
-          ),
-        ],
-      ),
+      // No settings action: settings is a tab now, and two ways to the same
+      // screen is one more thing to keep in step.
+      appBar: AppBar(title: const Text('Bugün')),
       body: SafeArea(
         child: BlocBuilder<ChainCubit, ChainState>(
           builder: (context, chainState) {
@@ -61,6 +55,15 @@ class _TodayViewState extends State<_TodayView> {
             return ListView(
               padding: const EdgeInsets.fromLTRB(24, 16, 24, 40),
               children: [
+                BlocBuilder<DailyCubit, DailyState>(
+                  builder: (context, daily) => _standing(
+                    context,
+                    hasResult: daily.status != DailyStatus.noResultYet,
+                    chainStarted: chainState.chain.started,
+                    streak: chainState.streakToday(now),
+                  ),
+                ),
+                const SizedBox(height: 24),
                 BlocBuilder<DailyCubit, DailyState>(
                   builder: (context, daily) =>
                       _day(context, daily, text, scheme),
@@ -142,6 +145,29 @@ class _TodayViewState extends State<_TodayView> {
           },
         ),
       ),
+    );
+  }
+
+  /// Where someone stands, in two chips. Without it the screen is a wall of
+  /// text that reads the same on day one and day thirty.
+  Widget _standing(
+    BuildContext context, {
+    required bool hasResult,
+    required bool chainStarted,
+    required int streak,
+  }) {
+    return Wrap(
+      spacing: 8,
+      children: [
+        _Chip(
+          done: hasResult,
+          label: hasResult ? 'Envanter tamam' : 'Envanter bekliyor',
+        ),
+        _Chip(
+          done: chainStarted,
+          label: chainStarted ? '$streak günlük zincir' : 'Zincir başlamadı',
+        ),
+      ],
     );
   }
 
@@ -235,5 +261,44 @@ class _TodayViewState extends State<_TodayView> {
     if (picked == null) return;
 
     await cubit.start(hour: picked.hour);
+  }
+}
+
+class _Chip extends StatelessWidget {
+  const _Chip({required this.done, required this.label});
+
+  final bool done;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: done
+            ? scheme.primaryContainer
+            : scheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            done ? Icons.check_circle : Icons.radio_button_unchecked,
+            size: 16,
+            color: done ? scheme.onPrimaryContainer : scheme.onSurfaceVariant,
+          ),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+              color: done ? scheme.onPrimaryContainer : scheme.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

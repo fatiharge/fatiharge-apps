@@ -27,6 +27,8 @@ import 'package:motto/features/content/application/content_repository.dart'
 import 'package:motto/features/content/application/content_store.dart' as _i432;
 import 'package:motto/features/daily/application/daily_cubit.dart' as _i1068;
 import 'package:motto/features/daily/application/daily_widget.dart' as _i113;
+import 'package:motto/features/onboarding/application/onboarding_store.dart'
+    as _i624;
 import 'package:motto/features/result/application/card_exporter.dart' as _i111;
 import 'package:motto/features/support/application/data_deletion.dart' as _i729;
 import 'package:motto/features/support/application/feedback_cubit.dart'
@@ -76,6 +78,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i432.ContentStore>(
       () => _i432.ContentStore(gh<_i460.SharedPreferences>()),
+    );
+    gh.lazySingleton<_i624.OnboardingStore>(
+      () => _i624.OnboardingStore(gh<_i460.SharedPreferences>()),
     );
     gh.lazySingleton<_i1019.LastArchetype>(
       () => _i1019.LastArchetype(gh<_i460.SharedPreferences>()),
