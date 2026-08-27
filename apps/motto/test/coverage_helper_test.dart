@@ -14,6 +14,7 @@ import 'package:motto/config/env.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/config/storage_module.dart';
 import 'package:motto/features/chain/application/chain_cubit.dart';
+import 'package:motto/features/chain/application/chain_repository.dart';
 import 'package:motto/features/chain/application/chain_state.dart';
 import 'package:motto/features/chain/application/chain_store.dart';
 import 'package:motto/features/chain/application/reminder_scheduler.dart';
