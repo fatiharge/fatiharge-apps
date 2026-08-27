@@ -46,6 +46,10 @@ dependencies:
   # Attached to every piece of feedback, so nobody has to be asked "which
   # version?" — the answer people give is usually wrong anyway.
   package_info_plus: ^10.2.1
+
+  # The home screen widget. It needs no permission, which is the whole point:
+  # for someone who said no to notifications it is the only daily contact left.
+  home_widget: ^0.9.0
   meta: any
 
 dev_dependencies:
