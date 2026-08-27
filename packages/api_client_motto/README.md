@@ -47,13 +47,14 @@ import 'package:api_client_motto/api.dart';
 // String yourTokenGeneratorFunction() { ... }
 //defaultApiClient.getAuthentication<HttpBearerAuth>('SecurityScheme').setAccessToken(yourTokenGeneratorFunction);
 
-final api_instance = EntitlementResourceApi();
+final api_instance = ContentResourceApi();
+final ifNoneMatch = ifNoneMatch_example; // String | 
 
 try {
-    final result = api_instance.currentEntitlement();
+    final result = api_instance.contentBundle(ifNoneMatch);
     print(result);
 } catch (e) {
-    print('Exception when calling EntitlementResourceApi->currentEntitlement: $e\n');
+    print('Exception when calling ContentResourceApi->contentBundle: $e\n');
 }
 
 ```
@@ -64,6 +65,7 @@ All URIs are relative to *http://localhost*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
+*ContentResourceApi* | [**contentBundle**](doc//ContentResourceApi.md#contentbundle) | **GET** /v1/content | The content package
 *EntitlementResourceApi* | [**currentEntitlement**](doc//EntitlementResourceApi.md#currententitlement) | **GET** /v1/entitlements | What this device may do now
 *EntitlementResourceApi* | [**deleteMyData**](doc//EntitlementResourceApi.md#deletemydata) | **DELETE** /v1/me | Delete this device's data
 *EventResourceApi* | [**recordEvents**](doc//EventResourceApi.md#recordevents) | **POST** /v1/events | Report what happened
@@ -76,7 +78,11 @@ Class | Method | HTTP request | Description
 ## Documentation For Models
 
  - [AnswerSubmission](doc//AnswerSubmission.md)
+ - [ArchetypeContent](doc//ArchetypeContent.md)
  - [ArchetypeResponse](doc//ArchetypeResponse.md)
+ - [Connector](doc//Connector.md)
+ - [ContentBundle](doc//ContentBundle.md)
+ - [DailySkeleton](doc//DailySkeleton.md)
  - [DeletionResponse](doc//DeletionResponse.md)
  - [EntitlementResponse](doc//EntitlementResponse.md)
  - [EventBatch](doc//EventBatch.md)
@@ -84,6 +90,8 @@ Class | Method | HTTP request | Description
  - [EventEntry](doc//EventEntry.md)
  - [FeedbackKind](doc//FeedbackKind.md)
  - [FeedbackRequest](doc//FeedbackRequest.md)
+ - [Fragment](doc//Fragment.md)
+ - [MottoContent](doc//MottoContent.md)
  - [Question](doc//Question.md)
  - [QuestionResponse](doc//QuestionResponse.md)
  - [ResultResponse](doc//ResultResponse.md)

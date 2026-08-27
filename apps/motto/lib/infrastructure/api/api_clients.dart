@@ -49,4 +49,8 @@ abstract class ApiClients {
   @lazySingleton
   motto.FeedbackResourceApi feedback(motto.ApiClient client) =>
       motto.FeedbackResourceApi(client);
+
+  @lazySingleton
+  motto.ContentResourceApi content(motto.ApiClient client) =>
+      motto.ContentResourceApi(client);
 }
