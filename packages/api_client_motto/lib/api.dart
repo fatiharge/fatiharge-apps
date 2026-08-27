@@ -53,6 +53,7 @@ part 'model/feedback_kind.dart';
 part 'model/feedback_request.dart';
 part 'model/fragment.dart';
 part 'model/mark_day_request.dart';
+part 'model/marked_day.dart';
 part 'model/motto_content.dart';
 part 'model/profile_scores.dart';
 part 'model/question.dart';

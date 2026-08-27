@@ -236,6 +236,8 @@ class ApiClient {
           return Fragment.fromJson(value);
         case 'MarkDayRequest':
           return MarkDayRequest.fromJson(value);
+        case 'MarkedDay':
+          return MarkedDay.fromJson(value);
         case 'MottoContent':
           return MottoContent.fromJson(value);
         case 'ProfileScores':

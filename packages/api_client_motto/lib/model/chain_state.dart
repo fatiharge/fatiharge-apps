@@ -33,7 +33,7 @@ class ChainState {
   ///
   DateTime? startedOn;
 
-  List<DateTime> markedDays;
+  List<MarkedDay> markedDays;
 
   ///
   /// Please note: This property should have been non-nullable! Since the specification file
@@ -142,7 +142,7 @@ class ChainState {
       return ChainState(
         started: mapValueOfType<bool>(json, r'started')!,
         startedOn: mapDateTime(json, r'startedOn', r''),
-        markedDays: DateTime.listFromJson(json[r'markedDays']),
+        markedDays: MarkedDay.listFromJson(json[r'markedDays']),
         freezeUsedOn: mapDateTime(json, r'freezeUsedOn', r''),
         streak: mapValueOfType<int>(json, r'streak')!,
         markedToday: mapValueOfType<bool>(json, r'markedToday')!,

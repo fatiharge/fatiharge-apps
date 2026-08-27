@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meta/meta.dart';
+import 'package:motto/features/chain/application/chain_repository.dart';
 import 'package:motto/features/chain/application/chain_state.dart';
 import 'package:motto/features/chain/application/chain_store.dart';
 import 'package:motto/features/chain/application/reminder_scheduler.dart';
@@ -17,9 +18,10 @@ import 'package:motto/infrastructure/analytics/motto_event.dart';
 /// already in the system cannot check anything when it fires.
 @injectable
 class ChainCubit extends Cubit<ChainState> {
-  ChainCubit(this._store, this._scheduler, this._analytics)
+  ChainCubit(this._chains, this._store, this._scheduler, this._analytics)
     : super(const ChainState());
 
+  final ChainRepository _chains;
   final ChainStore _store;
   final ReminderScheduler _scheduler;
   final Analytics _analytics;
@@ -27,17 +29,20 @@ class ChainCubit extends Cubit<ChainState> {
   @visibleForTesting
   DateTime Function() now = DateTime.now;
 
-  /// A chain that broke while the app was closed is discovered here.
+  /// The cache first so the screen has something to draw, then the server.
   Future<void> load() async {
     emit(
       state.copyWith(
-        chain: _store.read(),
+        chain: _chains.cached,
         hour: _store.hour,
-        permissionAsked: _store.read().started,
+        permissionAsked: _chains.cached.started,
       ),
     );
 
-    if (state.chain.started) {
+    final chain = await _chains.load(now());
+    emit(state.copyWith(chain: chain, permissionAsked: chain.started));
+
+    if (chain.started) {
       if (state.isBroken(now())) {
         await _analytics.record(MottoEvent.chainBroken);
       }
@@ -49,8 +54,7 @@ class ChainCubit extends Cubit<ChainState> {
   /// and this is the first moment the app has earned it. Saying no does not
   /// stop the chain.
   Future<void> start({required int hour}) async {
-    final chain = _store.read().start(now());
-    await _store.write(chain);
+    final chain = await _chains.start(now());
     await _store.setHour(hour);
 
     final allowed = await _scheduler.requestPermission();
@@ -74,8 +78,7 @@ class ChainCubit extends Cubit<ChainState> {
   Future<void> markToday() async {
     if (state.markedToday(now())) return;
 
-    final chain = state.chain.mark(now());
-    await _store.write(chain);
+    final chain = await _chains.mark(now(), now());
     await _store.resetUnopened();
     emit(state.copyWith(chain: chain));
 
@@ -89,9 +92,11 @@ class ChainCubit extends Cubit<ChainState> {
   Future<void> useFreeze() async {
     if (!state.canFreeze(now())) return;
 
-    final chain = state.chain.freeze(now());
-    await _store.write(chain);
-    emit(state.copyWith(chain: chain));
+    try {
+      emit(state.copyWith(chain: await _chains.freeze(now())));
+    } on Object {
+      return;
+    }
     await _reschedule();
   }
 

@@ -2,6 +2,7 @@ package com.dafalabs.api.motto.chain;
 
 import com.dafalabs.api.core.error.CustomRuntimeException;
 import com.dafalabs.api.motto.chain.dto.ChainState;
+import com.dafalabs.api.motto.chain.dto.MarkedDay;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import java.time.Clock;
@@ -94,10 +95,16 @@ public class Chains {
     }
 
     Set<LocalDate> marked = markedDays(deviceId);
+    List<MarkedDay> reported =
+        days.forDevice(deviceId).stream()
+            .sorted(java.util.Comparator.comparing(ChainDay::day))
+            .map(day -> new MarkedDay(day.day(), day.madeUp()))
+            .toList();
+
     return new ChainState(
         true,
         chain.startedOn(),
-        List.copyOf(marked),
+        reported,
         chain.freezeUsedOn(),
         ChainRules.streakOn(marked, today),
         marked.contains(today),

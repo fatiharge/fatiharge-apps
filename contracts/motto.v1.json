@@ -70,9 +70,7 @@
           "markedDays" : {
             "type" : "array",
             "items" : {
-              "type" : "string",
-              "format" : "date",
-              "examples" : [ "2022-03-10" ]
+              "$ref" : "#/components/schemas/MarkedDay"
             }
           },
           "freezeUsedOn" : {
@@ -310,6 +308,19 @@
           },
           "today" : {
             "$ref" : "#/components/schemas/LocalDate"
+          }
+        }
+      },
+      "MarkedDay" : {
+        "type" : "object",
+        "required" : [ "day", "madeUp" ],
+        "properties" : {
+          "day" : {
+            "type" : "string",
+            "$ref" : "#/components/schemas/LocalDate"
+          },
+          "madeUp" : {
+            "type" : "boolean"
           }
         }
       },

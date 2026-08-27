@@ -15,7 +15,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 public record ChainState(
     @Schema(required = true) boolean started,
     LocalDate startedOn,
-    @Schema(required = true) List<LocalDate> markedDays,
+    @Schema(required = true) List<MarkedDay> markedDays,
     LocalDate freezeUsedOn,
     @Schema(required = true) int streak,
     @Schema(required = true) boolean markedToday,

@@ -24,6 +24,7 @@ doc/FeedbackRequest.md
 doc/FeedbackResourceApi.md
 doc/Fragment.md
 doc/MarkDayRequest.md
+doc/MarkedDay.md
 doc/MottoContent.md
 doc/MottoResourceApi.md
 doc/ProfileScores.md
@@ -68,6 +69,7 @@ lib/model/feedback_kind.dart
 lib/model/feedback_request.dart
 lib/model/fragment.dart
 lib/model/mark_day_request.dart
+lib/model/marked_day.dart
 lib/model/motto_content.dart
 lib/model/profile_scores.dart
 lib/model/question.dart
@@ -97,6 +99,7 @@ test/feedback_request_test.dart
 test/feedback_resource_api_test.dart
 test/fragment_test.dart
 test/mark_day_request_test.dart
+test/marked_day_test.dart
 test/motto_content_test.dart
 test/motto_resource_api_test.dart
 test/profile_scores_test.dart

@@ -17,6 +17,8 @@ import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:motto/config/storage_module.dart' as _i909;
 import 'package:motto/features/chain/application/chain_cubit.dart' as _i41;
+import 'package:motto/features/chain/application/chain_repository.dart'
+    as _i761;
 import 'package:motto/features/chain/application/chain_store.dart' as _i625;
 import 'package:motto/features/chain/application/reminder_scheduler.dart'
     as _i632;
@@ -120,11 +122,23 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i66.ContentResourceApi>(
       () => apiClients.content(gh<_i66.ApiClient>()),
     );
+    gh.lazySingleton<_i66.ChainResourceApi>(
+      () => apiClients.chains(gh<_i66.ApiClient>()),
+    );
+    gh.lazySingleton<_i66.ResultResourceApi>(
+      () => apiClients.results(gh<_i66.ApiClient>()),
+    );
     gh.lazySingleton<_i503.DeviceSession>(
       () => _i503.DeviceSession(
         gh<_i37.DeviceIdentity>(),
         gh<_i818.DeviceResourceApi>(),
         gh<_i759.TokenStore>(),
+      ),
+    );
+    gh.lazySingleton<_i761.ChainRepository>(
+      () => _i761.ChainRepository(
+        gh<_i66.ChainResourceApi>(),
+        gh<_i625.ChainStore>(),
       ),
     );
     gh.lazySingleton<_i190.Analytics>(
@@ -143,6 +157,14 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i547.TestDraft>(),
         gh<_i190.Analytics>(),
         gh<_i1019.LastArchetype>(),
+      ),
+    );
+    gh.factory<_i41.ChainCubit>(
+      () => _i41.ChainCubit(
+        gh<_i761.ChainRepository>(),
+        gh<_i625.ChainStore>(),
+        gh<_i632.ReminderScheduler>(),
+        gh<_i190.Analytics>(),
       ),
     );
     gh.lazySingleton<_i876.ContentRepository>(
@@ -164,18 +186,11 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i190.Analytics>(),
       ),
     );
-    gh.factory<_i41.ChainCubit>(
-      () => _i41.ChainCubit(
-        gh<_i625.ChainStore>(),
-        gh<_i632.ReminderScheduler>(),
-        gh<_i190.Analytics>(),
-      ),
-    );
     gh.factory<_i1068.DailyCubit>(
       () => _i1068.DailyCubit(
         gh<_i876.ContentRepository>(),
         gh<_i1019.LastArchetype>(),
-        gh<_i625.ChainStore>(),
+        gh<_i761.ChainRepository>(),
         gh<_i190.Analytics>(),
         gh<_i113.DailyWidget>(),
       ),

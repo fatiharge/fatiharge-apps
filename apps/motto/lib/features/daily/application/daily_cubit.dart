@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:motto/features/chain/application/chain_store.dart';
+import 'package:motto/features/chain/application/chain_repository.dart';
 import 'package:motto/features/content/application/content_repository.dart';
 import 'package:motto/features/daily/application/daily_state.dart';
 import 'package:motto/features/daily/application/daily_widget.dart';
@@ -27,15 +27,21 @@ class DailyCubit extends Cubit<DailyState> {
 
   final ContentRepository _content;
   final LastArchetype _archetype;
-  final ChainStore _chain;
+  final ChainRepository _chain;
   final Analytics _analytics;
   final DailyWidget _widget;
 
   void unawaitedLoad() => unawaited(load());
 
   Future<void> load() async {
-    final pack = ContentPack.fromJson(await _content.current());
-    final chain = _chain.read();
+    final json = await _content.current();
+    if (json == null) {
+      emit(const DailyState(status: DailyStatus.noContent));
+      return;
+    }
+
+    final pack = ContentPack.fromJson(json);
+    final chain = _chain.cached;
 
     // Total days marked, not the current streak: losing your place in the
     // content because you missed two days punishes the person who came back.

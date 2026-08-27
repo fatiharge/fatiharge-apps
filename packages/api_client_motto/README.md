@@ -98,6 +98,7 @@ Class | Method | HTTP request | Description
  - [FeedbackRequest](doc//FeedbackRequest.md)
  - [Fragment](doc//Fragment.md)
  - [MarkDayRequest](doc//MarkDayRequest.md)
+ - [MarkedDay](doc//MarkedDay.md)
  - [MottoContent](doc//MottoContent.md)
  - [ProfileScores](doc//ProfileScores.md)
  - [Question](doc//Question.md)
