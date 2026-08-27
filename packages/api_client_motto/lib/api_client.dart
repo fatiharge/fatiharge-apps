@@ -204,6 +204,10 @@ class ApiClient {
           return valueString == 'true' || valueString == '1';
         case 'DateTime':
           return value is DateTime ? value : DateTime.tryParse(value);
+        case 'DeletionResponse':
+          return DeletionResponse.fromJson(value);
+        case 'EntitlementResponse':
+          return EntitlementResponse.fromJson(value);
         default:
           dynamic match;
           if (value is List &&

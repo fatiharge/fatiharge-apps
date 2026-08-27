@@ -40,6 +40,22 @@ Please follow the [installation procedure](#installation--usage) and then run th
 ```dart
 import 'package:api_client_motto/api.dart';
 
+// TODO Configure HTTP Bearer authorization: SecurityScheme
+// Case 1. Use String Token
+//defaultApiClient.getAuthentication<HttpBearerAuth>('SecurityScheme').setAccessToken('YOUR_ACCESS_TOKEN');
+// Case 2. Use Function which generate token.
+// String yourTokenGeneratorFunction() { ... }
+//defaultApiClient.getAuthentication<HttpBearerAuth>('SecurityScheme').setAccessToken(yourTokenGeneratorFunction);
+
+final api_instance = EntitlementResourceApi();
+
+try {
+    final result = api_instance.currentEntitlement();
+    print(result);
+} catch (e) {
+    print('Exception when calling EntitlementResourceApi->currentEntitlement: $e\n');
+}
+
 ```
 
 ## Documentation for API Endpoints
@@ -48,10 +64,14 @@ All URIs are relative to *http://localhost*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
+*EntitlementResourceApi* | [**currentEntitlement**](doc//EntitlementResourceApi.md#currententitlement) | **GET** /v1/entitlements | What this device may do now
+*EntitlementResourceApi* | [**deleteMyData**](doc//EntitlementResourceApi.md#deletemydata) | **DELETE** /v1/me | Delete this device's data
 
 
 ## Documentation For Models
 
+ - [DeletionResponse](doc//DeletionResponse.md)
+ - [EntitlementResponse](doc//EntitlementResponse.md)
 
 
 ## Documentation For Authorization
@@ -64,5 +84,6 @@ Authentication schemes defined for the API:
 
 
 ## Author
+
 
 
