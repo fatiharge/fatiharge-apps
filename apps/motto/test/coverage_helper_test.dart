@@ -36,6 +36,7 @@ import 'package:motto/features/daily/presentation/widgets/chain_calendar.dart';
 import 'package:motto/features/mascot/application/mascot_controller.dart';
 import 'package:motto/features/mascot/application/rive_mascot_controller.dart';
 import 'package:motto/features/mascot/presentation/mascot.dart';
+import 'package:motto/features/mascot/presentation/mascot_host.dart';
 import 'package:motto/features/result/application/card_exporter.dart';
 import 'package:motto/features/result/presentation/result_page.dart';
 import 'package:motto/features/result/presentation/share_card_page.dart';
