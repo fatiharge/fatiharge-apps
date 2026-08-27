@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:motto/app.dart';
 import 'package:motto/config/app_crash_listener.dart';
 import 'package:motto/config/injectable.dart';
-import 'package:motto/features/startup/application/bootstrap_adapter.dart';
+import 'package:motto/infrastructure/bootstrap/bootstrap_adapter.dart';
 import 'package:motto/route/app_router.dart';
 
 Future<void> main() => AppCrashListener().runGuarded(startApp);
