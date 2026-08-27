@@ -1,25 +1,34 @@
-name: service logs
+name: stage logs
 
-# Reads a deployed service's state and nothing else: `docker compose ps` and
-# `docker compose logs`. No write, no restart, no .env.
+# Reads a stage deployment's state and nothing else: `docker compose ps` and
+# `docker compose logs`. No write, no restart, never the .env.
 #
 # It exists so that looking at a deployment does not need anyone's shell
 # password. It borrows the deploy key that already reaches that machine, so no
-# new access is created, and every run is recorded in Actions with who asked
-# for it.
+# new access is created, and every run is recorded in Actions.
+#
+# Two limits, both because THIS REPOSITORY IS PUBLIC and Actions logs are
+# public with it:
+#
+#   * stage only. Production logs carry real people's requests and this would
+#     publish them. There is deliberately no way to select it here.
+#   * stack frames are stripped. What is left is the timestamp, level, logger,
+#     message and `Caused by:` — enough to see what failed, without the frames
+#     where field values and payloads end up.
+#
+# Even so, a stage log message is a public log message. When stage starts
+# carrying beta testers rather than smoke tests, delete this file.
 
 on:
   workflow_dispatch:
     inputs:
       environment:
-        description: Which deployment to read
+        description: Which stage deployment to read
         required: true
         type: choice
         options:
           - stage
-          - production
           - auth-stage
-          - auth-production
       lines:
         description: Lines per container
         required: false
@@ -40,6 +49,18 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     steps:
+      - name: Refuse anything but stage
+        env:
+          TARGET_ENV: ${{ inputs.environment }}
+        run: |
+          set -euo pipefail
+          # The choice list already limits this. Asserted again because a
+          # choice list is a UI, and a workflow edited later is not.
+          case "$TARGET_ENV" in
+            stage|auth-stage) ;;
+            *) echo "this workflow reads stage only, not '$TARGET_ENV'"; exit 1 ;;
+          esac
+
       - name: Prepare the SSH connection
         env:
           KEY: ${{ secrets.DEPLOY_SSH_KEY }}
@@ -62,7 +83,8 @@ jobs:
           SINCE: ${{ inputs.since }}
         run: |
           set -euo pipefail
-          ssh -i ~/.ssh/deploy -p "$PORT" -o BatchMode=yes "${USER_NAME}@${HOST}" bash -s <<EOF
+          ssh -i ~/.ssh/deploy -p "$PORT" -o BatchMode=yes "${USER_NAME}@${HOST}" \
+            bash -s > raw.log <<EOF
             set -euo pipefail
             cd "${TARGET}"
             echo "--- compose ps ---"
@@ -70,6 +92,10 @@ jobs:
             echo "--- logs (last ${LINES} lines, since ${SINCE}) ---"
             docker compose logs --tail "${LINES}" --since "${SINCE}" --no-color
           EOF
+
+          # Filtered into the job's output rather than printed and then
+          # trimmed: this step's output is the public part.
+          grep -vE '^([^|]*\| *)?(at |\.\.\. [0-9]+ more)' raw.log || echo "(nothing)"
 
       - name: Remove the key
         if: always()
