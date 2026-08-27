@@ -1,6 +1,49 @@
 {
   "openapi" : "3.1.0",
   "components" : {
+    "schemas" : {
+      "DeletionResponse" : {
+        "type" : "object",
+        "properties" : {
+          "deleted" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "kept" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
+      "EntitlementResponse" : {
+        "type" : "object",
+        "properties" : {
+          "remainingUses" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "cooldownUntil" : {
+            "$ref" : "#/components/schemas/Instant"
+          },
+          "skipsLeft" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "premium" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "Instant" : {
+        "type" : "string",
+        "format" : "date-time",
+        "examples" : [ "2022-03-10T16:15:50Z" ]
+      }
+    },
     "securitySchemes" : {
       "SecurityScheme" : {
         "type" : "http",
@@ -10,9 +53,66 @@
       }
     }
   },
+  "paths" : {
+    "/v1/entitlements" : {
+      "get" : {
+        "summary" : "What this device may do now",
+        "operationId" : "currentEntitlement",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/EntitlementResponse"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "tags" : [ "Entitlement Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
+    "/v1/me" : {
+      "delete" : {
+        "summary" : "Delete this device's data",
+        "operationId" : "deleteMyData",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DeletionResponse"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "tags" : [ "Entitlement Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    }
+  },
   "info" : {
     "title" : "motto API",
     "version" : "1.0.0"
-  },
-  "paths" : { }
+  }
 }

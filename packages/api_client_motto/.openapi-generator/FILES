@@ -3,8 +3,12 @@
 .travis.yml
 README.md
 analysis_options.yaml
+doc/DeletionResponse.md
+doc/EntitlementResourceApi.md
+doc/EntitlementResponse.md
 git_push.sh
 lib/api.dart
+lib/api/entitlement_resource_api.dart
 lib/api_client.dart
 lib/api_exception.dart
 lib/api_helper.dart
@@ -13,4 +17,9 @@ lib/auth/authentication.dart
 lib/auth/http_basic_auth.dart
 lib/auth/http_bearer_auth.dart
 lib/auth/oauth.dart
+lib/model/deletion_response.dart
+lib/model/entitlement_response.dart
 pubspec.yaml
+test/deletion_response_test.dart
+test/entitlement_resource_api_test.dart
+test/entitlement_response_test.dart
