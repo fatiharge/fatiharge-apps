@@ -58,7 +58,7 @@ class _DataDeletionPageState extends State<DataDeletionPage> {
               for (final item in deletionGoes)
                 Text('• $item', style: text.bodyMedium),
               const SizedBox(height: 8),
-              Text(deletionChainNote, style: text.bodyMedium),
+              Text(deletionAnswersNote, style: text.bodyMedium),
               const SizedBox(height: 24),
               Text('Kalacaklar', style: text.titleMedium),
               const SizedBox(height: 8),

@@ -88,10 +88,9 @@ const faq = <FaqItem>[
   FaqItem(
     'delete_data',
     'Verilerimi sildirebilir miyim?',
-    'Ayarlar → Gizlilik → Verilerimi sil. Cevapların, profilin ve arketibin '
-        'silinir. Cihaz kimliğin ve kullandığın hak sayısı kalır; suistimali '
-        'önlemenin başka yolu yok ve bunu saklamak istemediğimiz için değil, '
-        'saklamak zorunda olduğumuz için yazıyoruz.',
+    'Ayarlar → Gizlilik → Verilerimi sil. Telefonundakiler ve sunucudaki '
+        'kaydın silinir. Cihaz kimliğin ve kullandığın hak sayısı kalır; '
+        'silip yeniden yükleyerek hak kazanılmasın diye.',
   ),
   FaqItem(
     'cost',

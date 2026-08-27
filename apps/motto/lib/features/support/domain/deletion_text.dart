@@ -1,12 +1,11 @@
 /// What "delete my data" does, said before it is done.
 ///
 /// The counter line is not fine print. It is the one thing that survives, and
-/// finding that out afterwards is how a deletion screen becomes a store
-/// review.
+/// finding that out afterwards is how a deletion screen becomes a review.
 const deletionGoes = [
-  'Test cevapların',
-  'Profil vektörün ve arketibin',
-  'Aldığın mottolar',
+  'Arketibin ve aldığın mottolar',
+  'Zincirin ve işaretlediğin günler',
+  'Yarım kalmış testin',
 ];
 
 const deletionStays = [
@@ -19,8 +18,7 @@ const deletionCounterReason =
     'yükleyerek hak kazanılamaz. Bu sayaç kim olduğunu değil, kaç kez '
     'kullandığını bilir.';
 
-/// The chain never leaves the phone, so the server cannot delete it — and
-/// someone who asked for everything to go would reasonably expect it to.
-const deletionChainNote =
-    'Zincirin ve hatırlatıcı ayarların zaten yalnızca bu telefonda; onlar da '
-    'birlikte silinir.';
+/// Test cevapları hiçbir zaman saklanmadığı için silinecek bir şey de yok —
+/// bunu söylememek, sakladığımızı ima etmek olur.
+const deletionAnswersNote =
+    'Test cevapların zaten saklanmıyor; puanlanıp unutuluyorlar.';
