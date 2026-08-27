@@ -218,6 +218,10 @@ class ApiClient {
           return EventBatchResponse.fromJson(value);
         case 'EventEntry':
           return EventEntry.fromJson(value);
+        case 'FeedbackKind':
+          return FeedbackKindTypeTransformer().decode(value);
+        case 'FeedbackRequest':
+          return FeedbackRequest.fromJson(value);
         case 'Question':
           return Question.fromJson(value);
         case 'QuestionResponse':

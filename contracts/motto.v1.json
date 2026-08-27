@@ -125,6 +125,31 @@
           }
         }
       },
+      "FeedbackKind" : {
+        "type" : "string",
+        "enum" : [ "BUG", "SUGGESTION", "CONTENT", "ARCHETYPE_REJECTED", "OTHER" ]
+      },
+      "FeedbackRequest" : {
+        "type" : "object",
+        "required" : [ "kind", "message" ],
+        "properties" : {
+          "kind" : {
+            "$ref" : "#/components/schemas/FeedbackKind"
+          },
+          "message" : {
+            "type" : "string"
+          },
+          "email" : {
+            "type" : "string"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
       "Instant" : {
         "type" : "string",
         "format" : "date-time",
@@ -245,6 +270,45 @@
           }
         },
         "tags" : [ "Event Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
+    "/v1/feedback" : {
+      "post" : {
+        "summary" : "Send feedback",
+        "operationId" : "submitFeedback",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/FeedbackRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : { }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        },
+        "tags" : [ "Feedback Resource" ],
         "security" : [ {
           "SecurityScheme" : [ ]
         } ]
