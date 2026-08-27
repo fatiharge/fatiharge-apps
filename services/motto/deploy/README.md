@@ -51,7 +51,13 @@ MOTTO_ENV=stage
 MOTTO_HOST=mottostage.dafalabs.com
 MOTTO_IMAGE=
 MOTTO_DB_PASSWORD=<openssl rand -base64 24>
+MOTTO_JWT_PUBLIC_KEY="<auth's public PEM, one line, newlines escaped>"
 ```
+
+The public key comes from [auth](../../auth/deploy/README.md), which generated
+the pair. It must be quoted, for the reason written there. It must also be set:
+this service has authenticated endpoints, and Quarkus reads an empty value,
+fails to parse it and does not start — empty is not the same as unset.
 
 `/srv/motto-prod/.env` is the same with `prod`, `motto.dafalabs.com`, and its
 own password.

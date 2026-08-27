@@ -24,6 +24,11 @@ openssl rsa -in auth-private.pem -pubout -out auth-public.pem
 awk 'BEGIN{ORS="\\n"} {print}' auth-private.pem
 ```
 
+**Quote it.** Compose expands `\n` back into a newline only inside double
+quotes; unquoted, the two characters reach the container literally, base64
+decoding fails and the service starts refusing every token as if the key were
+wrong.
+
 ## `/srv/auth-stage/.env`
 
 ```dotenv
@@ -31,8 +36,8 @@ AUTH_ENV=stage
 AUTH_HOST=authstage.dafalabs.com
 AUTH_IMAGE=
 AUTH_DB_PASSWORD=<openssl rand -base64 24>
-AUTH_JWT_PRIVATE_KEY=<the private PEM, one line>
-AUTH_JWT_PUBLIC_KEY=<the public PEM, one line>
+AUTH_JWT_PRIVATE_KEY="<the private PEM, one line>"
+AUTH_JWT_PUBLIC_KEY="<the public PEM, one line>"
 ```
 
 ## The other half goes to motto
