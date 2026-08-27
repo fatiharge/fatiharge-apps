@@ -1,0 +1,37 @@
+# The joins, written by hand.
+#
+# This file is the only antidote to combinatorial text reading generic. A day is
+# a body everybody gets plus a fragment only this archetype gets, and without a
+# real sentence between them the seam shows — every day starts to sound like the
+# same template with a different ending, which is exactly what a horoscope is.
+#
+# A connector has to work in both directions: after any of the fourteen bodies,
+# before any of the four fragments. That is why there are ten and not forty —
+# each one is checked against all of them, and one that only fits some days is
+# a worse connector than a plainer one that fits all of them.
+#
+# Rotated by day so the same seam never appears twice in a week.
+
+version: 1
+
+connectors:
+  - id: c1
+    tr: Sende bunun karşılığı şu.
+  - id: c2
+    tr: Senin için zor olan kısmı ise başka.
+  - id: c3
+    tr: Bu, sana özellikle şöyle uğruyor.
+  - id: c4
+    tr: Aynı şeyin sendeki hâli daha farklı.
+  - id: c5
+    tr: Şunu da eklemek gerek, çünkü seni ilgilendiren tarafı bu.
+  - id: c6
+    tr: Bunun sende nereye denk düştüğüne bak.
+  - id: c7
+    tr: Sen bu cümleyi muhtemelen başka bir yerinden okuyorsun.
+  - id: c8
+    tr: Senin durumunda asıl mesele burada.
+  - id: c9
+    tr: Bunu senin için biraz daha açalım.
+  - id: c10
+    tr: Ve sende bu, tanıdık bir yerden geliyor.
