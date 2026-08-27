@@ -87,6 +87,14 @@ class _ResultPageState extends State<ResultPage> {
               icon: const Icon(Icons.ios_share),
               label: const Text('Kartı paylaş'),
             ),
+            const SizedBox(height: 12),
+            // Offered here because this is the moment the motto means
+            // something. A chain proposed on a later screen is a chain
+            // proposed to someone who has already put the phone down.
+            OutlinedButton(
+              onPressed: () => context.router.push(const ChainRoute()),
+              child: const Text('Zincirini başlat'),
+            ),
             const SizedBox(height: 32),
             const BasisSection(),
           ],

@@ -55,3 +55,15 @@ hangi sonucu aldığını değiştirebilmesin diye.
 
 Yazıldı · ertesi gün bir kez daha okundu · yukarıdaki 1.4.1 tablosundan geçti ·
 göründüğü ekrana sığıyor · tanımsa bir bedel söylüyor.
+
+## Burada olmayan tek şey
+
+Hatırlatıcı metinleri
+`apps/motto/lib/features/chain/domain/turkish_reminder_copy.dart` içinde, bu
+klasörde değil. Bildirim, bir haftadır çevrimdışı olabilecek bir telefonda,
+tetiklendiği anda görünmek zorunda — yani sunucudan gelen hiçbir şeye
+dayanamaz. Hem burada hem orada bir kopya tutmak ise tam olarak bu klasörün
+engellemek için var olduğu kayma.
+
+Kurallar yine geçerli, ve bir tanesi sadece onlar için yazıldı: zincir seni
+bekler, kaç gün kaçırdığını saymaz.

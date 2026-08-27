@@ -59,7 +59,9 @@ void main() {
 
   test('an unmarked today past its hour gets the evening warning instead', () {
     final reminders = plan(chain: marked([1, 2]), now: day(3, 14));
-    final today = reminders.firstWhere((r) => dayOf(r.at) == DateTime(2026, 3, 3));
+    final today = reminders.firstWhere(
+      (r) => dayOf(r.at) == DateTime(2026, 3, 3),
+    );
 
     expect(today.kind, ReminderKind.dayEnding);
     expect(today.at.hour, ReminderPlan.dayEndingHour);
@@ -95,7 +97,9 @@ void main() {
 
   test('milestones are scheduled and may share a day with a nudge', () {
     final reminders = plan(chain: marked([1, 2, 3]), now: day(3, 10));
-    final milestone = reminders.firstWhere((r) => r.kind == ReminderKind.milestone);
+    final milestone = reminders.firstWhere(
+      (r) => r.kind == ReminderKind.milestone,
+    );
 
     // Day 3 is marked, so the seventh is four days out.
     expect(milestone.streak, 7);

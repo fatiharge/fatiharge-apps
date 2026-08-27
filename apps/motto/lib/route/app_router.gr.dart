@@ -9,59 +9,76 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i9;
+import 'dart:async' as _i10;
 
-import 'package:api_client_motto/api.dart' as _i8;
-import 'package:auto_route/auto_route.dart' as _i7;
-import 'package:flutter/material.dart' as _i10;
-import 'package:motto/features/result/presentation/result_page.dart' as _i3;
-import 'package:motto/features/result/presentation/share_card_page.dart' as _i4;
-import 'package:motto/features/startup/presentation/startup_page.dart' as _i5;
+import 'package:api_client_motto/api.dart' as _i9;
+import 'package:auto_route/auto_route.dart' as _i8;
+import 'package:flutter/material.dart' as _i11;
+import 'package:motto/features/chain/presentation/chain_page.dart' as _i2;
+import 'package:motto/features/result/presentation/result_page.dart' as _i4;
+import 'package:motto/features/result/presentation/share_card_page.dart' as _i5;
+import 'package:motto/features/startup/presentation/startup_page.dart' as _i6;
 import 'package:motto/features/test/presentation/calculating_page.dart' as _i1;
-import 'package:motto/features/test/presentation/question_page.dart' as _i2;
-import 'package:motto/features/welcome/presentation/welcome_page.dart' as _i6;
+import 'package:motto/features/test/presentation/question_page.dart' as _i3;
+import 'package:motto/features/welcome/presentation/welcome_page.dart' as _i7;
 
 /// generated route for
 /// [_i1.CalculatingPage]
-class CalculatingRoute extends _i7.PageRouteInfo<void> {
-  const CalculatingRoute({List<_i7.PageRouteInfo>? children})
+class CalculatingRoute extends _i8.PageRouteInfo<void> {
+  const CalculatingRoute({List<_i8.PageRouteInfo>? children})
     : super(CalculatingRoute.name, initialChildren: children);
 
   static const String name = 'CalculatingRoute';
 
-  static _i7.PageInfo page = _i7.PageInfo(
+  static _i8.PageInfo page = _i8.PageInfo(
     name,
     builder: (data) {
-      return _i7.WrappedRoute(child: const _i1.CalculatingPage());
+      return _i8.WrappedRoute(child: const _i1.CalculatingPage());
     },
   );
 }
 
 /// generated route for
-/// [_i2.QuestionPage]
-class QuestionRoute extends _i7.PageRouteInfo<void> {
-  const QuestionRoute({List<_i7.PageRouteInfo>? children})
+/// [_i2.ChainPage]
+class ChainRoute extends _i8.PageRouteInfo<void> {
+  const ChainRoute({List<_i8.PageRouteInfo>? children})
+    : super(ChainRoute.name, initialChildren: children);
+
+  static const String name = 'ChainRoute';
+
+  static _i8.PageInfo page = _i8.PageInfo(
+    name,
+    builder: (data) {
+      return const _i2.ChainPage();
+    },
+  );
+}
+
+/// generated route for
+/// [_i3.QuestionPage]
+class QuestionRoute extends _i8.PageRouteInfo<void> {
+  const QuestionRoute({List<_i8.PageRouteInfo>? children})
     : super(QuestionRoute.name, initialChildren: children);
 
   static const String name = 'QuestionRoute';
 
-  static _i7.PageInfo page = _i7.PageInfo(
+  static _i8.PageInfo page = _i8.PageInfo(
     name,
     builder: (data) {
-      return _i7.WrappedRoute(child: const _i2.QuestionPage());
+      return _i8.WrappedRoute(child: const _i3.QuestionPage());
     },
   );
 }
 
 /// generated route for
-/// [_i3.ResultPage]
-class ResultRoute extends _i7.PageRouteInfo<ResultRouteArgs> {
+/// [_i4.ResultPage]
+class ResultRoute extends _i8.PageRouteInfo<ResultRouteArgs> {
   ResultRoute({
-    required _i8.ResultResponse result,
-    _i9.Future<void> Function(_i10.BuildContext, _i8.ArchetypeResponse)?
+    required _i9.ResultResponse result,
+    _i10.Future<void> Function(_i11.BuildContext, _i9.ArchetypeResponse)?
     offerCard,
-    _i10.Key? key,
-    List<_i7.PageRouteInfo>? children,
+    _i11.Key? key,
+    List<_i8.PageRouteInfo>? children,
   }) : super(
          ResultRoute.name,
          args: ResultRouteArgs(result: result, offerCard: offerCard, key: key),
@@ -70,11 +87,11 @@ class ResultRoute extends _i7.PageRouteInfo<ResultRouteArgs> {
 
   static const String name = 'ResultRoute';
 
-  static _i7.PageInfo page = _i7.PageInfo(
+  static _i8.PageInfo page = _i8.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<ResultRouteArgs>();
-      return _i3.ResultPage(
+      return _i4.ResultPage(
         result: args.result,
         offerCard: args.offerCard,
         key: args.key,
@@ -86,12 +103,12 @@ class ResultRoute extends _i7.PageRouteInfo<ResultRouteArgs> {
 class ResultRouteArgs {
   const ResultRouteArgs({required this.result, this.offerCard, this.key});
 
-  final _i8.ResultResponse result;
+  final _i9.ResultResponse result;
 
-  final _i9.Future<void> Function(_i10.BuildContext, _i8.ArchetypeResponse)?
+  final _i10.Future<void> Function(_i11.BuildContext, _i9.ArchetypeResponse)?
   offerCard;
 
-  final _i10.Key? key;
+  final _i11.Key? key;
 
   @override
   String toString() {
@@ -110,12 +127,12 @@ class ResultRouteArgs {
 }
 
 /// generated route for
-/// [_i4.ShareCardPage]
-class ShareCardRoute extends _i7.PageRouteInfo<ShareCardRouteArgs> {
+/// [_i5.ShareCardPage]
+class ShareCardRoute extends _i8.PageRouteInfo<ShareCardRouteArgs> {
   ShareCardRoute({
-    required _i8.ArchetypeResponse archetype,
-    _i10.Key? key,
-    List<_i7.PageRouteInfo>? children,
+    required _i9.ArchetypeResponse archetype,
+    _i11.Key? key,
+    List<_i8.PageRouteInfo>? children,
   }) : super(
          ShareCardRoute.name,
          args: ShareCardRouteArgs(archetype: archetype, key: key),
@@ -124,11 +141,11 @@ class ShareCardRoute extends _i7.PageRouteInfo<ShareCardRouteArgs> {
 
   static const String name = 'ShareCardRoute';
 
-  static _i7.PageInfo page = _i7.PageInfo(
+  static _i8.PageInfo page = _i8.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<ShareCardRouteArgs>();
-      return _i4.ShareCardPage(archetype: args.archetype, key: args.key);
+      return _i5.ShareCardPage(archetype: args.archetype, key: args.key);
     },
   );
 }
@@ -136,9 +153,9 @@ class ShareCardRoute extends _i7.PageRouteInfo<ShareCardRouteArgs> {
 class ShareCardRouteArgs {
   const ShareCardRouteArgs({required this.archetype, this.key});
 
-  final _i8.ArchetypeResponse archetype;
+  final _i9.ArchetypeResponse archetype;
 
-  final _i10.Key? key;
+  final _i11.Key? key;
 
   @override
   String toString() {
@@ -157,33 +174,33 @@ class ShareCardRouteArgs {
 }
 
 /// generated route for
-/// [_i5.StartupPage]
-class StartupRoute extends _i7.PageRouteInfo<void> {
-  const StartupRoute({List<_i7.PageRouteInfo>? children})
+/// [_i6.StartupPage]
+class StartupRoute extends _i8.PageRouteInfo<void> {
+  const StartupRoute({List<_i8.PageRouteInfo>? children})
     : super(StartupRoute.name, initialChildren: children);
 
   static const String name = 'StartupRoute';
 
-  static _i7.PageInfo page = _i7.PageInfo(
+  static _i8.PageInfo page = _i8.PageInfo(
     name,
     builder: (data) {
-      return const _i5.StartupPage();
+      return const _i6.StartupPage();
     },
   );
 }
 
 /// generated route for
-/// [_i6.WelcomePage]
-class WelcomeRoute extends _i7.PageRouteInfo<void> {
-  const WelcomeRoute({List<_i7.PageRouteInfo>? children})
+/// [_i7.WelcomePage]
+class WelcomeRoute extends _i8.PageRouteInfo<void> {
+  const WelcomeRoute({List<_i8.PageRouteInfo>? children})
     : super(WelcomeRoute.name, initialChildren: children);
 
   static const String name = 'WelcomeRoute';
 
-  static _i7.PageInfo page = _i7.PageInfo(
+  static _i8.PageInfo page = _i8.PageInfo(
     name,
     builder: (data) {
-      return const _i6.WelcomePage();
+      return const _i7.WelcomePage();
     },
   );
 }

@@ -4,8 +4,10 @@ import 'package:motto/features/chain/domain/chain.dart';
 void main() {
   DateTime day(int d) => DateTime(2026, 3, d);
 
-  Chain marked(List<int> days) =>
-      Chain(startedOn: day(days.first), markedDays: {for (final d in days) day(d)});
+  Chain marked(List<int> days) => Chain(
+    startedOn: day(days.first),
+    markedDays: {for (final d in days) day(d)},
+  );
 
   group('streak', () {
     test('an unmarked today does not end the streak', () {
@@ -26,7 +28,9 @@ void main() {
     });
 
     test('marking twice in a day is marking once', () {
-      final chain = Chain().mark(DateTime(2026, 3, 4, 9)).mark(DateTime(2026, 3, 4, 23));
+      final chain = const Chain()
+          .mark(DateTime(2026, 3, 4, 9))
+          .mark(DateTime(2026, 3, 4, 23));
       expect(chain.streakOn(day(4)), 1);
     });
   });
@@ -66,7 +70,7 @@ void main() {
     test('comes back the next month', () {
       final chain = marked([1, 2]).freeze(day(4));
 
-      expect(chain.freezeSpentIn(DateTime(2026, 4, 1)), isFalse);
+      expect(chain.freezeSpentIn(DateTime(2026, 4)), isFalse);
     });
   });
 }

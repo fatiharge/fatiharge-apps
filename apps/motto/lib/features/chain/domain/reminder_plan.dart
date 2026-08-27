@@ -158,8 +158,12 @@ abstract final class ReminderPlan {
       if (daysAway < 0 || daysAway >= horizonDays) continue;
 
       final at = _wake(
-        DateTime(today.year, today.month, today.day, hour)
-            .add(Duration(days: daysAway)),
+        DateTime(
+          today.year,
+          today.month,
+          today.day,
+          hour,
+        ).add(Duration(days: daysAway)),
       );
       if (!at.isAfter(now)) continue;
 

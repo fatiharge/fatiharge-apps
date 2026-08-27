@@ -8,7 +8,8 @@ import 'package:motto/features/chain/domain/reminder.dart';
 ///
 /// The tone belongs in the copy, not here — the chain is waiting for you, never
 /// how many days you have missed. A reminder that scolds gets the app deleted.
-typedef ReminderCopy = ({String title, String body}) Function(
-  ReminderKind kind,
-  int streak,
-);
+typedef ReminderCopy =
+    ({String title, String body}) Function(
+      ReminderKind kind,
+      int streak,
+    );
