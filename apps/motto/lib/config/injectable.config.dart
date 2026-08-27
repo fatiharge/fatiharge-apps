@@ -21,6 +21,13 @@ import 'package:motto/features/chain/application/chain_store.dart' as _i625;
 import 'package:motto/features/chain/application/reminder_scheduler.dart'
     as _i632;
 import 'package:motto/features/result/application/card_exporter.dart' as _i111;
+import 'package:motto/features/support/application/data_deletion.dart' as _i729;
+import 'package:motto/features/support/application/feedback_cubit.dart'
+    as _i875;
+import 'package:motto/features/support/application/last_archetype.dart'
+    as _i1019;
+import 'package:motto/features/support/application/support_context.dart'
+    as _i922;
 import 'package:motto/features/test/application/test_cubit.dart' as _i89;
 import 'package:motto/features/test/application/test_draft.dart' as _i547;
 import 'package:motto/infrastructure/analytics/analytics.dart' as _i190;
@@ -59,6 +66,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i625.ChainStore>(
       () => _i625.ChainStore(gh<_i460.SharedPreferences>()),
     );
+    gh.lazySingleton<_i1019.LastArchetype>(
+      () => _i1019.LastArchetype(gh<_i460.SharedPreferences>()),
+    );
     gh.lazySingleton<_i547.TestDraft>(
       () => _i547.TestDraft(gh<_i460.SharedPreferences>()),
     );
@@ -95,6 +105,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i66.EventResourceApi>(
       () => apiClients.events(gh<_i66.ApiClient>()),
     );
+    gh.lazySingleton<_i66.FeedbackResourceApi>(
+      () => apiClients.feedback(gh<_i66.ApiClient>()),
+    );
     gh.lazySingleton<_i503.DeviceSession>(
       () => _i503.DeviceSession(
         gh<_i37.DeviceIdentity>(),
@@ -105,11 +118,31 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i190.Analytics>(
       () => _i190.Analytics(gh<_i98.EventQueue>(), gh<_i66.EventResourceApi>()),
     );
+    gh.lazySingleton<_i922.SupportContext>(
+      () => _i922.SupportContext(
+        gh<_i37.DeviceIdentity>(),
+        gh<_i1019.LastArchetype>(),
+      ),
+    );
     gh.factory<_i89.TestCubit>(
       () => _i89.TestCubit(
         gh<_i66.TestResourceApi>(),
         gh<_i66.MottoResourceApi>(),
         gh<_i547.TestDraft>(),
+        gh<_i190.Analytics>(),
+        gh<_i1019.LastArchetype>(),
+      ),
+    );
+    gh.lazySingleton<_i729.DataDeletion>(
+      () => _i729.DataDeletion(
+        gh<_i66.EntitlementResourceApi>(),
+        gh<_i460.SharedPreferences>(),
+      ),
+    );
+    gh.factory<_i875.FeedbackCubit>(
+      () => _i875.FeedbackCubit(
+        gh<_i66.FeedbackResourceApi>(),
+        gh<_i922.SupportContext>(),
         gh<_i190.Analytics>(),
       ),
     );

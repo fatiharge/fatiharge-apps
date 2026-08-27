@@ -56,13 +56,26 @@ change who gets which result.
 Written · read once more the next day · passes the 1.4.1 table above · fits the
 screen it appears on · names a cost, where it is a description.
 
-## The one thing that is not here
+## What is not here: copy that has to work offline
 
-Reminder copy lives in
-`apps/motto/lib/features/chain/domain/turkish_reminder_copy.dart`, not in this
-directory. A notification has to render at the moment it fires, on a phone that
-may have been offline for a week, so it cannot come from anything served — and
-a copy here plus a copy there is the drift this directory exists to prevent.
+Some text has to render on a phone that has been offline for a week, at the
+moment it is needed. It cannot come from anything served, and a copy here plus
+a copy in the app is exactly the drift this directory exists to prevent — so it
+lives in the app, and this list is where you find it:
 
-The rules still apply to it, and one is written only for it: the chain is
-waiting for you, never how many days you have missed.
+| What | Where |
+|---|---|
+| Reminder notifications | `apps/motto/lib/features/chain/domain/turkish_reminder_copy.dart` |
+| FAQ | `apps/motto/lib/features/support/domain/faq.dart` |
+| Method and limitations | `apps/motto/lib/features/support/domain/method_text.dart` |
+| Privacy summary | `apps/motto/lib/features/support/domain/privacy_text.dart` |
+| Data deletion | `apps/motto/lib/features/support/domain/deletion_text.dart` |
+
+The rules still apply to all of it, and two are written only for these:
+
+* **A reminder says the chain is waiting for you, never how many days you have
+  missed.** One that keeps score is one that gets the app deleted, and the
+  person it would scold is already having a bad week.
+* **An answer names the cost plainly rather than working around it.** "Your
+  streak is gone and there is no account to restore it from" is the answer that
+  does not become a one-star review; a reassuring non-answer is.

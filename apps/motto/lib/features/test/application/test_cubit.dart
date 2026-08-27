@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:api_client_motto/api.dart' as api;
 import 'package:bloc/bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:motto/features/support/application/last_archetype.dart';
 import 'package:motto/features/test/application/test_draft.dart';
 import 'package:motto/features/test/application/test_state.dart';
 import 'package:motto/infrastructure/analytics/analytics.dart';
@@ -12,8 +13,13 @@ import 'package:motto/infrastructure/analytics/motto_event.dart';
 /// use at the end.
 @injectable
 class TestCubit extends Cubit<TestState> {
-  TestCubit(this._tests, this._mottos, this._draft, this._analytics)
-    : super(const TestState());
+  TestCubit(
+    this._tests,
+    this._mottos,
+    this._draft,
+    this._analytics,
+    this._lastArchetype,
+  ) : super(const TestState());
 
   /// Where the glimpse is offered. Early enough that it arrives before anyone
   /// gets bored, late enough that it is not noise: drop-off in a quiz runs a
@@ -24,6 +30,7 @@ class TestCubit extends Cubit<TestState> {
   final api.MottoResourceApi _mottos;
   final TestDraft _draft;
   final Analytics _analytics;
+  final LastArchetype _lastArchetype;
 
   /// For call sites that cannot await — a widget constructor, a callback.
   /// Named rather than silently discarded so that "nobody is waiting for this"
@@ -118,6 +125,11 @@ class TestCubit extends Cubit<TestState> {
       // successful claim could be resumed into a second charge.
       await _draft.clear();
       emit(state.copyWith(status: TestStatus.asking, result: result));
+
+      // Remembered so that a bug report or a rejection knows what it is about.
+      if (result?.archetype.id case final String archetype) {
+        await _lastArchetype.remember(archetype);
+      }
 
       await _analytics.record(
         MottoEvent.testComplete,

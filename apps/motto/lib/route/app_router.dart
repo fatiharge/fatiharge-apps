@@ -15,5 +15,11 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: ResultRoute.page),
     AutoRoute(page: ShareCardRoute.page),
     AutoRoute(page: ChainRoute.page),
+    AutoRoute(page: SettingsRoute.page),
+    AutoRoute(page: PrivacyRoute.page),
+    AutoRoute(page: DataDeletionRoute.page),
+    AutoRoute(page: FaqRoute.page),
+    AutoRoute(page: MethodRoute.page),
+    AutoRoute(page: FeedbackRoute.page),
   ];
 }
