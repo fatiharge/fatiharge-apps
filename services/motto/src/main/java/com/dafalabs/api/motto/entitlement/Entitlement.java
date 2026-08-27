@@ -70,6 +70,12 @@ public class Entitlement {
     return purchasedAt != null;
   }
 
+  void markPurchased(Instant now) {
+    if (purchasedAt == null) {
+      purchasedAt = now;
+    }
+  }
+
   void recordClaim(Instant now) {
     usedCount++;
     lastClaimAt = now;

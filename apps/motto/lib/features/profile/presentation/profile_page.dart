@@ -1,11 +1,25 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:motto/config/injectable.dart';
+import 'package:motto/features/profile/application/profile_cubit.dart';
+import 'package:motto/route/app_router.gr.dart';
 
-/// The tab the real profile will fill, so the bar has its shape from the start.
-// TODO(fcetin): archive, reports and plan — T26.
 @RoutePage()
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => getIt<ProfileCubit>()..unawaitedLoad(),
+      child: const _ProfileView(),
+    );
+  }
+}
+
+class _ProfileView extends StatelessWidget {
+  const _ProfileView();
 
   @override
   Widget build(BuildContext context) {
@@ -15,21 +29,68 @@ class ProfilePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Profil')),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Yakında', style: text.headlineSmall),
-              const SizedBox(height: 12),
-              Text(
-                'Geçmiş sonuçların, raporların ve planın burada olacak.',
-                style: text.bodyLarge?.copyWith(
-                  color: scheme.onSurfaceVariant,
+        child: BlocBuilder<ProfileCubit, ProfileState>(
+          builder: (context, state) {
+            if (state.status == ProfileStatus.loading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (state.status == ProfileStatus.failed) {
+              return const Center(child: Text('Profil yüklenemedi.'));
+            }
+
+            final current = state.current;
+
+            return ListView(
+              padding: const EdgeInsets.fromLTRB(24, 16, 24, 40),
+              children: [
+                if (current == null)
+                  Text(
+                    'Henüz bir envanter doldurmadın.',
+                    style: text.bodyLarge,
+                  )
+                else ...[
+                  Text(
+                    'ŞU ANKİ ARKETİPİN',
+                    style: text.labelSmall?.copyWith(
+                      color: scheme.onSurfaceVariant,
+                      letterSpacing: 1.5,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(current.archetype.name, style: text.headlineSmall),
+                  const SizedBox(height: 12),
+                  Text(current.archetype.summary, style: text.bodyLarge),
+                  const SizedBox(height: 24),
+                  FilledButton(
+                    onPressed: () => context.router.push(
+                      DeepReportRoute(resultId: current.id),
+                    ),
+                    child: Text(
+                      state.premium ? 'Derin raporu oku' : 'Derin rapor',
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 32),
+                const Divider(),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Geçmiş sonuçların'),
+                  subtitle: Text('${state.results.length} kayıt'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => context.router.push(const ArchiveRoute()),
                 ),
-              ),
-            ],
-          ),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Arketipler'),
+                  subtitle: Text(
+                    state.premium ? 'Sekizini de gez' : 'Premium',
+                  ),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => context.router.push(const GalleryRoute()),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );

@@ -200,6 +200,40 @@
           }
         }
       },
+      "DeepReport" : {
+        "type" : "object",
+        "required" : [ "resultId", "archetypeId", "locked", "preview", "sections" ],
+        "properties" : {
+          "resultId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "archetypeId" : {
+            "type" : "string"
+          },
+          "locked" : {
+            "type" : "boolean"
+          },
+          "preview" : {
+            "type" : "string"
+          },
+          "sections" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ReportSection"
+            }
+          },
+          "portrait" : {
+            "type" : "string"
+          },
+          "comparison" : {
+            "type" : "string"
+          },
+          "limitation" : {
+            "type" : "string"
+          }
+        }
+      },
       "DeletionResponse" : {
         "type" : "object",
         "required" : [ "deleted", "kept" ],
@@ -464,6 +498,25 @@
             "items" : {
               "$ref" : "#/components/schemas/Question"
             }
+          }
+        }
+      },
+      "ReportSection" : {
+        "type" : "object",
+        "required" : [ "section", "opening", "reading", "fragment" ],
+        "properties" : {
+          "section" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "opening" : {
+            "type" : "string"
+          },
+          "reading" : {
+            "type" : "string"
+          },
+          "fragment" : {
+            "type" : "string"
           }
         }
       },
@@ -918,6 +971,43 @@
           }
         },
         "tags" : [ "Motto Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
+    "/v1/reports/{resultId}" : {
+      "get" : {
+        "summary" : "The deep report for a result",
+        "operationId" : "deepReport",
+        "parameters" : [ {
+          "name" : "resultId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DeepReport"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "tags" : [ "Report Resource" ],
         "security" : [ {
           "SecurityScheme" : [ ]
         } ]

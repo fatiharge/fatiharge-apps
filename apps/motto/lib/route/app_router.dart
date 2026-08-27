@@ -31,5 +31,8 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: TaskDetailRoute.page),
     AutoRoute(page: MottoDetailRoute.page),
     AutoRoute(page: PeriodReportRoute.page),
+    AutoRoute(page: ArchiveRoute.page),
+    AutoRoute(page: DeepReportRoute.page),
+    AutoRoute(page: GalleryRoute.page),
   ];
 }

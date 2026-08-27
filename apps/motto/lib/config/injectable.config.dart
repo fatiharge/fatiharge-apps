@@ -29,6 +29,7 @@ import 'package:motto/features/daily/application/daily_cubit.dart' as _i1068;
 import 'package:motto/features/daily/application/daily_widget.dart' as _i113;
 import 'package:motto/features/onboarding/application/onboarding_store.dart'
     as _i624;
+import 'package:motto/features/profile/application/profile_cubit.dart' as _i315;
 import 'package:motto/features/result/application/card_exporter.dart' as _i111;
 import 'package:motto/features/support/application/data_deletion.dart' as _i729;
 import 'package:motto/features/support/application/feedback_cubit.dart'
@@ -137,11 +138,20 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i66.TaskResourceApi>(
       () => apiClients.tasks(gh<_i66.ApiClient>()),
     );
+    gh.lazySingleton<_i66.ReportResourceApi>(
+      () => apiClients.reports(gh<_i66.ApiClient>()),
+    );
     gh.lazySingleton<_i503.DeviceSession>(
       () => _i503.DeviceSession(
         gh<_i37.DeviceIdentity>(),
         gh<_i818.DeviceResourceApi>(),
         gh<_i759.TokenStore>(),
+      ),
+    );
+    gh.factory<_i315.ProfileCubit>(
+      () => _i315.ProfileCubit(
+        gh<_i66.ResultResourceApi>(),
+        gh<_i66.EntitlementResourceApi>(),
       ),
     );
     gh.lazySingleton<_i761.ChainRepository>(

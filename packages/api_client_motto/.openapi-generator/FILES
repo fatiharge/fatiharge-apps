@@ -14,6 +14,7 @@ doc/ContentResourceApi.md
 doc/DailySkeleton.md
 doc/DailyTask.md
 doc/DailyTasks.md
+doc/DeepReport.md
 doc/DeletionResponse.md
 doc/EntitlementResourceApi.md
 doc/EntitlementResponse.md
@@ -33,6 +34,8 @@ doc/PeriodReport.md
 doc/ProfileScores.md
 doc/Question.md
 doc/QuestionResponse.md
+doc/ReportResourceApi.md
+doc/ReportSection.md
 doc/ResultHistory.md
 doc/ResultResourceApi.md
 doc/ResultResponse.md
@@ -47,6 +50,7 @@ lib/api/entitlement_resource_api.dart
 lib/api/event_resource_api.dart
 lib/api/feedback_resource_api.dart
 lib/api/motto_resource_api.dart
+lib/api/report_resource_api.dart
 lib/api/result_resource_api.dart
 lib/api/task_resource_api.dart
 lib/api/test_resource_api.dart
@@ -67,6 +71,7 @@ lib/model/content_bundle.dart
 lib/model/daily_skeleton.dart
 lib/model/daily_task.dart
 lib/model/daily_tasks.dart
+lib/model/deep_report.dart
 lib/model/deletion_response.dart
 lib/model/entitlement_response.dart
 lib/model/event_batch.dart
@@ -82,6 +87,7 @@ lib/model/period_report.dart
 lib/model/profile_scores.dart
 lib/model/question.dart
 lib/model/question_response.dart
+lib/model/report_section.dart
 lib/model/result_history.dart
 lib/model/result_response.dart
 lib/model/result_summary.dart
@@ -97,6 +103,7 @@ test/content_resource_api_test.dart
 test/daily_skeleton_test.dart
 test/daily_task_test.dart
 test/daily_tasks_test.dart
+test/deep_report_test.dart
 test/deletion_response_test.dart
 test/entitlement_resource_api_test.dart
 test/entitlement_response_test.dart
@@ -116,6 +123,8 @@ test/period_report_test.dart
 test/profile_scores_test.dart
 test/question_response_test.dart
 test/question_test.dart
+test/report_resource_api_test.dart
+test/report_section_test.dart
 test/result_history_test.dart
 test/result_resource_api_test.dart
 test/result_response_test.dart

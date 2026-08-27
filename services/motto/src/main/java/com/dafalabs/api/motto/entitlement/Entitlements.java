@@ -54,6 +54,20 @@ public class Entitlements {
   }
 
   /**
+   * Turns a device premium.
+   *
+   * <p>The one place it happens, so receipt verification has somewhere to call
+   * and nothing else has to know how premium is stored. Idempotent: a store
+   * that delivers the same purchase twice is a store, not a bug.
+   */
+  @Transactional
+  public EntitlementState grantPremium(UUID deviceId) {
+    Entitlement entitlement = rowFor(deviceId);
+    entitlement.markPurchased(clock.instant());
+    return describe(entitlement);
+  }
+
+  /**
    * Spends one use, and a skip if the cooldown is open and the caller asked to
    * spend one.
    *
