@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- updatePeriodMillis is 0 on purpose: the system's own refresh is capped at
+     thirty minutes and would redraw the same text all day. The app updates the
+     widget when the day or the chain changes, which is the only time it can
+     have changed. -->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="180dp"
+    android:minHeight="110dp"
+    android:targetCellWidth="3"
+    android:targetCellHeight="2"
+    android:updatePeriodMillis="0"
+    android:initialLayout="@layout/motto_widget"
+    android:resizeMode="horizontal|vertical"
+    android:widgetCategory="home_screen" />

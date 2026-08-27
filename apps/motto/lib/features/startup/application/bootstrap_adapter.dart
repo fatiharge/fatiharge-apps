@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bootstrap_kit/bootstrap_kit.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/features/content/application/content_repository.dart';
+import 'package:motto/features/support/application/last_archetype.dart';
 import 'package:motto/infrastructure/analytics/analytics.dart';
 import 'package:motto/infrastructure/analytics/motto_event.dart';
 import 'package:motto/infrastructure/session/device_session.dart';
@@ -45,8 +46,17 @@ class BootstrapAdapter implements BootstrapPort {
   ];
 
   /// Replaces rather than pushes: the splash is not somewhere to come back to.
+  ///
+  /// Somebody who already has a result lands on today, not on a welcome screen
+  /// inviting them to do the thing they have done. Daily freshness is what
+  /// this product is, and the front door has to be it.
   @override
   void bootstrapFinished() {
-    unawaited(getIt<AppRouter>().replaceAll([const WelcomeRoute()]));
+    final started = getIt<LastArchetype>().id != null;
+    unawaited(
+      getIt<AppRouter>().replaceAll([
+        if (started) const TodayRoute() else const WelcomeRoute(),
+      ]),
+    );
   }
 }
