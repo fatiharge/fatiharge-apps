@@ -1,0 +1,296 @@
+# Four mottos per archetype, with what each one means and the line it becomes
+# on a lock screen.
+#
+# A motto is a stance, not an instruction — "Acele etmeyen ama durmayan", never
+# "Her gün çalış". The difference matters because the instruction version is
+# advice, and advice from an app is the thing people mute first.
+#
+# Three parts, and all three are needed:
+#   motto    — what someone would screenshot.
+#   detail   — why this one, and what it costs. Same rule as an archetype
+#              summary: a line that only flatters is not finished.
+#   reminder — what it says when it arrives as a notification. Short enough to
+#              read on a lock screen without opening anything.
+#
+# `archetypes.yaml` carries one motto each as the archetype's own line. These
+# are the pool a claim draws from; the first of each set is that same line, so
+# the card and the first day agree.
+
+version: 1
+
+mottos:
+  # Sessiz İnşacı
+  - id: qb1
+    archetype: quiet_builder
+    tr:
+      motto: Acele etmeyen ama durmayan.
+      detail: >-
+        Hızlanmak sana bir şey kazandırmıyor, durmak her şeyi kaybettiriyor.
+        Bedeli, ilerlediğini uzun süre kimsenin — bazen senin bile — fark
+        etmemesi.
+      reminder: Bugün de bir taş.
+  - id: qb2
+    archetype: quiet_builder
+    tr:
+      motto: İlk taşı ben biliyorum.
+      detail: >-
+        Duvarı herkes görür, nereden başladığını sen bilirsin. Bunu bilmek
+        yeterli olmalı; çoğu zaman olmuyor ve bu yorucu.
+      reminder: Nereden başladığını hatırla.
+  - id: qb3
+    archetype: quiet_builder
+    tr:
+      motto: Gösterebileceğim kadarı yeter.
+      detail: >-
+        Bitmemiş bir şeyi göstermek sana yanlış geliyor. Ama hiç göstermezsen
+        hakkın da teslim edilmiyor — bu ikisi arasında bir yer var.
+      reminder: Bugünlük bu kadarı görünsün.
+  - id: qb4
+    archetype: quiet_builder
+    tr:
+      motto: Sessizlik yavaşlık değil.
+      detail: >-
+        Ses çıkarmadan çalışmak, az çalışmak sanılıyor. Doğrusunu bilmek senin
+        işine yarar; başkasına anlatmak da bazen gerekiyor.
+      reminder: Sessiz ama duruyor.
+
+  # Kıvılcım
+  - id: sp1
+    archetype: spark
+    tr:
+      motto: Bugün sadece bir tanesi.
+      detail: >-
+        Fikirlerin kötü değil, fazla. Seçmek eleme değil vazgeçme olduğu için
+        zor — ve vazgeçmediğin sürece hiçbiri ilerlemiyor.
+      reminder: Bir tanesi. Sadece bugün.
+  - id: sp2
+    archetype: spark
+    tr:
+      motto: Tutuşturmak kolay, taşımak marifet.
+      detail: >-
+        Başlangıçta iyisin ve bunu biliyorsun. Asıl mesele heyecan bittikten
+        sonra kalan kısım, ki orası sıkıcı olduğu için yürüyor.
+      reminder: Heyecan bitti, iş duruyor.
+  - id: sp3
+    archetype: spark
+    tr:
+      motto: Yaz ve bırak.
+      detail: >-
+        Yeni fikir gelmesini engelleyemezsin, peşinden gitmeyi
+        erteleyebilirsin. Bir yere yazılan fikir kaçmıyor; kovalanan fikir
+        bugünü yiyor.
+      reminder: Yazdın mı? Yeter.
+  - id: sp4
+    archetype: spark
+    tr:
+      motto: Kaçıncı gün, kaç fikir değil.
+      detail: >-
+        Sende ölçü hep üretilen sayıydı. Bu sefer ölçü aynı şeye kaçıncı kez
+        döndüğün — daha az heyecanlı ama daha çok işe yarıyor.
+      reminder: Aynı şeye bir kez daha dön.
+
+  # Gece Nöbetçisi
+  - id: nw1
+    archetype: night_watch
+    tr:
+      motto: Tetikte olmak da bir güç, dinlenmek de.
+      detail: >-
+        Önceden görmen defalarca işe yaradı, o yüzden bırakmıyorsun. Ama nöbet
+        her gün tutulmuyor ve bunu kimse sana söylemiyor.
+      reminder: Bugün nöbet yok.
+  - id: nw2
+    archetype: night_watch
+    tr:
+      motto: Listenin tamamı bugünün işi değil.
+      detail: >-
+        Ters gidebilecek her şeyi zaten düşündün. Hepsini bugün çözmeye
+        çalışmak, hiçbirini çözmemekle aynı yere çıkıyor.
+      reminder: Bir madde. Bugünlük o kadar.
+  - id: nw3
+    archetype: night_watch
+    tr:
+      motto: Bir gün affedilir.
+      detail: >-
+        Kaçırdığın gün değil, kaçırdıktan sonra kurduğun senaryo yoruyor.
+        Zincir bir günü affediyor — sen genelde affetmiyorsun.
+      reminder: Bir gün bir şey değiştirmez.
+  - id: nw4
+    archetype: night_watch
+    tr:
+      motto: Hazırlık da bir iş, o da bitiyor.
+      detail: >-
+        Hazırlanmak sende hiç bitmiyor çünkü her zaman bir ihtimal daha var.
+        Bir yerde durmak, hazırlıksız kalmak değil.
+      reminder: Yeterince hazırsın.
+
+  # Sofra Kuran
+  - id: ts1
+    archetype: table_setter
+    tr:
+      motto: Onlardan önce bir de bana sor.
+      detail: >-
+        Herkesin iyi hissetmesini ayarlarken sıra sana gelmiyor. Bu bir
+        fedakârlık değil, alışkanlık — ve alışkanlıklar değişebiliyor.
+      reminder: Bugünkü dakika senin.
+  - id: ts2
+    archetype: table_setter
+    tr:
+      motto: Kendime verdiğim söz de sözdür.
+      detail: >-
+        Başkasına verdiğin sözü tutuyorsun. Kendine verdiğini bozarken
+        kimseden özür dilemediğin için bedava geliyor; gelmiyor.
+      reminder: Söz vermiştin.
+  - id: ts3
+    archetype: table_setter
+    tr:
+      motto: Masayı kuran da oturur.
+      detail: >-
+        İnsanları bir araya getirmek senin işin oldu. Sofrada kendine yer
+        ayırmak, o işi bırakmak anlamına gelmiyor.
+      reminder: Otur.
+  - id: ts4
+    archetype: table_setter
+    tr:
+      motto: Bunu kimseye anlatmak zorunda değilim.
+      detail: >-
+        Yaptığın çoğu şeyin bir izleyicisi var. Bunun yok, ve olmaması onu
+        değersiz yapmıyor — sadece sessiz yapıyor.
+      reminder: Kimse görmese de olur.
+
+  # İnce İşçi
+  - id: fw1
+    archetype: fine_worker
+    tr:
+      motto: Mükemmel değil, bitmiş olsun.
+      detail: >-
+        Yarım kalanların çoğu tembellikten değil standardından yarım kaldı.
+        Standart iyi bir şey; her yerde aynı standardı uygulamak değil.
+      reminder: Bitmiş olsun, yeter.
+  - id: fw2
+    archetype: fine_worker
+    tr:
+      motto: Şimdilik böyle.
+      detail: >-
+        "Böyle olmaz" cümlesi işi durduruyor, "şimdilik böyle" ilerletiyor.
+        İkisi de geçici, biri ilerleme bırakıyor.
+      reminder: Şimdilik yeter.
+  - id: fw3
+    archetype: fine_worker
+    tr:
+      motto: Farkı ben görüyorum, bugün görmeyeyim.
+      detail: >-
+        Kimsenin görmediği farkı görmek bir yetenek ve bir yük. Bugünlük yükü
+        bırakmak, yeteneği kaybetmek değil.
+      reminder: Bugün bakma.
+  - id: fw4
+    archetype: fine_worker
+    tr:
+      motto: Bir kademe aşağısı da iş görür.
+      detail: >-
+        En iyisini yapmak zaman alıyor ve o zaman başka bir şeyden çalınıyor.
+        Neyin en iyi olması gerektiğini seçmek de bir ustalık.
+      reminder: Bir kademe aşağı.
+
+  # Yön Veren
+  - id: cp1
+    archetype: compass
+    tr:
+      motto: Karar vermek de bir yük, taşıyorum.
+      detail: >-
+        Kimse karar vermeyince sen veriyorsun ve genelde doğru çıkıyor.
+        Bedeli, taşıdığın şeyin ağırlığını kimsenin görmemesi — küçük kararlar
+        dahil.
+      reminder: Bugünkü karar küçük. Yine de sende.
+  - id: cp2
+    archetype: compass
+    tr:
+      motto: Bu sefer kimseyi ikna etmeyeceğim.
+      detail: >-
+        Herkesi beklemeden yürüyorsun ve genelde haklı çıkıyorsun. Bugünkü işin
+        kimseyi ilgilendirmiyor; ikna edilecek tek kişi sensin.
+      reminder: Sadece seni ilgilendiriyor.
+  - id: cp3
+    archetype: compass
+    tr:
+      motto: Bırak ilerlesin.
+      detail: >-
+        Yavaş gideni hızlandırma refleksin var. Bazı şeyler müdahaleyle değil,
+        zamanla ilerliyor — ve beklemek sende en zor kısım.
+      reminder: Bugün karışma.
+  - id: cp4
+    archetype: compass
+    tr:
+      motto: Yön göstermek de yoruyor.
+      detail: >-
+        Kimse senden istemedi ama sen yapıyorsun. Yorulmanın sebebi iş değil,
+        işin kime ait olduğunun hiç konuşulmaması.
+      reminder: Bugünkü yön seninki.
+
+  # Durgun Su
+  - id: sw1
+    archetype: still_water
+    tr:
+      motto: Sakinim, kayıtsız değil.
+      detail: >-
+        Telaşa kapılmaman umursamamak sanılıyor. Aynı sakinlik ertelemeyi de
+        rahatsız edici olmaktan çıkarıyor — asıl dikkat etmen gereken yer
+        orası.
+      reminder: Sakin ol ama bugün yap.
+  - id: sw2
+    archetype: still_water
+    tr:
+      motto: Sakinliğin bir bedeli var.
+      detail: >-
+        Çevrendekiler senin sakinliğinden faydalanıyor. Bunun sana neye mal
+        olduğunu genelde sadece sen biliyorsun ve söylemiyorsun.
+      reminder: Bugün kendine de bak.
+  - id: sw3
+    archetype: still_water
+    tr:
+      motto: Kendimi biraz rahatsız edeyim.
+      detail: >-
+        Kimseyi rahatsız etmeden yaşamayı beceriyorsun. Değişim tam olarak
+        rahatsızlığın olduğu yerde oluyor.
+      reminder: Küçük bir rahatsızlık.
+  - id: sw4
+    archetype: still_water
+    tr:
+      motto: Durgun, ama duruyor.
+      detail: >-
+        Dışarıdan hareketsiz görünmek durmakla karıştırılıyor. Aradaki farkı
+        bilen tek kişi sensin; bugün onu doğru tarafta tut.
+      reminder: Duruyorsun.
+
+  # Derin Dalgıç
+  - id: dd1
+    archetype: deep_diver
+    tr:
+      motto: Derinde kalmak değil, dalıp çıkmak.
+      detail: >-
+        Bir konuya girdiğinde dibine gidiyorsun; orada kalmak da kolay.
+        Değerli olan derinlik değil, geri çıkıp bir şey getirebilmen.
+      reminder: Dal, sonra çık.
+  - id: dd2
+    archetype: deep_diver
+    tr:
+      motto: Anlamadan da yapılır.
+      detail: >-
+        Anlamadığın bir şeyi yapmak sana ters geliyor. Ama bazı şeyler
+        yapıldıkça anlaşılıyor, öncesinde değil.
+      reminder: Anlamı sonra gelecek.
+  - id: dd3
+    archetype: deep_diver
+    tr:
+      motto: Hazır olacağım gün yok.
+      detail: >-
+        Hazır hissettiğinde başlamayı seviyorsun. O his gelmiyor; gelenler
+        başlamış olanlar.
+      reminder: Bugün başla.
+  - id: dd4
+    archetype: deep_diver
+    tr:
+      motto: Yüzeyde de bir şeyler oluyor.
+      detail: >-
+        Derinde olan biteni görüyorsun, yüzeydekini kaçırıyorsun. Kaçırdığın
+        şeylerin çoğu orada duruyor.
+      reminder: Bir dakika yukarı çık.

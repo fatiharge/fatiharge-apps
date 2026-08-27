@@ -1,0 +1,185 @@
+# Four fragments per archetype, and they are the whole reason a combinatorial
+# day does not read like a fortune cookie.
+#
+# A fragment is not advice. It is the sentence that says "this is the shape of
+# the trouble you specifically have with today's idea" — which only works if it
+# names the same cost the archetype's summary named. A fragment that would fit
+# any of the eight is a fragment that has not been written yet.
+#
+# Four each, rotated across the fourteen days, so nobody sees the same one twice
+# in a week.
+
+version: 1
+
+fragments:
+  # Sessiz İnşacı — düzenlilik ↑ · dışadönüklük ↓
+  - archetype: quiet_builder
+    index: 1
+    tr: >-
+      Sen zaten küçük başlıyorsun. Senin zorlandığın yer başlamak değil,
+      başladığını birine söylemek.
+  - archetype: quiet_builder
+    index: 2
+    tr: >-
+      Sessizce biriktirdiğin için ilerlemeni sen de geç fark ediyorsun.
+      Bugün fark ettiğin şeyi bir yere yaz, yoksa olmamış sayılıyor.
+  - archetype: quiet_builder
+    index: 3
+    tr: >-
+      Kimse bakmıyorken devam edebiliyorsun; bu nadir bir şey. Bedeli, kimse
+      bakmadığı için durduğunda da kimsenin fark etmemesi.
+  - archetype: quiet_builder
+    index: 4
+    tr: >-
+      Duvarı bitirmeden göstermek istemiyorsun. Bugünlük ilk taşı göster.
+
+  # Kıvılcım — açıklık ↑ · dışadönüklük ↑ · düzenlilik ↓
+  - archetype: spark
+    index: 1
+    tr: >-
+      Senin için tek bir şey seçmek, kötü olanları elemek değil; iyi olanlardan
+      vazgeçmek. Zor olan da bu.
+  - archetype: spark
+    index: 2
+    tr: >-
+      Bugün yeni bir fikir gelirse yaz ve bırak. Yarın da orada olacak; olmazsa
+      zaten tutmayacaktı.
+  - archetype: spark
+    index: 3
+    tr: >-
+      Sıkıldığın an bırakma anın değil, alışkanlığa dönüşme anın. Heyecan biterse
+      geriye kalan şey işin kendisi.
+  - archetype: spark
+    index: 4
+    tr: >-
+      Bir şeye başlamak sende hiç sorun olmadı. Bugünün ölçüsü kaç şey
+      başlattığın değil, kaçıncı gün aynı şeye döndüğün.
+
+  # Gece Nöbetçisi — düzenlilik ↑ · duygusal tepkisellik ↑
+  - archetype: night_watch
+    index: 1
+    tr: >-
+      Ters gidebilecekleri zaten düşündün. Bugünlük sadece gidebilecek olanı
+      yap, listenin tamamını değil.
+  - archetype: night_watch
+    index: 2
+    tr: >-
+      Bir günü kaçırınca aklından geçen senaryo, kaçırmanın kendisinden daha
+      yorucu. Zincir bir günü affediyor, sen de affet.
+  - archetype: night_watch
+    index: 3
+    tr: >-
+      Tetikte olmak enerji harcıyor ve o enerji bir yerden geliyor. Bugün
+      dinlenmeyi de yapılacak işlerden biri say.
+  - archetype: night_watch
+    index: 4
+    tr: >-
+      Hazırlıklı olmanı defalarca işe yaradığı için bırakmıyorsun. Doğru; ama
+      her gün nöbet tutulmuyor.
+
+  # Sofra Kuran — uyumluluk ↑ · dışadönüklük ↑
+  - archetype: table_setter
+    index: 1
+    tr: >-
+      Bugünkü bir dakika senin. Kimseye faydası olmayacak ve bu bir sorun değil.
+  - archetype: table_setter
+    index: 2
+    tr: >-
+      Birine söz verdiğinde tutuyorsun. Bu sefer sözü kendine verdiğin için
+      daha kolay bırakıyorsun — fark ettin mi?
+  - archetype: table_setter
+    index: 3
+    tr: >-
+      Herkesin iyi hissetmesini ayarlarken sıra sana gelmiyor. Bugün sıraya
+      önden gir.
+  - archetype: table_setter
+    index: 4
+    tr: >-
+      Anlatacak birini bulmak sende kolay. Zor olan, anlattığın şeyin sadece
+      seninle ilgili olması.
+
+  # İnce İşçi — açıklık ↑ · düzenlilik ↑
+  - archetype: fine_worker
+    index: 1
+    tr: >-
+      Bir dakikayı "yeterince iyi" yapmak sende zaman alıyor. Bugünlük ölçü
+      kalite değil, olmuş olması.
+  - archetype: fine_worker
+    index: 2
+    tr: >-
+      Yarım bıraktığın şeylerin çoğu tembellikten değil, standardından yarım
+      kaldı. Bugün standardı bir kademe indir.
+  - archetype: fine_worker
+    index: 3
+    tr: >-
+      Farkı kimsenin görmediği yerde de görüyorsun. Bugün görmediğin yerde bırak.
+  - archetype: fine_worker
+    index: 4
+    tr: >-
+      "Böyle olmaz" demek yerine bugün "şimdilik böyle" de. Yarın düzeltirsin.
+
+  # Yön Veren — dışadönüklük ↑ · düzenlilik ↑ · uyumluluk ↓
+  - archetype: compass
+    index: 1
+    tr: >-
+      Karar vermek sende hızlı. Bugünkü karar küçük olduğu için değersiz
+      görünüyor; asıl zor olan küçük kararı da vermek.
+  - archetype: compass
+    index: 2
+    tr: >-
+      Herkesi beklemeden yürüyorsun ve genelde doğru çıkıyor. Bugün kimseyi
+      ikna etmen gerekmiyor, sadece kendini.
+  - archetype: compass
+    index: 3
+    tr: >-
+      Bir şey yavaş ilerliyorsa müdahale etme refleksin var. Bugün bırak
+      ilerlesin.
+  - archetype: compass
+    index: 4
+    tr: >-
+      Yön göstermek yorucu bir iş ve kimse bunu senden istemiyor. Bugünkü yön
+      sadece seninki.
+
+  # Durgun Su — duygusal denge ↑ · dışadönüklük ↓
+  - archetype: still_water
+    index: 1
+    tr: >-
+      Telaşa kapılmadığın için acele de etmiyorsun. Bugün acele etmeden ama
+      ertelemeden yap.
+  - archetype: still_water
+    index: 2
+    tr: >-
+      Sakin kalabilmen çevrendekilere iyi geliyor; bunun bir bedeli olduğunu
+      genelde sadece sen biliyorsun.
+  - archetype: still_water
+    index: 3
+    tr: >-
+      Bir şeyi ertelediğinde huzursuz olmuyorsun, o yüzden erteleme sende
+      sessiz ilerliyor. Bugün sessizliği bozan tek şey bu olsun.
+  - archetype: still_water
+    index: 4
+    tr: >-
+      Kimseyi rahatsız etmeden yaşamayı beceriyorsun. Bugün kendini biraz
+      rahatsız et.
+
+  # Derin Dalgıç — açıklık ↑ · dışadönüklük ↓
+  - archetype: deep_diver
+    index: 1
+    tr: >-
+      Bir konuya girdiğinde dibine kadar gidiyorsun. Bugünkü iş sığ ve bu
+      bilerek böyle.
+  - archetype: deep_diver
+    index: 2
+    tr: >-
+      Anlamadığın bir şeyi yapmak sana ters. Bugün anlamadan yap, anlamı sonra
+      gelecek.
+  - archetype: deep_diver
+    index: 3
+    tr: >-
+      Derine indiğin için yüzeyde olan biteni kaçırıyorsun. Bugün bir dakika
+      yüzeyde kal.
+  - archetype: deep_diver
+    index: 4
+    tr: >-
+      Hazır olduğunda başlamayı seviyorsun. Hazır olmak diye bir gün yok;
+      bugün de yok.

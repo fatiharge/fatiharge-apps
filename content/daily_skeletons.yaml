@@ -1,0 +1,129 @@
+# The fourteen days, without the person in them.
+#
+# Each day is the same for everybody: the body says one thing about building
+# something small, and the fragment that follows it is what makes it theirs.
+# Written this way round on purpose — a body that already knows who is reading
+# it cannot be reused, and 14 × 8 individually written days is not fourteen
+# days of writing, it is a hundred and twelve.
+#
+# `action` is the minute. It has to be doable while standing in a queue, or the
+# chain breaks on the first bad day and takes the app with it.
+
+version: 1
+
+skeletons:
+  - day: 1
+    tr:
+      title: Bir dakika
+      body: >-
+        Bugün başlayan şey küçük olmak zorunda. Büyük başlayan her şey ikinci
+        gün pazarlık konusu oluyor; küçük başlayan, sıkıcı olduğu için hayatta
+        kalıyor.
+      action: Bir dakikanı alacak tek bir şey seç ve bugün onu yap.
+
+  - day: 2
+    tr:
+      title: İkinci gün
+      body: >-
+        İlk gün heyecanla olur. İkinci gün olmaz — çünkü ikinci günde heyecan
+        yoktur, sadece yapılacak iş vardır. Zincirin gerçekte bugün başlıyor.
+      action: Dün ne yaptıysan bugün aynısını yap. Daha fazlasını değil.
+
+  - day: 3
+    tr:
+      title: Aynı saat
+      body: >-
+        Hatırlamak zorunda kaldığın şey unutulur. Aynı saate bağlanan şey
+        hatırlanmaz, sadece olur. Saatin ne olduğu önemli değil, aynı olması
+        önemli.
+      action: Bugünkü saati not et. Yarın da o saat.
+
+  - day: 4
+    tr:
+      title: İlk direnç
+      body: >-
+        Dördüncü gün civarında içinden "bugün olmasa da olur" geçer. Bu bir
+        işaret değil, sadece yeniliğin bitmesi. Yenilik bittiğinde geriye kalan
+        şeye alışkanlık deniyor.
+      action: Bugün canın istemese de yap. Kısa tut, ama yap.
+
+  - day: 5
+    tr:
+      title: Kaçırdığın gün
+      body: >-
+        Bir gün kaçırmak zinciri bitirmez; kaçırdıktan sonra "nasılsa bozuldu"
+        demek bitirir. Bir gün boşluktur, iki gün karardır.
+      action: Kaçırdıysan bugün geri dön. Telafi etmeye çalışma, sadece devam et.
+
+  - day: 6
+    tr:
+      title: Görünür yer
+      body: >-
+        Akılda tutulan şey unutulur, gözün önündeki şey yapılır. İrade dediğimiz
+        şeyin çoğu aslında yerleştirme meselesi.
+      action: Yapacağın şeyi göreceğin bir yere koy. Kitabı yastığa, şişeyi masaya.
+
+  - day: 7
+    tr:
+      title: Bir hafta
+      body: >-
+        Yedi gün, bir şeyin sende tuttuğunu anlamak için yeterli. Değişen şey
+        sen değilsin; kararı her gün yeniden vermek zorunda kalmaman.
+      action: Bu hafta ne fark ettin? Tek cümleyle kendine söyle.
+
+  - day: 8
+    tr:
+      title: Çevre
+      body: >-
+        Aynı odada, aynı insanlarla, aynı saatte zor olan şey, ortam biraz
+        değişince kolaylaşabiliyor. Zorlanıyorsan sen değil, koşullar
+        ayarlanabilir.
+      action: Bugün aynı şeyi başka bir yerde ya da başka bir sırada yap.
+
+  - day: 9
+    tr:
+      title: Bahane cümlesi
+      body: >-
+        Herkesin bir cümlesi var: "yorgunum", "bugün olmaz", "yarın telafi
+        ederim". Cümleyi tanımak onu etkisiz kılmıyor ama görünür kılıyor.
+      action: Kendi bahane cümleni yaz. Bir daha duyduğunda tanıyacaksın.
+
+  - day: 10
+    tr:
+      title: Ölçmeyi bırak
+      body: >-
+        Ne kadar ilerlediğini sürekli kontrol etmek, ilerlemeyi yavaşlatan
+        şeylerden biri. Bugün sayacı unut; zaten sayıyor.
+      action: Bugün ne kadar yaptığını ölçme. Sadece yap.
+
+  - day: 11
+    tr:
+      title: Yavaşlama
+      body: >-
+        İkinci haftanın ortası, çoğu şeyin sessizce bırakıldığı yer. Sebebi
+        başarısızlık değil, dikkatin başka bir şeye kayması.
+      action: Bugün süreyi yarıya indir ama atlama. Küçük olan devam eder.
+
+  - day: 12
+    tr:
+      title: Anlat
+      body: >-
+        Bir şeyi başkasına anlattığında iki şey oluyor: kendin için netleşiyor
+        ve bırakması zorlaşıyor. İkincisi işe yarıyor.
+      action: Ne yaptığını bir kişiye söyle. Övünmek için değil, söylemiş olmak için.
+
+  - day: 13
+    tr:
+      title: Neyi bırakacaksın
+      body: >-
+        Yeni bir şey eklemek her zaman bir şeyin yerine geçer. Neyin yerine
+        geçtiğini bilmiyorsan, geri gelecek olan da o.
+      action: Bu on üç günde neyi daha az yaptığını fark et.
+
+  - day: 14
+    tr:
+      title: Bundan sonrası
+      body: >-
+        On dört gün bir bitiş değil, ölçüm. Bundan sonra devam eden şey artık
+        bir deneme değil, senin yaptığın bir şey.
+      action: Yarın da yapacaksan bugün karar ver. Vermezsen yarın karar veremezsin.

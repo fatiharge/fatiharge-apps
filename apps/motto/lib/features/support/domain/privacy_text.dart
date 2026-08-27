@@ -8,6 +8,6 @@ const privacySummary = [
   'Tutulan kimlik seni değil, telefonu tanıyor.',
   'Test cevapların ve arketibin sunucuda, o kimliğe bağlı duruyor.',
   'Zincirin, hatırlatıcı saatin ve yarım kalmış testin yalnızca telefonunda.',
-  'Ölçüm kendi sunucumuzda: üçüncü parti analiz yok, reklam kimliği yok.',
+  'Ölçüm kendi sunucumuzda: üçüncü parti araç yok, reklam kimliği yok.',
   'Paylaştığın kartta yalnızca arketibinin adı ve mottosu var.',
 ];
