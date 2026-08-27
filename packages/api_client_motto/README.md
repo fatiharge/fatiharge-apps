@@ -76,6 +76,9 @@ Class | Method | HTTP request | Description
 *FeedbackResourceApi* | [**submitFeedback**](doc//FeedbackResourceApi.md#submitfeedback) | **POST** /v1/feedback | Send feedback
 *MottoResourceApi* | [**claimMotto**](doc//MottoResourceApi.md#claimmotto) | **POST** /v1/mottos/claim | Spend a use and get a motto
 *ResultResourceApi* | [**resultHistory**](doc//ResultResourceApi.md#resulthistory) | **GET** /v1/me/results | Past results, newest first
+*TaskResourceApi* | [**completeTask**](doc//TaskResourceApi.md#completetask) | **POST** /v1/tasks/{id}/complete | Tick a task off
+*TaskResourceApi* | [**dailyTasks**](doc//TaskResourceApi.md#dailytasks) | **GET** /v1/tasks | The three things today asks for
+*TaskResourceApi* | [**periodReport**](doc//TaskResourceApi.md#periodreport) | **GET** /v1/tasks/report | What the period came to
 *TestResourceApi* | [**partialResult**](doc//TestResourceApi.md#partialresult) | **POST** /v1/tests/partial | A first look, without spending anything
 *TestResourceApi* | [**testQuestions**](doc//TestResourceApi.md#testquestions) | **GET** /v1/tests/questions | The questions to ask
 
@@ -89,6 +92,8 @@ Class | Method | HTTP request | Description
  - [Connector](doc//Connector.md)
  - [ContentBundle](doc//ContentBundle.md)
  - [DailySkeleton](doc//DailySkeleton.md)
+ - [DailyTask](doc//DailyTask.md)
+ - [DailyTasks](doc//DailyTasks.md)
  - [DeletionResponse](doc//DeletionResponse.md)
  - [EntitlementResponse](doc//EntitlementResponse.md)
  - [EventBatch](doc//EventBatch.md)
@@ -100,6 +105,7 @@ Class | Method | HTTP request | Description
  - [MarkDayRequest](doc//MarkDayRequest.md)
  - [MarkedDay](doc//MarkedDay.md)
  - [MottoContent](doc//MottoContent.md)
+ - [PeriodReport](doc//PeriodReport.md)
  - [ProfileScores](doc//ProfileScores.md)
  - [Question](doc//Question.md)
  - [QuestionResponse](doc//QuestionResponse.md)

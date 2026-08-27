@@ -1,0 +1,175 @@
+# The three things each day asks for.
+#
+# Written once per day and given to every archetype, then replaced one at a
+# time with something written for that archetype specifically. The rows are
+# seeded as `placeholder: true` so the writing job is a query rather than a
+# memory: `select * from tasks where placeholder`.
+#
+# The rule every task follows: it has to be doable while standing in a queue.
+# A task that needs a free afternoon is a task that breaks the chain on the
+# first bad day, and the chain is the product.
+
+version: 1
+
+tasks:
+  - day: 1
+    tr:
+      - title: Bir dakikanı seç
+        detail: >-
+          Bugün yapacağın şeyi seç ve bir dakikayı geçmediğinden emin ol.
+          Büyük seçilen her şey ikinci gün pazarlık konusu oluyor.
+      - title: Nereye koyacağını bul
+        detail: >-
+          Yapacağın şeyi hangi saatin yanına koyduğunu belirle. Kahvaltıdan
+          sonra, otobüste, yatmadan önce — bir çıpası olsun.
+      - title: Bugün bir kez yap
+        detail: Seçtiğin şeyi bugün bir kez yap. Bugünlük ölçü bu kadar.
+
+  - day: 2
+    tr:
+      - title: Aynısını tekrarla
+        detail: >-
+          Dün ne yaptıysan bugün aynısını yap. Daha fazlasını değil — ikinci
+          gün heyecan bitiyor ve geriye kalan şey iş oluyor.
+      - title: Süreyi ölçme
+        detail: Bugün ne kadar sürdüğüne bakma. Sadece oldu mu ona bak.
+      - title: Tek cümle yaz
+        detail: >-
+          Nasıl geçtiğini bir cümleyle kendine yaz. Yazılmayan şey olmamış
+          sayılıyor.
+
+  - day: 3
+    tr:
+      - title: Saati sabitle
+        detail: >-
+          Dünkü saati bugün de kullan. Hatırlamak zorunda kaldığın şey
+          unutulur; aynı saate bağlanan şey hatırlanmaz, sadece olur.
+      - title: Telefonu kaldır
+        detail: Yaparken telefon başka bir odada ya da ters çevrili olsun.
+      - title: Bitince işaretle
+        detail: İşaretlemek bir dakikanın ikinci yarısı. Zincirin bununla uzuyor.
+
+  - day: 4
+    tr:
+      - title: Canın istemese de yap
+        detail: >-
+          Bugün "olmasa da olur" diyeceksin. Bu bir işaret değil, yeniliğin
+          bitmesi. Kısa tut ama yap.
+      - title: Yarısını yap
+        detail: >-
+          Bugünlük yarısı da sayılır. Yarım yapılan bir şey, yapılmayan bir
+          şeyden farklı bir şey.
+      - title: Ne zorladı, yaz
+        detail: Bugün en çok neyin zorladığını tek cümleyle yaz.
+
+  - day: 5
+    tr:
+      - title: Kaçırdıysan geri dön
+        detail: >-
+          Bir gün boşluktur, iki gün karardır. Kaçırdıysan bugün devam et,
+          telafi etmeye çalışma.
+      - title: Zinciri gözden geçir
+        detail: Şu ana kadarki günlere bak. Şeklini görmek devam ettiriyor.
+      - title: Bugünü işaretle
+        detail: Bugünün işaretlenmesi dünü telafi etmekten daha önemli.
+
+  - day: 6
+    tr:
+      - title: Görünür yere koy
+        detail: >-
+          Yapacağın şeyi göreceğin bir yere koy. İrade dediğimiz şeyin çoğu
+          aslında yerleştirme meselesi.
+      - title: Bir engeli kaldır
+        detail: Başlamanı geciktiren tek şeyi bul ve bugün onu ortadan kaldır.
+      - title: Yine yap
+        detail: Altıncı gün. Bugünü de ekle.
+
+  - day: 7
+    tr:
+      - title: Haftayı oku
+        detail: >-
+          Yedi gün, bir şeyin sende tuttuğunu anlamak için yeterli. Neyi fark
+          ettin?
+      - title: Bir şeyi değiştir
+        detail: >-
+          İşlemeyen tek bir ayrıntıyı değiştir — saat, yer, süre. Hepsini
+          değil, birini.
+      - title: Bugünü işaretle
+        detail: Bir haftalık zincir. Bugün de dursun.
+
+  - day: 8
+    tr:
+      - title: Başka bir yerde yap
+        detail: >-
+          Aynı şeyi bugün başka bir yerde ya da başka bir sırada yap.
+          Zorlanıyorsan sen değil, koşullar ayarlanabilir.
+      - title: Bir şeyi kolaylaştır
+        detail: Yarın için hazırlığı bugün yap. Yarınki sen sana teşekkür eder.
+      - title: İşaretle
+        detail: Sekizinci gün.
+
+  - day: 9
+    tr:
+      - title: Bahane cümleni yaz
+        detail: >-
+          Herkesin bir cümlesi var: "yorgunum", "bugün olmaz". Kendininkini
+          yaz. Bir daha duyduğunda tanıyacaksın.
+      - title: Cümleye rağmen yap
+        detail: Bugün o cümleyi duyduğunda yine de yap.
+      - title: İşaretle
+        detail: Dokuzuncu gün.
+
+  - day: 10
+    tr:
+      - title: Ölçmeyi bırak
+        detail: >-
+          Bugün ne kadar yaptığını ölçme. Sürekli kontrol etmek ilerlemeyi
+          yavaşlatan şeylerden biri.
+      - title: Sadece yap
+        detail: Düşünmeden, değerlendirmeden, sadece yap.
+      - title: İşaretle
+        detail: Onuncu gün. Sayaç zaten sayıyor.
+
+  - day: 11
+    tr:
+      - title: Süreyi yarıya indir
+        detail: >-
+          İkinci haftanın ortası çoğu şeyin sessizce bırakıldığı yer. Bugün
+          küçült ama atlama.
+      - title: Neden yaptığını hatırla
+        detail: Başlarken ne istiyordun? Tek cümleyle kendine söyle.
+      - title: İşaretle
+        detail: On birinci gün.
+
+  - day: 12
+    tr:
+      - title: Bir kişiye söyle
+        detail: >-
+          Ne yaptığını bir kişiye söyle. Övünmek için değil, söylemiş olmak
+          için — bırakması zorlaşıyor.
+      - title: Yardım iste ya da isteme
+        detail: Birinin bilmesi yeterli. Ondan bir şey istemek zorunda değilsin.
+      - title: İşaretle
+        detail: On ikinci gün.
+
+  - day: 13
+    tr:
+      - title: Neyi bıraktığını fark et
+        detail: >-
+          Yeni bir şey her zaman bir şeyin yerine geçer. Bu on üç günde neyi
+          daha az yaptın?
+      - title: Bir şeyi geri alma
+        detail: Bıraktığın şeyi geri almadan bugünü tamamla.
+      - title: İşaretle
+        detail: On üçüncü gün.
+
+  - day: 14
+    tr:
+      - title: Yarına karar ver
+        detail: >-
+          Yarın da yapacaksan bugün karar ver. Vermezsen yarın karar
+          veremezsin.
+      - title: Neyin kaldığını yaz
+        detail: On dört günden geriye ne kaldı? Tek cümle.
+      - title: Son günü işaretle
+        detail: On dördüncü gün. Bu bir bitiş değil, ölçüm.

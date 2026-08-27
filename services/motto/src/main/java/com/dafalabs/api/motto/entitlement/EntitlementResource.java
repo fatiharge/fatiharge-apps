@@ -4,6 +4,7 @@ import com.dafalabs.api.core.auth.AuthenticatedDevice;
 import com.dafalabs.api.motto.entitlement.dto.DeletionResponse;
 import com.dafalabs.api.motto.chain.Chains;
 import com.dafalabs.api.motto.result.Results;
+import com.dafalabs.api.motto.task.Tasks;
 import com.dafalabs.api.motto.entitlement.dto.EntitlementResponse;
 import io.quarkus.security.Authenticated;
 import jakarta.ws.rs.DELETE;
@@ -23,16 +24,19 @@ public class EntitlementResource {
   private final Entitlements entitlements;
   private final Results results;
   private final Chains chains;
+  private final Tasks tasks;
   private final AuthenticatedDevice current;
 
   EntitlementResource(
       Entitlements entitlements,
       Results results,
       Chains chains,
+      Tasks tasks,
       AuthenticatedDevice current) {
     this.entitlements = entitlements;
     this.results = results;
     this.chains = chains;
+    this.tasks = tasks;
     this.current = current;
   }
 
@@ -52,9 +56,10 @@ public class EntitlementResource {
     entitlements.deleteDataKeepingCounter(current.id());
     results.deleteForDevice(current.id());
     chains.deleteForDevice(current.id());
+    tasks.deleteForDevice(current.id());
     // Named rather than counted: the app shows this list on the confirmation
     // screen, and a number would not explain why the free uses did not return.
     return new DeletionResponse(
-        List.of("results", "chain"), List.of("usage_counter"));
+        List.of("results", "chain", "tasks"), List.of("usage_counter"));
   }
 }
