@@ -1,0 +1,92 @@
+import 'dart:async';
+
+import 'package:api_client_motto/api.dart' as api;
+import 'package:bloc/bloc.dart';
+import 'package:injectable/injectable.dart';
+import 'package:meta/meta.dart';
+import 'package:motto/features/chain/domain/chain.dart';
+
+enum TaskStatus { loading, ready, failed }
+
+@immutable
+class TaskState {
+  const TaskState({
+    this.status = TaskStatus.loading,
+    this.day = 1,
+    this.tasks = const [],
+  });
+
+  final TaskStatus status;
+  final int day;
+  final List<api.DailyTask> tasks;
+
+  int get done => tasks.where((task) => task.done).length;
+
+  TaskState copyWith({
+    TaskStatus? status,
+    int? day,
+    List<api.DailyTask>? tasks,
+  }) => TaskState(
+    status: status ?? this.status,
+    day: day ?? this.day,
+    tasks: tasks ?? this.tasks,
+  );
+}
+
+@injectable
+class TaskCubit extends Cubit<TaskState> {
+  TaskCubit(this._tasks) : super(const TaskState());
+
+  final api.TaskResourceApi _tasks;
+
+  @visibleForTesting
+  DateTime Function() now = DateTime.now;
+
+  void unawaitedLoad() => unawaited(load());
+
+  Future<void> load() async {
+    try {
+      final today = await _tasks.dailyTasks(today: dayOf(now()));
+      emit(
+        TaskState(
+          status: TaskStatus.ready,
+          day: today?.day ?? 1,
+          tasks: today?.tasks ?? const [],
+        ),
+      );
+    } on Object {
+      emit(state.copyWith(status: TaskStatus.failed));
+    }
+  }
+
+  /// Ticked here before the server hears about it: the point of a checkbox is
+  /// that it answers instantly, and the server refusing is not a case anyone
+  /// can act on.
+  Future<void> complete(api.DailyTask task) async {
+    if (task.done) return;
+
+    emit(
+      state.copyWith(
+        tasks: [
+          for (final each in state.tasks)
+            if (each.id == task.id)
+              api.DailyTask(
+                id: each.id,
+                ordinal: each.ordinal,
+                title: each.title,
+                detail: each.detail,
+                done: true,
+              )
+            else
+              each,
+        ],
+      ),
+    );
+
+    try {
+      await _tasks.completeTask(task.id, today: dayOf(now()));
+    } on Object {
+      await load();
+    }
+  }
+}
