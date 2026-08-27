@@ -16,6 +16,7 @@ class Mascot extends StatefulWidget {
     this.size = 140,
     this.onGameOffered,
     this.onReady,
+    this.followsFinger = true,
     this.loadFile = RiveFile.asset,
     super.key,
   });
@@ -30,6 +31,11 @@ class Mascot extends StatefulWidget {
 
   /// Hands the controller out so a screen can celebrate a finished task.
   final void Function(MascotController)? onReady;
+
+  /// Whether a pull moves it. False when something above it does the moving —
+  /// the host drags it across the whole screen, and two things fighting over
+  /// one gesture is a mascot that jitters.
+  final bool followsFinger;
 
   /// A seam, because rive's renderer needs a native library that a unit test
   /// does not have — and "the file would not load" is exactly the case worth
@@ -216,30 +222,44 @@ class _MascotState extends State<Mascot>
     final artboard = _artboard;
     if (artboard == null) return SizedBox.square(dimension: widget.size);
 
-    return RepaintBoundary(
-      child: GestureDetector(
-        onTap: _onTap,
-        onPanStart: (_) {
-          _touched();
-          _spring.stop();
-          _mascot?.drag(held: true);
-        },
-        onPanUpdate: (details) {
-          setState(
-            () => _pulled = MascotRules.pulledTo(_pulled, details.delta),
-          );
-          _mascot?.drag(held: true, x: _pulled.dx, y: _pulled.dy);
-        },
-        onPanEnd: (_) => _release(),
-        onPanCancel: _release,
-        child: Transform.translate(
-          offset: _pulled,
-          child: SizedBox.square(
-            dimension: widget.size,
-            child: Rive(artboard: artboard),
-          ),
+    final drawn = RepaintBoundary(
+      child: Transform.translate(
+        offset: _pulled,
+        child: SizedBox.square(
+          dimension: widget.size,
+          child: Rive(artboard: artboard),
         ),
       ),
+    );
+
+    if (!widget.followsFinger) {
+      // The host owns the pan; this still owns the pose and the tap.
+      return GestureDetector(
+        onTap: _onTap,
+        onPanDown: (_) {
+          _touched();
+          _mascot?.drag(held: true);
+        },
+        onPanEnd: (_) => _mascot?.drag(held: false),
+        onPanCancel: () => _mascot?.drag(held: false),
+        child: drawn,
+      );
+    }
+
+    return GestureDetector(
+      onTap: _onTap,
+      onPanStart: (_) {
+        _touched();
+        _spring.stop();
+        _mascot?.drag(held: true);
+      },
+      onPanUpdate: (details) {
+        setState(() => _pulled = MascotRules.pulledTo(_pulled, details.delta));
+        _mascot?.drag(held: true, x: _pulled.dx, y: _pulled.dy);
+      },
+      onPanEnd: (_) => _release(),
+      onPanCancel: _release,
+      child: drawn,
     );
   }
 }
