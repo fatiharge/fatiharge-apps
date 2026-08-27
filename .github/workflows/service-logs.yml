@@ -1,0 +1,76 @@
+name: service logs
+
+# Reads a deployed service's state and nothing else: `docker compose ps` and
+# `docker compose logs`. No write, no restart, no .env.
+#
+# It exists so that looking at a deployment does not need anyone's shell
+# password. It borrows the deploy key that already reaches that machine, so no
+# new access is created, and every run is recorded in Actions with who asked
+# for it.
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Which deployment to read
+        required: true
+        type: choice
+        options:
+          - stage
+          - production
+          - auth-stage
+          - auth-production
+      lines:
+        description: Lines per container
+        required: false
+        default: "100"
+        type: string
+      since:
+        description: Only entries newer than this, e.g. 30m or 2h
+        required: false
+        default: "1h"
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  logs:
+    name: Read ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Prepare the SSH connection
+        env:
+          KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$KEY" > ~/.ssh/deploy && chmod 600 ~/.ssh/deploy
+          # Pinned rather than scanned: every CI run is a first connection, so
+          # accepting whatever answers would accept anything.
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts && chmod 600 ~/.ssh/known_hosts
+
+      - name: Read
+        env:
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          USER_NAME: ${{ secrets.DEPLOY_USER }}
+          PORT: ${{ secrets.DEPLOY_PORT }}
+          TARGET: ${{ vars.DEPLOY_PATH }}
+          LINES: ${{ inputs.lines }}
+          SINCE: ${{ inputs.since }}
+        run: |
+          set -euo pipefail
+          ssh -i ~/.ssh/deploy -p "$PORT" -o BatchMode=yes "${USER_NAME}@${HOST}" bash -s <<EOF
+            set -euo pipefail
+            cd "${TARGET}"
+            echo "--- compose ps ---"
+            docker compose ps
+            echo "--- logs (last ${LINES} lines, since ${SINCE}) ---"
+            docker compose logs --tail "${LINES}" --since "${SINCE}" --no-color
+          EOF
+
+      - name: Remove the key
+        if: always()
+        run: rm -rf ~/.ssh
