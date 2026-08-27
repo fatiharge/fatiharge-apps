@@ -30,6 +30,7 @@ part 'auth/http_bearer_auth.dart';
 
 part 'api/entitlement_resource_api.dart';
 part 'api/event_resource_api.dart';
+part 'api/feedback_resource_api.dart';
 part 'api/motto_resource_api.dart';
 part 'api/test_resource_api.dart';
 
@@ -40,6 +41,8 @@ part 'model/entitlement_response.dart';
 part 'model/event_batch.dart';
 part 'model/event_batch_response.dart';
 part 'model/event_entry.dart';
+part 'model/feedback_kind.dart';
+part 'model/feedback_request.dart';
 part 'model/question.dart';
 part 'model/question_response.dart';
 part 'model/result_response.dart';

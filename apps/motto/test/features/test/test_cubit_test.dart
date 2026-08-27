@@ -1,6 +1,7 @@
 import 'package:api_client_motto/api.dart' as api;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:motto/features/support/application/last_archetype.dart';
 import 'package:motto/features/test/application/test_cubit.dart';
 import 'package:motto/features/test/application/test_draft.dart';
 import 'package:motto/features/test/application/test_state.dart';
@@ -56,6 +57,7 @@ void main() {
       mottos,
       draft,
       Analytics(EventQueue(preferences), events),
+      LastArchetype(preferences),
     );
   });
 

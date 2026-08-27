@@ -5,6 +5,7 @@ import 'package:motto/config/injectable.dart';
 import 'package:motto/features/chain/application/chain_cubit.dart';
 import 'package:motto/features/chain/application/chain_state.dart';
 import 'package:motto/features/chain/application/chain_store.dart';
+import 'package:motto/route/app_router.gr.dart';
 
 /// The chain: start it, mark today, keep it.
 ///
@@ -34,7 +35,15 @@ class _ChainView extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Zincir')),
+      appBar: AppBar(
+        title: const Text('Zincir'),
+        actions: [
+          IconButton(
+            onPressed: () => context.router.push(const SettingsRoute()),
+            icon: const Icon(Icons.settings_outlined),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: BlocBuilder<ChainCubit, ChainState>(
           builder: (context, state) {
@@ -108,6 +117,13 @@ class _ChainView extends StatelessWidget {
     OutlinedButton(
       onPressed: () => context.read<ChainCubit>().useFreeze(),
       child: const Text('Telafi et'),
+    ),
+    // Straight to the entry, not to a list someone then has to search: the
+    // question is already formed by the time they get here.
+    TextButton(
+      onPressed: () =>
+          context.router.push(FaqRoute(openItem: 'chain_broken')),
+      child: const Text('Telafi nasıl çalışıyor?'),
     ),
     const SizedBox(height: 24),
   ];

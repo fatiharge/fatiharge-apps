@@ -1,0 +1,113 @@
+import 'package:meta/meta.dart';
+
+/// One question and its answer.
+@immutable
+class FaqItem {
+  const FaqItem(this.id, this.question, this.answer);
+
+  /// Stable, so another screen can link straight to one entry.
+  final String id;
+  final String question;
+  final String answer;
+}
+
+/// The questions, answered before they are asked.
+///
+/// Static and offline on purpose, and this file is why: "verilerim kayboldu"
+/// is not a bug report, it is the natural consequence of an app with no
+/// accounts, and the moment someone has that thought they have no network
+/// guarantee and no patience. An FAQ that needs a server is an FAQ that is
+/// missing exactly when it is needed.
+///
+/// Copy rules: `content/README.md`. Every answer says the cost plainly rather
+/// than working around it — the complaint that gets a straight answer here is
+/// the one that does not become a one-star review.
+const faq = <FaqItem>[
+  FaqItem(
+    'data_on_device',
+    'Verilerim nerede tutuluyor?',
+    'Zincirin ve hatırlatıcı ayarların yalnızca telefonunda. Test cevapların '
+        've arketipin sunucuda, cihazına bağlı bir kimlikle — isminle değil.',
+  ),
+  FaqItem(
+    'no_account',
+    'Neden hesap açmıyorum?',
+    'Çünkü gerekmiyor. Hesapsız başlamak, seni bir e-posta vermeye zorlamadan '
+        'kullanmanın tek yolu. Bunun bedeli aşağıdaki maddede yazıyor.',
+  ),
+  FaqItem(
+    'lost_data',
+    'Uygulamayı silersem ne olur?',
+    'Zincirin gider. Hesap olmadığı için geri getirecek bir yer yok — bu, '
+        'hesapsız çalışmanın bedeli. Telefon değiştirince de aynısı olur.',
+  ),
+  FaqItem(
+    'why_wait',
+    'Neden hemen yeni bir test yapamıyorum?',
+    'Kişilik iki günde değişmez. Arka arkaya çözülen bir envanter, cevabı '
+        'değil ruh halini ölçer. Bekleme süresi sonucun bir anlamı olsun diye.',
+  ),
+  FaqItem(
+    'accuracy',
+    'Sonuç ne kadar doğru?',
+    'Kısa bir form, kaba bir çözünürlük verir. Arketip bilimsel bir kategori '
+        'değil, beş boyutlu bir profilin editöryal yorumu. Yöntem sayfasında '
+        'sınırlılıkları tek tek yazdık.',
+  ),
+  FaqItem(
+    'not_me',
+    'Arketip bana uymadı, ne yapayım?',
+    'Sonuç ekranındaki "bana uymadı" bağlantısını kullan. Hangi arketibin ne '
+        'sıklıkla reddedildiği, eşleme tablosunu düzeltmek için elimizdeki tek '
+        'sinyal.',
+  ),
+  FaqItem(
+    'chain_broken',
+    'Zincirim kırıldı, geri gelir mi?',
+    'Ayda bir telafi hakkın var ve tek bir kaçan günü kapatır. İki gün '
+        'kaçtıysa kapatmaz — kapatsaydı zincirin bir anlamı kalmazdı.',
+  ),
+  FaqItem(
+    'notifications_off',
+    'Bildirimlere izin vermedim, zincir çalışır mı?',
+    'Çalışır. Sadece hatırlatma gelmez; günü kendin işaretlersin. iOS izni bir '
+        'kez sorar, sonrasında yalnızca sistem ayarlarından açılır.',
+  ),
+  FaqItem(
+    'reminder_time',
+    'Hatırlatma saatini değiştirebilir miyim?',
+    'Ayarlar ekranından. Günde en fazla bir hatırlatma gelir ve 22:00 ile '
+        '08:00 arasında hiç gelmez.',
+  ),
+  FaqItem(
+    'too_many',
+    'Neden bazen hiç bildirim gelmiyor?',
+    'Üst üste üç bildirimi açmazsan sıklık kendiliğinden düşer. Görmezden '
+        'gelinen bir hatırlatıcının çözümü dördüncüsü değil.',
+  ),
+  FaqItem(
+    'delete_data',
+    'Verilerimi sildirebilir miyim?',
+    'Ayarlar → Gizlilik → Verilerimi sil. Cevapların, profilin ve arketibin '
+        'silinir. Cihaz kimliğin ve kullandığın hak sayısı kalır; suistimali '
+        'önlemenin başka yolu yok ve bunu saklamak istemediğimiz için değil, '
+        'saklamak zorunda olduğumuz için yazıyoruz.',
+  ),
+  FaqItem(
+    'cost',
+    'Ücretli mi?',
+    'Bu sürümde hayır. Test, sonuç, kart ve zincir ücretsiz.',
+  ),
+  FaqItem(
+    'share_card',
+    'Paylaştığım kartta ne görünüyor?',
+    'Arketibinin adı ve mottosu. Cevapların, puanların ve cihaz kimliğin '
+        'kartta yok.',
+  ),
+  FaqItem(
+    'contact',
+    'Size nasıl ulaşırım?',
+    'Ayarlar → Geri bildirim. E-posta bırakmak zorunda değilsin; bırakmazsan '
+        'okuruz ama cevap yazamayız.',
+  ),
+];

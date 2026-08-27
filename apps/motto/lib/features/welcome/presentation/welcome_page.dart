@@ -14,6 +14,16 @@ class WelcomePage extends StatelessWidget {
     final text = Theme.of(context).textTheme;
 
     return Scaffold(
+      appBar: AppBar(
+        // No title: this screen is the app's front door and a bar with a name
+        // on it would make it look like a page inside something.
+        actions: [
+          IconButton(
+            onPressed: () => context.router.push(const SettingsRoute()),
+            icon: const Icon(Icons.settings_outlined),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),

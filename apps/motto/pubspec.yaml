@@ -42,6 +42,10 @@ dependencies:
   # an initialised database every scheduled time is read as UTC.
   flutter_local_notifications: ^19.4.2
   timezone: ^0.10.1
+
+  # Attached to every piece of feedback, so nobody has to be asked "which
+  # version?" — the answer people give is usually wrong anyway.
+  package_info_plus: ^10.2.1
   meta: any
 
 dev_dependencies:

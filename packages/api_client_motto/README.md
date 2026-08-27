@@ -67,6 +67,7 @@ Class | Method | HTTP request | Description
 *EntitlementResourceApi* | [**currentEntitlement**](doc//EntitlementResourceApi.md#currententitlement) | **GET** /v1/entitlements | What this device may do now
 *EntitlementResourceApi* | [**deleteMyData**](doc//EntitlementResourceApi.md#deletemydata) | **DELETE** /v1/me | Delete this device's data
 *EventResourceApi* | [**recordEvents**](doc//EventResourceApi.md#recordevents) | **POST** /v1/events | Report what happened
+*FeedbackResourceApi* | [**submitFeedback**](doc//FeedbackResourceApi.md#submitfeedback) | **POST** /v1/feedback | Send feedback
 *MottoResourceApi* | [**claimMotto**](doc//MottoResourceApi.md#claimmotto) | **POST** /v1/mottos/claim | Spend a use and get a motto
 *TestResourceApi* | [**partialResult**](doc//TestResourceApi.md#partialresult) | **POST** /v1/tests/partial | A first look, without spending anything
 *TestResourceApi* | [**testQuestions**](doc//TestResourceApi.md#testquestions) | **GET** /v1/tests/questions | The questions to ask
@@ -81,6 +82,8 @@ Class | Method | HTTP request | Description
  - [EventBatch](doc//EventBatch.md)
  - [EventBatchResponse](doc//EventBatchResponse.md)
  - [EventEntry](doc//EventEntry.md)
+ - [FeedbackKind](doc//FeedbackKind.md)
+ - [FeedbackRequest](doc//FeedbackRequest.md)
  - [Question](doc//Question.md)
  - [QuestionResponse](doc//QuestionResponse.md)
  - [ResultResponse](doc//ResultResponse.md)

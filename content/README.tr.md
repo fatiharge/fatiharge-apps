@@ -56,14 +56,26 @@ hangi sonucu aldığını değiştirebilmesin diye.
 Yazıldı · ertesi gün bir kez daha okundu · yukarıdaki 1.4.1 tablosundan geçti ·
 göründüğü ekrana sığıyor · tanımsa bir bedel söylüyor.
 
-## Burada olmayan tek şey
+## Burada olmayan: çevrimdışı çalışmak zorunda olan metinler
 
-Hatırlatıcı metinleri
-`apps/motto/lib/features/chain/domain/turkish_reminder_copy.dart` içinde, bu
-klasörde değil. Bildirim, bir haftadır çevrimdışı olabilecek bir telefonda,
-tetiklendiği anda görünmek zorunda — yani sunucudan gelen hiçbir şeye
-dayanamaz. Hem burada hem orada bir kopya tutmak ise tam olarak bu klasörün
-engellemek için var olduğu kayma.
+Bazı metinler, bir haftadır çevrimdışı olan bir telefonda, ihtiyaç duyulduğu
+anda görünmek zorunda. Sunucudan gelen hiçbir şeye dayanamazlar, ve hem burada
+hem uygulamada kopya tutmak tam olarak bu klasörün engellemek için var olduğu
+kayma — o yüzden uygulamada duruyorlar ve nerede olduklarının listesi burada:
 
-Kurallar yine geçerli, ve bir tanesi sadece onlar için yazıldı: zincir seni
-bekler, kaç gün kaçırdığını saymaz.
+| Ne | Nerede |
+|---|---|
+| Hatırlatıcı bildirimleri | `apps/motto/lib/features/chain/domain/turkish_reminder_copy.dart` |
+| SSS | `apps/motto/lib/features/support/domain/faq.dart` |
+| Yöntem ve sınırlılıklar | `apps/motto/lib/features/support/domain/method_text.dart` |
+| Gizlilik özeti | `apps/motto/lib/features/support/domain/privacy_text.dart` |
+| Veri silme | `apps/motto/lib/features/support/domain/deletion_text.dart` |
+
+Kurallar hepsi için geçerli, ve iki tanesi sadece bunlar için yazıldı:
+
+* **Hatırlatıcı, zincirin seni beklediğini söyler; kaç gün kaçırdığını
+  saymaz.** Sayan bir hatırlatıcı sildiren bir hatırlatıcıdır, ve azarlayacağı
+  kişi zaten kötü bir hafta geçiriyordur.
+* **Bir cevap, bedeli dolandırmadan söyler.** "Zincirin gitti ve geri
+  getirecek bir hesap yok" cevabı tek yıldıza dönüşmeyen cevaptır; güven veren
+  ama cevap vermeyen cümle dönüşür.
