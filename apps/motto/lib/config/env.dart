@@ -32,4 +32,8 @@ abstract final class Env {
   static String get mottoBaseUrl => current.mottoBaseUrl;
 
   static bool get isStage => current == MottoEnvironment.stage;
+
+  /// The full policy, which the store listing needs as a public URL anyway.
+  /// The app opens this one rather than shipping a second copy of the text.
+  static const privacyPolicyUrl = 'https://dafalabs.com/motto/privacy';
 }
