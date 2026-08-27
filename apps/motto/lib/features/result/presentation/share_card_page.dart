@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/features/result/application/card_exporter.dart';
 import 'package:motto/features/result/presentation/widgets/share_card.dart';
+import 'package:motto/infrastructure/analytics/analytics.dart';
+import 'package:motto/infrastructure/analytics/motto_event.dart';
+import 'package:share_plus/share_plus.dart';
 
 /// The card, and the one button that matters in this whole app.
 ///
@@ -26,14 +29,30 @@ class _ShareCardPageState extends State<ShareCardPage> {
 
   Future<void> _share() async {
     setState(() => _sharing = true);
+    final analytics = getIt<Analytics>();
     try {
       final exporter = getIt<CardExporter>();
       final png = await exporter.capture(
         _boundaryKey,
         targetWidth: ShareCard.exportWidth,
       );
-      if (png != null) {
-        await exporter.share(png, archetypeName: widget.archetype.name);
+      if (png == null) return;
+
+      await analytics.record(MottoEvent.shareSheetOpen);
+      final outcome = await exporter.share(
+        png,
+        archetypeName: widget.archetype.name,
+      );
+
+      // A sheet that was opened and dismissed is not a share. Android's
+      // `unavailable` counts, because Android says that whenever it cannot see
+      // which app was picked — the status rides along as a property so the
+      // number can be read with that in mind rather than trusted blindly.
+      if (outcome != ShareResultStatus.dismissed) {
+        await analytics.record(
+          MottoEvent.shareComplete,
+          properties: {'status': outcome.name},
+        );
       }
     } finally {
       if (mounted) setState(() => _sharing = false);

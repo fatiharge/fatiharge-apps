@@ -1,7 +1,12 @@
+import 'dart:async';
+
 import 'package:api_client_motto/api.dart' as api;
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:motto/config/injectable.dart';
 import 'package:motto/features/result/presentation/widgets/basis_section.dart';
+import 'package:motto/infrastructure/analytics/analytics.dart';
+import 'package:motto/infrastructure/analytics/motto_event.dart';
 import 'package:motto/route/app_router.gr.dart';
 
 /// What the test produced, and the way to post it.
@@ -29,6 +34,7 @@ class _ResultPageState extends State<ResultPage> {
     // measuring, and a screen someone has to go looking for measures nothing —
     // but it opens *after* the result has been read, not instead of it.
     WidgetsBinding.instance.addPostFrameCallback((_) => _offerCard());
+    unawaited(getIt<Analytics>().record(MottoEvent.resultView));
   }
 
   static const _readingPause = Duration(milliseconds: 900);

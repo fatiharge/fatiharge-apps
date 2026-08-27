@@ -212,6 +212,12 @@ class ApiClient {
           return DeletionResponse.fromJson(value);
         case 'EntitlementResponse':
           return EntitlementResponse.fromJson(value);
+        case 'EventBatch':
+          return EventBatch.fromJson(value);
+        case 'EventBatchResponse':
+          return EventBatchResponse.fromJson(value);
+        case 'EventEntry':
+          return EventEntry.fromJson(value);
         case 'Question':
           return Question.fromJson(value);
         case 'QuestionResponse':

@@ -41,4 +41,8 @@ abstract class ApiClients {
   @lazySingleton
   motto.EntitlementResourceApi entitlements(motto.ApiClient client) =>
       motto.EntitlementResourceApi(client);
+
+  @lazySingleton
+  motto.EventResourceApi events(motto.ApiClient client) =>
+      motto.EventResourceApi(client);
 }
