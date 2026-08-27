@@ -6,7 +6,11 @@ plugins {
 
 android {
     namespace = "com.dafalabs.motto"
-    compileSdk = flutter.compileSdkVersion
+    // Pinned above the Flutter template's default: flutter_secure_storage
+    // compiles against 37 and refuses anything older. Raising it here rather
+    // than pinning an older storage release, because the Keychain is where the
+    // device identity has to live.
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -23,6 +27,27 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+    }
+
+    // Two flavors so both can sit on one phone and neither can be mistaken for
+    // the other. The suffix is what keeps their application ids apart; the app
+    // name is what keeps them apart on the home screen.
+    //
+    // A manifest placeholder rather than resValue: custom resource values are a
+    // build feature that is off by default, and turning it on for one string is
+    // more machinery than the string is worth.
+    flavorDimensions += "environment"
+
+    productFlavors {
+        create("stage") {
+            dimension = "environment"
+            applicationIdSuffix = ".stage"
+            manifestPlaceholders["appName"] = "Motto Stage"
+        }
+        create("prod") {
+            dimension = "environment"
+            manifestPlaceholders["appName"] = "Motto"
+        }
     }
 
     buildTypes {

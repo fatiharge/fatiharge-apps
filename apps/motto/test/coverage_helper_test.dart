@@ -10,6 +10,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:motto/app.dart';
 import 'package:motto/config/app_crash_listener.dart';
+import 'package:motto/config/env.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/features/welcome/presentation/welcome_page.dart';
 import 'package:motto/main.dart';
