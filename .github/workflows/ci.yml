@@ -28,6 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       dart: ${{ steps.filter.outputs.dart }}
+      paused: ${{ steps.pause.outputs.paused }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -62,59 +63,74 @@ jobs:
             echo "dart=false" >> "$GITHUB_OUTPUT"
           fi
 
-  quality:
-    name: Dart quality
+
+      # Paused until PAUSE_UNTIL, on pull requests only. The same builds run
+      # locally before every pull request is opened, and waiting for them twice
+      # was costing more than it caught. Merges to main still run everything —
+      # that is what stands between a broken commit and the stage deploy, which
+      # is automatic.
+      #
+      # Nothing has to be remembered to undo this: the date passes and the jobs
+      # come back.
+      - name: Whether the heavy jobs are paused
+        id: pause
+        run: |
+          PAUSE_UNTIL=2026-09-06
+          today=$(date -u +%F)
+
+          if [ "${{ github.event_name }}" = "pull_request" ] && [[ "$today" < "$PAUSE_UNTIL" ]]; then
+            echo "paused until ${PAUSE_UNTIL}; merges to main still run in full"
+            echo "paused=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "paused=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  # Split from the tests rather than run before them: formatting and analysis
+  # answer in well under a minute, and waiting for the test suite to hear that a
+  # file is badly formatted is a minute nobody gets back.
+  static:
+    name: Format & analyze
     needs: changes
-    if: needs.changes.outputs.dart == 'true'
+    if: needs.changes.outputs.dart == 'true' && needs.changes.outputs.paused == 'false'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+      - uses: ./.github/actions/dart-workspace
+      - run: dart run melos run format
+      - run: dart run melos run analyze
 
-      - name: Read Flutter version from .fvmrc
-        id: fvm
-        run: echo "version=$(jq -r .flutter .fvmrc)" >> "$GITHUB_OUTPUT"
-
-      - name: Set up Flutter ${{ steps.fvm.outputs.version }}
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: ${{ steps.fvm.outputs.version }}
-          channel: stable
-          cache: true
-
-      - name: Activate Melos
-        run: dart pub global activate melos
-
-      - name: Bootstrap workspace
-        run: melos bootstrap
-
-      - name: Format
-        run: melos run format
-
-      - name: Analyze
-        run: melos run analyze
-
-      - name: Test & coverage floor
-        run: melos run coverage:check
+  tests:
+    name: Test & coverage
+    needs: changes
+    if: needs.changes.outputs.dart == 'true' && needs.changes.outputs.paused == 'false'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/dart-workspace
+      - run: dart run melos run coverage:check
 
   # This job's name is the one `main-protection` requires. It is reached on
   # every run, including the ones where the Dart pipeline was skipped, so the
   # required check always reports.
   gate:
     name: Analyze, format & test
-    needs: [changes, quality]
+    needs: [changes, static, tests]
     if: always()
     runs-on: ubuntu-latest
     steps:
       - name: Fail only when something that ran failed
         run: |
           echo "changes: ${{ needs.changes.result }}"
-          echo "quality: ${{ needs.quality.result }}"
+          echo "static:  ${{ needs.static.result }}"
+          echo "tests:   ${{ needs.tests.result }}"
 
           if [ "${{ needs.changes.result }}" != "success" ]; then
             exit 1
           fi
 
-          case "${{ needs.quality.result }}" in
-            success|skipped) exit 0 ;;
-            *) exit 1 ;;
-          esac
+          for result in "${{ needs.static.result }}" "${{ needs.tests.result }}"; do
+            case "$result" in
+              success|skipped) ;;
+              *) exit 1 ;;
+            esac
+          done

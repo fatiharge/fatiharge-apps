@@ -24,6 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       services: ${{ steps.filter.outputs.services }}
+      paused: ${{ steps.pause.outputs.paused }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -56,10 +57,32 @@ jobs:
             echo "services=false" >> "$GITHUB_OUTPUT"
           fi
 
+
+      # Paused until PAUSE_UNTIL, on pull requests only. The same builds run
+      # locally before every pull request is opened, and waiting for them twice
+      # was costing more than it caught. Merges to main still run everything —
+      # that is what stands between a broken commit and the stage deploy, which
+      # is automatic.
+      #
+      # Nothing has to be remembered to undo this: the date passes and the jobs
+      # come back.
+      - name: Whether the heavy jobs are paused
+        id: pause
+        run: |
+          PAUSE_UNTIL=2026-09-06
+          today=$(date -u +%F)
+
+          if [ "${{ github.event_name }}" = "pull_request" ] && [[ "$today" < "$PAUSE_UNTIL" ]]; then
+            echo "paused until ${PAUSE_UNTIL}; merges to main still run in full"
+            echo "paused=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "paused=false" >> "$GITHUB_OUTPUT"
+          fi
+
   build:
     name: JVM build
     needs: changes
-    if: needs.changes.outputs.services == 'true'
+    if: needs.changes.outputs.services == 'true' && needs.changes.outputs.paused == 'false'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -82,7 +105,7 @@ jobs:
   contract:
     name: Contract and clients
     needs: changes
-    if: needs.changes.outputs.services == 'true'
+    if: needs.changes.outputs.services == 'true' && needs.changes.outputs.paused == 'false'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
