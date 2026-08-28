@@ -148,7 +148,7 @@ class _TodayViewState extends State<_TodayView> {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  content.motto,
+                  content.mottoLine,
                   style: text.headlineSmall?.copyWith(
                     color: scheme.onPrimaryContainer,
                     height: 1.2,

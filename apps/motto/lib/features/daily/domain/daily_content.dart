@@ -1,4 +1,5 @@
 import 'package:meta/meta.dart';
+import 'package:motto/features/daily/domain/content_pack.dart';
 
 @immutable
 class DailyContent {
@@ -26,7 +27,11 @@ class DailyContent {
 
   final String action;
 
-  final String motto;
+  /// The whole motto, not only the line. What it means and what it costs are
+  /// written next to it and were reaching the app without ever being drawn.
+  final PackMotto motto;
 
   String get text => '$body $connector $fragment';
+
+  String get mottoLine => motto.motto;
 }
