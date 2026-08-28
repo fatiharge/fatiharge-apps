@@ -44,7 +44,11 @@ class CalculatingPage extends StatelessWidget implements AutoRouteWrapper {
             // to. "Zincirini başlat" then becomes a pop rather than a push.
             await context.router.replaceAll([
               const ShellRoute(),
-              ResultRoute(result: state.result!),
+              ResultRoute(
+                archetype: state.result!.archetype,
+                resultId: state.result!.id,
+                justClaimed: true,
+              ),
             ]);
           }
         }

@@ -63,11 +63,12 @@ class _ProfileView extends StatelessWidget {
                   const SizedBox(height: 24),
                   FilledButton(
                     onPressed: () => context.router.push(
-                      DeepReportRoute(resultId: current.id),
+                      ResultRoute(
+                        archetype: current.archetype,
+                        resultId: current.id,
+                      ),
                     ),
-                    child: Text(
-                      state.premium ? 'Derin raporu oku' : 'Derin rapor',
-                    ),
+                    child: const Text('Sonucunu gör'),
                   ),
                 ],
                 const SizedBox(height: 32),
