@@ -28,6 +28,11 @@ services:
       QUARKUS_DATASOURCE_USERNAME: motto
       QUARKUS_DATASOURCE_PASSWORD: ${MOTTO_DB_PASSWORD}
       MP_JWT_VERIFY_PUBLICKEY: ${MOTTO_JWT_PUBLIC_KEY}
+      # Content is pushed into the tables over /admin/content rather than
+      # seeded by a migration. Unset means shut: leave it out of an .env and
+      # nobody can write content there, which is the right default for
+      # production. Stage sets it so scripts/push_content.py can reach it.
+      MOTTO_ADMIN_TOKEN: ${MOTTO_ADMIN_TOKEN:-}
     depends_on:
       db:
         condition: service_healthy

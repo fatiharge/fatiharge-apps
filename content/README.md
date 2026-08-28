@@ -1,8 +1,13 @@
 # content
 
 The product's words. Everything a user reads that is not a button lives here,
-and `services/motto` seeds its content tables from these files — so a wording
-change ships without a store release.
+and `services/motto` serves them — so a wording change ships without a store
+release.
+
+Most of it is read from the classpath at startup. The two that live in tables
+instead, `tasks.yaml` and `report.yaml`, are pushed into the running service by
+`scripts/push_content.py`; they are data, not schema, so correcting a sentence
+is one request rather than a deploy.
 
 > 🇹🇷 Türkçe için: [README.tr.md](README.tr.md)
 

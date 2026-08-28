@@ -33,7 +33,30 @@ public class Task {
   @Column(nullable = false)
   private boolean active;
 
+  /// True while the text is a stand-in rather than something somebody wrote,
+  /// so what is left to write is a query.
+  @Column(nullable = false)
+  private boolean placeholder;
+
   protected Task() {}
+
+  /** Written by the content push, and by nothing else. */
+  public static Task of(
+      int day, String archetypeId, int ordinal, String title, String detail, boolean placeholder) {
+    Task task = new Task();
+    task.day = day;
+    task.archetypeId = archetypeId;
+    task.ordinal = ordinal;
+    task.active = true;
+    task.rewrite(title, detail, placeholder);
+    return task;
+  }
+
+  public void rewrite(String title, String detail, boolean placeholder) {
+    this.title = title;
+    this.detail = detail;
+    this.placeholder = placeholder;
+  }
 
   public Long id() {
     return id;
@@ -41,6 +64,10 @@ public class Task {
 
   public int day() {
     return day;
+  }
+
+  public String archetypeId() {
+    return archetypeId;
   }
 
   public int ordinal() {

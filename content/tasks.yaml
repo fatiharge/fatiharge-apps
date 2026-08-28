@@ -1,9 +1,19 @@
 # The three things each day asks for.
 #
-# Written once per day and given to every archetype, then replaced one at a
-# time with something written for that archetype specifically. The rows are
-# seeded as `placeholder: true` so the writing job is a query rather than a
-# memory: `select * from tasks where placeholder`.
+# One set of three per day, given to every archetype, and then replaced one
+# slot at a time with something written for that archetype specifically. The
+# shared text goes in marked as a stand-in, so what is still unwritten is a
+# request rather than a memory: GET /admin/content/unwritten.
+#
+# An override is a slot, not a day — write one of the three and leave the rest:
+#
+#   - day: 1
+#     tr: [...]
+#     by_archetype:
+#       quiet_builder:
+#         2: {title: ..., detail: ...}
+#
+# Pushed by scripts/push_content.py. Nothing here is a migration.
 #
 # The rule every task follows: it has to be doable while standing in a queue.
 # A task that needs a free afternoon is a task that breaks the chain on the

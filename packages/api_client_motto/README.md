@@ -76,6 +76,7 @@ Class | Method | HTTP request | Description
 *FeedbackResourceApi* | [**submitFeedback**](doc//FeedbackResourceApi.md#submitfeedback) | **POST** /v1/feedback | Send feedback
 *MottoResourceApi* | [**claimMotto**](doc//MottoResourceApi.md#claimmotto) | **POST** /v1/mottos/claim | Spend a use and get a motto
 *ReportResourceApi* | [**deepReport**](doc//ReportResourceApi.md#deepreport) | **GET** /v1/reports/{resultId} | The deep report for a result
+*ReportResourceApi* | [**resultReport**](doc//ReportResourceApi.md#resultreport) | **GET** /v1/reports/{resultId}/summary | The free report for a result
 *ResultResourceApi* | [**resultHistory**](doc//ResultResourceApi.md#resulthistory) | **GET** /v1/me/results | Past results, newest first
 *ScoreResourceApi* | [**leaderboard**](doc//ScoreResourceApi.md#leaderboard) | **GET** /v1/scores | This week's board
 *ScoreResourceApi* | [**recordScore**](doc//ScoreResourceApi.md#recordscore) | **POST** /v1/scores | Record a game and get the board
@@ -101,6 +102,7 @@ Class | Method | HTTP request | Description
  - [DeepReport](doc//DeepReport.md)
  - [DeletionCopy](doc//DeletionCopy.md)
  - [DeletionResponse](doc//DeletionResponse.md)
+ - [DimensionReading](doc//DimensionReading.md)
  - [EntitlementResponse](doc//EntitlementResponse.md)
  - [EventBatch](doc//EventBatch.md)
  - [EventBatchResponse](doc//EventBatchResponse.md)
@@ -120,6 +122,7 @@ Class | Method | HTTP request | Description
  - [QuestionResponse](doc//QuestionResponse.md)
  - [ReportSection](doc//ReportSection.md)
  - [ResultHistory](doc//ResultHistory.md)
+ - [ResultReport](doc//ResultReport.md)
  - [ResultResponse](doc//ResultResponse.md)
  - [ResultSummary](doc//ResultSummary.md)
  - [ScoreSubmission](doc//ScoreSubmission.md)

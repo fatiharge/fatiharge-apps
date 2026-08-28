@@ -95,6 +95,15 @@ carries its own migrations.
 The database is reachable only on the internal Docker network. It gets no
 Traefik route and no published port.
 
+**Migrations carry schema, never content.** Motto's tasks and report pieces
+were briefly seeded by two generated repeatable migrations — hundreds of
+committed `INSERT` lines — which put the product's words in the schema history
+and made correcting a typo a release. They are pushed over `/admin/content`
+now, guarded by `MOTTO_ADMIN_TOKEN`, kept out of the published schema so no
+generated client learns they exist, and closed to everyone when the variable is
+unset. The rule that follows: if a human wrote it and might rewrite it, it does
+not belong in `db/migration`.
+
 ## The contract
 
 Code-first. Resources and DTOs are the source; SmallRye emits the schema at

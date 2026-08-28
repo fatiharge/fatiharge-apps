@@ -1,16 +1,40 @@
-# The deep report, in pieces.
+# The two reports, in pieces.
 #
-# Seventy-two short parts rather than eight long texts, because the report is
-# assembled against the reader's profile — two people with the same archetype
-# read different reports, and that difference is what makes it worth paying
-# for.
+# There are two, and they are different documents rather than one document and
+# its teaser:
 #
-# Only the parts that are the same for everybody are written here so far: the
-# four section skeletons and the limitations. The rest is generated as
-# placeholders and replaced one at a time, findable by
-# `select * from report_pieces where placeholder`.
+#   Rapor (free)       overview + five dimension readings + strength + cost.
+#                      What the reader is. Whole on its own.
+#   Derin rapor (paid) portrait + four sections woven from a skeleton, the
+#                      reader's band on that section's dimension and an
+#                      archetype fragment + comparison + limitation.
+#                      What it means and what to do about it.
+#
+# Assembled against the profile, not looked up by archetype: two people with
+# the same archetype land on different bands and read different reports. That
+# difference is what the deep one is worth paying for.
+#
+# Only the parts that are the same for everybody are written here — the four
+# section skeletons and the limitations. The rest is generated as placeholders
+# and replaced one at a time, findable by
+# `select kind, archetype_id, dimension, band, section from report_pieces
+#  where placeholder`.
 
 version: 1
+
+# Where the writing goes. Each of these is optional and partial — a key that is
+# not here is pushed as a marked stand-in, so the file can be filled one entry
+# at a time:
+#
+#   readings:      DIMENSION: {low|mid|high: {tr: …}}   free report
+#   dimensions:    DIMENSION: {low|mid|high: {tr: …}}   deep report
+#   overviews:     archetype_id: {tr: …}                free report
+#   strengths:     archetype_id: {tr: …}                free report
+#   costs:         archetype_id: {tr: …}                free report
+#   portraits:     archetype_id: {tr: …}                deep report
+#   comparisons:   archetype_id: {tr: …}                deep report
+#   fragments:     archetype_id: {1..4: {tr: …}}        deep report
+
 
 # The shape of every report. Each section takes a dimension reading and an
 # archetype fragment; the skeleton is what holds them together.

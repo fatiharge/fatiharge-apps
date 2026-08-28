@@ -53,6 +53,7 @@ import 'package:motto/features/profile/presentation/deep_report_page.dart';
 import 'package:motto/features/profile/presentation/gallery_page.dart';
 import 'package:motto/features/profile/presentation/profile_page.dart';
 import 'package:motto/features/result/application/card_exporter.dart';
+import 'package:motto/features/result/presentation/report_page.dart';
 import 'package:motto/features/result/presentation/result_page.dart';
 import 'package:motto/features/result/presentation/share_card_page.dart';
 import 'package:motto/features/result/presentation/widgets/basis_section.dart';
