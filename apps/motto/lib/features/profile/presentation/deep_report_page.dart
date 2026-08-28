@@ -4,6 +4,7 @@ import 'package:api_client_motto/api.dart' as api;
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:motto/config/injectable.dart';
+import 'package:motto/theme/motto_loading.dart';
 
 /// The deep report, or the preview of one.
 ///
@@ -54,7 +55,7 @@ class _DeepReportPageState extends State<DeepReportPage> {
       body: SafeArea(
         child: switch ((report, _failed)) {
           (null, true) => const Center(child: Text('Rapor alınamadı.')),
-          (null, _) => const Center(child: CircularProgressIndicator()),
+          (null, _) => const MottoLoading(),
           (final api.DeepReport ready, _) when ready.locked => _locked(
             context,
             ready,

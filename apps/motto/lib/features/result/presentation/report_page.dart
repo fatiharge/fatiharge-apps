@@ -4,6 +4,7 @@ import 'package:api_client_motto/api.dart' as api;
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:motto/config/injectable.dart';
+import 'package:motto/theme/motto_loading.dart';
 
 /// The free report: what the reader is, one dimension at a time.
 ///
@@ -62,7 +63,7 @@ class _ReportPageState extends State<ReportPage> {
       body: SafeArea(
         child: switch ((report, _failed)) {
           (null, true) => const Center(child: Text('Rapor alınamadı.')),
-          (null, _) => const Center(child: CircularProgressIndicator()),
+          (null, _) => const MottoLoading(),
           (final api.ResultReport ready, _) => _read(context, ready),
         },
       ),

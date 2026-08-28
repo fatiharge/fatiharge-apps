@@ -18,11 +18,24 @@ class MascotStore {
 
   final ValueNotifier<bool> visible;
 
-  /// Held down by a screen that needs the space, and released when it leaves.
-  /// Separate from [visible] because one is a preference and the other is a
-  /// screen saying "not here": a screen must not be able to change what
-  /// somebody chose in settings.
-  final ValueNotifier<int> suppressions = ValueNotifier(0);
+  /// The routes the mascot stays off.
+  ///
+  /// Read from the route rather than counted by a widget that wraps the page.
+  /// The counting version was right in a test and wrong on a phone: whether a
+  /// wrapper's `initState` and `dispose` pair up depends on how the router
+  /// builds and keeps pages, and the mascot sat on the result screen's buttons
+  /// because of it. Which screen is up is a fact the router already has.
+  static const closedTo = {
+    'QuestionRoute',
+    'CalculatingRoute',
+    'ResultRoute',
+    'ShareCardRoute',
+  };
+
+  /// Set from the router. Separate from [visible] because one is a preference
+  /// and the other is a screen saying "not here": a screen must not be able to
+  /// change what somebody chose in settings.
+  final ValueNotifier<bool> allowedHere = ValueNotifier(true);
 
   /// Whether it should be on screen right now.
   ValueNotifier<bool> get onScreen => _onScreen;
@@ -30,20 +43,16 @@ class MascotStore {
   late final ValueNotifier<bool> _onScreen = _combined();
 
   ValueNotifier<bool> _combined() {
-    final result = ValueNotifier(visible.value && suppressions.value == 0);
-    void update() => result.value = visible.value && suppressions.value == 0;
+    final result = ValueNotifier(visible.value && allowedHere.value);
+    void update() => result.value = visible.value && allowedHere.value;
     visible.addListener(update);
-    suppressions.addListener(update);
+    allowedHere.addListener(update);
     return result;
   }
 
-  /// Counted rather than flagged: a sheet over a suppressed screen would
-  /// otherwise release the suppression when it closed.
-  void suppress() => suppressions.value++;
-
-  void release() {
-    if (suppressions.value > 0) suppressions.value--;
-  }
+  /// Called whenever the router moves.
+  void onRoute(String? name) =>
+      allowedHere.value = name == null || !closedTo.contains(name);
 
   Future<void> setVisible({required bool value}) async {
     visible.value = value;

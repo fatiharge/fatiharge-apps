@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/features/game/application/game_store.dart';
 import 'package:motto/features/mascot/presentation/mascot_host.dart';
+import 'package:motto/features/mascot/presentation/mascot_route_observer.dart';
 import 'package:motto/route/app_router.dart';
 import 'package:motto/route/app_router.gr.dart';
 import 'package:motto/theme/motto_theme.dart';
@@ -13,13 +14,19 @@ Future<void> _openGame(AppRouter router) => router.push(
   getIt<GameStore>().rulesSeen ? GameRoute() : GameRulesRoute(),
 );
 
-class MottoApp extends StatelessWidget {
+class MottoApp extends StatefulWidget {
   const MottoApp({required this.router, super.key});
 
   final AppRouter router;
 
   @override
+  State<MottoApp> createState() => _MottoAppState();
+}
+
+class _MottoAppState extends State<MottoApp> {
+  @override
   Widget build(BuildContext context) {
+    final router = widget.router;
     return MaterialApp.router(
       title: 'Motto',
       debugShowCheckedModeBanner: false,
@@ -29,7 +36,9 @@ class MottoApp extends StatelessWidget {
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,
-      routerConfig: router.config(),
+      routerConfig: router.config(
+        navigatorObservers: () => [MascotRouteObserver()],
+      ),
       // Above every screen rather than inside one: the mascot is dragged
       // anywhere, and one that resets when a tab changes is one nobody
       // believes in.

@@ -18,13 +18,22 @@ Widget bar({int index = 0, ValueChanged<int>? onSelected}) => MaterialApp(
 );
 
 void main() {
-  testWidgets('only the selected item is labelled', (tester) async {
+  testWidgets('no label is drawn, and every icon still has one', (
+    tester,
+  ) async {
+    final handle = tester.ensureSemantics();
     await tester.pumpWidget(bar());
     await tester.pumpAndSettle();
 
-    // Two labels sitting there permanently is what makes a bar look like 2014.
-    expect(find.text('Bugün'), findsOneWidget);
+    // Words under icons are what date a bar. Taking them off the screen must
+    // not take them away from a screen reader, which is the whole risk of an
+    // icon-only bar.
+    expect(find.text('Bugün'), findsNothing);
     expect(find.text('Profil'), findsNothing);
+    expect(find.bySemanticsLabel('Bugün'), findsOneWidget);
+    expect(find.bySemanticsLabel('Profil'), findsOneWidget);
+
+    handle.dispose();
   });
 
   testWidgets('the selected item is filled, the other outlined', (

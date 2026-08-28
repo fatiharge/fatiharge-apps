@@ -12,7 +12,11 @@ class NavItem {
   final String label;
 }
 
-/// A floating bar rather than a full-width one.
+/// A floating bar rather than a full-width one, and icons only.
+///
+/// No labels: three words sitting under three icons is what dates a bar, and
+/// the three places here are ordinary enough that an icon carries them. The
+/// selected one is said with colour and a dot instead.
 ///
 /// No `BackdropFilter`: the glass look is the usual way to do this and it
 /// re-renders the blur every frame — with the mascot animating on top of it,
@@ -26,7 +30,7 @@ class FloatingNavBar extends StatelessWidget {
     super.key,
   });
 
-  static const height = 62.0;
+  static const height = 58.0;
 
   final List<NavItem> items;
   final int index;
@@ -92,43 +96,46 @@ class _Item extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final text = Theme.of(context).textTheme;
 
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        curve: Curves.easeOut,
-        decoration: BoxDecoration(
-          color: selected ? scheme.primaryContainer : Colors.transparent,
-          borderRadius: BorderRadius.circular(25),
-        ),
-        child: Row(
+    return Semantics(
+      // The label is gone from the screen, not from the app: a bar of bare
+      // icons is unreadable to a screen reader unless it is said here.
+      label: item.label,
+      selected: selected,
+      button: true,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              selected ? item.filled : item.icon,
-              size: 20,
-              color: selected
-                  ? scheme.onPrimaryContainer
-                  : scheme.onSurfaceVariant,
-            ),
-            // The label shows only on the selected one: two labels sitting
-            // there permanently is what makes a bar look like 2014.
-            if (selected) ...[
-              const SizedBox(width: 8),
-              Flexible(
-                child: Text(
-                  item.label,
-                  overflow: TextOverflow.fade,
-                  softWrap: false,
-                  style: text.labelLarge?.copyWith(
-                    color: scheme.onPrimaryContainer,
-                  ),
-                ),
+            AnimatedScale(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOutBack,
+              scale: selected ? 1.08 : 1,
+              child: Icon(
+                selected ? item.filled : item.icon,
+                size: 23,
+                color: selected
+                    ? scheme.primary
+                    : scheme.onSurfaceVariant.withValues(alpha: 0.65),
               ),
-            ],
+            ),
+            const SizedBox(height: 5),
+            // A dot rather than a filled pill behind the icon. The pill puts a
+            // block of colour in a bar whose whole job is to stay out of the
+            // way; four pixels say the same thing and leave the icon as the
+            // only shape being read.
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOut,
+              width: selected ? 4 : 0,
+              height: 4,
+              decoration: BoxDecoration(
+                color: scheme.primary,
+                shape: BoxShape.circle,
+              ),
+            ),
           ],
         ),
       ),

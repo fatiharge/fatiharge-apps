@@ -34,6 +34,17 @@ class DailyCubit extends Cubit<DailyState> {
   void unawaitedLoad() => unawaited(load());
 
   Future<void> load() async {
+    // Wrapped because the failure of an unawaited load is otherwise invisible:
+    // the state stays `loading` and the screen spins for ever, which reads as a
+    // slow network rather than as something broken.
+    try {
+      await _load();
+    } on Object {
+      emit(const DailyState(status: DailyStatus.failed));
+    }
+  }
+
+  Future<void> _load() async {
     final json = await _content.current();
     if (json == null) {
       emit(const DailyState(status: DailyStatus.noContent));

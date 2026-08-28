@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:bootstrap_kit/bootstrap_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:motto/config/injectable.dart';
+import 'package:motto/theme/motto_loading.dart';
 
 /// The first route, and the only place the container is built.
 ///
@@ -24,13 +25,7 @@ class _Splash extends StatelessWidget {
   const _Splash();
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Text('Motto', style: Theme.of(context).textTheme.displaySmall),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => const Scaffold(body: MottoLoading());
 }
 
 class _StartupError extends StatelessWidget {
