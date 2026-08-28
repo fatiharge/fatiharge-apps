@@ -52,6 +52,7 @@ MOTTO_HOST=mottostage.dafalabs.com
 MOTTO_IMAGE=
 MOTTO_DB_PASSWORD=<openssl rand -base64 24>
 MOTTO_JWT_PUBLIC_KEY="<auth's public PEM, one line, newlines escaped>"
+MOTTO_ADMIN_TOKEN=<openssl rand -base64 32>
 ```
 
 The public key comes from [auth](../../auth/deploy/README.md), which generated
@@ -62,6 +63,10 @@ fails to parse it and does not start — empty is not the same as unset.
 `/srv/motto-prod/.env` is the same with `prod`, `motto.dafalabs.com`, and its
 own password.
 
+- `MOTTO_ADMIN_TOKEN` opens `/admin/content`, which is how tasks and report
+  pieces get into the database — see [content](#content). Leave the line out
+  and the endpoints answer 404 to everyone, which is what production should do
+  until there is a reason not to.
 - `MOTTO_IMAGE` stays empty. Every deploy rewrites it.
 - `PROXY_NETWORK`, `TRAEFIK_ENTRYPOINT` and `TRAEFIK_CERTRESOLVER` only need a
   line if the server's Traefik ever stops matching the defaults above.
@@ -162,3 +167,27 @@ access story:
 DBeaver opens the tunnel itself — "SSH" tab, "Use SSH Tunnel" — and then
 connects as if the database were local. Nothing needs to be published wider for
 this to work, and if it ever is, that is the mistake.
+
+## Content
+
+Tasks and report pieces are data, not schema. They are pushed from `content/`
+into the running service:
+
+```bash
+MOTTO_ADMIN_TOKEN=<the one in that .env> \
+  scripts/push_content.py https://mottostage.dafalabs.com
+```
+
+Idempotent, and addressed by slot: running it twice changes nothing, and
+pushing one corrected sentence leaves the other three hundred alone. A database
+that has never been pushed to has no tasks in it and the app says so.
+
+What is still a stand-in rather than something somebody wrote:
+
+```bash
+curl -H "X-Admin-Token: $MOTTO_ADMIN_TOKEN" \
+  https://mottostage.dafalabs.com/admin/content/unwritten
+```
+
+Wrong token and missing token both answer **404**, not 401. An endpoint nobody
+is meant to know about should not confirm it exists to somebody guessing.

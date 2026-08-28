@@ -276,6 +276,25 @@
           }
         }
       },
+      "DimensionReading" : {
+        "type" : "object",
+        "required" : [ "dimension", "band", "score", "text" ],
+        "properties" : {
+          "dimension" : {
+            "type" : "string"
+          },
+          "band" : {
+            "type" : "string"
+          },
+          "score" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "text" : {
+            "type" : "string"
+          }
+        }
+      },
       "EntitlementResponse" : {
         "type" : "object",
         "required" : [ "remainingUses", "skipsLeft", "premium" ],
@@ -609,6 +628,34 @@
             "items" : {
               "$ref" : "#/components/schemas/ResultSummary"
             }
+          }
+        }
+      },
+      "ResultReport" : {
+        "type" : "object",
+        "required" : [ "resultId", "archetypeId", "overview", "readings", "strength", "cost" ],
+        "properties" : {
+          "resultId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "archetypeId" : {
+            "type" : "string"
+          },
+          "overview" : {
+            "type" : "string"
+          },
+          "readings" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/DimensionReading"
+            }
+          },
+          "strength" : {
+            "type" : "string"
+          },
+          "cost" : {
+            "type" : "string"
           }
         }
       },
@@ -1117,6 +1164,43 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/DeepReport"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "tags" : [ "Report Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
+    "/v1/reports/{resultId}/summary" : {
+      "get" : {
+        "summary" : "The free report for a result",
+        "operationId" : "resultReport",
+        "parameters" : [ {
+          "name" : "resultId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResultReport"
                 }
               }
             }

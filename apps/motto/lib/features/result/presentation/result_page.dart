@@ -139,7 +139,8 @@ class _ResultPageState extends State<ResultPage> {
               ),
               const SizedBox(height: 12),
               OutlinedButton(
-                onPressed: () => context.router.push(const PeriodReportRoute()),
+                onPressed: () =>
+                    context.router.push(ReportRoute(resultId: widget.resultId)),
                 child: const Text('Rapor'),
               ),
               const SizedBox(height: 12),

@@ -17,6 +17,7 @@ doc/DailyTasks.md
 doc/DeepReport.md
 doc/DeletionCopy.md
 doc/DeletionResponse.md
+doc/DimensionReading.md
 doc/EntitlementResourceApi.md
 doc/EntitlementResponse.md
 doc/EventBatch.md
@@ -41,6 +42,7 @@ doc/QuestionResponse.md
 doc/ReportResourceApi.md
 doc/ReportSection.md
 doc/ResultHistory.md
+doc/ResultReport.md
 doc/ResultResourceApi.md
 doc/ResultResponse.md
 doc/ResultSummary.md
@@ -84,6 +86,7 @@ lib/model/daily_tasks.dart
 lib/model/deep_report.dart
 lib/model/deletion_copy.dart
 lib/model/deletion_response.dart
+lib/model/dimension_reading.dart
 lib/model/entitlement_response.dart
 lib/model/event_batch.dart
 lib/model/event_batch_response.dart
@@ -103,6 +106,7 @@ lib/model/question.dart
 lib/model/question_response.dart
 lib/model/report_section.dart
 lib/model/result_history.dart
+lib/model/result_report.dart
 lib/model/result_response.dart
 lib/model/result_summary.dart
 lib/model/score_submission.dart
@@ -122,6 +126,7 @@ test/daily_tasks_test.dart
 test/deep_report_test.dart
 test/deletion_copy_test.dart
 test/deletion_response_test.dart
+test/dimension_reading_test.dart
 test/entitlement_resource_api_test.dart
 test/entitlement_response_test.dart
 test/event_batch_response_test.dart
@@ -146,6 +151,7 @@ test/question_test.dart
 test/report_resource_api_test.dart
 test/report_section_test.dart
 test/result_history_test.dart
+test/result_report_test.dart
 test/result_resource_api_test.dart
 test/result_response_test.dart
 test/result_summary_test.dart

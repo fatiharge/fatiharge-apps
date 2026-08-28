@@ -3,6 +3,8 @@ package com.dafalabs.api.motto.report;
 import com.dafalabs.api.core.error.CustomRuntimeException;
 import com.dafalabs.api.motto.entitlement.Entitlements;
 import com.dafalabs.api.motto.report.dto.DeepReport;
+import com.dafalabs.api.motto.report.dto.DimensionReading;
+import com.dafalabs.api.motto.report.dto.ResultReport;
 import com.dafalabs.api.motto.report.dto.ReportSection;
 import com.dafalabs.api.motto.result.Result;
 import com.dafalabs.api.motto.result.Results;
@@ -63,16 +65,52 @@ public class Reports {
     return score > highAbove ? "high" : "mid";
   }
 
+  /**
+   * The free report: all five dimensions, read where this profile lands on
+   * them, wrapped in what the archetype gives and what it costs.
+   *
+   * <p>Deliberately whole. A free report that stops mid-sentence to ask for
+   * money teaches people that the paid one is the same text with the rest
+   * attached, which is not what the deep report is.
+   */
+  @Transactional
+  public ResultReport readingFor(UUID deviceId, long resultId) {
+    Result result = mine(deviceId, resultId);
+    String archetype = result.archetypeId();
+    Map<Dimension, Double> profile = result.profile();
+
+    List<DimensionReading> readings = new ArrayList<>();
+    for (Dimension dimension : Dimension.values()) {
+      double score = profile.getOrDefault(dimension, 0.5);
+      String band = bandOf(score);
+      readings.add(
+          new DimensionReading(
+              dimension.name(),
+              band,
+              score,
+              pieces.reading(dimension.name(), band).map(ReportPiece::text).orElse("")));
+    }
+
+    return new ResultReport(
+        result.id(),
+        archetype,
+        pieces.one("overview", archetype).map(ReportPiece::text).orElse(""),
+        readings,
+        pieces.one("strength", archetype).map(ReportPiece::text).orElse(""),
+        pieces.one("cost", archetype).map(ReportPiece::text).orElse(""));
+  }
+
+  private Result mine(UUID deviceId, long resultId) {
+    return results.forDevice(deviceId).stream()
+        .filter(candidate -> candidate.id() == resultId)
+        .findFirst()
+        .orElseThrow(
+            () -> new CustomRuntimeException(404, "no_such_result", "That result does not exist."));
+  }
+
   @Transactional
   public DeepReport forResult(UUID deviceId, long resultId) {
-    Result result =
-        results.forDevice(deviceId).stream()
-            .filter(candidate -> candidate.id() == resultId)
-            .findFirst()
-            .orElseThrow(
-                () ->
-                    new CustomRuntimeException(
-                        404, "no_such_result", "That result does not exist."));
+    Result result = mine(deviceId, resultId);
 
     String archetype = result.archetypeId();
     List<ReportSection> sections = assemble(result, archetype);

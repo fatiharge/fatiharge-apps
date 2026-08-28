@@ -9,10 +9,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.dafalabs.api.core.error.CustomRuntimeException;
 import com.dafalabs.api.motto.entitlement.Entitlements;
+import com.dafalabs.api.motto.report.dto.DimensionReading;
+import com.dafalabs.api.motto.report.dto.ResultReport;
 import com.dafalabs.api.motto.result.Result;
 import com.dafalabs.api.motto.result.Results;
 import com.dafalabs.api.motto.scoring.Dimension;
 import com.dafalabs.api.motto.scoring.ProfileVector;
+import com.dafalabs.api.motto.admin.GivenContent;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -30,11 +33,14 @@ class ReportsTest {
   @Inject Results results;
   @Inject Entitlements entitlements;
 
+  @Inject GivenContent content;
+
   private UUID device;
 
   @BeforeEach
   void setUp() {
     device = UUID.randomUUID();
+    content.everything();
   }
 
   @Transactional
@@ -118,5 +124,46 @@ class ReportsTest {
             () -> reports.forResult(UUID.randomUUID(), result.id()));
 
     assertEquals("no_such_result", refused.code());
+  }
+
+  @Test
+  @DisplayName("the free report reads every dimension, and is never locked")
+  void theFreeReportIsWhole() {
+    Result result = givenAResult(0.9);
+    ResultReport report = reports.readingFor(device, result.id());
+
+    assertEquals(Dimension.values().length, report.readings().size());
+    assertFalse(report.overview().isBlank());
+    assertFalse(report.strength().isBlank());
+    assertFalse(report.cost().isBlank());
+    for (DimensionReading reading : report.readings()) {
+      assertFalse(reading.text().isBlank(), reading.dimension() + " has no text");
+    }
+  }
+
+  @Test
+  @DisplayName("the free report follows the profile, not the archetype")
+  void theFreeReportFollowsTheProfile() {
+    Result low = givenAResult(0.1);
+    Result high = givenAResult(0.9);
+
+    assertEquals("low", bandFor(reports.readingFor(device, low.id())));
+    assertEquals("high", bandFor(reports.readingFor(device, high.id())));
+  }
+
+  private String bandFor(ResultReport report) {
+    return report.readings().stream()
+        .filter(reading -> reading.dimension().equals(Dimension.CONSCIENTIOUSNESS.name()))
+        .findFirst()
+        .orElseThrow()
+        .band();
+  }
+
+  @Test
+  @DisplayName("the free report is somebody else's to read only if it is theirs")
+  void theFreeReportIsScopedToTheDevice() {
+    Result result = givenAResult(0.5);
+    assertThrows(
+        CustomRuntimeException.class, () -> reports.readingFor(UUID.randomUUID(), result.id()));
   }
 }

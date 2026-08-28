@@ -228,6 +228,8 @@ class ApiClient {
           return DeletionCopy.fromJson(value);
         case 'DeletionResponse':
           return DeletionResponse.fromJson(value);
+        case 'DimensionReading':
+          return DimensionReading.fromJson(value);
         case 'EntitlementResponse':
           return EntitlementResponse.fromJson(value);
         case 'EventBatch':
@@ -266,6 +268,8 @@ class ApiClient {
           return ReportSection.fromJson(value);
         case 'ResultHistory':
           return ResultHistory.fromJson(value);
+        case 'ResultReport':
+          return ResultReport.fromJson(value);
         case 'ResultResponse':
           return ResultResponse.fromJson(value);
         case 'ResultSummary':

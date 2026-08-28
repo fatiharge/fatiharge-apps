@@ -1,16 +1,40 @@
-# The deep report, in pieces.
+# The two reports, in pieces.
 #
-# Seventy-two short parts rather than eight long texts, because the report is
-# assembled against the reader's profile — two people with the same archetype
-# read different reports, and that difference is what makes it worth paying
-# for.
+# There are two, and they are different documents rather than one document and
+# its teaser:
 #
-# Only the parts that are the same for everybody are written here so far: the
-# four section skeletons and the limitations. The rest is generated as
-# placeholders and replaced one at a time, findable by
-# `select * from report_pieces where placeholder`.
+#   Rapor (free)       overview + five dimension readings + strength + cost.
+#                      What the reader is. Whole on its own.
+#   Derin rapor (paid) portrait + four sections woven from a skeleton, the
+#                      reader's band on that section's dimension and an
+#                      archetype fragment + comparison + limitation.
+#                      What it means and what to do about it.
+#
+# Assembled against the profile, not looked up by archetype: two people with
+# the same archetype land on different bands and read different reports. That
+# difference is what the deep one is worth paying for.
+#
+# Only the parts that are the same for everybody are written here — the four
+# section skeletons and the limitations. The rest is generated as placeholders
+# and replaced one at a time, findable by
+# `select kind, archetype_id, dimension, band, section from report_pieces
+#  where placeholder`.
 
 version: 1
+
+# Where the writing goes. Each of these is optional and partial — a key that is
+# not here is pushed as a marked stand-in, so the file can be filled one entry
+# at a time:
+#
+#   readings:      DIMENSION: {low|mid|high: {tr: …}}   free report
+#   dimensions:    DIMENSION: {low|mid|high: {tr: …}}   deep report
+#   overviews:     archetype_id: {tr: …}                free report
+#   strengths:     archetype_id: {tr: …}                free report
+#   costs:         archetype_id: {tr: …}                free report
+#   portraits:     archetype_id: {tr: …}                deep report
+#   comparisons:   archetype_id: {tr: …}                deep report
+#   fragments:     archetype_id: {1..4: {tr: …}}        deep report
+
 
 # The shape of every report. Each section takes a dimension reading and an
 # archetype fragment; the skeleton is what holds them together.
@@ -35,3 +59,601 @@ limitation:
     Bu rapor yirmi maddelik bir envanterden çıkıyor. Kısa form kaba çözünürlük
     verir, özbildirim yanlıdır, ve arketip sınırları keskin değildir. Buradaki
     hiçbir cümle bir teşhis değil; beş boyutlu bir profilin okunabilir hâli.
+
+# ---------------------------------------------------------------------------
+# Rapor (ücretsiz)
+# ---------------------------------------------------------------------------
+
+# Beş eksen, arketipten bağımsız. Buraya arketip adı girmez: aynı arketipteki
+# iki kişi farklı bantlara düşer ve farklı okur — raporu kişiye ait yapan şey
+# bu. Her bant bir bedel söyler; yalnız öven bant, kimsenin ikinci kez
+# okumadığı banttır.
+readings:
+  OPENNESS:
+    low:
+      tr: >-
+        Bildiğin yoldan gitmeyi seçiyorsun ve bu genelde işini görüyor. Yeni bir
+        şey seni heyecanlandırmıyor; önce ne kadar dağıtacağını hesaplıyorsun.
+        Bedeli şu: sana çok yakışacak şeylere de geç kalıyorsun, çünkü sıraya
+        girmeden önce kanıt istiyorsun.
+    mid:
+      tr: >-
+        Yeni olana kapalı değilsin ama peşinden de koşmuyorsun. Bir şey önüne
+        geldiğinde deniyorsun, kendi başına aramaya çıkmıyorsun. Bu dengeli
+        duruşun görünmeyen tarafı şu: seçimi çoğunlukla başkalarının önüne ne
+        koyduğu belirliyor.
+    high:
+      tr: >-
+        Alışılmışın dışındaki şey seni yormuyor, çekiyor. Bir fikri denemeden
+        bırakmak sana israf gibi geliyor. Bedeli şu: yarım kalan şeylerin sayısı
+        seni rahatsız edecek kadar çok, çünkü her yeni kapı eskisinden daha
+        parlak görünüyor.
+  CONSCIENTIOUSNESS:
+    low:
+      tr: >-
+        Plan yapıp ona uymak sende zorlukla değil, sıkıntıyla karşılanıyor.
+        İşler genelde son anda ve bir hamlede oluyor — ve çoğu zaman oluyor.
+        Bedeli şu: her seferinde baştan başlamak yorucu, ve biriken şey olmuyor.
+    mid:
+      tr: >-
+        Düzenin var ama kutsal değil. Önemli olana sadık kalıyor, gerisini
+        akışına bırakıyorsun. Bunun sessiz tarafı şu: neyin önemli olduğuna karar
+        vermeyi ertelediğin günlerde ikisi de yapılmıyor.
+    high:
+      tr: >-
+        Başladığın işi bitiriyorsun ve bunu kimse kontrol etmediğinde de
+        yapıyorsun. Söz verdiğin şey oluyor. Bedeli şu: plan bozulduğunda
+        esnemek yerine geriliyorsun, ve dinlenmeyi de bir göreve çevirmediğin
+        sürece dinlenmiyorsun.
+  EXTRAVERSION:
+    low:
+      tr: >-
+        Kalabalık seni doldurmuyor, boşaltıyor. Az kişiyle derin konuşmak, çok
+        kişiyle kısa konuşmaya her gün tercihin. Bedeli şu: odada olmadığın için
+        senin hakkında verilen kararların bir kısmını sonradan öğreniyorsun.
+    mid:
+      tr: >-
+        İnsanların arasında rahatsın ama oradan beslenmiyorsun. Bir süre sonra
+        kendi başına kalman gerekiyor ve bu ihtiyacın belirsizliği kafa
+        karıştırıyor — hem çağrılıyorsun hem yorulduğun anlaşılmıyor.
+    high:
+      tr: >-
+        Enerjini insanlardan alıyorsun; konuşurken düşünüyor, anlatırken
+        anlıyorsun. Bedeli şu: yalnız kalmak sana boşluk gibi geliyor, ve bazı
+        şeyler ancak yalnızken bitiyor.
+  AGREEABLENESS:
+    low:
+      tr: >-
+        Hayır demek sende bir mesele değil. Katılmadığın şeyi katılıyormuş gibi
+        yapmıyorsun ve bu, etrafındakilerin nerede durduğunu bilmesini
+        kolaylaştırıyor. Bedeli şu: haklı olduğun konuşmalardan bile kırgın
+        insanlar çıkıyor.
+    mid:
+      tr: >-
+        Çoğu zaman uzlaşıyor, gerektiğinde diretiyorsun. Bu ayarı tutturmak
+        yorucu değil ama görünmez: ne kadar taviz verdiğini kimse bilmiyor,
+        çünkü hiçbirini yüksek sesle vermiyorsun.
+    high:
+      tr: >-
+        İnsanların arasını iyi tutmak senin işin — istenmeden, karşılıksız.
+        Bedeli şu: kendi ihtiyacını sıraya en son koyuyorsun ve sıra çoğu zaman
+        sana gelmiyor. Bu bir incelik, ama faturası sana kesiliyor.
+  NEUROTICISM:
+    low:
+      tr: >-
+        Bir şey ters gittiğinde önce sakin kalıyorsun ve bu, etrafındakileri de
+        sakinleştiriyor. Bedeli şu: gerçekten sorun olan şeyi de geç fark
+        ediyorsun, çünkü ilk tepkin telaş değil, bekleme.
+    mid:
+      tr: >-
+        Sarsılıyorsun ama devrilmiyorsun. Kötü bir gün gününü bozuyor, haftanı
+        bozmuyor. Bunun sessiz maliyeti şu: toparlandığın için kimse ne kadar
+        zorlandığını sormuyor.
+    high:
+      tr: >-
+        Bir şeyin ters gideceğini herkesten önce hissediyorsun ve çoğu zaman
+        haklı çıkıyorsun. Bedeli şu: haklı çıkmadığın zamanlar da aynı yorgunluğu
+        ödüyorsun, çünkü beden tehlikeyi gerçekleşmeden yaşıyor.
+
+# Serbest raporun açılışı: okuyucuya kim olduğunu söyler, ne yapması
+# gerektiğini değil. Bir paragraf.
+overviews:
+  quiet_builder:
+    tr: >-
+      Sen, ilerlemenin görünmediği yerde ilerleyen birisin. Bir şeyi duyurmadan
+      önce sağlam olmasını istiyorsun, o yüzden yaptığın işin çoğu bitmeden
+      kimsenin haberi olmuyor. Bu, sana güvenilmesinin de görülmemenin de aynı
+      sebebi.
+  spark:
+    tr: >-
+      Sen, fikrin bol olduğu birisin. Sorun ilgisizlik değil — başladığın her
+      şey başladığın anda gerçekten iyi bir fikirdi. Zor olan tutuşturmak değil,
+      birini seçip diğerlerinin sönmesine izin vermek.
+  night_watch:
+    tr: >-
+      Sen, olacak olanı önceden gören birisin. Herkes rahatken senin çoktan
+      düşünmüş olman defalarca işe yaradı ve kimse bunu sayamadı. Tetikte olmak
+      bir beceri; sürekli tetikte olmak bir yük.
+  table_setter:
+    tr: >-
+      Sen, insanların bir araya geldiği yeri kuran birisin. Kimse senden
+      istemiyor, sen yapıyorsun. Etrafındakilerin iyi hissetmesi senin için
+      arka plan değil, işin kendisi — ve tam da bu yüzden kendi ihtiyacın
+      arka planda kalıyor.
+  fine_worker:
+    tr: >-
+      Sen, farkı kimsenin görmediği yerde de gören birisin. "Olur böyle" cümlesi
+      sende çalışmıyor. Yaptığın işin kalitesi bir tercih değil, bir eşik — ve o
+      eşik bitirmeyi başlamaktan daha zor hale getiriyor.
+  compass:
+    tr: >-
+      Sen, kimse karar vermeyince karar veren birisin. Belirsizlik odadaki
+      herkesi beklerken sana bir şey yaptırıyor. Genelde doğru çıkıyorsun, ve
+      herkesin katılmasını beklemediğin için bazen tek başına yürüyorsun.
+  still_water:
+    tr: >-
+      Sen, telaşın yayılmadığı birisin. Etrafındaki insanlar farkında olmadan
+      sana bakıp sakinleşiyor. Bu, taşıdığın en sessiz ve en işe yarar şey —
+      ama sakinlik, bir şeyin gerçekten yanlış olduğunu söylemekte de yavaş.
+  deep_diver:
+    tr: >-
+      Sen, her şeyi bir kat daha derinden yaşayan birisin; iyisini de kötüsünü
+      de. Yüzeyde kalabilseydin daha rahat ederdin, ama o zaman fark ettiğin
+      şeylerin çoğunu fark etmezdin. Mesele derinliği azaltmak değil, çıkmayı
+      öğrenmek.
+
+# "Bu sana ne veriyor" — övgü değil, işe yarayan tarafın adı.
+strengths:
+  quiet_builder:
+    tr: >-
+      Kimse bakmazken de aynı hızda gidiyorsun. Bu, uzun işlerde tek gerçek
+      avantaj: motivasyonla değil, alışkanlıkla ilerleyen kişi altı ay sonra
+      hâlâ orada oluyor.
+  spark:
+    tr: >-
+      Bir şeyi başlatmak sana bedavaya geliyor. Çoğu insanın haftalarca
+      ertelediği şeyi sen bir öğleden sonra deniyorsun, ve denenen fikir
+      konuşulan fikirden her zaman daha çok şey öğretiyor.
+  night_watch:
+    tr: >-
+      Riski erken görüyorsun. Herkes iyimserken senin sorduğun soru, sonradan
+      kimsenin sormadığına pişman olduğu soru oluyor.
+  table_setter:
+    tr: >-
+      İnsanları bir arada tutuyorsun ve bu, öğrenilmesi en zor beceri. Bir
+      grubun dağılmamasının sebebi genelde kimsenin adını koymadığı biri oluyor;
+      o sensin.
+  fine_worker:
+    tr: >-
+      Standardın yüksek ve düşmüyor. Senin elinden çıkan şeyin bir daha kontrol
+      edilmesi gerekmiyor — bu, zamanla insanların sana neyi emanet ettiğini
+      değiştiriyor.
+  compass:
+    tr: >-
+      Belirsizliği karara çeviriyorsun. Yanlış karar bile beklemekten iyidir
+      diyebilen az kişi var, ve o kişi olmadan çoğu şey hiç başlamıyor.
+  still_water:
+    tr: >-
+      Panik sende durup kalıyor, yayılmıyor. Kötü bir anda odadaki en işe yarar
+      kişi, en çok bilen değil, en az telaşlanan oluyor.
+  deep_diver:
+    tr: >-
+      Yüzeyin altını görüyorsun. Başkalarının "iyiyim" dediği yerde neyin
+      olduğunu anlıyorsun, ve bu, insanların sana söylemedikleri şeyi söylemesini
+      sağlıyor.
+
+# "Neye mal oluyor" — ücretsiz raporda kalır, paranın arkasına saklanmaz.
+# Sadece öven bir profil, kimsenin geri dönmediği profildir.
+costs:
+  quiet_builder:
+    tr: >-
+      Görünmediğin için hakkın da teslim edilmiyor. Daha kötüsü, yardım
+      istemeyi geciktiriyorsun: sessizce ilerlemek sessizce tıkanmayı da
+      kolaylaştırıyor.
+  spark:
+    tr: >-
+      Yarım kalanların sayısı seni yoruyor. Her yeni başlangıç bir öncekinin
+      bitmediğini biraz daha kanıtlıyor, ve bir süre sonra başlamak da eskisi
+      kadar iyi hissettirmiyor.
+  night_watch:
+    tr: >-
+      Tehlikeyi gerçekleşmeden yaşıyorsun. Haklı çıkmadığın zamanlarda da aynı
+      yorgunluğu ödüyorsun, ve dinlenmeyi bir görev listesine yazmadığın sürece
+      dinlenmiyorsun.
+  table_setter:
+    tr: >-
+      Sıra sana geldiğinde masada yer kalmıyor. Kimse seni dışarıda bırakmıyor —
+      sen kendini en sona koyuyorsun, ve bunu o kadar doğal yapıyorsun ki
+      kimsenin fark etmesi için bir sebep olmuyor.
+  fine_worker:
+    tr: >-
+      Bitirmek sana başlamaktan pahalıya geliyor. "Yeterince iyi" eşiği sende
+      çalışmadığı için, bitmiş ama mükemmel olmayan şey yerine bitmemiş şeyi
+      seçiyorsun.
+  compass:
+    tr: >-
+      Bazen yalnız yürüyorsun. Herkesin katılmasını beklemediğin için hız
+      kazanıyor, destek kaybediyorsun — ve kararın doğruluğu, o desteğin
+      eksikliğini kapatmıyor.
+  still_water:
+    tr: >-
+      Sorun etmediğin için sorun büyüyor. Sakinlik, bir şeyin gerçekten yanlış
+      olduğunu söylemeyi de erteliyor, ve söylendiğinde iş çoktan başkasının
+      meselesi olmuş oluyor.
+  deep_diver:
+    tr: >-
+      Çıkmakta zorlanıyorsun. Derine inmek bir seçim ama orada kalmak bir
+      alışkanlık, ve iyi olan şeyi de kötü olan şeyi de aynı derinlikte
+      taşımak günü uzatıyor.
+
+# ---------------------------------------------------------------------------
+# Derin rapor (ücretli)
+# ---------------------------------------------------------------------------
+
+# Bölüm iskeletinden sonra, arketip fragmanından önce okunur. Bu yüzden eksenin
+# adıyla değil, bölümün sorusuyla başlar: 1 nasıl karar verdiğin, 2 başkalarıyla
+# olan kısmın, 3 işin ortasında yaptığın, 4 neye mal olduğu.
+#
+# Uyumluluk şu an dört bölümün hiçbirine düşmüyor — eşleme puanlama tarafında
+# sabit ve orada kalması doğru. Metni yine de burada: hangi eksenin hangi bölümü
+# okuyacağı bir ürün kararı ve yeniden tartışılacak.
+dimensions:
+  CONSCIENTIOUSNESS:
+    low:
+      tr: >-
+        Karar anını uzatmıyorsun. Yeterince bilgi biriktiğinde değil, sıkıldığın
+        anda seçiyorsun ve seçtikten sonra da geri dönüp bakmıyorsun. Bu, hızlı
+        olmanın sebebi; aynı kararı üç ay sonra bir daha vermenin de sebebi.
+    mid:
+      tr: >-
+        Önemli kararlarda yavaşlıyor, gerisini akışına bırakıyorsun. Ayrımı iyi
+        yapıyorsun ama ayrımı yapmak da bir karar, ve yorgun olduğun günlerde
+        her şey "gerisi" tarafına düşüyor.
+    high:
+      tr: >-
+        Karar vermeden önce ne olacağını görmek istiyorsun ve genelde
+        görüyorsun. Seçtiğin şeye sadık kalıyorsun. Bunun görünmeyen tarafı:
+        yanlış olduğu ortaya çıkan bir karardan çıkmak, ona girmekten çok daha
+        zor oluyor senin için.
+  EXTRAVERSION:
+    low:
+      tr: >-
+        Yakınlığı azaltarak değil, seyrelterek kuruyorsun. Az sayıda insanla
+        derin, gerisiyle kibar ve mesafeli. Bu seçim seni koruyor, ve aynı
+        zamanda seni odada olmadığın konuşmaların sonucuna razı ediyor.
+    mid:
+      tr: >-
+        İnsanların arasına giriyor, sonra sessizce çıkıyorsun. İkisini de
+        yapabiliyor olman bir avantaj, ama hangisine ihtiyacın olduğunu
+        genellikle çok geç fark ediyorsun — kalabalıktan çıkarken ya da yalnız
+        kaldıktan bir gün sonra.
+    high:
+      tr: >-
+        Yakınlığı hızlı kuruyorsun ve bu insanları rahatlatıyor. Konuşarak
+        düşünüyorsun, o yüzden yalnız kaldığında düşünce de duruyor. Bedeli şu:
+        bazı şeyler ancak kimseye anlatmadan bitiyor, ve o şeyler sende
+        birikiyor.
+  OPENNESS:
+    low:
+      tr: >-
+        İşin ortasında yolu değiştirmiyorsun. Başladığın gibi bitiriyorsun ve
+        bu, çoğu işi kurtaran şey. Kaçırdığın şey şu: bazen ortada görünen daha
+        iyi yol gerçekten daha iyi yoldur, ve sen ona bakmadan geçiyorsun.
+    mid:
+      tr: >-
+        Ortada bir kez duruyor, bakıyor, sonra devam ediyorsun. Bu duruş sana
+        pahalıya gelmiyor ama tam olarak neye baktığını da belirlemediğin için
+        çoğu zaman aynı kararı tekrar veriyorsun.
+    high:
+      tr: >-
+        İşin ortası senin için en canlı yer — orada yeni bir şey görüyorsun ve
+        görmemiş gibi yapamıyorsun. Bu, işi zenginleştiriyor ve bitmesini
+        geciktiriyor. İkisi aynı huyun iki yüzü, birini alıp diğerini bırakmak
+        mümkün değil.
+  AGREEABLENESS:
+    low:
+      tr: >-
+        Anlaşmayı sürdürmek için katılmıyormuş gibi yapmıyorsun. Bu, seninle
+        çalışan herkesin nerede durduğunu bilmesini sağlıyor — ve bazılarının
+        seninle bir daha çalışmak istememesini de.
+    mid:
+      tr: >-
+        Uzlaşmayı seçiyorsun ama sınırın var. Sınırın nerede olduğunu
+        söylemediğin için, ona basıldığında verdiğin tepki karşı tarafa ani
+        geliyor; sana gelmiyor, sen yıllardır oradaydın.
+    high:
+      tr: >-
+        Aranın iyi kalması senin için arka plan değil, işin bir parçası. Bu
+        emeği kimse görmüyor çünkü iyi yapıldığında görünmez oluyor — ve
+        görünmediği için de karşılığı ödenmiyor.
+  NEUROTICISM:
+    low:
+      tr: >-
+        Güçlü tarafının bedeli sende geç geliyor. Sarsılmadığın için etrafındaki
+        herkes sana yaslanıyor, ve yaslanılan kişinin kendi ağırlığını ne zaman
+        bıraktığını kimse sormuyor.
+    mid:
+      tr: >-
+        Zorlandığını belli etmiyorsun ama etmemek bedava değil. Toparlanma
+        hızın, sana ne kadar yüklendiğinin ölçüsü haline geliyor — ve o ölçüyü
+        sen koymuyorsun.
+    high:
+      tr: >-
+        Bedeli peşin ödüyorsun. Kötü ihtimali önceden yaşamak seni hazırlıklı
+        yapıyor ve aynı anda yoruyor; gerçekleşmeyen tehlikelerin faturası da
+        gerçekleşenler kadar tutuyor.
+
+# Derin raporun açılışı. Serbest rapordaki açılışın daha uzunu değil — orası
+# "kimsin" diyor, burası "bu nereden geliyor ve seni nereye götürüyor" diyor.
+portraits:
+  quiet_builder:
+    tr: >-
+      Senin ilerlemen sıçramalarla değil, katmanlarla oluyor. Bir şeyi
+      duyurmadan önce sağlam olmasını istemen bir alçakgönüllülük değil, bir
+      risk yönetimi: yarım bir şeyi savunmak zorunda kalmaktansa hiç
+      konuşmamayı seçiyorsun. Bu seni güvenilir yapıyor ve görünmez tutuyor,
+      ve ikisi aynı tercihten çıkıyor. Zamanla şu ortaya çıkıyor: insanlar sana
+      güveniyor ama seni hatırlamıyor. Değiştirmen gereken şey çalışma biçimin
+      değil, biten işi ne zaman söylediğin.
+  spark:
+    tr: >-
+      Sende fikir üretimi bir yetenek değil, bir refleks — ve refleksler
+      durdurulamaz, sadece yönlendirilebilir. Başladığın her şey başladığı anda
+      gerçekten iyi bir fikirdi; sorun fikirlerin kalitesinde değil, hiçbirinin
+      sıkıcı olan orta kısmına gelmemesinde. Yeni bir şeye başlamak, eskisinin
+      zorlaştığı anda geliyor ve bu tesadüf değil. Sende işe yarayan tek şey
+      şu: aynı anda kaç şeyin açık olduğunu bir yere yazmak. Seçmek acı verici,
+      ama seçmemek de sürekli ve daha sessiz bir acı.
+  night_watch:
+    tr: >-
+      Senin dikkatinin varsayılan hali tarama. Bir odaya girdiğinde neyin yanlış
+      gidebileceğini herkesten önce görüyorsun ve bu, defalarca birilerini
+      kurtardı — sayılmayan, teşekkür edilmeyen defalar. Bunun mekaniği şu:
+      beden tehlikeyi gerçekleşmesini beklemeden yaşıyor, o yüzden yanlış alarm
+      da gerçek alarm kadar yoruyor. Senin meselen daha az fark etmek değil;
+      fark ettikten sonra bırakabilmek. Nöbet devredilebildiğinde nöbet, tutan
+      kişiyi tüketmiyor.
+  table_setter:
+    tr: >-
+      Sen bir grubu ayakta tutan görünmez işi yapıyorsun: kimin küstüğünü, kimin
+      çağrılmadığını, kimin bir şey söylemek isteyip söyleyemediğini takip
+      etmek. Bunu kimse istemedi, sen üstlendin, ve iyi yapıldığında bu iş
+      görünmez olduğu için karşılığı da ödenmiyor. Zamanla ortaya çıkan şey şu:
+      herkesin ihtiyacını bilen kişi, kendi ihtiyacını söylemeyi unutan kişi
+      oluyor. Sofrayı kurmayı bırakman gerekmiyor — sofrada kendine de bir yer
+      ayırman gerekiyor, ve bunu önceden yapman gerekiyor, çünkü sonradan yer
+      kalmıyor.
+  fine_worker:
+    tr: >-
+      Senin standardın bir tercih değil, bir algı: farkı gerçekten görüyorsun,
+      görmemiş gibi yapamıyorsun. Bu yüzden "yeterince iyi" cümlesi sende bir
+      uzlaşma değil, bir yalan gibi duruyor. İşin ironisi şu: standardın işi
+      iyileştiriyor ama bitmesini engellediğinde iyileştirdiği bir şey kalmıyor.
+      Bitmemiş mükemmel iş, bitmiş iyi işten her ölçüde daha kötü. Senin
+      öğreneceğin şey daha az önemsemek değil — neyin bittiğine kimin karar
+      verdiğini değiştirmek.
+  compass:
+    tr: >-
+      Belirsizlik çoğu insanı durduruyor, seni harekete geçiriyor. Kimse karar
+      vermeyince sen veriyorsun, ve bunu istediğin için değil, boşluğa
+      dayanamadığın için yapıyorsun. Kararların genelde doğru çıkıyor, bu yüzden
+      alışkanlık pekişiyor. Ödediğin bedel kararın kendisinde değil, sürecinde:
+      herkesin katılmasını beklemediğin için hızlanıyorsun ve arkanda insan
+      bırakıyorsun. Yalnız yürümek bir kere işe yarar, üç kere alışkanlık olur,
+      beşinci sefer kimse peşinden gelmez.
+  still_water:
+    tr: >-
+      Sende sakinlik bir çaba değil, varsayılan. Kriz anında etrafındakiler
+      farkında olmadan sana bakıp yavaşlıyor ve bu, taşıdığın en işe yarar şey.
+      Ama aynı mekanizmanın ikinci bir sonucu var: bir şeyin gerçekten yanlış
+      olduğuna karar verme eşiğin de yüksek. Telaşlanmamak, geç fark etmekle
+      aynı yerden besleniyor. Senin ayarlaman gereken şey sakinliğin değil —
+      "bunu şimdi söylemem gerekiyor" dediğin anın nerede olduğu.
+  deep_diver:
+    tr: >-
+      Sende yaşantının çözünürlüğü yüksek: aynı olay sana daha çok ayrıntı,
+      daha çok anlam ve daha çok ağırlık olarak geliyor. Bu, fark ettiğin
+      şeylerin sebebi ve yorgunluğunun da sebebi — ikisini ayırmak mümkün değil.
+      İnsanların sana anlatmadıklarını anlatması tesadüf değil, derinliğin
+      görünüyor. Mesele sığlaşmak değil; dalıştan sonra çıkmayı bir beceri
+      olarak öğrenmek. Derinde kalmak seçim değil, alışkanlık haline geldiğinde
+      orada bulduğun şeyleri kimseye taşıyamıyorsun.
+
+# Bölümün kapanışı: eksen metni "genelde böyle" der, fragman "sende böyle" der.
+# 1 nasıl karar verdiğin · 2 başkalarıyla · 3 işin ortası · 4 bedeli.
+fragments:
+  quiet_builder:
+    1:
+      tr: >-
+        Sende karar, bir anda değil bir süre içinde oluyor. Kimseye
+        danışmadığın için dışarıdan ani görünüyor, oysa sen haftalardır
+        oradasın.
+    2:
+      tr: >-
+        Az kişiye çok şey veriyorsun. Bu çemberin dışındakiler seni soğuk
+        sanıyor; içindekiler için ulaşılabilecek en sağlam kişisin.
+    3:
+      tr: >-
+        Ortada yavaşlamıyorsun, ama tıkandığında da söylemiyorsun. Sessizce
+        ilerlemenin bedeli, sessizce takılıp kalmak.
+    4:
+      tr: >-
+        Sana pahalıya gelen şey görünmezlik. İşin konuşulduğu odada adın
+        geçmediğinde bunu düzeltmiyorsun, ve düzeltmediğin için tekrar oluyor.
+  spark:
+    1:
+      tr: >-
+        Karar vermiyorsun, başlıyorsun — ve başlamak sende karar vermenin yerini
+        tutuyor. Bu, çoğu zaman işe yarıyor ve arada bir pahalıya patlıyor.
+    2:
+      tr: >-
+        İnsanlar senin yanında bir şeye başlama cesareti buluyor. Aynı
+        insanlar, sen o şeyden çıktığında nerede olduğunu da soruyor.
+    3:
+      tr: >-
+        İşin ortası senin en zayıf yerin. Yenilik bittiğinde ilgi de bitiyor,
+        ve tam o noktada yeni bir kapı açılıyor.
+    4:
+      tr: >-
+        Sana pahalıya gelen şey yarım kalanların birikmesi. Her biri tek başına
+        önemsiz, hepsi birlikte "ben bitiremem" cümlesini kuruyor.
+  night_watch:
+    1:
+      tr: >-
+        Karar verirken en kötü ihtimalden geri sayıyorsun. Bu seni hazırlıklı
+        yapıyor ve aynı zamanda hiçbir kararın rahat hissettirmemesini
+        sağlıyor.
+    2:
+      tr: >-
+        Sevdiklerini uyarıyorsun ve uyarı, ilgiyle aynı şey olarak
+        anlaşılmıyor. Sen tehlikeyi anlatırken karşı taraf eleştiri duyuyor.
+    3:
+      tr: >-
+        İşin ortasında kontrol ediyorsun, tekrar kontrol ediyorsun. Bir yerden
+        sonra kontrol işi ilerletmiyor, sadece seni oyalıyor.
+    4:
+      tr: >-
+        Sana pahalıya gelen şey dinlenememek. Nöbeti kimseye devretmediğin için
+        nöbet hiç bitmiyor, ve bitmeyen nöbet dikkati de köreltiyor.
+  table_setter:
+    1:
+      tr: >-
+        Karar verirken önce kimin ne hissedeceğine bakıyorsun. Bu, çoğu kararı
+        daha iyi yapıyor ve bazılarını imkânsız hale getiriyor.
+    2:
+      tr: >-
+        Burası senin en güçlü olduğun bölüm. İnsanları bir arada tutmak
+        öğrenilmesi en zor beceri ve sen onu düşünmeden yapıyorsun.
+    3:
+      tr: >-
+        İşin ortasında başkasının işine bakıyorsun. Kendi işin geri kalıyor ve
+        bunu fark ettiğinde suçlusu olarak yine kendini görüyorsun.
+    4:
+      tr: >-
+        Sana pahalıya gelen şey sıranın hiç sana gelmemesi. Kimse seni sona
+        koymuyor — sen koyuyorsun, ve o kadar sessiz koyuyorsun ki kimsenin
+        itiraz etmesi için sebep olmuyor.
+  fine_worker:
+    1:
+      tr: >-
+        Karar verirken detaya bakıyorsun ve detay çoğu zaman haklı çıkıyor.
+        Haklı çıkmadığında ise küçük bir şey yüzünden büyük bir şeyi
+        geciktirmiş oluyorsun.
+    2:
+      tr: >-
+        İnsanlara da aynı standartla bakıyorsun ve bunu söylemesen de
+        anlaşılıyor. Yanındakiler kendilerini ölçülüyor hissediyor.
+    3:
+      tr: >-
+        İşin ortası senin en uzun kaldığın yer. Bitmiş sayılabilecek şeyi
+        bitmiş saymamak, senin en pahalı alışkanlığın.
+    4:
+      tr: >-
+        Sana pahalıya gelen şey bitirememek. Ortaya çıkmamış mükemmel iş, ortaya
+        çıkmış iyi işten hiçbir ölçüde daha değerli değil — ama içeriden öyle
+        hissettirmiyor.
+  compass:
+    1:
+      tr: >-
+        Karar senin için bir yük değil, bir rahatlama. Boşluğa dayanamadığın
+        için seçiyorsun, ve seçtiğin şey genelde doğru olduğu için bu huy hiç
+        sorgulanmıyor.
+    2:
+      tr: >-
+        İnsanlar sana yön için geliyor, yakınlık için değil. Bu ayrımı sen de
+        biliyorsun ve bazen tam da bu yüzden yorgunsun.
+    3:
+      tr: >-
+        İşin ortasında hızlanıyorsun. Arkanda kalanları kontrol etmek yavaşlatır
+        diye düşünüyorsun, ve haklısın — ama arkanda kalanlar da orada kalıyor.
+    4:
+      tr: >-
+        Sana pahalıya gelen şey yalnızlık. Kararın doğruluğu, o kararı tek
+        başına vermiş olmanın açtığı mesafeyi kapatmıyor.
+  still_water:
+    1:
+      tr: >-
+        Karar verirken acele etmiyorsun ve acelesizlik çoğu zaman doğru cevabı
+        getiriyor. Getirmediğinde ise karar seni değil, zaman seni geçmiş
+        oluyor.
+    2:
+      tr: >-
+        Yanında olmak insanları sakinleştiriyor. Bunu bilerek yapmıyorsun,
+        o yüzden karşılığını da istemiyorsun.
+    3:
+      tr: >-
+        İşin ortasında telaşlanmıyorsun, ama hızlanman gereken yeri de geç fark
+        ediyorsun. Sakinlik burada bir maliyet.
+    4:
+      tr: >-
+        Sana pahalıya gelen şey söylememek. Sorun etmediğin şey büyüyor ve
+        büyüdüğünde artık senin meselen olmaktan çıkmış oluyor.
+  deep_diver:
+    1:
+      tr: >-
+        Karar verirken çok fazla şey hissediyorsun ve hepsi geçerli. Zor olan
+        seçmek değil, hangisinin bilgi hangisinin gürültü olduğunu ayırmak.
+    2:
+      tr: >-
+        İnsanlar sana söylemediklerini söylüyor çünkü anlayacağını biliyorlar.
+        Bu bir ayrıcalık ve aynı zamanda taşıdığın ağırlığın bir kısmı.
+    3:
+      tr: >-
+        İşin ortasında derine iniyorsun ve zaman kayboluyor. Çıktığında bulduğun
+        şey genelde değerli, ama çıkma anını kimse senin için işaretlemiyor.
+    4:
+      tr: >-
+        Sana pahalıya gelen şey iniş ile çıkış arasındaki fark. İyi olanı da
+        kötü olanı da aynı derinlikte taşımak, günü herkesinkinden uzun yapıyor.
+
+# Yakın arketiple karşılaştırma. Aynı bandı paylaştığın biriyle nerede
+# ayrıldığını söyler — arketip adının bir kategori değil, bir yorum olduğunu
+# en açık gösteren yer burası.
+comparisons:
+  quiet_builder:
+    tr: >-
+      İnce İşçi ile aynı yerden geliyorsunuz: ikiniz de yüksek bir eşik
+      taşıyorsunuz. Fark şurada — onun eşiği işin kalitesinde, seninki işin
+      hazır olmasında. O bitmiş bir şeyi beğenmediği için tutuyor, sen sağlam
+      olmadığını düşündüğün için tutuyorsun. Bu yüzden onun çıkmazı mükemmellik,
+      seninki görünmezlik.
+  spark:
+    tr: >-
+      Yön Veren ile ikiniz de hızlısınız ve ikiniz de beklemeyi sevmiyorsunuz.
+      Fark şurada — o bir yön seçip arkasında duruyor, sen bir sürü yönü aynı
+      anda açık tutuyorsun. Onun riski yanlış yöne kararlılıkla gitmek, seninki
+      hiçbir yöne yeterince gitmemek.
+  night_watch:
+    tr: >-
+      Derin Dalgıç ile ikiniz de yoğun hissediyorsunuz ve ikiniz de bunun
+      bedelini ödüyorsunuz. Fark şurada — o içeri doğru derinleşiyor, sen
+      dışarıyı tarıyorsun. Onun yorgunluğu anlamdan geliyor, seninki
+      tetikte olmaktan.
+  table_setter:
+    tr: >-
+      Yön Veren ile ikiniz de bir grubun merkezindesiniz. Fark şurada — o
+      kararla merkeze geliyor, sen ilgiyle. İnsanlar ona ne yapacaklarını
+      sormaya, sana nasıl hissettiklerini söylemeye geliyor. Onun bedeli
+      yalnızlık, seninki kendini unutmak.
+  fine_worker:
+    tr: >-
+      Sessiz İnşacı ile ikiniz de sabırlısınız ve ikiniz de gürültü
+      çıkarmıyorsunuz. Fark şurada — o biriktiriyor, sen düzeltiyorsun. Onun
+      için bir şeyin görünmemesi sorun değil; senin için bir şeyin kusurlu
+      görünmesi sorun.
+  compass:
+    tr: >-
+      Sofra Kuran ile ikiniz de insanların bulunduğu yerdesiniz. Fark şurada —
+      o herkesin katılmasını bekliyor, sen beklemiyorsun. Onun kararları daha
+      yavaş ve daha çok destekli, seninkiler daha hızlı ve daha yalnız.
+  still_water:
+    tr: >-
+      Sessiz İnşacı ile ikiniz de sessizsiniz ama sessizliğiniz aynı yerden
+      gelmiyor. O odaklandığı için sessiz, sen sarsılmadığın için. Onun riski
+      görülmemek, seninki geç görmek.
+  deep_diver:
+    tr: >-
+      Gece Nöbetçisi ile ikiniz de erken hissediyorsunuz. Fark şurada — o neyin
+      ters gidebileceğini görüyor, sen neyin gerçekten olduğunu. Onunki bir
+      uyarı sistemi, seninki bir çözünürlük farkı. İkiniz de yoruluyorsunuz ama
+      farklı sebeplerle dinleniyorsunuz.

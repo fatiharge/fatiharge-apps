@@ -1,15 +1,34 @@
 # The three things each day asks for.
 #
-# Written once per day and given to every archetype, then replaced one at a
-# time with something written for that archetype specifically. The rows are
-# seeded as `placeholder: true` so the writing job is a query rather than a
-# memory: `select * from tasks where placeholder`.
+# One set of three per day, given to every archetype, and then replaced one
+# slot at a time with something written for that archetype specifically. The
+# shared text goes in marked as a stand-in, so what is still unwritten is a
+# request rather than a memory: GET /admin/content/unwritten.
+#
+# Of the three, the second belongs to the archetype and the other two do not.
+# Slot 1 is the day's move and slot 3 is the mark — a chain works because
+# everybody walks the same fourteen days, so those two staying identical is a
+# decision rather than unfinished work. Slot 2 is the adjustment, which is
+# exactly where the eight differ: what "do half of it" costs a Kıvılcım is not
+# what it costs an İnce İşçi.
+#
+#   - day: 1
+#     tr: [...]
+#     by_archetype:
+#       quiet_builder:
+#         2: {title: ..., detail: ...}
+#
+# A missing slot-2 override is reported as unwritten; slots 1 and 3 never are.
+# Pushed by scripts/push_content.py. Nothing here is a migration.
 #
 # The rule every task follows: it has to be doable while standing in a queue.
 # A task that needs a free afternoon is a task that breaks the chain on the
 # first bad day, and the chain is the product.
 
 version: 1
+
+# The slot the archetype owns. See the note above.
+personal_slot: 2
 
 tasks:
   - day: 1
@@ -25,6 +44,53 @@ tasks:
       - title: Bugün bir kez yap
         detail: Seçtiğin şeyi bugün bir kez yap. Bugünlük ölçü bu kadar.
 
+    by_archetype:
+      quiet_builder:
+        2:
+          title: "Kimsenin görmediği saate koy"
+          detail: >-
+            Çıpanı zaten yalnız olduğun bir ana koy. Sen görülmek için değil,
+            biriktirmek için yapıyorsun — düzenin de öyle olsun.
+      spark:
+        2:
+          title: "Çıpanı bir tanesine koy"
+          detail: >-
+            Aklındaki üç şeyden birini seç ve çıpayı sadece ona koy. Diğer
+            ikisi bugün yok.
+      night_watch:
+        2:
+          title: "Çıpanı sakin bir saate koy"
+          detail: >-
+            Tetikte olduğun saatlere koyma. Günün en az taradığın anını seç.
+      table_setter:
+        2:
+          title: "Çıpanı yalnız olduğun saate koy"
+          detail: >-
+            Etrafında insan varsa onların ihtiyacı seninkinin önüne geçer.
+            Yalnız olduğun bir saat seç.
+      fine_worker:
+        2:
+          title: "Çıpanı koy, sistemi kurma"
+          detail: >-
+            Bir saatin yanına koy ve orada bırak. Bugün daha iyi bir düzen
+            tasarlama.
+      compass:
+        2:
+          title: "Çıpanı koy ve kimseye duyurma"
+          detail: >-
+            Bir saatin yanına koy. Bu sefer kimseyi de bu işe dahil etme.
+      still_water:
+        2:
+          title: "Çıpanı net bir saate koy"
+          detail: >-
+            “Bir ara” senin en pahalı cümlen. Saati belirle ve belirsiz
+            bırakma.
+      deep_diver:
+        2:
+          title: "Çıpanı koy ve bir alarm kur"
+          detail: >-
+            Bir saatin yanına koy, ve bitiş için alarm kur. Girmek senin
+            sorunun değil, çıkmak.
   - day: 2
     tr:
       - title: Aynısını tekrarla
@@ -38,6 +104,51 @@ tasks:
           Nasıl geçtiğini bir cümleyle kendine yaz. Yazılmayan şey olmamış
           sayılıyor.
 
+    by_archetype:
+      quiet_builder:
+        2:
+          title: "Süreye değil, sağlamlığa bak"
+          detail: >-
+            Ne kadar sürdüğü seni zaten ilgilendirmiyor. Bugün de
+            ilgilendirmesin: oldu mu, o kadar.
+      spark:
+        2:
+          title: "Süreyi değil, aynılığı ölç"
+          detail: >-
+            Kaç dakika sürdüğü seni yanıltır. Bugün tek soru: bu, dünküyle
+            aynı şey miydi?
+      night_watch:
+        2:
+          title: "Süreyi de doğruluğu da ölçme"
+          detail: >-
+            Bugün ne kadar sürdüğüne de bakma, doğru yaptın mı ona da. Sadece
+            oldu mu.
+      table_setter:
+        2:
+          title: "Süreyi değil, bölünmeyi ölç"
+          detail: >-
+            Bugün tek soru: yaparken kaç kere birine baktın?
+      fine_worker:
+        2:
+          title: "Süreyi ölçme, kaliteyi de"
+          detail: >-
+            Bugün ne kadar sürdüğüne de bakma, ne kadar iyi olduğuna da.
+            Sadece oldu mu.
+      compass:
+        2:
+          title: "Süreyi ölçme, verimi de"
+          detail: >-
+            Bugün hız da verim de senin işin değil. Sadece oldu mu.
+      still_water:
+        2:
+          title: "Süreyi ölçme, ertelemeyi ölç"
+          detail: >-
+            Bugün tek soru: kaç kere sonraya bıraktın?
+      deep_diver:
+        2:
+          title: "Süreyi ölçme ama bitişi işaretle"
+          detail: >-
+            Ne kadar sürdüğüne bakma. Sadece nerede bitirdiğini işaretle.
   - day: 3
     tr:
       - title: Saati sabitle
@@ -49,6 +160,54 @@ tasks:
       - title: Bitince işaretle
         detail: İşaretlemek bir dakikanın ikinci yarısı. Zincirin bununla uzuyor.
 
+    by_archetype:
+      quiet_builder:
+        2:
+          title: "Telefonu değil, bildirimi kaldır"
+          detail: >-
+            Seni bölen şey ekran değil, bir şeyi kaçırdığın hissi. Bugün o
+            hissi kapat.
+      spark:
+        2:
+          title: "Telefonu kaldır, defteri de"
+          detail: >-
+            Yaparken yeni fikir gelirse yazma. Yazmak, o fikri bugün
+            başlatmanın kibar hâli.
+      night_watch:
+        2:
+          title: "Telefonu başka odaya koy"
+          detail: >-
+            Sen ekranı bırakınca değil, kontrol etme ihtimalini bırakınca
+            rahatlıyorsun.
+      table_setter:
+        2:
+          title: "Telefonu kaldır, biri arayabilir"
+          detail: >-
+            On dakika ulaşılamaz olmak kimseyi incitmez. Bu cümleyi bugün bir
+            kere sına.
+      fine_worker:
+        2:
+          title: "Telefonu kaldır, notu da"
+          detail: >-
+            Yaparken nasıl daha iyi yapılacağını not alma. Not, bugün
+            bitirmemenin kibar hâli.
+      compass:
+        2:
+          title: "Telefonu kaldır, kimse beklemesin"
+          detail: >-
+            On dakika karar verilemeyen bir yer olsun. Dünya o kadarını
+            kaldırır.
+      still_water:
+        2:
+          title: "Telefonu kaldır, bahane bitsin"
+          detail: >-
+            Telefon zaten seni çok bölmüyor. Bugün onu bir bahane olmaktan
+            çıkar.
+      deep_diver:
+        2:
+          title: "Telefonu kaldır, kapıyı da"
+          detail: >-
+            Dalarken bölünmek sana pahalıya geliyor. Bugün baştan kapat.
   - day: 4
     tr:
       - title: Canın istemese de yap
@@ -62,6 +221,51 @@ tasks:
       - title: Ne zorladı, yaz
         detail: Bugün en çok neyin zorladığını tek cümleyle yaz.
 
+    by_archetype:
+      quiet_builder:
+        2:
+          title: "Yarısını yap, eksiklik sayma"
+          detail: >-
+            Yarım yapılmış bir şeyi kimseye göstermeyeceksin, o yüzden yarım
+            olması sorun değil. Sorun, yarım olacağı için hiç başlamamak.
+      spark:
+        2:
+          title: "Yarısını yap, yenisine başlama"
+          detail: >-
+            Bugün yarım kalması serbest. Serbest olmayan şey, yarım kalınca
+            başka bir şeye geçmek.
+      night_watch:
+        2:
+          title: "Yarısını yap, aksama sayma"
+          detail: >-
+            Yarım yapılan şey bir uyarı işareti değil. Bugün onu uyarı işareti
+            gibi okuma.
+      table_setter:
+        2:
+          title: "Yarısını yap, telafi sözü verme"
+          detail: >-
+            Yarısı yeter. Kalan yarıyı birine telafi etme sözü verme.
+      fine_worker:
+        2:
+          title: "Yarısını yap ve orada bırak"
+          detail: >-
+            Yarısı bugünlük tamam. Tamamlanmamış olması onu kötü yapmıyor,
+            bitmemiş yapıyor.
+      compass:
+        2:
+          title: "Yarısını yap, telafi etme"
+          detail: >-
+            Yarısı yeterli. Kalanını bugün içinde kapatma planı yapma.
+      still_water:
+        2:
+          title: "Yarısını yap, tamamını erteleme"
+          detail: >-
+            Yarısı sayılır. Ama yarısı, bugünü tamamen atlamanın yolu değil.
+      deep_diver:
+        2:
+          title: "Yarısını yap, derinleşme"
+          detail: >-
+            Yarısı yeterli. Bugün yarısını daha derin yapmaya çalışma.
   - day: 5
     tr:
       - title: Kaçırdıysan geri dön
@@ -73,6 +277,53 @@ tasks:
       - title: Bugünü işaretle
         detail: Bugünün işaretlenmesi dünü telafi etmekten daha önemli.
 
+    by_archetype:
+      quiet_builder:
+        2:
+          title: "Zincire bak ve birine göster"
+          detail: >-
+            Beş gündür duran şeyi bir kişiye göster. Görünmemek senin
+            tercihin; hakkının teslim edilmemesi değil.
+      spark:
+        2:
+          title: "Zincire bak, bu bitirdiğin en uzun şey"
+          detail: >-
+            Beş gün. Senin için bu bir rekor olabilir. Şeklini gör, çünkü
+            şekli olan tek şey bu.
+      night_watch:
+        2:
+          title: "Zincire bak, eksiği arama"
+          detail: >-
+            Günlere bak ama hangisinin zayıf olduğunu bulmaya çalışma. Bugün
+            sadece şekli gör.
+      table_setter:
+        2:
+          title: "Zincire bak, bu tamamen senin"
+          detail: >-
+            Beş gündür yaptığın tek şey bu ve kimse için değil. Şeklini gör.
+      fine_worker:
+        2:
+          title: "Zincire bak, eksik günü arama"
+          detail: >-
+            Beş güne bak. Hangisini daha iyi yapabileceğini düşünme; bugün
+            sadece sayıyı gör.
+      compass:
+        2:
+          title: "Zincire bak, hızlandırma"
+          detail: >-
+            Beş güne bak ve bu iyi gidiyor diye tempoyu artırma.
+      still_water:
+        2:
+          title: "Zincire bak, aksayanı söyle"
+          detail: >-
+            Günlere bak. Aksayan bir şey varsa bugün onu yüksek sesle söyle —
+            kendine bile olsa.
+      deep_diver:
+        2:
+          title: "Zincire bak, anlam arama"
+          detail: >-
+            Beş güne bak ve neye işaret ettiğini çözmeye çalışma. Bugün sadece
+            say.
   - day: 6
     tr:
       - title: Görünür yere koy
@@ -84,6 +335,55 @@ tasks:
       - title: Yine yap
         detail: Altıncı gün. Bugünü de ekle.
 
+    by_archetype:
+      quiet_builder:
+        2:
+          title: "Engelini söyleyerek kaldır"
+          detail: >-
+            Seni geciktiren şeyi bugün tek başına çözme. Sessizce ilerlemek,
+            sessizce tıkanmayı da kolaylaştırıyor.
+      spark:
+        2:
+          title: "Engelin sıkıcılıksa, kısalt"
+          detail: >-
+            Seni durduran şey zorluk değil, ortadaki sıkıcı kısım. Bugün onu
+            iki dakikaya indir.
+      night_watch:
+        2:
+          title: "Engelin endişeyse adını koy"
+          detail: >-
+            Seni geciktiren şey bir iş değil, bir ihtimal. Tek cümleyle yaz,
+            sonra yine de yap.
+      table_setter:
+        2:
+          title: "Engelini kaldır: bir hayır de"
+          detail: >-
+            Seni geciktiren şey genelde bir başkasının işi. Bugün bir tanesine
+            hayır de.
+      fine_worker:
+        2:
+          title: "Engelin standardınsa, düşür"
+          detail: >-
+            Seni geciktiren şey zorluk değil, yeterince iyi olmaması. Bugün
+            eşiği bilerek indir.
+      compass:
+        2:
+          title: "Engelini kaldır, kendin için"
+          detail: >-
+            Seni geciktiren tek şeyi bul. Bu sefer başkasının engelini değil,
+            kendininkini.
+      still_water:
+        2:
+          title: "Engelini bugün kaldır, yarına bırakma"
+          detail: >-
+            Tek engeli bul ve bugün kaldır. Senin için zor olan kısmı bu:
+            bugün.
+      deep_diver:
+        2:
+          title: "Engelin ağırlıksa, hafiflet"
+          detail: >-
+            Seni geciktiren şey iş değil, taşıdığın şey. Bugün bir tanesini
+            bir yere yaz ve bırak.
   - day: 7
     tr:
       - title: Haftayı oku
@@ -97,6 +397,52 @@ tasks:
       - title: Bugünü işaretle
         detail: Bir haftalık zincir. Bugün de dursun.
 
+    by_archetype:
+      quiet_builder:
+        2:
+          title: "Saati değil, görünürlüğü değiştir"
+          detail: >-
+            Ayarın çalışıyor. Değiştireceğin tek şey şu: yaptığını bir yere
+            yaz, sen de görebil.
+      spark:
+        2:
+          title: "Bir şeyi değiştir, sadece birini"
+          detail: >-
+            Değiştirme isteğin bugün yüksek olacak. Tek bir ayrıntı değiştir,
+            gerisine dokunma.
+      night_watch:
+        2:
+          title: "Değiştir, sonra kontrol etme"
+          detail: >-
+            Bir ayrıntı değiştir ve bugün sonucunu ölçme. İşe yarayıp
+            yaramadığını yarın da öğrenirsin.
+      table_setter:
+        2:
+          title: "Değiştir, kimseye sormadan"
+          detail: >-
+            İşlemeyen tek ayrıntıyı değiştir. Bunu birine danışmadan yap.
+      fine_worker:
+        2:
+          title: "Bir ayrıntı değiştir, hepsini değil"
+          detail: >-
+            Tek bir şey değiştir. Baştan düzenleme isteğini bugün geçir.
+      compass:
+        2:
+          title: "Bir şeyi değiştir, birine sor"
+          detail: >-
+            Tek bir ayrıntı değiştir ve bu kararı bir kişiye danış.
+            Katılmasını beklemek de bir alıştırma.
+      still_water:
+        2:
+          title: "Bir şeyi değiştir, beklemeyi bırak"
+          detail: >-
+            Kendi kendine düzelmesini bekleme. Tek ayrıntıyı bugün değiştir.
+      deep_diver:
+        2:
+          title: "Bir şeyi değiştir, yorumlama"
+          detail: >-
+            Tek bir ayrıntı değiştir. Neden işe yaramadığını bugün anlamaya
+            çalışma.
   - day: 8
     tr:
       - title: Başka bir yerde yap
@@ -108,6 +454,51 @@ tasks:
       - title: İşaretle
         detail: Sekizinci gün.
 
+    by_archetype:
+      quiet_builder:
+        2:
+          title: "Yarını bugünden kur"
+          detail: >-
+            Bu senin zaten iyi olduğun şey. Bir adım ileri git: yarının ilk
+            hareketini tamamen hazır bırak.
+      spark:
+        2:
+          title: "Yarını hazırla, yeniden tasarlama"
+          detail: >-
+            Yarın için tek bir şey hazırla. Sistemi baştan kurma isteğini
+            bugün geçir.
+      night_watch:
+        2:
+          title: "Yarını kolaylaştır, planlama"
+          detail: >-
+            Tek bir hazırlık yap. Yarının tamamını gözden geçirme; o hazırlık
+            değil, nöbet.
+      table_setter:
+        2:
+          title: "Yarını kendin için kolaylaştır"
+          detail: >-
+            Yarınki hazırlığı sadece kendine yap. Bugün başkasının yarınını
+            kurma.
+      fine_worker:
+        2:
+          title: "Yarını kolaylaştır, kusursuzlaştırma"
+          detail: >-
+            Yarın için tek bir hazırlık yap ve o hazırlığı gözden geçirme.
+      compass:
+        2:
+          title: "Yarını kolaylaştır, devretme"
+          detail: >-
+            Yarınki hazırlığı kendin yap. Bugün bu tek işi kimseye dağıtma.
+      still_water:
+        2:
+          title: "Yarını kolaylaştır, şimdi"
+          detail: >-
+            Yarınki hazırlığı bugün yap. Yarın hatırlarsın diye bırakma.
+      deep_diver:
+        2:
+          title: "Yarını kolaylaştır: çıkışı hazırla"
+          detail: >-
+            Yarın için hazırladığın tek şey, ne zaman bırakacağın olsun.
   - day: 9
     tr:
       - title: Bahane cümleni yaz
@@ -119,6 +510,53 @@ tasks:
       - title: İşaretle
         detail: Dokuzuncu gün.
 
+    by_archetype:
+      quiet_builder:
+        2:
+          title: "Hazır olmadan yap"
+          detail: >-
+            Seninki erteleme değil, hazır olmama hissi. Bugün hazır
+            hissetmeden yap.
+      spark:
+        2:
+          title: "Daha iyi fikre rağmen yap"
+          detail: >-
+            O fikir gerçekten daha iyi olabilir. Yarın da iyi olacak. Bugün
+            bunu yap.
+      night_watch:
+        2:
+          title: "Kötü bir güne rağmen yap"
+          detail: >-
+            Kötü günü herkesten önce görüyorsun ve genelde haklısın. Bugün
+            haklı olmana rağmen yap.
+      table_setter:
+        2:
+          title: "Söz vermiş olmana rağmen yap"
+          detail: >-
+            Söz gerçekti. Ama sıraya kendini koymadığın sürece sıra sana hiç
+            gelmiyor.
+      fine_worker:
+        2:
+          title: "Yeterince iyi değilken yap"
+          detail: >-
+            Bahanen genelde hazır olmaması. Bugün hazır değilken, olduğu
+            hâliyle yap.
+      compass:
+        2:
+          title: "Bahanen “daha önemli iş var” ise yine yap"
+          detail: >-
+            Daha önemli iş her zaman var. Bu, on dört gündür duran tek şey.
+      still_water:
+        2:
+          title: "Bahanen “acelesi yok” ise yine yap"
+          detail: >-
+            Acelesi gerçekten yok. On dört günün de acelesi yoktu, ve gün
+            dokuz.
+      deep_diver:
+        2:
+          title: "Ağır bir gündeyken yap"
+          detail: >-
+            Bahanen genelde bugün taşıdığın şey. Bugün onu taşırken yap.
   - day: 10
     tr:
       - title: Ölçmeyi bırak
@@ -130,6 +568,49 @@ tasks:
       - title: İşaretle
         detail: Onuncu gün. Sayaç zaten sayıyor.
 
+    by_archetype:
+      quiet_builder:
+        2:
+          title: "Tartmadan yap, zaten tartmıştın"
+          detail: >-
+            Kararı çoktan verdin, sadece kimseye söylemedin. Bugün düşünme
+            kısmını atla.
+      spark:
+        2:
+          title: "Sadece yap, en kolay günün"
+          detail: >-
+            Düşünmeden yapmak senin doğal hâlin. Bugün onu tek bir şeye harca.
+      night_watch:
+        2:
+          title: "Sadece yap, tartmak bugün yok"
+          detail: >-
+            Düşünmeden yapmak sana yabancı. Bugün bir kere dene: ihtimalleri
+            saymadan.
+      table_setter:
+        2:
+          title: "Sadece yap, haber vermeden"
+          detail: >-
+            Düşünmeden, tartmadan, ve kimseye söylemeden yap.
+      fine_worker:
+        2:
+          title: "Sadece yap, sonra bakma"
+          detail: >-
+            Düşünmeden yap ve bittikten sonra geri dönüp kontrol etme.
+      compass:
+        2:
+          title: "Sadece yap, karar verme"
+          detail: >-
+            Düşünmeden yap. Bugün bir kere karar veren kişi olma.
+      still_water:
+        2:
+          title: "Sadece yap, beklemeden"
+          detail: >-
+            Düşünmeden, tartmadan, ve uygun anı beklemeden yap.
+      deep_diver:
+        2:
+          title: "Sadece yap, üstüne düşünme"
+          detail: >-
+            Düşünmeden yap ve sonrasında ne hissettiğini çözmeye kalkma.
   - day: 11
     tr:
       - title: Süreyi yarıya indir
@@ -141,6 +622,51 @@ tasks:
       - title: İşaretle
         detail: On birinci gün.
 
+    by_archetype:
+      quiet_builder:
+        2:
+          title: "Neden başladığını yaz, sakla"
+          detail: >-
+            Tek cümle. Kimseye göstermeyeceksin ama on dördüncü günde
+            okuyacaksın.
+      spark:
+        2:
+          title: "Neden bunu seçtiğini hatırla"
+          detail: >-
+            Onca fikrin arasından bunu seçmiştin. Sebebini tek cümleyle
+            kendine söyle.
+      night_watch:
+        2:
+          title: "Neden yaptığını hatırla"
+          detail: >-
+            Tek cümle. Cümlen “kötü bir şey olmasın diye” çıkıyorsa bir daha
+            yaz.
+      table_setter:
+        2:
+          title: "Neden yaptığını hatırla, kendin için"
+          detail: >-
+            Tek cümle. Cümlende başka birinin adı geçiyorsa bir daha yaz.
+      fine_worker:
+        2:
+          title: "Neden yaptığını hatırla"
+          detail: >-
+            Tek cümle. Cümlen “kusursuz olsun diye” çıkıyorsa bir daha yaz.
+      compass:
+        2:
+          title: "Neden yaptığını hatırla"
+          detail: >-
+            Tek cümle. Cümlende “gerekiyordu” geçiyorsa bir daha yaz.
+      still_water:
+        2:
+          title: "Neden yaptığını hatırla"
+          detail: >-
+            Tek cümle. Cümlende “bir şey değişsin” geçiyorsa, neyin değişmesi
+            gerektiğini de yaz.
+      deep_diver:
+        2:
+          title: "Neden yaptığını hatırla, tek cümle"
+          detail: >-
+            Tek cümle. Uzattığını fark edersen kes; bugün kısa olması önemli.
   - day: 12
     tr:
       - title: Bir kişiye söyle
@@ -152,6 +678,53 @@ tasks:
       - title: İşaretle
         detail: On ikinci gün.
 
+    by_archetype:
+      quiet_builder:
+        2:
+          title: "Bir kişiye söyle, bu sefer gerçekten"
+          detail: >-
+            Bu senin en zor günün. Yardım istemeni istemiyorum, sadece birinin
+            bilmesini istiyorum.
+      spark:
+        2:
+          title: "Söyle ama bitirmeden övünme"
+          detail: >-
+            Birinin bilmesi yeterli. Anlatmak, yapmış olmanın yerini tutmasın.
+      night_watch:
+        2:
+          title: "Bir kişiye söyle, nöbet devredilir"
+          detail: >-
+            Birinin bilmesi, işin bir kısmını bırakman demek. Bugünün asıl
+            görevi bu.
+      table_setter:
+        2:
+          title: "Söyle ve bu sefer yardım iste"
+          detail: >-
+            Bu senin en zor günün: istemek. Küçük bir şey iste, reddedilme
+            ihtimaliyle birlikte.
+      fine_worker:
+        2:
+          title: "Bitmemiş hâliyle bir kişiye göster"
+          detail: >-
+            Birinin bilmesi yeterli — ama bu sefer olduğu hâliyle göster,
+            düzeltmeden.
+      compass:
+        2:
+          title: "Bir kişiye söyle, yön verme"
+          detail: >-
+            Birinin bilmesi yeterli. Ona ne yapması gerektiğini söyleme.
+      still_water:
+        2:
+          title: "Bir kişiye söyle, açıkça"
+          detail: >-
+            Birinin bilmesi yeterli. Ama üstünü örtmeden, kaçamak cümle
+            kurmadan söyle.
+      deep_diver:
+        2:
+          title: "Bir kişiye söyle, kısa tut"
+          detail: >-
+            Birinin bilmesi yeterli. Anlatmayı bir sohbete çevirme, bugün tek
+            cümle yeter.
   - day: 13
     tr:
       - title: Neyi bıraktığını fark et
@@ -163,6 +736,52 @@ tasks:
       - title: İşaretle
         detail: On üçüncü gün.
 
+    by_archetype:
+      quiet_builder:
+        2:
+          title: "Geri alma, boşluğu doldur"
+          detail: >-
+            Bıraktığın şeyin yeri boş kaldıysa oraya başka bir şey koy. Boş
+            yerler sende sessizce geri dolar.
+      spark:
+        2:
+          title: "Bıraktıklarını geri alma"
+          detail: >-
+            On üç gündür kenarda duran fikirler bugün çok cazip görünecek.
+            Hiçbirini geri alma.
+      night_watch:
+        2:
+          title: "Bıraktığını geri alma"
+          detail: >-
+            Bıraktığın şeyi geri almak sana güvenlik gibi gelecek. Bugün o
+            güvenliği alma.
+      table_setter:
+        2:
+          title: "Bıraktığını geri alma"
+          detail: >-
+            Bıraktığın yükü birileri sana geri uzatacak. Bugün alma.
+      fine_worker:
+        2:
+          title: "Geri alma, düzeltmeye de kalkma"
+          detail: >-
+            Bıraktığın şeyi geri alma. Bıraktığın şeyi “bir toparlayayım” diye
+            de açma.
+      compass:
+        2:
+          title: "Bıraktığını geri alma"
+          detail: >-
+            Bıraktığın işi geri almak bugün verimli görünecek. Alma.
+      still_water:
+        2:
+          title: "Bıraktığını geri alma"
+          detail: >-
+            Geri almak sana sorun çıkarmaz gibi gelecek. Bugün yine de alma.
+      deep_diver:
+        2:
+          title: "Bıraktığını geri alma"
+          detail: >-
+            Bıraktığın şey bugün anlamlı görünecek. Anlamlı olması geri alman
+            gerektiği anlamına gelmiyor.
   - day: 14
     tr:
       - title: Yarına karar ver
@@ -173,3 +792,48 @@ tasks:
         detail: On dört günden geriye ne kaldı? Tek cümle.
       - title: Son günü işaretle
         detail: On dördüncü gün. Bu bir bitiş değil, ölçüm.
+    by_archetype:
+      quiet_builder:
+        2:
+          title: "Ne kaldığını yaz ve birine oku"
+          detail: >-
+            Tek cümle yaz, sonra bir kişiye oku. On dört gün görünmeden
+            yaptın; bugünü ayrı tut.
+      spark:
+        2:
+          title: "Ne kaldığını yaz: bir tane"
+          detail: >-
+            Geriye kaç şey kaldığını değil, hangisinin kaldığını yaz.
+      night_watch:
+        2:
+          title: "Ne kaldığını yaz, ne olabileceğini değil"
+          detail: >-
+            On dört günden geriye ne kaldığını yaz. Neyin ters gidebileceğini
+            değil.
+      table_setter:
+        2:
+          title: "Ne kaldığını kendi cümlenle yaz"
+          detail: >-
+            On dört günden geriye ne kaldı? Cümlende kimsenin memnuniyeti
+            geçmesin.
+      fine_worker:
+        2:
+          title: "Ne kaldığını yaz, ne eksik kaldığını değil"
+          detail: >-
+            On dört günden geriye ne kaldı? Neyi yapamadığını değil.
+      compass:
+        2:
+          title: "Ne kaldığını yaz, sırada ne var yazma"
+          detail: >-
+            On dört günden geriye ne kaldı? Bir sonraki planı bugün kurma.
+      still_water:
+        2:
+          title: "Ne kaldığını yaz, yumuşatmadan"
+          detail: >-
+            On dört günden geriye ne kaldı? Cümleni kimseyi rahatlatmak için
+            yazma.
+      deep_diver:
+        2:
+          title: "Ne kaldığını yaz, bir cümle"
+          detail: >-
+            On dört günden geriye ne kaldı? Bir cümleyi geçme.

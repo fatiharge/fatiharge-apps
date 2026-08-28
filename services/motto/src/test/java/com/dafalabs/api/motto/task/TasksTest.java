@@ -12,6 +12,7 @@ import com.dafalabs.api.motto.result.Results;
 import com.dafalabs.api.motto.scoring.Dimension;
 import com.dafalabs.api.motto.scoring.ProfileVector;
 import io.quarkus.test.InjectMock;
+import com.dafalabs.api.motto.admin.GivenContent;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -35,11 +36,14 @@ class TasksTest {
   @Inject Results results;
   @InjectMock Clock clock;
 
+  @Inject GivenContent content;
+
   private UUID device;
 
   @BeforeEach
   void setUp() {
     device = UUID.randomUUID();
+    content.everything();
     when(clock.instant()).thenReturn(TODAY.atStartOfDay(ZoneOffset.UTC).toInstant());
     when(clock.getZone()).thenReturn(ZoneOffset.UTC);
     when(clock.withZone(ZoneOffset.UTC))
