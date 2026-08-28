@@ -14,6 +14,9 @@ change ships without a store release.
 | `daily_skeletons.yaml` | the fourteen days, without the person in them |
 | `fragments.yaml` | four per archetype, the part that makes a day theirs |
 | `connectors.yaml` | the hand-written joins between the two |
+| `tasks.yaml` | the three things each of the fourteen days asks for |
+| `report.yaml` | the deep report's shared parts: four section skeletons and the limitations |
+| `support.yaml` | the FAQ, the privacy summary and the deletion copy |
 
 A day someone reads is `skeleton.body` + a connector + a fragment. Fourteen
 bodies and eight sets of four fragments is a hundred and twelve days of text
@@ -83,10 +86,12 @@ lives in the app, and this list is where you find it:
 | What | Where |
 |---|---|
 | Reminder notifications | `apps/motto/lib/features/chain/domain/turkish_reminder_copy.dart` |
-| FAQ | `apps/motto/lib/features/support/domain/faq.dart` |
 | Method and limitations | `apps/motto/lib/features/support/domain/method_text.dart` |
-| Privacy summary | `apps/motto/lib/features/support/domain/privacy_text.dart` |
-| Data deletion | `apps/motto/lib/features/support/domain/deletion_text.dart` |
+
+The FAQ, the privacy summary and the deletion copy used to be here too. They
+are served now (`support.yaml`), because the answer that matters most — where
+somebody's data is — has to be correctable in one deploy rather than one store
+release.
 
 The rules still apply to all of it, and two are written only for these:
 

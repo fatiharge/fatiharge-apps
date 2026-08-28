@@ -43,7 +43,10 @@ SKIP = {ROOT / "content/README.md", ROOT / "content/README.tr.md", Path(__file__
 # safest sentence on that screen, and dropping the word to satisfy a grep would
 # weaken exactly the line that protects us. Every exception here is a denial;
 # an assertion never belongs in this list.
-ALLOWED = ("bir teşhis, bir yetenek ölçümü",)
+ALLOWED = (
+    "bir teşhis, bir yetenek ölçümü",
+    "hiçbir cümle bir teşhis değil",
+)
 
 
 def files() -> list[Path]:
