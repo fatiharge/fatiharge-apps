@@ -27,10 +27,14 @@ class ContentCatalogTest {
   void carriesEveryPiece() {
     ContentBundle bundle = catalog.bundle();
 
-    assertEquals(8, bundle.archetypes().size());
+    // Counted against the archetype table rather than against a number typed
+    // here: adding an archetype should fail this test by leaving one of these
+    // short, not by disagreeing with a constant somebody forgot to bump.
+    int expected = archetypes.size();
+    assertEquals(expected, bundle.archetypes().size());
     assertEquals(14, bundle.skeletons().size());
-    assertEquals(32, bundle.fragments().size());
-    assertEquals(32, bundle.mottos().size());
+    assertEquals(expected * 4, bundle.fragments().size());
+    assertEquals(expected * 4, bundle.mottos().size());
     assertFalse(bundle.connectors().isEmpty());
   }
 
@@ -41,7 +45,7 @@ class ContentCatalogTest {
         catalog.bundle().fragments().stream()
             .collect(Collectors.groupingBy(Fragment::archetypeId, Collectors.counting()));
 
-    assertEquals(8, perArchetype.size());
+    assertEquals(archetypes.size(), perArchetype.size());
     assertTrue(perArchetype.values().stream().allMatch(count -> count == 4L), "" + perArchetype);
   }
 

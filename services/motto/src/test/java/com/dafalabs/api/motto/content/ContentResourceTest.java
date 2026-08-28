@@ -33,7 +33,7 @@ class ContentResourceTest {
         .header("ETag", notNullValue())
         .body("version", equalTo(catalog.bundle().version()))
         .body("skeletons", hasSize(14))
-        .body("fragments", hasSize(32));
+        .body("fragments", hasSize(catalog.bundle().fragments().size()));
   }
 
   @Test

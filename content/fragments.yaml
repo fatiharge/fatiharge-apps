@@ -183,3 +183,91 @@ fragments:
     tr: >-
       Hazır olduğunda başlamayı seviyorsun. Hazır olmak diye bir gün yok;
       bugün de yok.
+
+  # Kendi Saatinde — düzenlilik ↓ · dışadönüklük ↓
+  - archetype: own_clock
+    index: 1
+    tr: >-
+      Bugünün fikri sana kolay geliyor; zor olan yarın da aynı şeyi yapmak.
+      Senin eksiğin istek değil, tekrar.
+  - archetype: own_clock
+    index: 2
+    tr: >-
+      Dalga geldiğinde çok şey yapıyorsun ve arada hiçbir şey. Bugün az yapmak,
+      dalgayı beklemekten daha değerli.
+  - archetype: own_clock
+    index: 3
+    tr: >-
+      Kimseye söylemediğin için kimse hatırlatmıyor. Bugün hatırlatıcın sadece
+      sensin, ve bu yeterli olmak zorunda.
+  - archetype: own_clock
+    index: 4
+    tr: >-
+      Sana kurulacak düzen tutmuyor. Bugünü düzen olarak değil, tek bir gün
+      olarak al — o tutuyor.
+
+  # Aykırı — düzenlilik ↓ · uyumluluk ↓
+  - archetype: contrarian
+    index: 1
+    tr: >-
+      Bugünün fikrine itirazın hazır. İtirazın haklı bile olsa, bugün itiraz
+      etmek yapmanın yerine geçmiyor.
+  - archetype: contrarian
+    index: 2
+    tr: >-
+      Başkasının kurduğu şeyi sürdürmek sana ağır geliyor. Bunu kendi kurduğun
+      bir şey say, o zaman ağırlığı düşüyor.
+  - archetype: contrarian
+    index: 3
+    tr: >-
+      Kimseye hesap vermiyorsun ve bu, hesap vereceğin tek kişinin sen olduğun
+      anlamına geliyor. Bugün o kişi biraz sıkı olsun.
+  - archetype: contrarian
+    index: 4
+    tr: >-
+      Uymamak seni özgür yapıyor, sürdürmemek yapmıyor. Bugün ikisinin farkını
+      bir kere yaşa.
+
+  # Ayağı Yerde — açıklık ↓ · düzenlilik ↓
+  - archetype: feet_on_ground
+    index: 1
+    tr: >-
+      Bugünün fikri sana fazla soyut gelebilir. Somutla: nerede, ne zaman, ne
+      kadar. Üçü belliyse gerisi kolay.
+  - archetype: feet_on_ground
+    index: 2
+    tr: >-
+      Sen anlatılanla değil, yapılanla öğreniyorsun. Bugün anlamaya çalışma,
+      bir kere yap ve sonra bak.
+  - archetype: feet_on_ground
+    index: 3
+    tr: >-
+      Yeni olan seni çekmiyor ve bu bir sorun değil. Bugün merak etmeden yap;
+      merak sonradan gelirse gelir.
+  - archetype: feet_on_ground
+    index: 4
+    tr: >-
+      Planı olmayan şeyi de yapabiliyorsun, bu senin avantajın. Bugünkü tek
+      şart: bir kere olsun.
+
+  # Olduğu Gibi — dışadönüklük ↓ · uyumluluk ↓
+  - archetype: as_is
+    index: 1
+    tr: >-
+      Bugünün fikrini kimseye anlatmayacaksın, biliyorum. O yüzden bugün tek
+      tanık sensin — ve tanıklık da bir iş.
+  - archetype: as_is
+    index: 2
+    tr: >-
+      Kimseyi idare etmediğin için kendini de idare etmiyorsun. Bugün bu iyi
+      bir şey: bahane üretmiyorsun.
+  - archetype: as_is
+    index: 3
+    tr: >-
+      Uzak durmak sana enerji kazandırıyor. Bugün o enerjinin bir kısmını
+      buraya harca, tamamını değil.
+  - archetype: as_is
+    index: 4
+    tr: >-
+      Tıkandığında kimse fark etmiyor, çünkü kimseye söylemiyorsun. Bugün
+      tıkanırsan, en azından kendine söyle.

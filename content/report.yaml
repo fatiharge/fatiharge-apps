@@ -203,6 +203,28 @@ overviews:
       öğrenmek.
 
 # "Bu sana ne veriyor" — övgü değil, işe yarayan tarafın adı.
+  own_clock:
+    tr: >-
+      Sen, kendi ritmiyle çalışan birisin. Dalga geldiğinde bir günde
+      başkalarının haftada yaptığını yapıyorsun, gelmediğinde hiçbir şey
+      olmuyor. Bu bir disiplin eksikliği değil, farklı bir motor — ama
+      biriktirmeyen bir motor.
+  contrarian:
+    tr: >-
+      Sen, uymayı reddeden birisin — ne düzene ne de ortama.
+      Katılıyormuş gibi yapmadığın için senden duyduğun şey gerçekten
+      senin düşündüğün şey, ve bu, etrafındaki az sayıdaki dürüst
+      kaynaktan biri olmanı sağlıyor.
+  feet_on_ground:
+    tr: >-
+      Sen, bugünün işine bakan birisin. Teoriye ihtiyacın yok, plana da;
+      elindekiyle çözüyorsun ve genelde çözülüyor. Bu, etrafındaki
+      insanların en çok güvendiği ama en az konuştuğu türden bir beceri.
+  as_is:
+    tr: >-
+      Sen, kendini pazarlamayan birisin. Yakınlık için uğraşmıyorsun,
+      araları düzeltmek için de; seni tanıyan tam olarak seni tanıyor,
+      çünkü gösterdiğin başka bir sen yok.
 strengths:
   quiet_builder:
     tr: >-
@@ -244,6 +266,26 @@ strengths:
 
 # "Neye mal oluyor" — ücretsiz raporda kalır, paranın arkasına saklanmaz.
 # Sadece öven bir profil, kimsenin geri dönmediği profildir.
+  own_clock:
+    tr: >-
+      Geldiğinde tamamen geliyorsun. Bir işe girdiğinde araya hiçbir şey
+      sokmadan bitirebilmen, planla çalışan çoğu insanda olmayan bir
+      yoğunluk.
+  contrarian:
+    tr: >-
+      Kimseyi idare etmiyorsun. Bir odada herkesin katıldığı bir şeye
+      katılmayan tek kişi olmak zor ve sen bunu düşünmeden yapıyorsun; o
+      yüzden yanlış giden şeyler senin yanında daha erken söyleniyor.
+  feet_on_ground:
+    tr: >-
+      Elindekiyle başlıyorsun. Çoğu insan hazır olmayı beklerken sen
+      çoktan bir şey yapmış oluyorsun, ve yapılmış bir şey, planlanmış
+      on şeyden fazla.
+  as_is:
+    tr: >-
+      Sözünün karşılığı var. Kimseyi idare etmediğin için evet dediğinde
+      evet oluyor, ve bu, insanların zamanla neyi sana emanet ettiğini
+      değiştiriyor.
 costs:
   quiet_builder:
     tr: >-
@@ -297,6 +339,26 @@ costs:
 # Uyumluluk şu an dört bölümün hiçbirine düşmüyor — eşleme puanlama tarafında
 # sabit ve orada kalması doğru. Metni yine de burada: hangi eksenin hangi bölümü
 # okuyacağı bir ürün kararı ve yeniden tartışılacak.
+  own_clock:
+    tr: >-
+      Hiçbir şey birikmiyor. Her seferinde baştan başladığın için altı
+      ay sonra elde kalan, altı gün sonra elde kalanla aynı — ve kimse
+      sana göre plan yapamıyor, sen de dahil.
+  contrarian:
+    tr: >-
+      Sonradan ihtiyacın olacak iyi niyeti bugün harcıyorsun. Haklı
+      olduğun tartışmalardan bile kırgın insanlar çıkıyor, ve bir şeye
+      ihtiyacın olduğunda arayacak kimse kalmıyor.
+  feet_on_ground:
+    tr: >-
+      Hiçbir şey değişmiyor. Değişim ya merak ister ya plan, ve sen
+      ikisini de taşımıyorsun — o yüzden beş yıl önce çalışan çözüm hâlâ
+      kullanımda, çalışmayı bırakmış olsa bile.
+  as_is:
+    tr: >-
+      Bir süre sonra kimse sormuyor. Uzak durman bir tercihti ama tercih
+      olduğunu kontrol etmeyi bıraktığında alışkanlığa dönüşüyor — ve
+      bunu ancak bir şeye ihtiyacın olduğunda fark ediyorsun.
 dimensions:
   CONSCIENTIOUSNESS:
     low:
@@ -461,6 +523,49 @@ portraits:
 
 # Bölümün kapanışı: eksen metni "genelde böyle" der, fragman "sende böyle" der.
 # 1 nasıl karar verdiğin · 2 başkalarıyla · 3 işin ortası · 4 bedeli.
+  own_clock:
+    tr: >-
+      Senin motorun takvim değil, dalga. Bu yüzden kurulan her düzen
+      sende iki hafta yaşıyor ve sonra sessizce ölüyor — kusur sende
+      değil, düzenin varsayımında: o, her günün aynı olduğunu sanıyor.
+      Senin için değil. Ama dalganın da bir sorunu var; hiçbir şey
+      biriktirmiyor. On yıllık dalga, bir yıllık düzenden az şey
+      bırakıyor geriye. Senin arayacağın şey daha sıkı bir program değil
+      — kötü günde de duran, gülünecek kadar küçük bir eşik. Dalga
+      geldiğinde zaten fazlasını yapacaksın.
+  contrarian:
+    tr: >-
+      Senin reddin bir huysuzluk değil, bir tutarlılık: katılmadığın
+      şeye katılmış gibi yapmak sana yalan söylemek gibi geliyor ve
+      yalan söylemiyorsun. Bu, seni güvenilir yapıyor — ve pahalı. Çünkü
+      insanlar haklılıkla değil, taşınabilirlikle çalışıyor, ve sen
+      taşınması zor birisin. İkinci bir mesele daha var: düzeni de
+      reddediyorsun, o yüzden itiraz ettiğin şeyin yerine koyacağın şeyi
+      kurmakta zorlanıyorsun. İtiraz bedava, alternatif değil. Senin
+      öğreneceğin şey uyum değil — reddettiğin şeyin yerine bir şey
+      koyup onu iki hafta sürdürmek.
+  feet_on_ground:
+    tr: >-
+      Sende soyut olan şey tutmuyor; nerede, ne zaman, ne kadar belliyse
+      iş oluyor, belli değilse olmuyor. Bu bir zeka meselesi değil, bir
+      dikkat tercihi: sen önündeki şeye bakıyorsun ve önündeki şey
+      genelde çözülmesi gereken şey. Bunun bedeli ileride ortaya
+      çıkıyor. Değişmesi gereken bir şey olduğunda, seni harekete
+      geçirecek iki şeyden biri lazım — merak ya da plan — ve ikisi de
+      senin doğal aletin değil. O yüzden senin için işe yarayan tek
+      yöntem şu: bir seferde tek bir somut ayrıntıyı değiştirmek. Büyük
+      karar alma, küçük şeyi değiştir ve sonucunu gör.
+  as_is:
+    tr: >-
+      Sende iki şey aynı anda kapalı: yakınlık kurma isteği ve araları
+      yumuşatma refleksi. İkisi de olmayınca ortaya çok net bir insan
+      çıkıyor — ne beklendiğini bilirsin, ne beklendiğin. Bu netlik
+      senin en değerli özelliğin ve çevreni de en çok daraltan şey.
+      Mesele şu ki her ikisi de bir tercihti, ama tercihler kontrol
+      edilmediğinde alışkanlığa dönüşüyor ve alışkanlık sana danışmıyor.
+      Senin yapman gereken şey sosyalleşmek değil — ara ara, hâlâ tercih
+      mi diye bakmak. Çoğu zaman evet çıkacak. Bazen çıkmayacak, ve o
+      bazen önemli.
 fragments:
   quiet_builder:
     1:
@@ -609,6 +714,78 @@ fragments:
 # Yakın arketiple karşılaştırma. Aynı bandı paylaştığın biriyle nerede
 # ayrıldığını söyler — arketip adının bir kategori değil, bir yorum olduğunu
 # en açık gösteren yer burası.
+  own_clock:
+    1:
+      tr: >-
+        Karar vermiyorsun, dalga geldiğinde hareket ediyorsun. Bu yüzden
+        dışarıdan kararsız görünüyorsun, oysa sen sadece hazır olmayı
+        bekliyorsun.
+    2:
+      tr: >-
+        Kimseye söylemediğin için kimse seni beklemiyor. Bu özgürlük, ve
+        aynı zamanda hiçbir şeyin seni çağırmaması demek.
+    3:
+      tr: >-
+        İşin ortası senin en tehlikeli yerin. Dalga çekildiğinde iş
+        yarım kalıyor ve yarım kalan şey bir daha açılmıyor.
+    4:
+      tr: >-
+        Sana pahalıya gelen şey biriktirememek. Yaptığın işler tek tek
+        iyi, ama üst üste konmadıkları için hiçbiri bir şeye dönüşmüyor.
+  contrarian:
+    1:
+      tr: >-
+        Karar verirken herkesin ne dediğine bakıyorsun — tersini yapmak
+        için. Bu bazen isabetli, bazen sadece ters.
+    2:
+      tr: >-
+        İnsanlar seninle nerede olduklarını biliyor ve bu nadir. Aynı
+        netlik, bazılarının bir daha gelmemesinin de sebebi.
+    3:
+      tr: >-
+        İşin ortasında kurallar can sıkmaya başlıyor. Tam o noktada
+        bıraktığın şeylerin sayısı, itiraz ettiğin şeylerin sayısından
+        fazla.
+    4:
+      tr: >-
+        Sana pahalıya gelen şey yalnız kalmak. Haklı olmak, kimsenin
+        seni aramamasını telafi etmiyor.
+  feet_on_ground:
+    1:
+      tr: >-
+        Karar verirken elindeki bilgiye bakıyorsun, olabilecek bilgiye
+        değil. Bu seni hızlı yapıyor ve bazen dar.
+    2:
+      tr: >-
+        İnsanlarla aran iyi çünkü onlarla uğraşmıyorsun, işle
+        uğraşıyorsun. Bu bir sadelik ve karşındaki bunu rahatlatıcı
+        buluyor.
+    3:
+      tr: >-
+        İşin ortasında yol değiştirmiyorsun. Bu çoğu işi kurtarıyor ve
+        bir kısmını da eski hâlinde tutuyor.
+    4:
+      tr: >-
+        Sana pahalıya gelen şey aynı kalmak. Elindekiyle çözmek bir
+        beceri, ama elindeki hiç değişmiyorsa çözüm de değişmiyor.
+  as_is:
+    1:
+      tr: >-
+        Karar verirken kimseye danışmıyorsun ve bu kararı hızlandırıyor.
+        Danışmadığın için gözden kaçan şeyler de sende kalıyor.
+    2:
+      tr: >-
+        Az kişiye tamamen açıksın. O az kişi meşgul olduğunda geriye
+        kimse kalmıyor ve bunu planlamıyorsun.
+    3:
+      tr: >-
+        İşin ortasında yardım istemiyorsun. İstemediğin için tıkandığını
+        da kimse görmüyor.
+    4:
+      tr: >-
+        Sana pahalıya gelen şey sorulmamak. Kimse seni dışarıda
+        bırakmıyor; sen kapıyı kapalı tutuyorsun ve kapalı kapı bir süre
+        sonra çalınmıyor.
 comparisons:
   quiet_builder:
     tr: >-
@@ -657,3 +834,29 @@ comparisons:
       ters gidebileceğini görüyor, sen neyin gerçekten olduğunu. Onunki bir
       uyarı sistemi, seninki bir çözünürlük farkı. İkiniz de yoruluyorsunuz ama
       farklı sebeplerle dinleniyorsunuz.
+
+  own_clock:
+    tr: >-
+      Sessiz İnşacı ile ikiniz de gürültü çıkarmadan çalışıyorsunuz ve
+      ikiniz de kimseye hesap vermiyorsunuz. Fark şurada — onda her gün
+      aynı miktar, sende bazen hepsi bazen hiç. Onun riski görülmemek,
+      seninki geriye bir şey kalmaması.
+  contrarian:
+    tr: >-
+      Kıvılcım ile ikiniz de düzenle çalışmıyorsunuz. Fark şurada — o
+      çok fikri olduğu için bir yerde duramıyor, sen kimsenin fikrine
+      uymadığın için. Onun dağınıklığı bollluktan, seninki reddetmekten
+      geliyor.
+  feet_on_ground:
+    tr: >-
+      Durgun Su ile ikiniz de telaş etmiyorsunuz ve ikiniz de sakin
+      görünüyorsunuz. Fark şurada — o sarsılmadığı için sakin, sen somut
+      olanla uğraştığın için. Onun geç fark ettiği şey duygusal, senin
+      geç fark ettiğin şey değişmesi gereken şey.
+  as_is:
+    tr: >-
+      Yön Veren ile ikiniz de uzlaşmak için uğraşmıyorsunuz. Fark şurada
+      — o öne çıkarak, sen çekilerek. İkiniz de araları
+      yumuşatmıyorsunuz ama onunki bir liderlik biçimi, seninki bir
+      mesafe. Onun bedeli arkasında insan bırakmak, seninki hiç yanına
+      almamak.

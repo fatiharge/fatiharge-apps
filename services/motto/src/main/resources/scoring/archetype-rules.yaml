@@ -50,3 +50,25 @@ archetypes:
   - id: deep_diver
     defining: [openness, neuroticism, extraversion]
     target: {openness: 0.85, conscientiousness: 0.45, extraversion: 0.20, agreeableness: 0.55, neuroticism: 0.75}
+
+  # The four the eight left out. Every one of them sits where the first table
+  # had no point at all: low conscientiousness that is not Kıvılcım's, low
+  # openness that nobody claimed, and low agreeableness away from Yön Veren.
+  # Placed by simulation over twenty thousand plausible profiles rather than by
+  # eye — the numbers are in the decision record, and the thing being protected
+  # is that no archetype becomes so rare it reads as broken.
+  - id: own_clock
+    defining: [conscientiousness, extraversion]
+    target: {openness: 0.45, conscientiousness: 0.10, extraversion: 0.20, agreeableness: 0.60, neuroticism: 0.50}
+
+  - id: contrarian
+    defining: [conscientiousness, agreeableness]
+    target: {openness: 0.60, conscientiousness: 0.15, extraversion: 0.60, agreeableness: 0.10, neuroticism: 0.50}
+
+  - id: feet_on_ground
+    defining: [openness, conscientiousness]
+    target: {openness: 0.10, conscientiousness: 0.30, extraversion: 0.50, agreeableness: 0.65, neuroticism: 0.45}
+
+  - id: as_is
+    defining: [extraversion, agreeableness]
+    target: {openness: 0.45, conscientiousness: 0.60, extraversion: 0.15, agreeableness: 0.15, neuroticism: 0.50}

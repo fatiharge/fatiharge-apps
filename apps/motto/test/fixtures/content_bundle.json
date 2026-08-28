@@ -47,6 +47,30 @@
       "motto": "Derinde kalmak değil, dalıp çıkmak.",
       "name": "Derin Dalgıç",
       "summary": "Her şeyi bir kat daha derinden yaşıyorsun; iyisini de kötüsünü de. Yüzeyde kalabilseydin rahat ederdin ama o zaman sen olmazdın."
+    },
+    {
+      "id": "own_clock",
+      "motto": "Kendi saatimde ama her gün.",
+      "name": "Kendi Saatinde",
+      "summary": "Sistemle değil, dalgayla çalışıyorsun; geldiğinde tamamen geliyor. Bedeli şu: hiçbir şey birikmiyor, ve kimse sana göre plan yapamıyor — sen de dahil."
+    },
+    {
+      "id": "contrarian",
+      "motto": "Karşı çıkmak kolay, sürdürmek zor.",
+      "name": "Aykırı",
+      "summary": "Ne düzenmiş gibi yapıyorsun ne de katılıyormuş gibi, o yüzden senden duyduğun şey gerçek olan. Bedeli şu: sonradan ihtiyacın olacak iyi niyeti bugün harcıyorsun."
+    },
+    {
+      "id": "feet_on_ground",
+      "motto": "Bugün elimde olanla.",
+      "name": "Ayağı Yerde",
+      "summary": "Bugünün işine bakıyorsun ve elindekiyle çözüyorsun; teoriye de plana da ihtiyacın olmuyor. Bedeli şu: hiçbir şey değişmiyor, çünkü değişim ya merak ister ya plan, ikisini de taşımıyorsun."
+    },
+    {
+      "id": "as_is",
+      "motto": "Az kişiye açık, onlara tamamen.",
+      "name": "Olduğu Gibi",
+      "summary": "Ne yakınlık için uğraşıyorsun ne de araları düzeltmek için; seni tanıyan, tam olarak seni tanıyor. Bedeli şu: bir süre sonra kimse sormuyor, ve bunu ancak bir şeye ihtiyacın olduğunda fark ediyorsun."
     }
   ],
   "connectors": [
@@ -251,6 +275,86 @@
       "archetypeId": "deep_diver",
       "index": 4,
       "text": "Hazır olduğunda başlamayı seviyorsun. Hazır olmak diye bir gün yok; bugün de yok."
+    },
+    {
+      "archetypeId": "own_clock",
+      "index": 1,
+      "text": "Bugünün fikri sana kolay geliyor; zor olan yarın da aynı şeyi yapmak. Senin eksiğin istek değil, tekrar."
+    },
+    {
+      "archetypeId": "own_clock",
+      "index": 2,
+      "text": "Dalga geldiğinde çok şey yapıyorsun ve arada hiçbir şey. Bugün az yapmak, dalgayı beklemekten daha değerli."
+    },
+    {
+      "archetypeId": "own_clock",
+      "index": 3,
+      "text": "Kimseye söylemediğin için kimse hatırlatmıyor. Bugün hatırlatıcın sadece sensin, ve bu yeterli olmak zorunda."
+    },
+    {
+      "archetypeId": "own_clock",
+      "index": 4,
+      "text": "Sana kurulacak düzen tutmuyor. Bugünü düzen olarak değil, tek bir gün olarak al — o tutuyor."
+    },
+    {
+      "archetypeId": "contrarian",
+      "index": 1,
+      "text": "Bugünün fikrine itirazın hazır. İtirazın haklı bile olsa, bugün itiraz etmek yapmanın yerine geçmiyor."
+    },
+    {
+      "archetypeId": "contrarian",
+      "index": 2,
+      "text": "Başkasının kurduğu şeyi sürdürmek sana ağır geliyor. Bunu kendi kurduğun bir şey say, o zaman ağırlığı düşüyor."
+    },
+    {
+      "archetypeId": "contrarian",
+      "index": 3,
+      "text": "Kimseye hesap vermiyorsun ve bu, hesap vereceğin tek kişinin sen olduğun anlamına geliyor. Bugün o kişi biraz sıkı olsun."
+    },
+    {
+      "archetypeId": "contrarian",
+      "index": 4,
+      "text": "Uymamak seni özgür yapıyor, sürdürmemek yapmıyor. Bugün ikisinin farkını bir kere yaşa."
+    },
+    {
+      "archetypeId": "feet_on_ground",
+      "index": 1,
+      "text": "Bugünün fikri sana fazla soyut gelebilir. Somutla: nerede, ne zaman, ne kadar. Üçü belliyse gerisi kolay."
+    },
+    {
+      "archetypeId": "feet_on_ground",
+      "index": 2,
+      "text": "Sen anlatılanla değil, yapılanla öğreniyorsun. Bugün anlamaya çalışma, bir kere yap ve sonra bak."
+    },
+    {
+      "archetypeId": "feet_on_ground",
+      "index": 3,
+      "text": "Yeni olan seni çekmiyor ve bu bir sorun değil. Bugün merak etmeden yap; merak sonradan gelirse gelir."
+    },
+    {
+      "archetypeId": "feet_on_ground",
+      "index": 4,
+      "text": "Planı olmayan şeyi de yapabiliyorsun, bu senin avantajın. Bugünkü tek şart: bir kere olsun."
+    },
+    {
+      "archetypeId": "as_is",
+      "index": 1,
+      "text": "Bugünün fikrini kimseye anlatmayacaksın, biliyorum. O yüzden bugün tek tanık sensin — ve tanıklık da bir iş."
+    },
+    {
+      "archetypeId": "as_is",
+      "index": 2,
+      "text": "Kimseyi idare etmediğin için kendini de idare etmiyorsun. Bugün bu iyi bir şey: bahane üretmiyorsun."
+    },
+    {
+      "archetypeId": "as_is",
+      "index": 3,
+      "text": "Uzak durmak sana enerji kazandırıyor. Bugün o enerjinin bir kısmını buraya harca, tamamını değil."
+    },
+    {
+      "archetypeId": "as_is",
+      "index": 4,
+      "text": "Tıkandığında kimse fark etmiyor, çünkü kimseye söylemiyorsun. Bugün tıkanırsan, en azından kendine söyle."
     }
   ],
   "mottos": [
@@ -477,6 +581,118 @@
       "id": "dd4",
       "motto": "Yüzeyde de bir şeyler oluyor.",
       "reminder": "Bir dakika yukarı çık."
+    },
+    {
+      "archetypeId": "own_clock",
+      "detail": "Saatini değiştirmene gerek yok, her gün olmasına var. Bedeli, ilhamın gelmediği günlerde de küçük bir şey yapmayı kabul etmek.",
+      "id": "oc1",
+      "motto": "Kendi saatimde ama her gün.",
+      "reminder": "Bugün de kendi saatinde."
+    },
+    {
+      "archetypeId": "own_clock",
+      "detail": "İyi günde çok, kötü günde az — ama ikisinde de var. Bedeli, az olan günü bir başarısızlık saymamayı öğrenmek.",
+      "id": "oc2",
+      "motto": "Dalga geçtiğinde de kıyıdayım.",
+      "reminder": "Az da olsa bugün de."
+    },
+    {
+      "archetypeId": "own_clock",
+      "detail": "Sana kurulacak düzen yaramıyor; yarayan tek şey bugünün kendisi. Bedeli, yarını kimsenin — senin de — kestirememesi.",
+      "id": "oc3",
+      "motto": "Sistem değil, bugün.",
+      "reminder": "Sadece bugün. Yeter."
+    },
+    {
+      "archetypeId": "own_clock",
+      "detail": "Şimdiye kadar biriken bir şey olmadı ve bu bir kusur değil, bir alışkanlık boşluğu. Bedeli, ilk iki haftanın sıkıcı geçmesi.",
+      "id": "oc4",
+      "motto": "Biriktirmeyi yeni öğreniyorum.",
+      "reminder": "Bir gün daha ekle."
+    },
+    {
+      "archetypeId": "contrarian",
+      "detail": "İtiraz etmek sana bedavaya geliyor; asıl mesele itiraz ettiğin şeyin yerine bir şey koyup onu sürdürmek. Bedeli, haklı olmanın yetmediğini kabul etmek.",
+      "id": "ct1",
+      "motto": "Karşı çıkmak kolay, sürdürmek zor.",
+      "reminder": "Bugün sürdür."
+    },
+    {
+      "archetypeId": "contrarian",
+      "detail": "Başkasının kurduğu düzen sende tutmuyor, kendi kurduğun tutabilir. Bedeli, tutmadığında suçlayacak kimsenin olmaması.",
+      "id": "ct2",
+      "motto": "Kimseye değil, kendime söz verdim.",
+      "reminder": "Sözün sana."
+    },
+    {
+      "archetypeId": "contrarian",
+      "detail": "Katılmamak bir duruş, ortadan kaybolmak değil. Bedeli, kalıp tartışmanın kaçmaktan daha yorucu olması.",
+      "id": "ct3",
+      "motto": "Uymuyorum, kaçmıyorum.",
+      "reminder": "Bugün kal ve yap."
+    },
+    {
+      "archetypeId": "contrarian",
+      "detail": "Cilalamadığın için insanlar seninle nerede olduklarını biliyor. Bedeli, cilanın bazen kapı açtığı yerlerde kapının kapalı kalması.",
+      "id": "ct4",
+      "motto": "Ham hâlim, işlenmiş hâlimden dürüst.",
+      "reminder": "Olduğun gibi, ama bugün yap."
+    },
+    {
+      "archetypeId": "feet_on_ground",
+      "detail": "Hazırlık beklemiyorsun, elindekiyle başlıyorsun ve bu çoğu insanın yapamadığı şey. Bedeli, elindeki hep aynı kaldığı için sonucun da aynı kalması.",
+      "id": "fg1",
+      "motto": "Bugün elimde olanla.",
+      "reminder": "Elindekiyle başla."
+    },
+    {
+      "archetypeId": "feet_on_ground",
+      "detail": "Büyük planlar sende çalışmıyor; tek bir ayrıntı çalışıyor. Bedeli, tek ayrıntının sonucu göstermesinin haftalar sürmesi.",
+      "id": "fg2",
+      "motto": "Küçük bir şeyi değiştirmek de değişimdir.",
+      "reminder": "Bir şeyi değiştir."
+    },
+    {
+      "archetypeId": "feet_on_ground",
+      "detail": "Anlatılan şey sende tutmuyor, yapılan tutuyor. Bedeli, aynı hatayı bir kere yapmadan öğrenememek.",
+      "id": "fg3",
+      "motto": "Yaparak öğrenirim, okuyarak değil.",
+      "reminder": "Bugün yaparak öğren."
+    },
+    {
+      "archetypeId": "feet_on_ground",
+      "detail": "Yeni olan seni çekmiyor ve çekmesine gerek de yok — denemek merak gerektirmiyor. Bedeli, ilk denemenin garip hissettirmesi.",
+      "id": "fg4",
+      "motto": "Merak etmesem de deneyebilirim.",
+      "reminder": "Merak etmeden dene."
+    },
+    {
+      "archetypeId": "as_is",
+      "detail": "Herkese biraz olmaktansa birkaç kişiye tamamen olmayı seçiyorsun. Bedeli, o birkaç kişi meşgulken kimsenin kalmaması.",
+      "id": "ai1",
+      "motto": "Az kişiye açık, onlara tamamen.",
+      "reminder": "Bugün bir kişiye yaz."
+    },
+    {
+      "archetypeId": "as_is",
+      "detail": "Kimseyi idare etmediğin için sözün karşılığı var. Bedeli, idare edilmeyi bekleyen insanların bir daha gelmemesi.",
+      "id": "ai2",
+      "motto": "Evetim evet, hayırım hayır.",
+      "reminder": "Bugünkü sözün sana."
+    },
+    {
+      "archetypeId": "as_is",
+      "detail": "Uzak durman bir eksiklik değil, bir tercih — ama tercih olduğunu ara ara kontrol etmek gerekiyor. Bedeli, kontrol etmeyi unuttuğunda tercihin alışkanlığa dönüşmesi.",
+      "id": "ai3",
+      "motto": "Yalnızlık değil, seçicilik.",
+      "reminder": "Bugün bir kere kontrol et."
+    },
+    {
+      "archetypeId": "as_is",
+      "detail": "Motivasyonun dışarıdan gelmiyor, bu yüzden dışarıdan da bozulmuyor. Bedeli, tıkandığında kimsenin fark etmemesi.",
+      "id": "ai4",
+      "motto": "Kendim için yapıyorum, kimse görmese de.",
+      "reminder": "Kendin için, bugün de."
     }
   ],
   "skeletons": [
@@ -565,5 +781,5 @@
       "title": "Bundan sonrası"
     }
   ],
-  "version": "44c5e960be43"
+  "version": "d7b7137cea71"
 }

@@ -294,3 +294,142 @@ mottos:
         Derinde olan biteni görüyorsun, yüzeydekini kaçırıyorsun. Kaçırdığın
         şeylerin çoğu orada duruyor.
       reminder: Bir dakika yukarı çık.
+
+  # Kendi Saatinde
+  - id: oc1
+    archetype: own_clock
+    tr:
+      motto: Kendi saatimde ama her gün.
+      detail: >-
+        Saatini değiştirmene gerek yok, her gün olmasına var. Bedeli, ilhamın
+        gelmediği günlerde de küçük bir şey yapmayı kabul etmek.
+      reminder: Bugün de kendi saatinde.
+  - id: oc2
+    archetype: own_clock
+    tr:
+      motto: Dalga geçtiğinde de kıyıdayım.
+      detail: >-
+        İyi günde çok, kötü günde az — ama ikisinde de var. Bedeli, az olan
+        günü bir başarısızlık saymamayı öğrenmek.
+      reminder: Az da olsa bugün de.
+  - id: oc3
+    archetype: own_clock
+    tr:
+      motto: Sistem değil, bugün.
+      detail: >-
+        Sana kurulacak düzen yaramıyor; yarayan tek şey bugünün kendisi.
+        Bedeli, yarını kimsenin — senin de — kestirememesi.
+      reminder: Sadece bugün. Yeter.
+  - id: oc4
+    archetype: own_clock
+    tr:
+      motto: Biriktirmeyi yeni öğreniyorum.
+      detail: >-
+        Şimdiye kadar biriken bir şey olmadı ve bu bir kusur değil, bir
+        alışkanlık boşluğu. Bedeli, ilk iki haftanın sıkıcı geçmesi.
+      reminder: Bir gün daha ekle.
+
+  # Aykırı
+  - id: ct1
+    archetype: contrarian
+    tr:
+      motto: Karşı çıkmak kolay, sürdürmek zor.
+      detail: >-
+        İtiraz etmek sana bedavaya geliyor; asıl mesele itiraz ettiğin şeyin
+        yerine bir şey koyup onu sürdürmek. Bedeli, haklı olmanın yetmediğini
+        kabul etmek.
+      reminder: Bugün sürdür.
+  - id: ct2
+    archetype: contrarian
+    tr:
+      motto: Kimseye değil, kendime söz verdim.
+      detail: >-
+        Başkasının kurduğu düzen sende tutmuyor, kendi kurduğun tutabilir.
+        Bedeli, tutmadığında suçlayacak kimsenin olmaması.
+      reminder: Sözün sana.
+  - id: ct3
+    archetype: contrarian
+    tr:
+      motto: Uymuyorum, kaçmıyorum.
+      detail: >-
+        Katılmamak bir duruş, ortadan kaybolmak değil. Bedeli, kalıp
+        tartışmanın kaçmaktan daha yorucu olması.
+      reminder: Bugün kal ve yap.
+  - id: ct4
+    archetype: contrarian
+    tr:
+      motto: Ham hâlim, işlenmiş hâlimden dürüst.
+      detail: >-
+        Cilalamadığın için insanlar seninle nerede olduklarını biliyor. Bedeli,
+        cilanın bazen kapı açtığı yerlerde kapının kapalı kalması.
+      reminder: Olduğun gibi, ama bugün yap.
+
+  # Ayağı Yerde
+  - id: fg1
+    archetype: feet_on_ground
+    tr:
+      motto: Bugün elimde olanla.
+      detail: >-
+        Hazırlık beklemiyorsun, elindekiyle başlıyorsun ve bu çoğu insanın
+        yapamadığı şey. Bedeli, elindeki hep aynı kaldığı için sonucun da aynı
+        kalması.
+      reminder: Elindekiyle başla.
+  - id: fg2
+    archetype: feet_on_ground
+    tr:
+      motto: Küçük bir şeyi değiştirmek de değişimdir.
+      detail: >-
+        Büyük planlar sende çalışmıyor; tek bir ayrıntı çalışıyor. Bedeli, tek
+        ayrıntının sonucu göstermesinin haftalar sürmesi.
+      reminder: Bir şeyi değiştir.
+  - id: fg3
+    archetype: feet_on_ground
+    tr:
+      motto: Yaparak öğrenirim, okuyarak değil.
+      detail: >-
+        Anlatılan şey sende tutmuyor, yapılan tutuyor. Bedeli, aynı hatayı bir
+        kere yapmadan öğrenememek.
+      reminder: Bugün yaparak öğren.
+  - id: fg4
+    archetype: feet_on_ground
+    tr:
+      motto: Merak etmesem de deneyebilirim.
+      detail: >-
+        Yeni olan seni çekmiyor ve çekmesine gerek de yok — denemek merak
+        gerektirmiyor. Bedeli, ilk denemenin garip hissettirmesi.
+      reminder: Merak etmeden dene.
+
+  # Olduğu Gibi
+  - id: ai1
+    archetype: as_is
+    tr:
+      motto: Az kişiye açık, onlara tamamen.
+      detail: >-
+        Herkese biraz olmaktansa birkaç kişiye tamamen olmayı seçiyorsun.
+        Bedeli, o birkaç kişi meşgulken kimsenin kalmaması.
+      reminder: Bugün bir kişiye yaz.
+  - id: ai2
+    archetype: as_is
+    tr:
+      motto: Evetim evet, hayırım hayır.
+      detail: >-
+        Kimseyi idare etmediğin için sözün karşılığı var. Bedeli, idare edilmeyi
+        bekleyen insanların bir daha gelmemesi.
+      reminder: Bugünkü sözün sana.
+  - id: ai3
+    archetype: as_is
+    tr:
+      motto: Yalnızlık değil, seçicilik.
+      detail: >-
+        Uzak durman bir eksiklik değil, bir tercih — ama tercih olduğunu ara
+        ara kontrol etmek gerekiyor. Bedeli, kontrol etmeyi unuttuğunda
+        tercihin alışkanlığa dönüşmesi.
+      reminder: Bugün bir kere kontrol et.
+  - id: ai4
+    archetype: as_is
+    tr:
+      motto: Kendim için yapıyorum, kimse görmese de.
+      detail: >-
+        Motivasyonun dışarıdan gelmiyor, bu yüzden dışarıdan da bozulmuyor.
+        Bedeli, tıkandığında kimsenin fark etmemesi.
+      reminder: Kendin için, bugün de.
