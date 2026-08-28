@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
+import 'package:motto/config/injectable.dart';
 import 'package:motto/features/mascot/application/mascot_controller.dart';
+import 'package:motto/features/mascot/application/mascot_store.dart';
 import 'package:motto/features/mascot/presentation/mascot.dart';
 import 'package:rive/rive.dart';
 
@@ -176,34 +178,45 @@ class _MascotHostState extends State<MascotHost>
           final bounds = _bounds;
           final at = _resolved(bounds);
 
-          return Stack(
-            children: [
-              widget.child,
-              Positioned(
-                left: at.dx,
-                top: at.dy,
-                child: GestureDetector(
-                  // Opaque so the whole box catches a drag: the mascot is a
-                  // round thing on a transparent square, and a pull that only
-                  // works on the ink is a pull that mostly does not work.
-                  behavior: HitTestBehavior.opaque,
-                  onPanStart: (_) {
-                    _settle.stop();
-                    _controller?.drag(held: true);
-                  },
-                  onPanUpdate: (details) => _dragTo(details.delta, bounds),
-                  onPanEnd: (_) => _release(bounds),
-                  onPanCancel: () => _release(bounds),
-                  child: Mascot(
-                    size: _size,
-                    followsFinger: false,
-                    loadFile: widget.loadFile,
-                    onGameOffered: widget.onGameOffered,
-                    onReady: (mascot) => setState(() => _controller = mascot),
+          // A `Positioned` has to be a direct child of the `Stack`, so the
+          // switch is read around the whole thing rather than around the
+          // mascot.
+          return ValueListenableBuilder<bool>(
+            valueListenable: getIt<MascotStore>().visible,
+            builder: (context, visible, _) => Stack(
+              children: [
+                widget.child,
+                // Off means gone: no widget, no state machine, no timers.
+                // Opacity would keep paying for something somebody asked not
+                // to have.
+                if (visible)
+                  Positioned(
+                    left: at.dx,
+                    top: at.dy,
+                    child: GestureDetector(
+                      // Opaque so the whole box catches a drag: the mascot is
+                      // a round thing on a transparent square, and a pull that
+                      // only works on the ink mostly does not work.
+                      behavior: HitTestBehavior.opaque,
+                      onPanStart: (_) {
+                        _settle.stop();
+                        _controller?.drag(held: true);
+                      },
+                      onPanUpdate: (details) => _dragTo(details.delta, bounds),
+                      onPanEnd: (_) => _release(bounds),
+                      onPanCancel: () => _release(bounds),
+                      child: Mascot(
+                        size: _size,
+                        followsFinger: false,
+                        loadFile: widget.loadFile,
+                        onGameOffered: widget.onGameOffered,
+                        onReady: (mascot) =>
+                            setState(() => _controller = mascot),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ],
+              ],
+            ),
           );
         },
       ),

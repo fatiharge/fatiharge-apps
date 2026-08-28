@@ -28,6 +28,7 @@ import 'package:motto/features/content/application/content_store.dart' as _i432;
 import 'package:motto/features/daily/application/daily_cubit.dart' as _i1068;
 import 'package:motto/features/daily/application/daily_widget.dart' as _i113;
 import 'package:motto/features/game/application/game_store.dart' as _i164;
+import 'package:motto/features/mascot/application/mascot_store.dart' as _i756;
 import 'package:motto/features/onboarding/application/onboarding_store.dart'
     as _i624;
 import 'package:motto/features/profile/application/profile_cubit.dart' as _i315;
@@ -39,6 +40,8 @@ import 'package:motto/features/support/application/last_archetype.dart'
     as _i1019;
 import 'package:motto/features/support/application/support_context.dart'
     as _i922;
+import 'package:motto/features/support/application/support_copy_cubit.dart'
+    as _i708;
 import 'package:motto/features/tasks/application/task_cubit.dart' as _i249;
 import 'package:motto/features/test/application/test_cubit.dart' as _i89;
 import 'package:motto/features/test/application/test_draft.dart' as _i547;
@@ -84,6 +87,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i164.GameStore>(
       () => _i164.GameStore(gh<_i460.SharedPreferences>()),
+    );
+    gh.lazySingleton<_i756.MascotStore>(
+      () => _i756.MascotStore(gh<_i460.SharedPreferences>()),
     );
     gh.lazySingleton<_i624.OnboardingStore>(
       () => _i624.OnboardingStore(gh<_i460.SharedPreferences>()),
@@ -148,6 +154,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i66.ScoreResourceApi>(
       () => apiClients.scores(gh<_i66.ApiClient>()),
     );
+    gh.lazySingleton<_i66.SupportResourceApi>(
+      () => apiClients.support(gh<_i66.ApiClient>()),
+    );
     gh.lazySingleton<_i503.DeviceSession>(
       () => _i503.DeviceSession(
         gh<_i37.DeviceIdentity>(),
@@ -160,6 +169,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i66.ResultResourceApi>(),
         gh<_i66.EntitlementResourceApi>(),
       ),
+    );
+    gh.factory<_i708.SupportCopyCubit>(
+      () => _i708.SupportCopyCubit(gh<_i66.SupportResourceApi>()),
     );
     gh.lazySingleton<_i761.ChainRepository>(
       () => _i761.ChainRepository(

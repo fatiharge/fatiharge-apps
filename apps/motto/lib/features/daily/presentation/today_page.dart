@@ -55,7 +55,7 @@ class _TodayViewState extends State<_TodayView> {
             final now = DateTime.now();
 
             return ListView(
-              padding: const EdgeInsets.fromLTRB(24, 16, 24, 40),
+              padding: const EdgeInsets.fromLTRB(24, 16, 24, 110),
               children: [
                 BlocBuilder<DailyCubit, DailyState>(
                   builder: (context, daily) => _standing(
@@ -248,6 +248,42 @@ class _TodayViewState extends State<_TodayView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // The motto first. It is what somebody has, and the day is what the
+        // app suggests about it — the other way round buries the thing they
+        // came back for under this morning's advice.
+        InkWell(
+          onTap: () => context.router.push(const MottoDetailRoute()),
+          borderRadius: BorderRadius.circular(20),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.fromLTRB(20, 22, 20, 22),
+            decoration: BoxDecoration(
+              color: scheme.primaryContainer,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'MOTTON',
+                  style: text.labelSmall?.copyWith(
+                    color: scheme.onPrimaryContainer.withValues(alpha: 0.7),
+                    letterSpacing: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  content.motto,
+                  style: text.headlineSmall?.copyWith(
+                    color: scheme.onPrimaryContainer,
+                    height: 1.2,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 28),
         Text(
           '${content.day}. GÜN',
           style: text.labelSmall?.copyWith(
@@ -256,8 +292,8 @@ class _TodayViewState extends State<_TodayView> {
           ),
         ),
         const SizedBox(height: 8),
-        Text(content.title, style: text.headlineSmall),
-        const SizedBox(height: 16),
+        Text(content.title, style: text.titleLarge),
+        const SizedBox(height: 12),
         Text(content.text, style: text.bodyLarge),
         const SizedBox(height: 20),
         Container(
@@ -267,17 +303,6 @@ class _TodayViewState extends State<_TodayView> {
             borderRadius: BorderRadius.circular(12),
           ),
           child: Text(content.action, style: text.bodyMedium),
-        ),
-        const SizedBox(height: 16),
-        InkWell(
-          onTap: () => context.router.push(const MottoDetailRoute()),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            child: Text(
-              '“${content.motto}”',
-              style: text.titleMedium?.copyWith(color: scheme.primary),
-            ),
-          ),
         ),
       ],
     );

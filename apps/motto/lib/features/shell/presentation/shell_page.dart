@@ -1,39 +1,32 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:motto/features/shell/presentation/widgets/floating_nav_bar.dart';
 import 'package:motto/route/app_router.gr.dart';
 
-/// The three places there are.
+/// The two places there are.
 ///
-/// A bar rather than a drawer, and only after the test: during the questions
-/// completion is the only thing that matters, and every tab is a way out of it.
+/// A bar, and only after the inventory: during the questions completion is the
+/// only thing that matters and every tab is a way out of it.
 @RoutePage()
 class ShellPage extends StatelessWidget {
   const ShellPage({super.key});
 
+  static const _items = [
+    NavItem(icon: Icons.today_outlined, filled: Icons.today, label: 'Bugün'),
+    NavItem(icon: Icons.person_outline, filled: Icons.person, label: 'Profil'),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return AutoTabsScaffold(
-      routes: const [TodayRoute(), ProfileRoute(), SettingsRoute()],
-      bottomNavigationBuilder: (context, tabsRouter) => NavigationBar(
-        selectedIndex: tabsRouter.activeIndex,
-        onDestinationSelected: tabsRouter.setActiveIndex,
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.today_outlined),
-            selectedIcon: Icon(Icons.today),
-            label: 'Bugün',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.person_outline),
-            selectedIcon: Icon(Icons.person),
-            label: 'Profil',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.settings_outlined),
-            selectedIcon: Icon(Icons.settings),
-            label: 'Ayarlar',
-          ),
-        ],
+      routes: const [TodayRoute(), ProfileRoute()],
+      // Floating over the content rather than sitting under it, so the bar
+      // reads as something on top of the page instead of a wall at the bottom.
+      extendBody: true,
+      bottomNavigationBuilder: (context, tabsRouter) => FloatingNavBar(
+        items: _items,
+        index: tabsRouter.activeIndex,
+        onSelected: tabsRouter.setActiveIndex,
       ),
     );
   }

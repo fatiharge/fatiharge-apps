@@ -614,8 +614,12 @@
       },
       "ResultResponse" : {
         "type" : "object",
-        "required" : [ "archetype", "entitlement" ],
+        "required" : [ "id", "archetype", "entitlement" ],
         "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
           "archetype" : {
             "$ref" : "#/components/schemas/ArchetypeResponse"
           },

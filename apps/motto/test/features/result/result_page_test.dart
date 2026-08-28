@@ -28,6 +28,7 @@ void main() {
   tearDown(getIt.reset);
 
   final result = api.ResultResponse(
+    id: 1,
     archetype: api.ArchetypeResponse(
       id: 'quiet_builder',
       name: 'Sessiz İnşacı',
@@ -59,7 +60,10 @@ void main() {
 
     expect(find.text('Sessiz İnşacı'), findsOneWidget);
     expect(find.text('Gürültü çıkarmadan biriktirirsin.'), findsOneWidget);
-    expect(find.text('“Acele etmeyen ama durmayan.”'), findsOneWidget);
+    // Unquoted and on its own block now: the motto is the app, and it read
+    // like a caption under the summary.
+    expect(find.text('Acele etmeyen ama durmayan.'), findsOneWidget);
+    expect(find.text('MOTTON'), findsOneWidget);
 
     // The page schedules the card offer; let it fire so no timer outlives the
     // tree.

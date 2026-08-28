@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/features/chain/application/chain_cubit.dart';
 import 'package:motto/features/chain/application/chain_state.dart';
+import 'package:motto/features/mascot/application/mascot_store.dart';
 import 'package:motto/route/app_router.gr.dart';
 
 /// With no account this screen and the ones it links to are the only channel
@@ -42,6 +43,18 @@ class _SettingsView extends StatelessWidget {
                 ),
                 enabled: state.chain.started,
                 onTap: () => _pickHour(context, state.hour),
+              ),
+              ValueListenableBuilder<bool>(
+                valueListenable: getIt<MascotStore>().visible,
+                builder: (context, visible, _) => SwitchListTile(
+                  title: const Text('Maskot'),
+                  subtitle: Text(
+                    visible ? 'Ekranda dolaşıyor' : 'Kapalı',
+                  ),
+                  value: visible,
+                  onChanged: (value) =>
+                      getIt<MascotStore>().setVisible(value: value),
+                ),
               ),
               const Divider(height: 1),
               ListTile(

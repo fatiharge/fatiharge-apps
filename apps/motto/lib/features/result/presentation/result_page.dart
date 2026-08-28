@@ -70,17 +70,47 @@ class _ResultPageState extends State<ResultPage> {
               ),
             ),
             const SizedBox(height: 12),
-            Text(archetype.name, style: text.displaySmall),
-            const SizedBox(height: 20),
-            Container(width: 56, height: 3, color: scheme.primary),
-            const SizedBox(height: 20),
-            Text(archetype.summary, style: text.bodyLarge),
-            const SizedBox(height: 28),
+            Text(archetype.name, style: text.headlineMedium),
+            const SizedBox(height: 12),
             Text(
-              '“${archetype.motto}”',
-              style: text.titleLarge?.copyWith(color: scheme.primary),
+              archetype.summary,
+              style: text.bodyMedium?.copyWith(
+                color: scheme.onSurfaceVariant,
+              ),
             ),
-            const SizedBox(height: 36),
+            const SizedBox(height: 32),
+            // The motto is the app. It was set below the summary in the same
+            // weight as everything else, which made the one line somebody
+            // came for read like a caption.
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 28),
+              decoration: BoxDecoration(
+                color: scheme.primaryContainer,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'MOTTON',
+                    style: text.labelSmall?.copyWith(
+                      color: scheme.onPrimaryContainer.withValues(alpha: 0.7),
+                      letterSpacing: 1.5,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    archetype.motto,
+                    style: text.displaySmall?.copyWith(
+                      color: scheme.onPrimaryContainer,
+                      height: 1.15,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 32),
             FilledButton.icon(
               onPressed: () => context.router.push(
                 ShareCardRoute(archetype: archetype),
@@ -89,12 +119,18 @@ class _ResultPageState extends State<ResultPage> {
               label: const Text('Kartı paylaş'),
             ),
             const SizedBox(height: 12),
-            // Offered here because this is the moment the motto means
-            // something. A chain proposed on a later screen is a chain
-            // proposed to someone who has already put the phone down.
             OutlinedButton(
-              onPressed: () => context.router.push(const ShellRoute()),
-              child: const Text('Zincirini başlat'),
+              onPressed: () => context.router.push(const PeriodReportRoute()),
+              child: const Text('Rapor'),
+            ),
+            const SizedBox(height: 12),
+            OutlinedButton(
+              onPressed: () => context.router.push(
+                DeepReportRoute(resultId: widget.result.id),
+              ),
+              // "Analiz" is on the 1.4.1 word table; the screen is the same
+              // one either way and the word is what gets a listing rejected.
+              child: const Text('Derin rapor'),
             ),
             const SizedBox(height: 8),
             Align(

@@ -9,6 +9,7 @@ import 'package:motto/features/chain/application/chain_store.dart';
 import 'package:motto/features/chain/application/reminder_scheduler.dart';
 import 'package:motto/features/chain/domain/chain.dart';
 import 'package:motto/features/chain/domain/reminder.dart';
+import 'package:motto/features/mascot/application/mascot_store.dart';
 import 'package:motto/features/support/application/data_deletion.dart';
 import 'package:motto/features/support/application/feedback_cubit.dart';
 import 'package:motto/features/support/application/last_archetype.dart';
@@ -108,6 +109,7 @@ void main() {
     when(support.supportCopy).thenAnswer((_) async => supportCopy());
 
     getIt
+      ..registerSingleton<MascotStore>(MascotStore(preferences))
       ..registerFactory<SupportCopyCubit>(() => SupportCopyCubit(support))
       ..registerFactory<ChainCubit>(
         () => ChainCubit(chains, ChainStore(preferences), scheduler, analytics),
@@ -207,5 +209,18 @@ void main() {
 
     // Requiring an address collapses the submission rate.
     expect(find.text('Ulaştı. Teşekkürler.'), findsOneWidget);
+  });
+
+  testWidgets('the mascot can be switched off from settings', (tester) async {
+    await tester.pumpWidget(const MaterialApp(home: SettingsPage()));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Ekranda dolaşıyor'), findsOneWidget);
+
+    await tester.tap(find.byType(SwitchListTile));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Kapalı'), findsOneWidget);
+    expect(getIt<MascotStore>().visible.value, isFalse);
   });
 }
