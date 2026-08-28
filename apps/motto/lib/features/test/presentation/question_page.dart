@@ -1,11 +1,13 @@
 import 'dart:async';
-
+import 'package:api_client_motto/api.dart' as api;
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:motto/config/effects.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/features/mascot/presentation/mascot_free_zone.dart';
 import 'package:motto/features/test/application/test_cubit.dart';
+import 'package:motto/features/test/application/test_effect.dart';
 import 'package:motto/features/test/application/test_state.dart';
 import 'package:motto/features/test/presentation/widgets/glimpse_sheet.dart';
 import 'package:motto/features/test/presentation/widgets/likert_scale.dart';
@@ -30,41 +32,46 @@ class QuestionPage extends StatelessWidget implements AutoRouteWrapper {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<TestCubit, TestState>(
-      listenWhen: (previous, current) =>
-          previous.glimpse != current.glimpse ||
-          previous.isFinished != current.isFinished,
-      listener: (context, state) {
-        if (state.glimpse != null) {
-          _showGlimpse(context, state);
-        } else if (state.isFinished) {
-          unawaited(context.router.replace(const CalculatingRoute()));
+    // Effects rather than a state difference: the glimpse and the last answer
+    // each happen once, and `isFinished` stays true afterwards.
+    return EffectListener<TestCubit, TestEffect>(
+      bloc: context.read<TestCubit>(),
+      onEffect: (context, effect) {
+        switch (effect) {
+          case GlimpseOffered(:final archetype):
+            _showGlimpse(context, archetype);
+          case AnsweringFinished():
+            unawaited(context.router.replace(const CalculatingRoute()));
+          case ResultClaimed():
+            break;
         }
       },
-      builder: (context, state) => Scaffold(
-        body: SafeArea(
-          child: switch (state.status) {
-            TestStatus.loading || TestStatus.idle => const Center(
-              child: CircularProgressIndicator(),
-            ),
-            TestStatus.failed => _Failed(
-              onRetry: context.read<TestCubit>().unawaitedStart,
-            ),
-            _ => _Asking(state: state),
-          },
+      child: BlocBuilder<TestCubit, TestState>(
+        builder: (context, state) => Scaffold(
+          body: SafeArea(
+            child: switch (state.status) {
+              TestStatus.loading || TestStatus.idle => const Center(
+                child: CircularProgressIndicator(),
+              ),
+              TestStatus.failed => _Failed(
+                onRetry: context.read<TestCubit>().unawaitedStart,
+              ),
+              _ => _Asking(state: state),
+            },
+          ),
         ),
       ),
     );
   }
 
-  void _showGlimpse(BuildContext context, TestState state) {
+  void _showGlimpse(BuildContext context, api.ArchetypeResponse archetype) {
     final cubit = context.read<TestCubit>();
     unawaited(
       showModalBottomSheet<void>(
         context: context,
         isScrollControlled: true,
         builder: (sheetContext) => GlimpseSheet(
-          archetype: state.glimpse!,
+          archetype: archetype,
           onContinue: () => Navigator.of(sheetContext).pop(),
         ),
       ).whenComplete(cubit.dismissGlimpse),

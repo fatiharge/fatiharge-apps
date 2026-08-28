@@ -1,10 +1,11 @@
 import 'dart:async';
-
 import 'package:api_client_motto/api.dart' as api;
 import 'package:bloc/bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:motto/config/effects.dart';
 import 'package:motto/features/support/application/last_archetype.dart';
 import 'package:motto/features/test/application/test_draft.dart';
+import 'package:motto/features/test/application/test_effect.dart';
 import 'package:motto/features/test/application/test_state.dart';
 import 'package:motto/infrastructure/analytics/analytics.dart';
 import 'package:motto/infrastructure/analytics/motto_event.dart';
@@ -12,7 +13,7 @@ import 'package:motto/infrastructure/analytics/motto_event.dart';
 /// Drives the test: fetches the questions, collects the answers, and spends a
 /// use at the end.
 @injectable
-class TestCubit extends Cubit<TestState> {
+class TestCubit extends Cubit<TestState> with Effects<TestEffect, TestState> {
   TestCubit(
     this._tests,
     this._mottos,
@@ -87,6 +88,9 @@ class TestCubit extends Cubit<TestState> {
     if (index == glimpseAfter) {
       await _peek(answers);
     }
+    if (index >= state.questions.length) {
+      effect(const AnsweringFinished());
+    }
   }
 
   void back() {
@@ -119,6 +123,9 @@ class TestCubit extends Cubit<TestState> {
       if (result?.archetype.id case final String archetype) {
         await _lastArchetype.remember(archetype);
       }
+      // After the archetype is remembered, so that whatever the effect opens
+      // finds the app already knowing who this is.
+      if (result != null) effect(ResultClaimed(result));
 
       // The form names itself by its length, so a longer one later reports as
       // a different type without anyone inventing a word for it.
@@ -146,7 +153,10 @@ class TestCubit extends Cubit<TestState> {
       final glimpse = await _tests.partialResult(
         api.AnswerSubmission(answers: answers, spendSkip: false),
       );
-      if (glimpse != null) emit(state.copyWith(glimpse: glimpse));
+      if (glimpse != null) {
+        emit(state.copyWith(glimpse: glimpse));
+        effect(GlimpseOffered(glimpse));
+      }
     } on Object {
       // Deliberately silent.
     }
