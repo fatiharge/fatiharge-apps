@@ -41,7 +41,7 @@ class _ProfileView extends StatelessWidget {
             final current = state.current;
 
             return ListView(
-              padding: const EdgeInsets.fromLTRB(24, 16, 24, 40),
+              padding: const EdgeInsets.fromLTRB(24, 16, 24, 110),
               children: [
                 if (current == null)
                   Text(
@@ -78,6 +78,12 @@ class _ProfileView extends StatelessWidget {
                   subtitle: Text('${state.results.length} kayıt'),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => context.router.push(const ArchiveRoute()),
+                ),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Ayarlar'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => context.router.push(const SettingsRoute()),
                 ),
                 ListTile(
                   contentPadding: EdgeInsets.zero,
