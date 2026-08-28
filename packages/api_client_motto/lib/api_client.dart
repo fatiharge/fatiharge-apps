@@ -224,6 +224,8 @@ class ApiClient {
           return DailyTasks.fromJson(value);
         case 'DeepReport':
           return DeepReport.fromJson(value);
+        case 'DeletionCopy':
+          return DeletionCopy.fromJson(value);
         case 'DeletionResponse':
           return DeletionResponse.fromJson(value);
         case 'EntitlementResponse':
@@ -234,6 +236,8 @@ class ApiClient {
           return EventBatchResponse.fromJson(value);
         case 'EventEntry':
           return EventEntry.fromJson(value);
+        case 'FaqEntry':
+          return FaqEntry.fromJson(value);
         case 'FeedbackKind':
           return FeedbackKindTypeTransformer().decode(value);
         case 'FeedbackRequest':
@@ -268,6 +272,8 @@ class ApiClient {
           return ResultSummary.fromJson(value);
         case 'ScoreSubmission':
           return ScoreSubmission.fromJson(value);
+        case 'SupportCopy':
+          return SupportCopy.fromJson(value);
         default:
           dynamic match;
           if (value is List &&

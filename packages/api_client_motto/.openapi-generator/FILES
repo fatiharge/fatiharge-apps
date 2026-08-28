@@ -15,6 +15,7 @@ doc/DailySkeleton.md
 doc/DailyTask.md
 doc/DailyTasks.md
 doc/DeepReport.md
+doc/DeletionCopy.md
 doc/DeletionResponse.md
 doc/EntitlementResourceApi.md
 doc/EntitlementResponse.md
@@ -22,6 +23,7 @@ doc/EventBatch.md
 doc/EventBatchResponse.md
 doc/EventEntry.md
 doc/EventResourceApi.md
+doc/FaqEntry.md
 doc/FeedbackKind.md
 doc/FeedbackRequest.md
 doc/FeedbackResourceApi.md
@@ -44,6 +46,8 @@ doc/ResultResponse.md
 doc/ResultSummary.md
 doc/ScoreResourceApi.md
 doc/ScoreSubmission.md
+doc/SupportCopy.md
+doc/SupportResourceApi.md
 doc/TaskResourceApi.md
 doc/TestResourceApi.md
 git_push.sh
@@ -57,6 +61,7 @@ lib/api/motto_resource_api.dart
 lib/api/report_resource_api.dart
 lib/api/result_resource_api.dart
 lib/api/score_resource_api.dart
+lib/api/support_resource_api.dart
 lib/api/task_resource_api.dart
 lib/api/test_resource_api.dart
 lib/api_client.dart
@@ -77,11 +82,13 @@ lib/model/daily_skeleton.dart
 lib/model/daily_task.dart
 lib/model/daily_tasks.dart
 lib/model/deep_report.dart
+lib/model/deletion_copy.dart
 lib/model/deletion_response.dart
 lib/model/entitlement_response.dart
 lib/model/event_batch.dart
 lib/model/event_batch_response.dart
 lib/model/event_entry.dart
+lib/model/faq_entry.dart
 lib/model/feedback_kind.dart
 lib/model/feedback_request.dart
 lib/model/fragment.dart
@@ -99,6 +106,7 @@ lib/model/result_history.dart
 lib/model/result_response.dart
 lib/model/result_summary.dart
 lib/model/score_submission.dart
+lib/model/support_copy.dart
 pubspec.yaml
 test/answer_submission_test.dart
 test/archetype_content_test.dart
@@ -112,6 +120,7 @@ test/daily_skeleton_test.dart
 test/daily_task_test.dart
 test/daily_tasks_test.dart
 test/deep_report_test.dart
+test/deletion_copy_test.dart
 test/deletion_response_test.dart
 test/entitlement_resource_api_test.dart
 test/entitlement_response_test.dart
@@ -119,6 +128,7 @@ test/event_batch_response_test.dart
 test/event_batch_test.dart
 test/event_entry_test.dart
 test/event_resource_api_test.dart
+test/faq_entry_test.dart
 test/feedback_kind_test.dart
 test/feedback_request_test.dart
 test/feedback_resource_api_test.dart
@@ -141,5 +151,7 @@ test/result_response_test.dart
 test/result_summary_test.dart
 test/score_resource_api_test.dart
 test/score_submission_test.dart
+test/support_copy_test.dart
+test/support_resource_api_test.dart
 test/task_resource_api_test.dart
 test/test_resource_api_test.dart
