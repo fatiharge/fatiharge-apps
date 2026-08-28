@@ -155,6 +155,7 @@ void main() {
       await draft.write({'q1': 3});
       when(() => mottos.claimMotto(any())).thenAnswer(
         (_) async => api.ResultResponse(
+          id: 1,
           archetype: api.ArchetypeResponse(
             id: 'spark',
             name: 'Kıvılcım',

@@ -13,9 +13,12 @@ part of openapi.api;
 class ResultResponse {
   /// Returns a new [ResultResponse] instance.
   ResultResponse({
+    required this.id,
     required this.archetype,
     required this.entitlement,
   });
+
+  int id;
 
   ArchetypeResponse archetype;
 
@@ -25,20 +28,22 @@ class ResultResponse {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is ResultResponse &&
+          other.id == id &&
           other.archetype == archetype &&
           other.entitlement == entitlement;
 
   @override
   int get hashCode =>
       // ignore: unnecessary_parenthesis
-      (archetype.hashCode) + (entitlement.hashCode);
+      (id.hashCode) + (archetype.hashCode) + (entitlement.hashCode);
 
   @override
   String toString() =>
-      'ResultResponse[archetype=$archetype, entitlement=$entitlement]';
+      'ResultResponse[id=$id, archetype=$archetype, entitlement=$entitlement]';
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
+    json[r'id'] = this.id;
     json[r'archetype'] = this.archetype;
     json[r'entitlement'] = this.entitlement;
     return json;
@@ -55,6 +60,10 @@ class ResultResponse {
       // Note 1: the values aren't checked for validity beyond being non-null.
       // Note 2: this code is stripped in release mode!
       assert(() {
+        assert(json.containsKey(r'id'),
+            'Required key "ResultResponse[id]" is missing from JSON.');
+        assert(json[r'id'] != null,
+            'Required key "ResultResponse[id]" has a null value in JSON.');
         assert(json.containsKey(r'archetype'),
             'Required key "ResultResponse[archetype]" is missing from JSON.');
         assert(json[r'archetype'] != null,
@@ -67,6 +76,7 @@ class ResultResponse {
       }());
 
       return ResultResponse(
+        id: mapValueOfType<int>(json, r'id')!,
         archetype: ArchetypeResponse.fromJson(json[r'archetype'])!,
         entitlement: EntitlementResponse.fromJson(json[r'entitlement'])!,
       );
@@ -125,6 +135,7 @@ class ResultResponse {
 
   /// The list of required keys that must be present in a JSON.
   static const requiredKeys = <String>{
+    'id',
     'archetype',
     'entitlement',
   };

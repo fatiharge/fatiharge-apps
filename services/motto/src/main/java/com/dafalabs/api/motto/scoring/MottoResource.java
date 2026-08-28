@@ -66,9 +66,10 @@ public class MottoResource {
 
     // In the same transaction as the spend: a result that was returned but not
     // recorded is a use that cannot be shown again.
-    results.record(current.id(), archetype.id(), profile);
+    var stored = results.record(current.id(), archetype.id(), profile);
 
     return new ResultResponse(
+        stored.id(),
         new ArchetypeResponse(
             archetype.id(), archetype.name(), archetype.summary(), archetype.motto(), true),
         new EntitlementResponse(
