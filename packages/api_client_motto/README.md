@@ -79,6 +79,7 @@ Class | Method | HTTP request | Description
 *ResultResourceApi* | [**resultHistory**](doc//ResultResourceApi.md#resulthistory) | **GET** /v1/me/results | Past results, newest first
 *ScoreResourceApi* | [**leaderboard**](doc//ScoreResourceApi.md#leaderboard) | **GET** /v1/scores | This week's board
 *ScoreResourceApi* | [**recordScore**](doc//ScoreResourceApi.md#recordscore) | **POST** /v1/scores | Record a game and get the board
+*SupportResourceApi* | [**supportCopy**](doc//SupportResourceApi.md#supportcopy) | **GET** /v1/support | The support copy
 *TaskResourceApi* | [**completeTask**](doc//TaskResourceApi.md#completetask) | **POST** /v1/tasks/{id}/complete | Tick a task off
 *TaskResourceApi* | [**dailyTasks**](doc//TaskResourceApi.md#dailytasks) | **GET** /v1/tasks | The three things today asks for
 *TaskResourceApi* | [**periodReport**](doc//TaskResourceApi.md#periodreport) | **GET** /v1/tasks/report | What the period came to
@@ -98,11 +99,13 @@ Class | Method | HTTP request | Description
  - [DailyTask](doc//DailyTask.md)
  - [DailyTasks](doc//DailyTasks.md)
  - [DeepReport](doc//DeepReport.md)
+ - [DeletionCopy](doc//DeletionCopy.md)
  - [DeletionResponse](doc//DeletionResponse.md)
  - [EntitlementResponse](doc//EntitlementResponse.md)
  - [EventBatch](doc//EventBatch.md)
  - [EventBatchResponse](doc//EventBatchResponse.md)
  - [EventEntry](doc//EventEntry.md)
+ - [FaqEntry](doc//FaqEntry.md)
  - [FeedbackKind](doc//FeedbackKind.md)
  - [FeedbackRequest](doc//FeedbackRequest.md)
  - [Fragment](doc//Fragment.md)
@@ -120,6 +123,7 @@ Class | Method | HTTP request | Description
  - [ResultResponse](doc//ResultResponse.md)
  - [ResultSummary](doc//ResultSummary.md)
  - [ScoreSubmission](doc//ScoreSubmission.md)
+ - [SupportCopy](doc//SupportCopy.md)
 
 
 ## Documentation For Authorization

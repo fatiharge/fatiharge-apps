@@ -73,10 +73,11 @@ kayma — o yüzden uygulamada duruyorlar ve nerede olduklarının listesi burad
 | Ne | Nerede |
 |---|---|
 | Hatırlatıcı bildirimleri | `apps/motto/lib/features/chain/domain/turkish_reminder_copy.dart` |
-| SSS | `apps/motto/lib/features/support/domain/faq.dart` |
 | Yöntem ve sınırlılıklar | `apps/motto/lib/features/support/domain/method_text.dart` |
-| Gizlilik özeti | `apps/motto/lib/features/support/domain/privacy_text.dart` |
-| Veri silme | `apps/motto/lib/features/support/domain/deletion_text.dart` |
+
+SSS, gizlilik özeti ve veri silme metni de burada dururdu. Artık sunuluyorlar
+(`support.yaml`), çünkü en çok önem taşıyan cevap — birinin verisinin nerede
+olduğu — mağaza sürümüyle değil tek bir deploy'la düzeltilebilmeli.
 
 Kurallar hepsi için geçerli, ve iki tanesi sadece bunlar için yazıldı:
 

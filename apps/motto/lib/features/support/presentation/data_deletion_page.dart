@@ -1,21 +1,35 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/features/support/application/data_deletion.dart';
-import 'package:motto/features/support/domain/deletion_text.dart';
+import 'package:motto/features/support/application/support_copy_cubit.dart';
 
-/// What survives is said before the button, not after: the usage counter stays
-/// and finding that out afterwards is how a deletion screen becomes a one-star
-/// review.
+/// The confirmation, which is the whole screen.
+///
+/// What survives is said before the button: the usage counter stays, and
+/// finding that out afterwards is how a deletion screen becomes a review.
 @RoutePage()
-class DataDeletionPage extends StatefulWidget {
+class DataDeletionPage extends StatelessWidget {
   const DataDeletionPage({super.key});
 
   @override
-  State<DataDeletionPage> createState() => _DataDeletionPageState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => getIt<SupportCopyCubit>()..unawaitedLoad(),
+      child: const _DataDeletionView(),
+    );
+  }
 }
 
-class _DataDeletionPageState extends State<DataDeletionPage> {
+class _DataDeletionView extends StatefulWidget {
+  const _DataDeletionView();
+
+  @override
+  State<_DataDeletionView> createState() => _DataDeletionViewState();
+}
+
+class _DataDeletionViewState extends State<_DataDeletionView> {
   bool _deleting = false;
   bool _done = false;
   bool _failed = false;
@@ -43,50 +57,69 @@ class _DataDeletionPageState extends State<DataDeletionPage> {
     return Scaffold(
       appBar: AppBar(title: const Text('Verilerimi sil')),
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(24, 16, 24, 40),
-          children: [
-            if (_done) ...[
-              Text('Silindi.', style: text.titleMedium),
-              const SizedBox(height: 12),
-              Text(deletionCounterReason, style: text.bodyMedium),
-            ] else ...[
-              Text('Silinecekler', style: text.titleMedium),
-              const SizedBox(height: 8),
-              for (final item in deletionGoes)
-                Text('• $item', style: text.bodyMedium),
-              const SizedBox(height: 8),
-              Text(deletionAnswersNote, style: text.bodyMedium),
-              const SizedBox(height: 24),
-              Text('Kalacaklar', style: text.titleMedium),
-              const SizedBox(height: 8),
-              for (final item in deletionStays)
-                Text('• $item', style: text.bodyMedium),
-              const SizedBox(height: 12),
-              Text(
-                deletionCounterReason,
-                style: text.bodyMedium?.copyWith(
-                  color: scheme.onSurfaceVariant,
+        child: BlocBuilder<SupportCopyCubit, SupportCopyState>(
+          builder: (context, state) {
+            final copy = state.copy?.deletion;
+            if (copy == null) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Text(
+                    state.status == SupportCopyStatus.failed
+                        ? 'Metin yüklenemedi. Bağlantını kontrol edip tekrar '
+                              'dene.'
+                        : '…',
+                  ),
                 ),
-              ),
-              const SizedBox(height: 32),
-              if (_failed) ...[
-                Text(
-                  'Silinemedi. Bağlantını kontrol edip tekrar dene.',
-                  style: text.bodyMedium?.copyWith(color: scheme.error),
-                ),
-                const SizedBox(height: 12),
+              );
+            }
+
+            return ListView(
+              padding: const EdgeInsets.fromLTRB(24, 16, 24, 40),
+              children: [
+                if (_done) ...[
+                  Text('Silindi.', style: text.titleMedium),
+                  const SizedBox(height: 12),
+                  Text(copy.counterReason, style: text.bodyMedium),
+                ] else ...[
+                  Text('Silinecekler', style: text.titleMedium),
+                  const SizedBox(height: 8),
+                  for (final item in copy.goes)
+                    Text('• $item', style: text.bodyMedium),
+                  const SizedBox(height: 8),
+                  Text(copy.answersNote, style: text.bodyMedium),
+                  const SizedBox(height: 24),
+                  Text('Kalacaklar', style: text.titleMedium),
+                  const SizedBox(height: 8),
+                  for (final item in copy.stays)
+                    Text('• $item', style: text.bodyMedium),
+                  const SizedBox(height: 12),
+                  Text(
+                    copy.counterReason,
+                    style: text.bodyMedium?.copyWith(
+                      color: scheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  if (_failed) ...[
+                    Text(
+                      'Silinemedi. Bağlantını kontrol edip tekrar dene.',
+                      style: text.bodyMedium?.copyWith(color: scheme.error),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
+                  FilledButton(
+                    style: FilledButton.styleFrom(
+                      backgroundColor: scheme.error,
+                      foregroundColor: scheme.onError,
+                    ),
+                    onPressed: _deleting ? null : _delete,
+                    child: Text(_deleting ? 'Siliniyor…' : 'Verilerimi sil'),
+                  ),
+                ],
               ],
-              FilledButton(
-                style: FilledButton.styleFrom(
-                  backgroundColor: scheme.error,
-                  foregroundColor: scheme.onError,
-                ),
-                onPressed: _deleting ? null : _delete,
-                child: Text(_deleting ? 'Siliniyor…' : 'Verilerimi sil'),
-              ),
-            ],
-          ],
+            );
+          },
         ),
       ),
     );

@@ -234,6 +234,30 @@
           }
         }
       },
+      "DeletionCopy" : {
+        "type" : "object",
+        "required" : [ "goes", "stays", "counterReason", "answersNote" ],
+        "properties" : {
+          "goes" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "stays" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "counterReason" : {
+            "type" : "string"
+          },
+          "answersNote" : {
+            "type" : "string"
+          }
+        }
+      },
       "DeletionResponse" : {
         "type" : "object",
         "required" : [ "deleted", "kept" ],
@@ -317,6 +341,21 @@
             "additionalProperties" : {
               "type" : "string"
             }
+          }
+        }
+      },
+      "FaqEntry" : {
+        "type" : "object",
+        "required" : [ "id", "question", "answer" ],
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "question" : {
+            "type" : "string"
+          },
+          "answer" : {
+            "type" : "string"
           }
         }
       },
@@ -612,6 +651,33 @@
           "points" : {
             "type" : "integer",
             "format" : "int32"
+          }
+        }
+      },
+      "SupportCopy" : {
+        "type" : "object",
+        "required" : [ "version", "privacy", "deletion", "faq", "privacyPolicyUrl" ],
+        "properties" : {
+          "version" : {
+            "type" : "string"
+          },
+          "privacy" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "deletion" : {
+            "$ref" : "#/components/schemas/DeletionCopy"
+          },
+          "faq" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/FaqEntry"
+            }
+          },
+          "privacyPolicyUrl" : {
+            "type" : "string"
           }
         }
       }
@@ -1126,6 +1192,44 @@
           }
         },
         "tags" : [ "Score Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
+    "/v1/support" : {
+      "get" : {
+        "summary" : "The support copy",
+        "operationId" : "supportCopy",
+        "parameters" : [ {
+          "name" : "If-None-Match",
+          "in" : "header",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SupportCopy"
+                }
+              }
+            }
+          },
+          "304" : {
+            "description" : "The version you hold is current"
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "tags" : [ "Support Resource" ],
         "security" : [ {
           "SecurityScheme" : [ ]
         } ]
