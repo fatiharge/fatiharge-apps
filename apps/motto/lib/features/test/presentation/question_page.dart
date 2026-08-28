@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motto/config/effects.dart';
 import 'package:motto/config/injectable.dart';
-import 'package:motto/features/mascot/presentation/mascot_free_zone.dart';
 import 'package:motto/features/test/application/test_cubit.dart';
 import 'package:motto/features/test/application/test_effect.dart';
 import 'package:motto/features/test/application/test_state.dart';
@@ -23,11 +22,9 @@ class QuestionPage extends StatelessWidget implements AutoRouteWrapper {
   const QuestionPage({super.key});
 
   @override
-  Widget wrappedRoute(BuildContext context) => MascotFreeZone(
-    child: BlocProvider(
-      create: (_) => getIt<TestCubit>()..unawaitedStart(),
-      child: this,
-    ),
+  Widget wrappedRoute(BuildContext context) => BlocProvider(
+    create: (_) => getIt<TestCubit>()..unawaitedStart(),
+    child: this,
   );
 
   @override

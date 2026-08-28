@@ -4,7 +4,6 @@ import 'package:api_client_motto/api.dart' as api;
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:motto/config/injectable.dart';
-import 'package:motto/features/mascot/presentation/mascot_free_zone.dart';
 import 'package:motto/features/result/presentation/widgets/basis_section.dart';
 import 'package:motto/features/support/presentation/widgets/rejection_sheet.dart';
 import 'package:motto/infrastructure/analytics/analytics.dart';
@@ -72,98 +71,96 @@ class _ResultPageState extends State<ResultPage> {
     final scheme = Theme.of(context).colorScheme;
     final archetype = widget.archetype;
 
-    return MascotFreeZone(
-      child: Scaffold(
-        body: SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(24, 32, 24, 40),
-            children: [
-              Text(
-                'SENİN ARKETİPİN',
-                style: text.labelSmall?.copyWith(
-                  color: scheme.onSurfaceVariant,
-                  letterSpacing: 1.5,
-                ),
+    return Scaffold(
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(24, 32, 24, 40),
+          children: [
+            Text(
+              'SENİN ARKETİPİN',
+              style: text.labelSmall?.copyWith(
+                color: scheme.onSurfaceVariant,
+                letterSpacing: 1.5,
               ),
-              const SizedBox(height: 12),
-              Text(archetype.name, style: text.headlineMedium),
-              const SizedBox(height: 12),
-              Text(
-                archetype.summary,
-                style: text.bodyMedium?.copyWith(
-                  color: scheme.onSurfaceVariant,
-                ),
+            ),
+            const SizedBox(height: 12),
+            Text(archetype.name, style: text.headlineMedium),
+            const SizedBox(height: 12),
+            Text(
+              archetype.summary,
+              style: text.bodyMedium?.copyWith(
+                color: scheme.onSurfaceVariant,
               ),
-              const SizedBox(height: 32),
-              // The motto is the app. It was set below the summary in the same
-              // weight as everything else, which made the one line somebody
-              // came for read like a caption.
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 28,
-                ),
-                decoration: BoxDecoration(
-                  color: scheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'MOTTON',
-                      style: text.labelSmall?.copyWith(
-                        color: scheme.onPrimaryContainer.withValues(alpha: 0.7),
-                        letterSpacing: 1.5,
-                      ),
+            ),
+            const SizedBox(height: 32),
+            // The motto is the app. It was set below the summary in the same
+            // weight as everything else, which made the one line somebody
+            // came for read like a caption.
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 28,
+              ),
+              decoration: BoxDecoration(
+                color: scheme.primaryContainer,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'MOTTON',
+                    style: text.labelSmall?.copyWith(
+                      color: scheme.onPrimaryContainer.withValues(alpha: 0.7),
+                      letterSpacing: 1.5,
                     ),
-                    const SizedBox(height: 12),
-                    Text(
-                      archetype.motto,
-                      style: text.displaySmall?.copyWith(
-                        color: scheme.onPrimaryContainer,
-                        height: 1.15,
-                      ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    archetype.motto,
+                    style: text.displaySmall?.copyWith(
+                      color: scheme.onPrimaryContainer,
+                      height: 1.15,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 32),
-              FilledButton.icon(
-                onPressed: () => context.router.push(
-                  ShareCardRoute(archetype: archetype),
-                ),
-                icon: const Icon(Icons.ios_share),
-                label: const Text('Kartı paylaş'),
+            ),
+            const SizedBox(height: 32),
+            FilledButton.icon(
+              onPressed: () => context.router.push(
+                ShareCardRoute(archetype: archetype),
               ),
-              const SizedBox(height: 12),
-              OutlinedButton(
-                onPressed: () =>
-                    context.router.push(ReportRoute(resultId: widget.resultId)),
-                child: const Text('Rapor'),
+              icon: const Icon(Icons.ios_share),
+              label: const Text('Kartı paylaş'),
+            ),
+            const SizedBox(height: 12),
+            OutlinedButton(
+              onPressed: () =>
+                  context.router.push(ReportRoute(resultId: widget.resultId)),
+              child: const Text('Rapor'),
+            ),
+            const SizedBox(height: 12),
+            OutlinedButton(
+              onPressed: () => context.router.push(
+                DeepReportRoute(resultId: widget.resultId),
               ),
-              const SizedBox(height: 12),
-              OutlinedButton(
-                onPressed: () => context.router.push(
-                  DeepReportRoute(resultId: widget.resultId),
-                ),
-                // "Analiz" is on the 1.4.1 word table; the screen is the same
-                // one either way and the word is what gets a listing rejected.
-                child: const Text('Derin rapor'),
+              // "Analiz" is on the 1.4.1 word table; the screen is the same
+              // one either way and the word is what gets a listing rejected.
+              child: const Text('Derin rapor'),
+            ),
+            const SizedBox(height: 8),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton(
+                onPressed: () => showRejectionSheet(context),
+                child: const Text('Bana uymadı'),
               ),
-              const SizedBox(height: 8),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: TextButton(
-                  onPressed: () => showRejectionSheet(context),
-                  child: const Text('Bana uymadı'),
-                ),
-              ),
-              const SizedBox(height: 24),
-              const BasisSection(),
-            ],
-          ),
+            ),
+            const SizedBox(height: 24),
+            const BasisSection(),
+          ],
         ),
       ),
     );

@@ -2,7 +2,6 @@ import 'package:api_client_motto/api.dart' as api;
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:motto/config/injectable.dart';
-import 'package:motto/features/mascot/presentation/mascot_free_zone.dart';
 import 'package:motto/features/result/application/card_exporter.dart';
 import 'package:motto/features/result/presentation/widgets/share_card.dart';
 import 'package:motto/infrastructure/analytics/analytics.dart';
@@ -58,32 +57,30 @@ class _ShareCardPageState extends State<ShareCardPage> {
 
   @override
   Widget build(BuildContext context) {
-    return MascotFreeZone(
-      child: Scaffold(
-        appBar: AppBar(),
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-            child: Column(
-              children: [
-                Expanded(
-                  child: Center(
-                    // Wraps exactly the card, so the export has none of the
-                    // screen around it.
-                    child: RepaintBoundary(
-                      key: _boundaryKey,
-                      child: ShareCard(archetype: widget.archetype),
-                    ),
+    return Scaffold(
+      appBar: AppBar(),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+          child: Column(
+            children: [
+              Expanded(
+                child: Center(
+                  // Wraps exactly the card, so the export has none of the
+                  // screen around it.
+                  child: RepaintBoundary(
+                    key: _boundaryKey,
+                    child: ShareCard(archetype: widget.archetype),
                   ),
                 ),
-                const SizedBox(height: 24),
-                FilledButton.icon(
-                  onPressed: _sharing ? null : _share,
-                  icon: const Icon(Icons.ios_share),
-                  label: Text(_sharing ? 'Hazırlanıyor…' : 'Paylaş'),
-                ),
-              ],
-            ),
+              ),
+              const SizedBox(height: 24),
+              FilledButton.icon(
+                onPressed: _sharing ? null : _share,
+                icon: const Icon(Icons.ios_share),
+                label: Text(_sharing ? 'Hazırlanıyor…' : 'Paylaş'),
+              ),
+            ],
           ),
         ),
       ),
