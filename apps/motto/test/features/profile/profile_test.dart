@@ -50,8 +50,9 @@ void main() {
         results: [summary(2, 'Kıvılcım'), summary(1, 'Sessiz İnşacı')],
       ),
     );
-    when(entitlements.currentEntitlement)
-        .thenAnswer((_) async => entitlement());
+    when(
+      entitlements.currentEntitlement,
+    ).thenAnswer((_) async => entitlement());
   });
 
   group('the profile', () {
@@ -76,8 +77,9 @@ void main() {
     });
 
     test('someone with nothing yet has no current archetype', () async {
-      when(results.resultHistory)
-          .thenAnswer((_) async => api.ResultHistory(results: []));
+      when(
+        results.resultHistory,
+      ).thenAnswer((_) async => api.ResultHistory(results: []));
       final cubit = ProfileCubit(results, entitlements);
 
       await cubit.load();

@@ -113,8 +113,9 @@ void main() {
     });
 
     testWidgets('a report that cannot be fetched says so', (tester) async {
-      when(() => tasks.periodReport(today: any(named: 'today')))
-          .thenThrow(Exception('offline'));
+      when(
+        () => tasks.periodReport(today: any(named: 'today')),
+      ).thenThrow(Exception('offline'));
 
       await tester.pumpWidget(const MaterialApp(home: PeriodReportPage()));
       await tester.pumpAndSettle();

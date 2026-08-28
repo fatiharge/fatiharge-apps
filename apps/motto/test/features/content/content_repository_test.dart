@@ -45,8 +45,9 @@ void main() {
 
   test('the held version is what gets sent back', () async {
     when(() => store.version).thenReturn('abc123');
-    when(() => content.contentBundle(ifNoneMatch: any(named: 'ifNoneMatch')))
-        .thenAnswer((_) async => null);
+    when(
+      () => content.contentBundle(ifNoneMatch: any(named: 'ifNoneMatch')),
+    ).thenAnswer((_) async => null);
 
     await repository.refresh();
 
@@ -57,8 +58,9 @@ void main() {
   test('a newer package is kept and used from then on', () async {
     when(() => store.version).thenReturn('old');
     when(store.readCached).thenAnswer((_) async => {'version': 'old'});
-    when(() => content.contentBundle(ifNoneMatch: any(named: 'ifNoneMatch')))
-        .thenAnswer((_) async => _bundle('new'));
+    when(
+      () => content.contentBundle(ifNoneMatch: any(named: 'ifNoneMatch')),
+    ).thenAnswer((_) async => _bundle('new'));
 
     await repository.refresh();
 
@@ -66,30 +68,37 @@ void main() {
     expect((await repository.current())!['version'], 'new');
   });
 
-  test('a refresh that fails with a package on the phone is not a failure',
-      () async {
-    when(() => store.version).thenReturn('old');
-    when(store.readCached).thenAnswer((_) async => {'version': 'old'});
-    when(() => content.contentBundle(ifNoneMatch: any(named: 'ifNoneMatch')))
-        .thenThrow(Exception('offline'));
+  test(
+    'a refresh that fails with a package on the phone is not a failure',
+    () async {
+      when(() => store.version).thenReturn('old');
+      when(store.readCached).thenAnswer((_) async => {'version': 'old'});
+      when(
+        () => content.contentBundle(ifNoneMatch: any(named: 'ifNoneMatch')),
+      ).thenThrow(Exception('offline'));
 
-    await expectLater(repository.refresh(), completes);
-  });
+      await expectLater(repository.refresh(), completes);
+    },
+  );
 
-  test('a refresh that fails with nothing on the phone stops the flow',
-      () async {
-    when(() => store.version).thenReturn(null);
-    when(store.readCached).thenAnswer((_) async => null);
-    when(() => content.contentBundle(ifNoneMatch: any(named: 'ifNoneMatch')))
-        .thenThrow(Exception('offline'));
+  test(
+    'a refresh that fails with nothing on the phone stops the flow',
+    () async {
+      when(() => store.version).thenReturn(null);
+      when(store.readCached).thenAnswer((_) async => null);
+      when(
+        () => content.contentBundle(ifNoneMatch: any(named: 'ifNoneMatch')),
+      ).thenThrow(Exception('offline'));
 
-    await expectLater(repository.refresh(), throwsA(isA<Exception>()));
-  });
+      await expectLater(repository.refresh(), throwsA(isA<Exception>()));
+    },
+  );
 
   test('a device with nothing yet asks without a version', () async {
     when(() => store.version).thenReturn(null);
-    when(() => content.contentBundle(ifNoneMatch: any(named: 'ifNoneMatch')))
-        .thenAnswer((_) async => _bundle('first'));
+    when(
+      () => content.contentBundle(ifNoneMatch: any(named: 'ifNoneMatch')),
+    ).thenAnswer((_) async => _bundle('first'));
 
     await repository.refresh();
 

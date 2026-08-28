@@ -24,8 +24,9 @@ void main() {
     when(() => tasks.dailyTasks(today: any(named: 'today'))).thenAnswer(
       (_) async => api.DailyTasks(day: 3, tasks: [task(1), task(2), task(3)]),
     );
-    when(() => tasks.completeTask(any(), today: any(named: 'today')))
-        .thenAnswer((_) async => null);
+    when(
+      () => tasks.completeTask(any(), today: any(named: 'today')),
+    ).thenAnswer((_) async => null);
     cubit = TaskCubit(tasks)..now = () => DateTime(2026, 3, 3, 10);
   });
 
@@ -43,9 +44,10 @@ void main() {
     // A task ticked at 23:59 belongs to that day, not to whatever the server
     // thinks the time is.
     final sent =
-        verify(() => tasks.dailyTasks(today: captureAny(named: 'today')))
-            .captured
-            .single as DateTime;
+        verify(
+              () => tasks.dailyTasks(today: captureAny(named: 'today')),
+            ).captured.single
+            as DateTime;
     expect(sent, DateTime(2026, 3, 3));
   });
 
@@ -74,8 +76,9 @@ void main() {
 
   test('a refused tick is taken back rather than left showing', () async {
     await cubit.load();
-    when(() => tasks.completeTask(any(), today: any(named: 'today')))
-        .thenThrow(Exception('offline'));
+    when(
+      () => tasks.completeTask(any(), today: any(named: 'today')),
+    ).thenThrow(Exception('offline'));
 
     await cubit.complete(cubit.state.tasks.first);
 
@@ -84,8 +87,9 @@ void main() {
   });
 
   test('a day that cannot be fetched says so', () async {
-    when(() => tasks.dailyTasks(today: any(named: 'today')))
-        .thenThrow(Exception('offline'));
+    when(
+      () => tasks.dailyTasks(today: any(named: 'today')),
+    ).thenThrow(Exception('offline'));
 
     await cubit.load();
 

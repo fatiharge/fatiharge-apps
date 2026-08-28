@@ -56,7 +56,9 @@ void main() {
     content = _MockContent();
     when(content.current).thenAnswer(
       (_) async =>
-          jsonDecode(File('test/fixtures/content_bundle.json').readAsStringSync())
+          jsonDecode(
+                File('test/fixtures/content_bundle.json').readAsStringSync(),
+              )
               as Map<String, dynamic>,
     );
 
@@ -66,8 +68,9 @@ void main() {
     );
 
     widget = _MockWidget();
-    when(() => widget.publish(any(), streak: any(named: 'streak')))
-        .thenAnswer((_) async {});
+    when(
+      () => widget.publish(any(), streak: any(named: 'streak')),
+    ).thenAnswer((_) async {});
 
     return DailyCubit(
       content,

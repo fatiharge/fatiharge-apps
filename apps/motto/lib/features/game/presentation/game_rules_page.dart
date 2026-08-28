@@ -30,19 +30,22 @@ class GameRulesPage extends StatelessWidget {
             children: [
               _Rule(
                 title: 'Düşeni doğru kutuya at',
-                body: 'Sola gidecekse ekranın soluna, sağa gidecekse sağına '
+                body:
+                    'Sola gidecekse ekranın soluna, sağa gidecekse sağına '
                     'dokun.',
                 text: text,
               ),
               _Rule(
                 title: 'Üç hakkın var',
-                body: 'Yanlış kutu bir hak götürür. Yere düşen de yanlış '
+                body:
+                    'Yanlış kutu bir hak götürür. Yere düşen de yanlış '
                     'sayılır — beklemek bir taktik değil.',
                 text: text,
               ),
               _Rule(
                 title: 'Her doğru ${SortingGame.perSort} puan',
-                body: 'Üst üste ${SortingGame.speedsUpEvery} doğru yaptıkça '
+                body:
+                    'Üst üste ${SortingGame.speedsUpEvery} doğru yaptıkça '
                     'hızlanıyor. Yanlış yaparsan puanın durur, hız başa döner.',
                 text: text,
               ),

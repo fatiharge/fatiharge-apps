@@ -62,7 +62,6 @@ class _MascotState extends State<Mascot>
   late final AnimationController _spring;
   Offset _releasedFrom = Offset.zero;
 
-
   @override
   void initState() {
     super.initState();
@@ -198,8 +197,6 @@ class _MascotState extends State<Mascot>
     _lastTouched = DateTime.now();
     _offering = false;
   }
-
-
 
   void _onTap() {
     final mascot = _mascot;

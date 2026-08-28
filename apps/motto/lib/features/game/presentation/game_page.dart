@@ -110,9 +110,11 @@ class _GamePageState extends State<GamePage>
                   Text('${_game.score}', style: text.headlineSmall),
                   Row(
                     children: [
-                      for (var life = 0;
-                          life < SortingGame.startingLives;
-                          life++)
+                      for (
+                        var life = 0;
+                        life < SortingGame.startingLives;
+                        life++
+                      )
                         Icon(
                           life < _game.lives
                               ? Icons.favorite

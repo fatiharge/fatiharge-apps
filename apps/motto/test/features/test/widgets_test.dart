@@ -6,8 +6,10 @@ import 'package:motto/features/test/presentation/widgets/likert_scale.dart';
 import 'package:motto/features/test/presentation/widgets/test_progress.dart';
 import 'package:motto/theme/motto_theme.dart';
 
-Widget _wrap(Widget child) =>
-    MaterialApp(theme: MottoTheme.dark, home: Scaffold(body: child));
+Widget _wrap(Widget child) => MaterialApp(
+  theme: MottoTheme.dark,
+  home: Scaffold(body: child),
+);
 
 void main() {
   group('LikertScale', () {
@@ -49,8 +51,9 @@ void main() {
   });
 
   group('GlimpseSheet', () {
-    testWidgets('shows the archetype and says it may still change',
-        (tester) async {
+    testWidgets('shows the archetype and says it may still change', (
+      tester,
+    ) async {
       var continued = false;
       await tester.pumpWidget(
         _wrap(

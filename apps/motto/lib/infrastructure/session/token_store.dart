@@ -11,6 +11,7 @@ class TokenStore {
   TokenStore(this._storage);
 
   static const _key = 'device_token';
+
   /// Not synchronizable — its default — so the token does not travel to
   /// another device on the same Apple ID.
   static const _iosOptions = IOSOptions(

@@ -39,8 +39,9 @@ void main() {
 
     await analytics.record(MottoEvent.shareComplete);
 
-    final batch = verify(() => events.recordEvents(captureAny())).captured
-        .single as api.EventBatch;
+    final batch =
+        verify(() => events.recordEvents(captureAny())).captured.single
+            as api.EventBatch;
     expect(batch.events.single.name, 'share_complete');
     expect(queue.read(), isEmpty);
   });
@@ -53,8 +54,9 @@ void main() {
       properties: {'n': '5'},
     );
 
-    final batch = verify(() => events.recordEvents(captureAny())).captured
-        .single as api.EventBatch;
+    final batch =
+        verify(() => events.recordEvents(captureAny())).captured.single
+            as api.EventBatch;
     expect(batch.events.single.properties, {'n': '5'});
   });
 
@@ -76,8 +78,9 @@ void main() {
     serverAccepts();
     await analytics.flush();
 
-    final batch = verify(() => events.recordEvents(captureAny())).captured
-        .last as api.EventBatch;
+    final batch =
+        verify(() => events.recordEvents(captureAny())).captured.last
+            as api.EventBatch;
     expect(batch.events.map((event) => event.name), [
       'app_open',
       'result_view',
@@ -120,11 +123,13 @@ void main() {
     expect(kept.first['clientId'], '10');
   });
 
-  test('a queue that cannot be parsed is dropped rather than kept forever',
-      () async {
-    SharedPreferences.setMockInitialValues({'analytics_queue': 'not json'});
-    final broken = EventQueue(await SharedPreferences.getInstance());
+  test(
+    'a queue that cannot be parsed is dropped rather than kept forever',
+    () async {
+      SharedPreferences.setMockInitialValues({'analytics_queue': 'not json'});
+      final broken = EventQueue(await SharedPreferences.getInstance());
 
-    expect(broken.read(), isEmpty);
-  });
+      expect(broken.read(), isEmpty);
+    },
+  );
 }
