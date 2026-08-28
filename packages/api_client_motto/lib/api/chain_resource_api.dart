@@ -22,9 +22,9 @@ class ChainResourceApi {
   ///
   /// Parameters:
   ///
-  /// * [DateTime] today:
+  /// * [String] today:
   Future<Response> currentChainWithHttpInfo({
-    DateTime? today,
+    String? today,
     Future<void>? abortTrigger,
   }) async {
     // ignore: prefer_const_declarations
@@ -59,9 +59,9 @@ class ChainResourceApi {
   ///
   /// Parameters:
   ///
-  /// * [DateTime] today:
+  /// * [String] today:
   Future<ChainState?> currentChain({
-    DateTime? today,
+    String? today,
     Future<void>? abortTrigger,
   }) async {
     final response = await currentChainWithHttpInfo(

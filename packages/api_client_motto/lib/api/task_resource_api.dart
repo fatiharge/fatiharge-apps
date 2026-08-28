@@ -24,10 +24,10 @@ class TaskResourceApi {
   ///
   /// * [int] id (required):
   ///
-  /// * [DateTime] today:
+  /// * [String] today:
   Future<Response> completeTaskWithHttpInfo(
     int id, {
-    DateTime? today,
+    String? today,
     Future<void>? abortTrigger,
   }) async {
     // ignore: prefer_const_declarations
@@ -64,10 +64,10 @@ class TaskResourceApi {
   ///
   /// * [int] id (required):
   ///
-  /// * [DateTime] today:
+  /// * [String] today:
   Future<Object?> completeTask(
     int id, {
-    DateTime? today,
+    String? today,
     Future<void>? abortTrigger,
   }) async {
     final response = await completeTaskWithHttpInfo(
@@ -97,9 +97,9 @@ class TaskResourceApi {
   ///
   /// Parameters:
   ///
-  /// * [DateTime] today:
+  /// * [String] today:
   Future<Response> dailyTasksWithHttpInfo({
-    DateTime? today,
+    String? today,
     Future<void>? abortTrigger,
   }) async {
     // ignore: prefer_const_declarations
@@ -134,9 +134,9 @@ class TaskResourceApi {
   ///
   /// Parameters:
   ///
-  /// * [DateTime] today:
+  /// * [String] today:
   Future<DailyTasks?> dailyTasks({
-    DateTime? today,
+    String? today,
     Future<void>? abortTrigger,
   }) async {
     final response = await dailyTasksWithHttpInfo(
@@ -165,9 +165,9 @@ class TaskResourceApi {
   ///
   /// Parameters:
   ///
-  /// * [DateTime] today:
+  /// * [String] today:
   Future<Response> periodReportWithHttpInfo({
-    DateTime? today,
+    String? today,
     Future<void>? abortTrigger,
   }) async {
     // ignore: prefer_const_declarations
@@ -202,9 +202,9 @@ class TaskResourceApi {
   ///
   /// Parameters:
   ///
-  /// * [DateTime] today:
+  /// * [String] today:
   Future<PeriodReport?> periodReport({
-    DateTime? today,
+    String? today,
     Future<void>? abortTrigger,
   }) async {
     final response = await periodReportWithHttpInfo(

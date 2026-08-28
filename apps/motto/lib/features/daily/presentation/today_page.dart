@@ -180,6 +180,16 @@ class _TodayViewState extends State<_TodayView> {
   /// The three things today asks for. Below the day rather than behind it:
   /// the day says why, and these are what to do about it.
   Widget _tasks(BuildContext context, TaskState state, TextTheme text) {
+    if (state.status == TaskStatus.failed) {
+      // Silence here is what hid a broken endpoint for a whole feature: an
+      // empty list and a failed request looked identical.
+      return Text(
+        'Bugünün görevleri alınamadı.',
+        style: text.bodyMedium?.copyWith(
+          color: Theme.of(context).colorScheme.error,
+        ),
+      );
+    }
     if (state.tasks.isEmpty) return const SizedBox.shrink();
 
     return Column(

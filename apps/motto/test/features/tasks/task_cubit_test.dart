@@ -17,7 +17,7 @@ void main() {
   late _MockTasks tasks;
   late TaskCubit cubit;
 
-  setUpAll(() => registerFallbackValue(DateTime(2026, 3, 3)));
+  setUpAll(() => registerFallbackValue('2026-03-03'));
 
   setUp(() {
     tasks = _MockTasks();
@@ -41,14 +41,15 @@ void main() {
   test('the date it sends is a day, not a moment', () async {
     await cubit.load();
 
-    // A task ticked at 23:59 belongs to that day, not to whatever the server
-    // thinks the time is.
+    // Sent as a plain day. The generated client turns a DateTime into
+    // `toUtc().toIso8601String()`, which the server cannot parse and which has
+    // already moved the day for anyone east of UTC.
     final sent =
         verify(
               () => tasks.dailyTasks(today: captureAny(named: 'today')),
             ).captured.single
-            as DateTime;
-    expect(sent, DateTime(2026, 3, 3));
+            as String;
+    expect(sent, '2026-03-03');
   });
 
   test('ticking answers before the server does', () async {

@@ -11,7 +11,6 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
-import java.time.LocalDate;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 
 /**
@@ -37,8 +36,8 @@ public class ChainResource {
 
   @GET
   @Operation(operationId = "currentChain", summary = "The chain as it stands")
-  public ChainState current(@QueryParam("today") LocalDate today) {
-    return chains.state(current.id(), today);
+  public ChainState current(@QueryParam("today") String today) {
+    return chains.state(current.id(), LocalDates.parse(today));
   }
 
   @POST

@@ -22,7 +22,7 @@ class ChainRepository {
     await flushPending(today);
     try {
       return await _store.cacheAnd(
-        _chains.currentChain(today: dayOf(today)),
+        _chains.currentChain(today: isoDay(today)),
       );
     } on Object {
       return cached;

@@ -704,7 +704,7 @@
           "name" : "today",
           "in" : "query",
           "schema" : {
-            "$ref" : "#/components/schemas/LocalDate"
+            "type" : "string"
           }
         } ],
         "responses" : {
@@ -1247,7 +1247,7 @@
           "name" : "today",
           "in" : "query",
           "schema" : {
-            "$ref" : "#/components/schemas/LocalDate"
+            "type" : "string"
           }
         } ],
         "responses" : {
@@ -1282,7 +1282,7 @@
           "name" : "today",
           "in" : "query",
           "schema" : {
-            "$ref" : "#/components/schemas/LocalDate"
+            "type" : "string"
           }
         } ],
         "responses" : {
@@ -1325,7 +1325,7 @@
           "name" : "today",
           "in" : "query",
           "schema" : {
-            "$ref" : "#/components/schemas/LocalDate"
+            "type" : "string"
           }
         } ],
         "responses" : {
