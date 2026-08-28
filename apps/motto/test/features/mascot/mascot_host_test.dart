@@ -2,9 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:motto/config/injectable.dart';
+import 'package:motto/features/mascot/application/mascot_store.dart';
 import 'package:motto/features/mascot/presentation/mascot.dart';
 import 'package:motto/features/mascot/presentation/mascot_host.dart';
 import 'package:rive/rive.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// The renderer needs a native library `flutter test` does not have, so the
 /// file never loads here. What is under test is the host: where the mascot
@@ -18,6 +21,29 @@ Widget hosted() => MaterialApp(
 );
 
 void main() {
+  setUp(() async {
+    SharedPreferences.setMockInitialValues({});
+    getIt.registerSingleton<MascotStore>(
+      MascotStore(await SharedPreferences.getInstance()),
+    );
+  });
+
+  tearDown(getIt.reset);
+
+  testWidgets('switching it off takes it off the screen', (tester) async {
+    await tester.pumpWidget(hosted());
+    await tester.pump();
+    tester.takeException();
+    expect(find.byType(Mascot), findsOneWidget);
+
+    await getIt<MascotStore>().setVisible(value: false);
+    await tester.pump();
+
+    // Off means gone: no widget, no state machine, no timers.
+    expect(find.byType(Mascot), findsNothing);
+    expect(find.text('a screen'), findsOneWidget);
+  });
+
   testWidgets('the mascot floats above whatever screen is showing', (
     tester,
   ) async {
