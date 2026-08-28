@@ -2,6 +2,7 @@ package com.dafalabs.api.motto.task;
 
 import com.dafalabs.api.core.auth.AuthenticatedDevice;
 import com.dafalabs.api.motto.chain.Chains;
+import com.dafalabs.api.motto.chain.LocalDates;
 import com.dafalabs.api.motto.task.dto.DailyTasks;
 import com.dafalabs.api.motto.task.dto.PeriodReport;
 import io.quarkus.security.Authenticated;
@@ -42,23 +43,25 @@ public class TaskResource {
 
   @GET
   @Operation(operationId = "dailyTasks", summary = "The three things today asks for")
-  public DailyTasks today(@QueryParam("today") LocalDate today) {
-    return tasks.forToday(current.id(), chains.state(current.id(), today));
+  public DailyTasks today(@QueryParam("today") String today) {
+    LocalDate day = LocalDates.parse(today);
+    return tasks.forToday(current.id(), chains.state(current.id(), day));
   }
 
   @POST
   @Path("/{id}/complete")
   @Operation(operationId = "completeTask", summary = "Tick a task off")
   public Response complete(
-      @PathParam("id") long id, @QueryParam("today") LocalDate today) {
-    tasks.complete(current.id(), id, today);
+      @PathParam("id") long id, @QueryParam("today") String today) {
+    tasks.complete(current.id(), id, LocalDates.parse(today));
     return Response.noContent().build();
   }
 
   @GET
   @Path("/report")
   @Operation(operationId = "periodReport", summary = "What the period came to")
-  public PeriodReport report(@QueryParam("today") LocalDate today) {
-    return tasks.report(current.id(), chains.state(current.id(), today));
+  public PeriodReport report(@QueryParam("today") String today) {
+    LocalDate day = LocalDates.parse(today);
+    return tasks.report(current.id(), chains.state(current.id(), day));
   }
 }

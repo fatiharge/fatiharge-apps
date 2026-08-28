@@ -4,6 +4,7 @@ import 'package:api_client_motto/api.dart' as api;
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:motto/config/injectable.dart';
+import 'package:motto/features/chain/domain/chain.dart';
 
 /// What fourteen days came to.
 @RoutePage()
@@ -25,10 +26,9 @@ class _PeriodReportPageState extends State<PeriodReportPage> {
   }
 
   Future<void> _load() async {
-    final now = DateTime.now();
     try {
       final report = await getIt<api.TaskResourceApi>().periodReport(
-        today: DateTime(now.year, now.month, now.day),
+        today: isoDay(DateTime.now()),
       );
       if (mounted) setState(() => _report = report);
     } on Object {

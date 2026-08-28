@@ -4,6 +4,18 @@ import 'package:meta/meta.dart';
 DateTime dayOf(DateTime moment) =>
     DateTime(moment.year, moment.month, moment.day);
 
+/// The same day, as the server reads it.
+///
+/// Written out here rather than left to the generated client: that one sends
+/// `toUtc().toIso8601String()` for a query parameter, which the server cannot
+/// parse and which has already moved the day for anyone east of UTC.
+String isoDay(DateTime moment) {
+  final day = dayOf(moment);
+  final month = day.month.toString().padLeft(2, '0');
+  final date = day.day.toString().padLeft(2, '0');
+  return '${day.year}-$month-$date';
+}
+
 /// What the chain is.
 @immutable
 class Chain {

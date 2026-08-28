@@ -46,7 +46,7 @@ class TaskCubit extends Cubit<TaskState> {
 
   Future<void> load() async {
     try {
-      final today = await _tasks.dailyTasks(today: dayOf(now()));
+      final today = await _tasks.dailyTasks(today: isoDay(now()));
       emit(
         TaskState(
           status: TaskStatus.ready,
@@ -84,7 +84,7 @@ class TaskCubit extends Cubit<TaskState> {
     );
 
     try {
-      await _tasks.completeTask(task.id, today: dayOf(now()));
+      await _tasks.completeTask(task.id, today: isoDay(now()));
     } on Object {
       await load();
     }

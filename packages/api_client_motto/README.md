@@ -48,7 +48,7 @@ import 'package:api_client_motto/api.dart';
 //defaultApiClient.getAuthentication<HttpBearerAuth>('SecurityScheme').setAccessToken(yourTokenGeneratorFunction);
 
 final api_instance = ChainResourceApi();
-final today = 2013-10-20; // DateTime | 
+final today = today_example; // String | 
 
 try {
     final result = api_instance.currentChain(today);
