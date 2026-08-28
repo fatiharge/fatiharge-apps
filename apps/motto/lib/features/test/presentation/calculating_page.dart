@@ -33,7 +33,13 @@ class CalculatingPage extends StatelessWidget implements AutoRouteWrapper {
         if (state.result != null) {
           await Future<void>.delayed(_minimumDwell);
           if (context.mounted) {
-            await context.router.replace(ResultRoute(result: state.result!));
+            // The shell first, then the result on top of it: closing the card
+            // should land on today, not on a screen with nowhere to go back
+            // to. "Zincirini başlat" then becomes a pop rather than a push.
+            await context.router.replaceAll([
+              const ShellRoute(),
+              ResultRoute(result: state.result!),
+            ]);
           }
         }
       },
