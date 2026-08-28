@@ -29,9 +29,14 @@ class ContentRepository {
       );
       if (bundle == null) return;
 
-      final json = bundle.toJson();
-      await _store.save(json, bundle.version);
-      _loaded = json;
+      await _store.save(bundle.toJson(), bundle.version);
+      // Read back rather than keeping what toJson() returned. The generated
+      // client writes nested lists as the model objects themselves and lets
+      // jsonEncode convert them, so that map holds DTOs where this app expects
+      // maps — it parses only after a trip through the file. Keeping it in
+      // memory made the day's content fail on the launch that fetched it and
+      // work on every launch after, which is the worst shape a bug can have.
+      _loaded = await _store.readCached();
     } on Object {
       if (await current() == null) rethrow;
     }
