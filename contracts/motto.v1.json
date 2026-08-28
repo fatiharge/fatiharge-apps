@@ -366,6 +366,47 @@
         "format" : "date-time",
         "examples" : [ "2022-03-10T16:15:50Z" ]
       },
+      "Leaderboard" : {
+        "type" : "object",
+        "required" : [ "week", "entries", "yourBest", "rewardedRanks" ],
+        "properties" : {
+          "week" : {
+            "type" : "string",
+            "$ref" : "#/components/schemas/LocalDate"
+          },
+          "entries" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/LeaderboardEntry"
+            }
+          },
+          "yourBest" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "rewardedRanks" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "LeaderboardEntry" : {
+        "type" : "object",
+        "required" : [ "rank", "points", "you" ],
+        "properties" : {
+          "rank" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "points" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "you" : {
+            "type" : "boolean"
+          }
+        }
+      },
       "LocalDate" : {
         "type" : "string",
         "format" : "date",
@@ -561,6 +602,16 @@
           "claimedAt" : {
             "type" : "string",
             "$ref" : "#/components/schemas/Instant"
+          }
+        }
+      },
+      "ScoreSubmission" : {
+        "type" : "object",
+        "required" : [ "points" ],
+        "properties" : {
+          "points" : {
+            "type" : "integer",
+            "format" : "int32"
           }
         }
       }
@@ -1008,6 +1059,73 @@
           }
         },
         "tags" : [ "Report Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
+    "/v1/scores" : {
+      "post" : {
+        "summary" : "Record a game and get the board",
+        "operationId" : "recordScore",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ScoreSubmission"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Leaderboard"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        },
+        "tags" : [ "Score Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      },
+      "get" : {
+        "summary" : "This week's board",
+        "operationId" : "leaderboard",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Leaderboard"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "tags" : [ "Score Resource" ],
         "security" : [ {
           "SecurityScheme" : [ ]
         } ]

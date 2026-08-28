@@ -34,5 +34,8 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: ArchiveRoute.page),
     AutoRoute(page: DeepReportRoute.page),
     AutoRoute(page: GalleryRoute.page),
+    AutoRoute(page: GameRulesRoute.page),
+    AutoRoute(page: GameRoute.page),
+    AutoRoute(page: GameOverRoute.page),
   ];
 }

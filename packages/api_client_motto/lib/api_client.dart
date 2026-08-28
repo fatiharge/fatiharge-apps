@@ -240,6 +240,10 @@ class ApiClient {
           return FeedbackRequest.fromJson(value);
         case 'Fragment':
           return Fragment.fromJson(value);
+        case 'Leaderboard':
+          return Leaderboard.fromJson(value);
+        case 'LeaderboardEntry':
+          return LeaderboardEntry.fromJson(value);
         case 'MarkDayRequest':
           return MarkDayRequest.fromJson(value);
         case 'MarkedDay':
@@ -262,6 +266,8 @@ class ApiClient {
           return ResultResponse.fromJson(value);
         case 'ResultSummary':
           return ResultSummary.fromJson(value);
+        case 'ScoreSubmission':
+          return ScoreSubmission.fromJson(value);
         default:
           dynamic match;
           if (value is List &&

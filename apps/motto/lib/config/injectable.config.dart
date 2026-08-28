@@ -27,6 +27,7 @@ import 'package:motto/features/content/application/content_repository.dart'
 import 'package:motto/features/content/application/content_store.dart' as _i432;
 import 'package:motto/features/daily/application/daily_cubit.dart' as _i1068;
 import 'package:motto/features/daily/application/daily_widget.dart' as _i113;
+import 'package:motto/features/game/application/game_store.dart' as _i164;
 import 'package:motto/features/onboarding/application/onboarding_store.dart'
     as _i624;
 import 'package:motto/features/profile/application/profile_cubit.dart' as _i315;
@@ -80,6 +81,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i432.ContentStore>(
       () => _i432.ContentStore(gh<_i460.SharedPreferences>()),
+    );
+    gh.lazySingleton<_i164.GameStore>(
+      () => _i164.GameStore(gh<_i460.SharedPreferences>()),
     );
     gh.lazySingleton<_i624.OnboardingStore>(
       () => _i624.OnboardingStore(gh<_i460.SharedPreferences>()),
@@ -140,6 +144,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i66.ReportResourceApi>(
       () => apiClients.reports(gh<_i66.ApiClient>()),
+    );
+    gh.lazySingleton<_i66.ScoreResourceApi>(
+      () => apiClients.scores(gh<_i66.ApiClient>()),
     );
     gh.lazySingleton<_i503.DeviceSession>(
       () => _i503.DeviceSession(

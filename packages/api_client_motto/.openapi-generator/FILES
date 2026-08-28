@@ -26,6 +26,8 @@ doc/FeedbackKind.md
 doc/FeedbackRequest.md
 doc/FeedbackResourceApi.md
 doc/Fragment.md
+doc/Leaderboard.md
+doc/LeaderboardEntry.md
 doc/MarkDayRequest.md
 doc/MarkedDay.md
 doc/MottoContent.md
@@ -40,6 +42,8 @@ doc/ResultHistory.md
 doc/ResultResourceApi.md
 doc/ResultResponse.md
 doc/ResultSummary.md
+doc/ScoreResourceApi.md
+doc/ScoreSubmission.md
 doc/TaskResourceApi.md
 doc/TestResourceApi.md
 git_push.sh
@@ -52,6 +56,7 @@ lib/api/feedback_resource_api.dart
 lib/api/motto_resource_api.dart
 lib/api/report_resource_api.dart
 lib/api/result_resource_api.dart
+lib/api/score_resource_api.dart
 lib/api/task_resource_api.dart
 lib/api/test_resource_api.dart
 lib/api_client.dart
@@ -80,6 +85,8 @@ lib/model/event_entry.dart
 lib/model/feedback_kind.dart
 lib/model/feedback_request.dart
 lib/model/fragment.dart
+lib/model/leaderboard.dart
+lib/model/leaderboard_entry.dart
 lib/model/mark_day_request.dart
 lib/model/marked_day.dart
 lib/model/motto_content.dart
@@ -91,6 +98,7 @@ lib/model/report_section.dart
 lib/model/result_history.dart
 lib/model/result_response.dart
 lib/model/result_summary.dart
+lib/model/score_submission.dart
 pubspec.yaml
 test/answer_submission_test.dart
 test/archetype_content_test.dart
@@ -115,6 +123,8 @@ test/feedback_kind_test.dart
 test/feedback_request_test.dart
 test/feedback_resource_api_test.dart
 test/fragment_test.dart
+test/leaderboard_entry_test.dart
+test/leaderboard_test.dart
 test/mark_day_request_test.dart
 test/marked_day_test.dart
 test/motto_content_test.dart
@@ -129,5 +139,7 @@ test/result_history_test.dart
 test/result_resource_api_test.dart
 test/result_response_test.dart
 test/result_summary_test.dart
+test/score_resource_api_test.dart
+test/score_submission_test.dart
 test/task_resource_api_test.dart
 test/test_resource_api_test.dart
