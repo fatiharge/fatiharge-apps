@@ -204,4 +204,25 @@ void main() {
     );
     expect(cubit.state.pool.first.motto, cubit.state.content!.mottoLine);
   });
+
+  // The gallery is premium and it is a list of everyone there is, so it needs
+  // the whole table — not the archetypes this device happens to have had.
+  test('every archetype reaches the app, not only the ones given', () async {
+    final cubit = await build(archetype: 'quiet_builder', marked: 1);
+    await cubit.load();
+
+    expect(cubit.state.archetypes.length, greaterThan(1));
+    expect(
+      cubit.state.archetypes.map((a) => a.id),
+      contains('quiet_builder'),
+    );
+  });
+
+  test('and they arrive even before there is a result', () async {
+    final cubit = await build();
+    await cubit.load();
+
+    expect(cubit.state.status, DailyStatus.noResultYet);
+    expect(cubit.state.archetypes, isNotEmpty);
+  });
 }

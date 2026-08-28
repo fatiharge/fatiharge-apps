@@ -2,9 +2,11 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motto/config/injectable.dart';
+import 'package:motto/features/daily/application/daily_cubit.dart';
+import 'package:motto/features/daily/application/daily_state.dart';
 import 'package:motto/features/profile/application/profile_cubit.dart';
 
-/// All eight, for whoever paid.
+/// Every archetype there is, for whoever paid.
 ///
 /// Premium because it is the one thing here that is not about the reader: it
 /// is the map, and the map is worth something to somebody who already has
@@ -15,8 +17,11 @@ class GalleryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => getIt<ProfileCubit>()..unawaitedLoad(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => getIt<ProfileCubit>()..unawaitedLoad()),
+        BlocProvider(create: (_) => getIt<DailyCubit>()..unawaitedLoad()),
+      ],
       child: const _GalleryView(),
     );
   }
@@ -41,7 +46,12 @@ class _GalleryView extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Sekiz arketip', style: text.headlineSmall),
+                    BlocBuilder<DailyCubit, DailyState>(
+                      builder: (context, daily) => Text(
+                        '${daily.archetypes.length} arketip',
+                        style: text.headlineSmall,
+                      ),
+                    ),
                     const SizedBox(height: 12),
                     Text(
                       'Hepsini okumak premium. Kendi arketibin her zaman açık.',
@@ -65,24 +75,46 @@ class _GalleryView extends StatelessWidget {
               );
             }
 
-            // TODO(fcetin): read all eight from the content package — the
-            // history only carries the ones this device has been given.
-            return ListView(
-              padding: const EdgeInsets.fromLTRB(24, 16, 24, 40),
-              children: [
-                for (final result in state.results)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 24),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(result.archetype.name, style: text.titleMedium),
-                        const SizedBox(height: 6),
-                        Text(result.archetype.summary, style: text.bodyMedium),
-                      ],
+            // From the package, not from the history: the history holds the
+            // ones this device was given, and a gallery of what you already
+            // have is not a gallery.
+            final had = {
+              for (final result in state.results) result.archetype.id,
+            };
+
+            return BlocBuilder<DailyCubit, DailyState>(
+              builder: (context, daily) => ListView(
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 40),
+                children: [
+                  for (final archetype in daily.archetypes)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  archetype.name,
+                                  style: text.titleMedium,
+                                ),
+                              ),
+                              if (had.contains(archetype.id))
+                                Icon(
+                                  Icons.check_circle,
+                                  size: 16,
+                                  color: scheme.primary,
+                                ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          Text(archetype.summary, style: text.bodyMedium),
+                        ],
+                      ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             );
           },
         ),

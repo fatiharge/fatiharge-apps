@@ -85,7 +85,15 @@ class DailyCubit extends Cubit<DailyState> {
     );
 
     if (content == null) {
-      emit(const DailyState(status: DailyStatus.noResultYet));
+      // The archetypes come along even here: the gallery is a list of everyone
+      // there is, and somebody without a result of their own can still be
+      // looking at it.
+      emit(
+        DailyState(
+          status: DailyStatus.noResultYet,
+          archetypes: pack.archetypes,
+        ),
+      );
       return;
     }
 
@@ -104,6 +112,7 @@ class DailyCubit extends Cubit<DailyState> {
         keptYesterday: _keptYesterday(chain),
         tomorrow: tomorrow?.title,
         pool: pack.mottosFor(_archetype.id),
+        archetypes: pack.archetypes,
       ),
     );
     await _widget.publish(content, streak: chain.streakOn(now()));

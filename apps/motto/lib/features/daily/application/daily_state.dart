@@ -12,6 +12,7 @@ class DailyState {
     this.keptYesterday,
     this.tomorrow,
     this.pool = const [],
+    this.archetypes = const [],
   });
 
   final DailyStatus status;
@@ -28,4 +29,7 @@ class DailyState {
   /// The archetype's four mottos. Written from the start and unreachable until
   /// a period could end — three of every four were never seen by anybody.
   final List<PackMotto> pool;
+
+  /// Every archetype the package knows, for the gallery.
+  final List<PackArchetype> archetypes;
 }
