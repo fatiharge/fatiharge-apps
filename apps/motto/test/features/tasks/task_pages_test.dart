@@ -3,12 +3,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:motto/config/injectable.dart';
+import 'package:motto/features/chain/application/chain_cubit.dart';
+import 'package:motto/features/chain/application/chain_repository.dart';
+import 'package:motto/features/chain/application/chain_store.dart';
+import 'package:motto/features/chain/application/reminder_scheduler.dart';
+import 'package:motto/features/chain/domain/chain.dart';
 import 'package:motto/features/tasks/application/task_cubit.dart';
 import 'package:motto/features/tasks/presentation/daily_tasks_page.dart';
 import 'package:motto/features/tasks/presentation/period_report_page.dart';
 import 'package:motto/features/tasks/presentation/task_detail_page.dart';
+import 'package:motto/infrastructure/analytics/analytics.dart';
+import 'package:motto/infrastructure/analytics/event_queue.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class _MockTasks extends Mock implements api.TaskResourceApi {}
+
+class _MockChains extends Mock implements ChainRepository {}
+
+class _MockScheduler extends Mock implements ReminderScheduler {}
+
+class _MockEvents extends Mock implements api.EventResourceApi {}
 
 api.DailyTask task({bool done = false}) => api.DailyTask(
   id: 1,
@@ -129,7 +143,9 @@ void main() {
   group("the day's three things", () {
     late _MockTasks tasks;
 
-    setUp(() {
+    setUpAll(() => registerFallbackValue(api.EventBatch()));
+
+    setUp(() async {
       tasks = _MockTasks();
       when(() => tasks.dailyTasks(today: any(named: 'today'))).thenAnswer(
         (_) async => api.DailyTasks(
@@ -141,6 +157,25 @@ void main() {
         () => tasks.completeTask(any(), today: any(named: 'today')),
       ).thenAnswer((_) async => null);
       getIt.registerFactory<TaskCubit>(() => TaskCubit(tasks));
+
+      // The run sits above the three things now, so the screen needs one.
+      SharedPreferences.setMockInitialValues({});
+      final chains = _MockChains();
+      when(() => chains.cached).thenReturn(const Chain());
+      when(() => chains.load(any())).thenAnswer((_) async => const Chain());
+      final events = _MockEvents();
+      when(() => events.recordEvents(any())).thenAnswer(
+        (_) async => api.EventBatchResponse(accepted: 1, duplicates: 0),
+      );
+      final preferences = await SharedPreferences.getInstance();
+      getIt.registerFactory<ChainCubit>(
+        () => ChainCubit(
+          chains,
+          ChainStore(preferences),
+          _MockScheduler(),
+          Analytics(EventQueue(preferences), events),
+        ),
+      );
     });
 
     tearDown(getIt.reset);
@@ -152,8 +187,16 @@ void main() {
       // Three checkboxes squeezed between two blocks of text is a list nobody
       // reads.
       expect(find.text('Bir dakikanı seç'), findsNWidgets(2));
-      expect(find.textContaining('3. GÜN'), findsOneWidget);
       expect(find.byType(Checkbox), findsNWidgets(2));
+
+      // The run sits above them, because it is what they are for.
+      expect(find.text('ZİNCİR'), findsOneWidget);
+      expect(find.textContaining('/ 14'), findsOneWidget);
+      expect(find.text('Görevler'), findsOneWidget);
+      expect(find.textContaining('BUGÜNÜN ÜÇ ŞEYİ'), findsOneWidget);
+
+      // And the button that closes the day sits under them, not over them.
+      expect(find.text('Zincirini başlat'), findsOneWidget);
     });
 
     testWidgets('a day that cannot be fetched says so', (tester) async {
