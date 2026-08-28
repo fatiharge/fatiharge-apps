@@ -147,4 +147,19 @@ void main() {
     expect(arrived.dy, lessThan(started.dy));
     expect(arrived.dx, lessThan(24));
   });
+
+  testWidgets('it survives being built before the container exists', (
+    tester,
+  ) async {
+    // The host wraps every route, including the one whose job is to build the
+    // container. Reading get_it on that frame threw and took the app down.
+    await getIt.reset();
+
+    await tester.pumpWidget(hosted());
+    await tester.pump();
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('a screen'), findsOneWidget);
+    expect(find.byType(Mascot), findsNothing);
+  });
 }
