@@ -178,11 +178,20 @@ class _MascotHostState extends State<MascotHost>
           final bounds = _bounds;
           final at = _resolved(bounds);
 
+          // The host wraps every route, including the one that builds the
+          // container — so on the first frame there is nothing to ask. No
+          // mascot on the splash is the right answer anyway, and the builder
+          // runs again when bootstrap replaces the route.
+          final store = getIt.isRegistered<MascotStore>()
+              ? getIt<MascotStore>()
+              : null;
+          if (store == null) return widget.child;
+
           // A `Positioned` has to be a direct child of the `Stack`, so the
           // switch is read around the whole thing rather than around the
           // mascot.
           return ValueListenableBuilder<bool>(
-            valueListenable: getIt<MascotStore>().visible,
+            valueListenable: store.visible,
             builder: (context, visible, _) => Stack(
               children: [
                 widget.child,
