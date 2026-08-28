@@ -177,12 +177,10 @@ class _TodayViewState extends State<_TodayView> {
     );
   }
 
-  /// The three things today asks for. Below the day rather than behind it:
-  /// the day says why, and these are what to do about it.
+  /// One line, not three cards. The day is what somebody opens this screen
+  /// for; the tasks are what they do next, and they have their own screen.
   Widget _tasks(BuildContext context, TaskState state, TextTheme text) {
     if (state.status == TaskStatus.failed) {
-      // Silence here is what hid a broken endpoint for a whole feature: an
-      // empty list and a failed request looked identical.
       return Text(
         'Bugünün görevleri alınamadı.',
         style: text.bodyMedium?.copyWith(
@@ -192,30 +190,21 @@ class _TodayViewState extends State<_TodayView> {
     }
     if (state.tasks.isEmpty) return const SizedBox.shrink();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Bugünün üç şeyi', style: text.titleMedium),
-        const SizedBox(height: 4),
-        for (final task in state.tasks)
-          CheckboxListTile(
-            value: task.done,
-            contentPadding: EdgeInsets.zero,
-            controlAffinity: ListTileControlAffinity.leading,
-            onChanged: (_) => context.read<TaskCubit>().complete(task),
-            title: Text(task.title),
-            secondary: IconButton(
-              icon: const Icon(Icons.chevron_right),
-              onPressed: () => context.router.push(
-                TaskDetailRoute(
-                  task: task,
-                  day: state.day,
-                  onDone: () => context.read<TaskCubit>().complete(task),
-                ),
-              ),
-            ),
-          ),
-      ],
+    final scheme = Theme.of(context).colorScheme;
+    final done = state.done;
+    final all = state.tasks.length;
+
+    return Card(
+      margin: EdgeInsets.zero,
+      elevation: 0,
+      color: scheme.surfaceContainerHighest,
+      child: ListTile(
+        contentPadding: const EdgeInsets.fromLTRB(16, 8, 12, 8),
+        title: const Text('Bugünün üç şeyi'),
+        subtitle: Text(done == all ? 'Hepsi yapıldı' : '$done / $all'),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () => context.router.push(const DailyTasksRoute()),
+      ),
     );
   }
 

@@ -27,20 +27,12 @@ void main() {
 
   tearDown(getIt.reset);
 
-  final result = api.ResultResponse(
-    id: 1,
-    archetype: api.ArchetypeResponse(
-      id: 'quiet_builder',
-      name: 'Sessiz İnşacı',
-      summary: 'Gürültü çıkarmadan biriktirirsin.',
-      motto: 'Acele etmeyen ama durmayan.',
-      confident: true,
-    ),
-    entitlement: api.EntitlementResponse(
-      remainingUses: 1,
-      skipsLeft: 1,
-      premium: false,
-    ),
+  final archetype = api.ArchetypeResponse(
+    id: 'quiet_builder',
+    name: 'Sessiz İnşacı',
+    summary: 'Gürültü çıkarmadan biriktirirsin.',
+    motto: 'Acele etmeyen ama durmayan.',
+    confident: true,
   );
 
   Widget page({
@@ -48,7 +40,9 @@ void main() {
   }) => MaterialApp(
     theme: MottoTheme.dark,
     home: ResultPage(
-      result: result,
+      archetype: archetype,
+      resultId: 1,
+      justClaimed: true,
       offerCard: offerCard ?? (_, _) async {},
     ),
   );
@@ -75,7 +69,11 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: theme,
-          home: ResultPage(result: result, offerCard: (_, _) async {}),
+          home: ResultPage(
+            archetype: archetype,
+            resultId: 1,
+            offerCard: (_, _) async {},
+          ),
         ),
       );
       expect(tester.takeException(), isNull);
@@ -107,5 +105,24 @@ void main() {
     await tester.pumpAndSettle(const Duration(seconds: 2));
 
     verify(() => analytics.record(MottoEvent.resultView)).called(1);
+  });
+
+  testWidgets('an old result is read, not celebrated', (tester) async {
+    var offered = false;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ResultPage(
+          archetype: archetype,
+          resultId: 1,
+          offerCard: (_, _) async => offered = true,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle(const Duration(seconds: 2));
+
+    // Pushing the share card at somebody who came to look something up is an
+    // interruption.
+    expect(offered, isFalse);
+    expect(find.text('Sessiz İnşacı'), findsOneWidget);
   });
 }

@@ -14,9 +14,21 @@ import 'package:motto/route/app_router.gr.dart';
 /// What the test produced, and the way to post it.
 @RoutePage()
 class ResultPage extends StatefulWidget {
-  const ResultPage({required this.result, this.offerCard, super.key});
+  const ResultPage({
+    required this.archetype,
+    required this.resultId,
+    this.justClaimed = false,
+    this.offerCard,
+    super.key,
+  });
 
-  final api.ResultResponse result;
+  final api.ArchetypeResponse archetype;
+  final int resultId;
+
+  /// True only on the way out of the inventory. An old result opened from the
+  /// archive is being read, not celebrated: pushing the share card at somebody
+  /// who came to look something up is an interruption.
+  final bool justClaimed;
 
   /// How the card gets offered. Injectable so that the behaviour can be
   /// asserted without a router in the tree — the automatic open is the point of
@@ -35,7 +47,9 @@ class _ResultPageState extends State<ResultPage> {
     // The share screen opens itself. Growth is the only thing this version is
     // measuring, and a screen someone has to go looking for measures nothing —
     // but it opens *after* the result has been read, not instead of it.
-    WidgetsBinding.instance.addPostFrameCallback((_) => _offerCard());
+    if (widget.justClaimed) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _offerCard());
+    }
     unawaited(getIt<Analytics>().record(MottoEvent.resultView));
   }
 
@@ -46,7 +60,7 @@ class _ResultPageState extends State<ResultPage> {
     if (!mounted) return;
 
     final offer = widget.offerCard ?? _push;
-    await offer(context, widget.result.archetype);
+    await offer(context, widget.archetype);
   }
 
   Future<void> _push(BuildContext context, api.ArchetypeResponse archetype) =>
@@ -56,7 +70,7 @@ class _ResultPageState extends State<ResultPage> {
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
-    final archetype = widget.result.archetype;
+    final archetype = widget.archetype;
 
     return MascotFreeZone(
       child: Scaffold(
@@ -131,7 +145,7 @@ class _ResultPageState extends State<ResultPage> {
               const SizedBox(height: 12),
               OutlinedButton(
                 onPressed: () => context.router.push(
-                  DeepReportRoute(resultId: widget.result.id),
+                  DeepReportRoute(resultId: widget.resultId),
                 ),
                 // "Analiz" is on the 1.4.1 word table; the screen is the same
                 // one either way and the word is what gets a listing rejected.

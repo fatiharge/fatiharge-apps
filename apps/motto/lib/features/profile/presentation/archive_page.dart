@@ -56,7 +56,10 @@ class _ArchiveView extends StatelessWidget {
                   subtitle: Text('${at.day}.${at.month}.${at.year}'),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => context.router.push(
-                    DeepReportRoute(resultId: result.id),
+                    ResultRoute(
+                      archetype: result.archetype,
+                      resultId: result.id,
+                    ),
                   ),
                 );
               },
