@@ -234,6 +234,30 @@ class _TodayViewState extends State<_TodayView> {
       );
     }
 
+    if (state.status == DailyStatus.failed ||
+        state.status == DailyStatus.noContent) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 32),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              state.status == DailyStatus.noContent
+                  ? 'Günlük içerik bu cihaza hiç inmedi. Bağlantını kontrol '
+                        'edip tekrar dene.'
+                  : 'Bugünün metni açılamadı. Tekrar dene.',
+              style: text.bodyLarge,
+            ),
+            const SizedBox(height: 16),
+            OutlinedButton(
+              onPressed: () => context.read<DailyCubit>().unawaitedLoad(),
+              child: const Text('Tekrar dene'),
+            ),
+          ],
+        ),
+      );
+    }
+
     final content = state.content;
     if (content == null) {
       return const Center(
