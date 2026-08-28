@@ -11,7 +11,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:motto/app.dart';
 import 'package:motto/config/app_crash_listener.dart';
 import 'package:motto/config/app_ready.dart';
-import 'package:motto/config/effects.dart';
 import 'package:motto/config/env.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/config/reported.dart';
