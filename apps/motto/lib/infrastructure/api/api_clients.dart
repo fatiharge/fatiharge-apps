@@ -2,6 +2,9 @@ import 'package:api_client_auth/api.dart' as auth;
 import 'package:api_client_motto/api.dart' as motto;
 import 'package:injectable/injectable.dart';
 import 'package:motto/config/env.dart';
+import 'package:motto/config/injectable.dart';
+import 'package:motto/infrastructure/api/renewing_client.dart';
+import 'package:motto/infrastructure/session/device_session.dart';
 import 'package:motto/infrastructure/session/token_store.dart';
 
 /// The generated clients, pointed at this build's servers and taught to carry
@@ -20,10 +23,13 @@ abstract class ApiClients {
   );
 
   @lazySingleton
-  motto.ApiClient mottoClient(TokenStore tokens) => motto.ApiClient(
+  motto.ApiClient mottoClient(TokenStore tokens) => RenewingApiClient(
     basePath: Env.mottoBaseUrl,
     authentication: motto.HttpBearerAuth()
       ..accessToken = (() => tokens.current ?? ''),
+    // Resolved when it is needed rather than now: the session is built from
+    // the auth client, and asking for it here would be a circle.
+    renew: () => getIt<DeviceSession>().register(),
   );
 
   @lazySingleton

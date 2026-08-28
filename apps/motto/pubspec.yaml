@@ -21,6 +21,10 @@ dependencies:
   api_client_motto:
     path: ../../packages/api_client_motto
 
+  # Named directly because the app subclasses the generated client, and that
+  # client's method signatures speak in http's Response.
+  http: ^1.2.0
+
   auto_route: ^11.1.0
   bloc: ^9.0.0
   flutter_bloc: ^9.1.1

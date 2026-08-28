@@ -1,9 +1,9 @@
 import 'dart:async';
-
 import 'package:api_client_motto/api.dart' as api;
 import 'package:bloc/bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meta/meta.dart';
+import 'package:motto/config/reported.dart';
 import 'package:motto/features/chain/domain/chain.dart';
 
 enum TaskStatus { loading, ready, failed }
@@ -54,7 +54,8 @@ class TaskCubit extends Cubit<TaskState> {
           tasks: today?.tasks ?? const [],
         ),
       );
-    } on Object {
+    } on Object catch (failure, trace) {
+      reported('tasks', failure, trace);
       emit(state.copyWith(status: TaskStatus.failed));
     }
   }
@@ -85,7 +86,8 @@ class TaskCubit extends Cubit<TaskState> {
 
     try {
       await _tasks.completeTask(task.id, today: isoDay(now()));
-    } on Object {
+    } on Object catch (failure, trace) {
+      reported('tasks', failure, trace);
       await load();
     }
   }

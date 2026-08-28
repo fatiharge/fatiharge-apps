@@ -199,7 +199,9 @@ void main() {
       expect(find.text('Zincirini başlat'), findsOneWidget);
     });
 
-    testWidgets('a day that cannot be fetched says so', (tester) async {
+    testWidgets('a day that cannot be fetched says so, and is reported', (
+      tester,
+    ) async {
       when(
         () => tasks.dailyTasks(today: any(named: 'today')),
       ).thenThrow(Exception('offline'));
@@ -210,6 +212,11 @@ void main() {
       // An empty list and a failed request looked identical, which is how a
       // broken endpoint hid for a whole feature.
       expect(find.textContaining('alınamadı'), findsOneWidget);
+
+      // And it does not disappear quietly: a screen that says "alınamadı" over
+      // a silent log is a day of guessing for whoever has to fix it.
+      final reported = tester.takeException();
+      expect(reported, isA<Exception>());
     });
   });
 }

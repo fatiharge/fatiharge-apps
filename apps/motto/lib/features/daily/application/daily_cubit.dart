@@ -1,8 +1,8 @@
 import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meta/meta.dart';
+import 'package:motto/config/reported.dart';
 import 'package:motto/features/chain/application/chain_repository.dart';
 import 'package:motto/features/chain/domain/chain.dart';
 import 'package:motto/features/content/application/content_repository.dart';
@@ -46,7 +46,8 @@ class DailyCubit extends Cubit<DailyState> {
     // slow network rather than as something broken.
     try {
       await _load();
-    } on Object {
+    } on Object catch (failure, trace) {
+      reported('daily', failure, trace);
       emit(const DailyState(status: DailyStatus.failed));
     }
   }

@@ -1,8 +1,8 @@
 import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meta/meta.dart';
+import 'package:motto/config/reported.dart';
 import 'package:motto/features/chain/application/chain_repository.dart';
 import 'package:motto/features/chain/application/chain_state.dart';
 import 'package:motto/features/chain/application/chain_store.dart';
@@ -100,7 +100,8 @@ class ChainCubit extends Cubit<ChainState> {
           chain: await _chains.nextPeriod(now(), mottoId: mottoId),
         ),
       );
-    } on Object {
+    } on Object catch (failure, trace) {
+      reported('chain', failure, trace);
       return;
     }
     await _analytics.record(MottoEvent.chainStart);
@@ -112,7 +113,8 @@ class ChainCubit extends Cubit<ChainState> {
 
     try {
       emit(state.copyWith(chain: await _chains.freeze(now())));
-    } on Object {
+    } on Object catch (failure, trace) {
+      reported('chain', failure, trace);
       return;
     }
     await _reschedule();
