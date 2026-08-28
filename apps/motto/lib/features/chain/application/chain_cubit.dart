@@ -1,8 +1,8 @@
 import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meta/meta.dart';
+import 'package:motto/config/reported.dart';
 import 'package:motto/features/chain/application/chain_repository.dart';
 import 'package:motto/features/chain/application/chain_state.dart';
 import 'package:motto/features/chain/application/chain_store.dart';
@@ -89,12 +89,32 @@ class ChainCubit extends Cubit<ChainState> {
     await _reschedule();
   }
 
+  /// Starts the next fourteen days under [mottoId].
+  ///
+  /// The server refuses if the period is not actually done, so the button can
+  /// be wrong without the chain being wrong.
+  Future<void> beginNextPeriod({String? mottoId}) async {
+    try {
+      emit(
+        state.copyWith(
+          chain: await _chains.nextPeriod(now(), mottoId: mottoId),
+        ),
+      );
+    } on Object catch (failure, trace) {
+      reported('chain', failure, trace);
+      return;
+    }
+    await _analytics.record(MottoEvent.chainStart);
+    await _reschedule();
+  }
+
   Future<void> useFreeze() async {
     if (!state.canFreeze(now())) return;
 
     try {
       emit(state.copyWith(chain: await _chains.freeze(now())));
-    } on Object {
+    } on Object catch (failure, trace) {
+      reported('chain', failure, trace);
       return;
     }
     await _reschedule();

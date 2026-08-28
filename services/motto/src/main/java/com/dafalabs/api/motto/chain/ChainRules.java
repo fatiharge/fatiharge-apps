@@ -18,6 +18,15 @@ public abstract sealed class ChainRules permits ChainRules.None {
    * open. A streak does not break at midnight; it breaks when a whole day goes
    * by unmarked.
    */
+  /// A period is fourteen marked days. The same fourteen as the content
+  /// cycle, the cooldown and everything else here: this is the length of the
+  /// thing being sold.
+  public static final int periodDays = 14;
+
+  public static boolean periodDone(int markedInPeriod) {
+    return markedInPeriod >= periodDays;
+  }
+
   public static int streakOn(Set<LocalDate> marked, LocalDate today) {
     if (marked.isEmpty()) {
       return 0;

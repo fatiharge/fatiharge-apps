@@ -153,4 +153,56 @@ class ChainTest {
 
     assertFalse(chains.state(device, TODAY).started());
   }
+
+  /// Marks fourteen consecutive days, moving the clock with them, and returns
+  /// the day after the last.
+  private LocalDate walkAPeriod() {
+    LocalDate day = TODAY;
+    for (int i = 0; i < ChainRules.periodDays; i++) {
+      at(day);
+      chains.mark(device, day, day);
+      day = day.plusDays(1);
+    }
+    return day;
+  }
+
+  @Test
+  @DisplayName("fourteen marked days finish the period")
+  void fourteenDaysIsAPeriod() {
+    LocalDate after = walkAPeriod();
+    at(after.minusDays(1));
+
+    var state = chains.state(device, after.minusDays(1));
+
+    assertEquals(ChainRules.periodDays, state.markedDays().size());
+    assertTrue(state.periodDone());
+    assertEquals(1, state.period());
+  }
+
+  @Test
+  @DisplayName("the next period cannot be started before the fourteen are done")
+  void anUnfinishedPeriodCannotBeSkipped() {
+    chains.start(device, TODAY);
+
+    // Letting somebody restart early would make the period mean nothing, and
+    // the period is the product.
+    assertThrows(
+        CustomRuntimeException.class, () -> chains.nextPeriod(device, "qb2", TODAY));
+  }
+
+  @Test
+  @DisplayName("the next period starts empty, under the chosen motto")
+  void theNextPeriodStartsClean() {
+    LocalDate after = walkAPeriod();
+    at(after);
+
+    var state = chains.nextPeriod(device, "qb2", after);
+
+    assertEquals(2, state.period());
+    assertEquals("qb2", state.mottoId());
+    assertFalse(state.periodDone());
+    // The finished days stay in the table; they are just no longer this run's.
+    assertTrue(state.markedDays().isEmpty());
+    assertEquals(after, state.startedOn());
+  }
 }

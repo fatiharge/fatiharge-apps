@@ -24,6 +24,9 @@ abstract final class DailyAssembler {
     final fragments = pack.fragmentsFor(archetypeId);
     if (fragments.isEmpty || pack.connectors.isEmpty) return null;
 
+    final motto = _mottoFor(pack, archetypeId);
+    if (motto == null) return null;
+
     final day = dayIndex(daysMarked);
     final skeleton = pack.skeletons.firstWhere(
       (candidate) => candidate.day == day,
@@ -41,14 +44,19 @@ abstract final class DailyAssembler {
       connector: connector,
       fragment: fragment.text,
       action: skeleton.action,
-      motto: _mottoFor(pack, archetypeId),
+      motto: motto,
     );
   }
 
-  static String _mottoFor(ContentPack pack, String archetypeId) {
+  /// The archetype's first motto.
+  ///
+  /// First, not chosen: the pool of four exists so that a second period can
+  /// start on a different one, and nothing chooses yet. Until it does, three
+  /// of every four written mottos are unreachable.
+  static PackMotto? _mottoFor(ContentPack pack, String archetypeId) {
     for (final motto in pack.mottos) {
-      if (motto.archetypeId == archetypeId) return motto.motto;
+      if (motto.archetypeId == archetypeId) return motto;
     }
-    return '';
+    return null;
   }
 }

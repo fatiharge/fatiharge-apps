@@ -36,7 +36,7 @@ class ArchetypeRulesTest {
   }
 
   @Test
-  @DisplayName("the words and the rules cover the same eight")
+  @DisplayName("the words and the rules cover the same set")
   void tableAndTextAgree() {
     assertEquals(rules.size(), catalog.size());
   }

@@ -7,6 +7,7 @@ import 'package:meta/meta.dart';
 class ContentPack {
   const ContentPack({
     required this.version,
+    required this.archetypes,
     required this.skeletons,
     required this.fragments,
     required this.connectors,
@@ -15,6 +16,10 @@ class ContentPack {
 
   factory ContentPack.fromJson(Map<String, dynamic> json) => ContentPack(
     version: json['version'] as String,
+    archetypes: [
+      for (final item in json['archetypes'] as List<dynamic>)
+        PackArchetype.fromJson(item as Map<String, dynamic>),
+    ],
     skeletons: [
       for (final item in json['skeletons'] as List<dynamic>)
         DaySkeleton.fromJson(item as Map<String, dynamic>),
@@ -34,10 +39,21 @@ class ContentPack {
   );
 
   final String version;
+
+  /// Every archetype there is, not only the ones this device has been given.
+  /// The gallery is a gallery because it shows the ones somebody has not had.
+  final List<PackArchetype> archetypes;
   final List<DaySkeleton> skeletons;
   final List<DayFragment> fragments;
   final List<String> connectors;
   final List<PackMotto> mottos;
+
+  /// Every motto written for an archetype, in the order they were written —
+  /// the first is the one on the result card.
+  List<PackMotto> mottosFor(String? archetypeId) => [
+    for (final motto in mottos)
+      if (motto.archetypeId == archetypeId) motto,
+  ];
 
   List<DayFragment> fragmentsFor(String archetypeId) => [
     for (final fragment in fragments)
@@ -88,6 +104,27 @@ class DayFragment {
 }
 
 @immutable
+class PackArchetype {
+  const PackArchetype({
+    required this.id,
+    required this.name,
+    required this.summary,
+    required this.motto,
+  });
+
+  factory PackArchetype.fromJson(Map<String, dynamic> json) => PackArchetype(
+    id: json['id'] as String,
+    name: json['name'] as String,
+    summary: json['summary'] as String,
+    motto: json['motto'] as String,
+  );
+
+  final String id;
+  final String name;
+  final String summary;
+  final String motto;
+}
+
 class PackMotto {
   const PackMotto({
     required this.id,

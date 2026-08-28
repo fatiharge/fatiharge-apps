@@ -1,9 +1,13 @@
+import 'package:api_client_motto/api.dart' as api;
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motto/config/injectable.dart';
+import 'package:motto/features/chain/application/chain_cubit.dart';
+import 'package:motto/features/chain/application/chain_state.dart';
 import 'package:motto/features/daily/application/daily_cubit.dart';
 import 'package:motto/features/daily/application/daily_state.dart';
+import 'package:motto/features/profile/application/profile_cubit.dart';
 import 'package:motto/route/app_router.gr.dart';
 
 /// What somebody has, and what today says about it.
@@ -21,6 +25,8 @@ class TodayPage extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => getIt<DailyCubit>()..unawaitedLoad()),
+        BlocProvider(create: (_) => getIt<ProfileCubit>()..unawaitedLoad()),
+        BlocProvider(create: (_) => getIt<ChainCubit>()..unawaitedLoad()),
       ],
       child: const _TodayView(),
     );
@@ -48,11 +54,34 @@ class _TodayViewState extends State<_TodayView> {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 110),
           children: [
+            // Above everything when the run is over: fourteen days finished is
+            // the most important thing this screen can say, and it used to say
+            // nothing at all.
+            BlocBuilder<ChainCubit, ChainState>(
+              builder: (context, chain) => chain.chain.periodDone
+                  ? const Padding(
+                      padding: EdgeInsets.only(bottom: 24),
+                      child: _PeriodDoneBanner(),
+                    )
+                  : const SizedBox.shrink(),
+            ),
             // The motto and the day, and nothing else. The chain moved to
             // Görevler, next to the three things that advance it: this screen
             // is what somebody reads, that one is what they do.
             BlocBuilder<DailyCubit, DailyState>(
               builder: (context, daily) => _day(context, daily, text, scheme),
+            ),
+            // The way to the result, and through it to the deep report. It was
+            // reachable only from the profile, which is the tab people open
+            // last — a paid thing nobody can find is not a paid thing.
+            BlocBuilder<ProfileCubit, ProfileState>(
+              builder: (context, profile) => switch (profile.current) {
+                final api.ResultSummary result => Padding(
+                  padding: const EdgeInsets.only(top: 28),
+                  child: _ArchetypeRow(result: result),
+                ),
+                _ => const SizedBox.shrink(),
+              },
             ),
           ],
         ),
@@ -148,7 +177,7 @@ class _TodayViewState extends State<_TodayView> {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  content.motto,
+                  content.mottoLine,
                   style: text.headlineSmall?.copyWith(
                     color: scheme.onPrimaryContainer,
                     height: 1.2,
@@ -159,6 +188,28 @@ class _TodayViewState extends State<_TodayView> {
           ),
         ),
         const SizedBox(height: 28),
+        // What happened before today. One line, and only once the chain has
+        // started — a screen that opens the same way on day one and day nine
+        // is a screen nobody is inside of.
+        if (state.keptYesterday case final bool kept) ...[
+          Row(
+            children: [
+              Icon(
+                kept ? Icons.check_circle_outline : Icons.remove_circle_outline,
+                size: 16,
+                color: kept ? scheme.primary : scheme.onSurfaceVariant,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                kept ? 'Dün işaretledin.' : 'Dün kaçtı.',
+                style: text.bodyMedium?.copyWith(
+                  color: kept ? scheme.primary : scheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+        ],
         Text(
           '${content.day}. GÜN',
           style: text.labelSmall?.copyWith(
@@ -179,10 +230,137 @@ class _TodayViewState extends State<_TodayView> {
           ),
           child: Text(content.action, style: text.bodyMedium),
         ),
+        // And what is waiting. Named rather than teased: "yarın bir sürprizin
+        // var" is the sentence people learn to ignore.
+        if (state.tomorrow case final String next) ...[
+          const SizedBox(height: 28),
+          Divider(color: scheme.outlineVariant, height: 1),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Text(
+                'YARIN',
+                style: text.labelSmall?.copyWith(
+                  color: scheme.onSurfaceVariant,
+                  letterSpacing: 1.5,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  next,
+                  style: text.titleSmall?.copyWith(
+                    color: scheme.onSurfaceVariant,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ],
     );
   }
+}
 
-  /// The hour is asked for rather than assumed: a reminder at the wrong time
-  /// of day is the one that teaches people to swipe them away.
+/// Who somebody is, one row, opening the result.
+class _ArchetypeRow extends StatelessWidget {
+  const _ArchetypeRow({required this.result});
+
+  final api.ResultSummary result;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    final scheme = Theme.of(context).colorScheme;
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(14),
+      onTap: () => context.router.push(
+        ResultRoute(archetype: result.archetype, resultId: result.id),
+      ),
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(18, 16, 12, 16),
+        decoration: BoxDecoration(
+          border: Border.all(color: scheme.outlineVariant),
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'ARKETİPİN',
+                    style: text.labelSmall?.copyWith(
+                      color: scheme.onSurfaceVariant,
+                      letterSpacing: 1.5,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(result.archetype.name, style: text.titleMedium),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Raporun ve derin raporun burada.',
+                    style: text.bodySmall?.copyWith(
+                      color: scheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right, color: scheme.onSurfaceVariant),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PeriodDoneBanner extends StatelessWidget {
+  const _PeriodDoneBanner();
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    final scheme = Theme.of(context).colorScheme;
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(16),
+      onTap: () => context.router.push(const PeriodDoneRoute()),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.fromLTRB(20, 18, 14, 18),
+        decoration: BoxDecoration(
+          color: scheme.primaryContainer,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'On dört gün bitti.',
+                    style: text.titleMedium?.copyWith(
+                      color: scheme.onPrimaryContainer,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Raporunu oku, sonra devam et.',
+                    style: text.bodySmall?.copyWith(
+                      color: scheme.onPrimaryContainer,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right, color: scheme.onPrimaryContainer),
+          ],
+        ),
+      ),
+    );
+  }
 }

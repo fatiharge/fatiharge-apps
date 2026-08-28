@@ -71,6 +71,42 @@
       "motto": "Az kişiye açık, onlara tamamen.",
       "name": "Olduğu Gibi",
       "summary": "Ne yakınlık için uğraşıyorsun ne de araları düzeltmek için; seni tanıyan, tam olarak seni tanıyor. Bedeli şu: bir süre sonra kimse sormuyor, ve bunu ancak bir şeye ihtiyacın olduğunda fark ediyorsun."
+    },
+    {
+      "id": "table_upsetter",
+      "motto": "Söylemesi kolaydı, kalması değil.",
+      "name": "Masayı Deviren",
+      "summary": "Odada kimsenin söylemediği şeyi sen söylüyorsun ve genelde söylenmesi gerekiyordu. Bedeli şu: söyledikten sonra orada kalman gerekiyor, ve kalmak söylemekten çok daha zor."
+    },
+    {
+      "id": "light_footed",
+      "motto": "Taşımadan da gidilir, ama bunu değil.",
+      "name": "Hafif Ayaklı",
+      "summary": "Kalabalık da aksilik de seni yormuyor; ikisinin içinden aynı rahatlıkla geçiyorsun. Bedeli şu: hiçbir şeyi büyütmediğin için gerçekten büyük olanı da geç fark ediyorsun."
+    },
+    {
+      "id": "full_glass",
+      "motto": "Bir yudum boşalt, sonra taşı.",
+      "name": "Dolu Bardak",
+      "summary": "Her şeyi aynı anda ve tamamen hissediyorsun, o yüzden zor olan ne yapacağın değil neyi önce yapacağın. Bedeli şu: taşmamak için harcadığın enerjiyi işin kendisine ayıramıyorsun."
+    },
+    {
+      "id": "word_is_bond",
+      "motto": "Söz verdiğim kadarı, o kadarı da tam.",
+      "name": "Sözü Senet",
+      "summary": "Söylediğin şey oluyor ve insanlar bunu sen söylemeden önce biliyorlar. Bedeli şu: kimse senden \"yapamam\" duymadığı için sormaya da devam ediyor, ve sıra kendi işine en son geliyor."
+    },
+    {
+      "id": "in_its_place",
+      "motto": "Yerinde duranı da bir yokla.",
+      "name": "Yerli Yerinde",
+      "summary": "Denenmiş olanı denenmiş olduğu için seçiyorsun ve bu seni sarsılmaz yapıyor; etrafındakiler de bunu bilerek plan yapıyor. Bedeli şu: değişmesi gereken şey de aynı yerde duruyor, çünkü onu da yerinde sanıyorsun."
+    },
+    {
+      "id": "inwardly",
+      "motto": "Ben de söyleyebilirim.",
+      "name": "İçten İçe",
+      "summary": "Kimseye söylemeden çok şey taşıyorsun; birinin canı sıkkınsa sen zaten fark etmişsindir. Bedeli şu: fark ettiğini söylemediğin için yardım hep tek yönlü akıyor, ve bir gün sana lazım olduğunda kimsenin aklına gelmiyorsun."
     }
   ],
   "connectors": [
@@ -355,6 +391,126 @@
       "archetypeId": "as_is",
       "index": 4,
       "text": "Tıkandığında kimse fark etmiyor, çünkü kimseye söylemiyorsun. Bugün tıkanırsan, en azından kendine söyle."
+    },
+    {
+      "archetypeId": "table_upsetter",
+      "index": 1,
+      "text": "Senin için zor olan başlamak değil, başladığını duyurduktan sonra geri adım atmadan sürdürmek. Bugün kimseye duyurmadan yap."
+    },
+    {
+      "archetypeId": "table_upsetter",
+      "index": 2,
+      "text": "Bir şeyin yanlış olduğunu görmek sende hızlı, düzeltmek yavaş. Bugün itiraz ettiğin bir şeyin yerine ne koyacağını da yaz."
+    },
+    {
+      "archetypeId": "table_upsetter",
+      "index": 3,
+      "text": "Tepkin geçtikten sonra ortada kalan işi genelde başkası topluyor. Bugünkü küçük şeyi sonuna kadar sen taşı."
+    },
+    {
+      "archetypeId": "table_upsetter",
+      "index": 4,
+      "text": "Haklı olduğun bir konuda ısrar etmek sana bedava geliyor; ısrar etmediğinde ne olacağını denemek pahalı. Bugün bir kez deneme."
+    },
+    {
+      "archetypeId": "light_footed",
+      "index": 1,
+      "text": "Bugünkü şeyi atlarsan canını sıkmayacak, mesele de bu. Seni tutan şey rahatsızlık olmayacak; o yüzden çıpanı sağlam bir yere bağla."
+    },
+    {
+      "archetypeId": "light_footed",
+      "index": 2,
+      "text": "Zorlanmadığın için ilerlediğini de fark etmiyorsun. Bugün yaptığını bir yere işaretle, yoksa yapmamışsın gibi duracak."
+    },
+    {
+      "archetypeId": "light_footed",
+      "index": 3,
+      "text": "Bir aksilik seni durdurmuyor ama bir boşluk durduruyor. Bugün araya bir gün girerse, ertesi gün aynı saatte orada ol."
+    },
+    {
+      "archetypeId": "light_footed",
+      "index": 4,
+      "text": "Herkesle iyi geçindiğin için kimseye söz vermiyorsun. Bugünkü şeyi bir kişiye söyle; ağırlığı oradan gelsin."
+    },
+    {
+      "archetypeId": "full_glass",
+      "index": 1,
+      "text": "Bugünkü şey sana küçük geldiyse doğru seçmişsin. Sende plan büyüdükçe yapılma ihtimali düşüyor, tersi değil."
+    },
+    {
+      "archetypeId": "full_glass",
+      "index": 2,
+      "text": "Kötü bir gün senin için \"bugün olmaz\" demek zorunda değil. Yarısını yap ve yarısını yapmış say — zincir bunu kabul ediyor."
+    },
+    {
+      "archetypeId": "full_glass",
+      "index": 3,
+      "text": "Aklında aynı anda duran şeylerin sayısı, bugünkü işi zorlaştıran asıl sebep. Yapmadan önce bir tanesini bir yere yaz ve kafandan çıkar."
+    },
+    {
+      "archetypeId": "full_glass",
+      "index": 4,
+      "text": "Bir günü kaçırdığında bunu bir karakter meselesi yapıyorsun. Kaçan gün bir gün; ertesi sabah aynı yerden devam."
+    },
+    {
+      "archetypeId": "word_is_bond",
+      "index": 1,
+      "text": "Bugünkü şey sana ait ve sadece sana. Başkasının işine dönüşme ihtimali olan her şeyi bugünlük dışarıda bırak."
+    },
+    {
+      "archetypeId": "word_is_bond",
+      "index": 2,
+      "text": "Birine söz verseydin çoktan yapmıştın. Bugünkü şeye de aynı gözle bak: bu da bir söz, sadece muhatabı sensin."
+    },
+    {
+      "archetypeId": "word_is_bond",
+      "index": 3,
+      "text": "Sıra sana geldiğinde gün bitmiş oluyor. Bugün onu en sona değil, ilk boşluğa koy."
+    },
+    {
+      "archetypeId": "word_is_bond",
+      "index": 4,
+      "text": "Yükü sessizce almak sana doğal geliyor, o yüzden kimse azaltmıyor. Bugün bir kişiye ne taşıdığını söyle."
+    },
+    {
+      "archetypeId": "in_its_place",
+      "index": 1,
+      "text": "Bugünkü şeyi zaten yapıyorsan onu değiştirme, yerini değiştir. Sende sürdürmek kolay, tazelemek zor."
+    },
+    {
+      "archetypeId": "in_its_place",
+      "index": 2,
+      "text": "Yeni bir şeyi denemeden önce gerekçe istiyorsun ve bu genelde doğru. Bugünlük gerekçe şu: on dört gün sonra hâlâ aynı yerde olmak istemiyorsun."
+    },
+    {
+      "archetypeId": "in_its_place",
+      "index": 3,
+      "text": "Bir şeyin bozulduğunu geç fark ediyorsun, çünkü uzun süredir orada. Bugün, alışkanlıktan yaptığın bir şeyi bir kez sorgula."
+    },
+    {
+      "archetypeId": "in_its_place",
+      "index": 4,
+      "text": "Düzenin sağlam olduğu için bugünkü şeyi de düzenin içine gömeceksin. Bugünlük onu ayrı tut; ayrı durursa görünür."
+    },
+    {
+      "archetypeId": "inwardly",
+      "index": 1,
+      "text": "Bugünkü şeyi kimseye söylemeyeceksin, biliyorum. Bir kişiye söyle; söylediğin an senin için de gerçek oluyor."
+    },
+    {
+      "archetypeId": "inwardly",
+      "index": 2,
+      "text": "Başkasının gününü okumak sende otomatik, kendi gününü okumak değil. Bugün bir kez kendine sor: bugün nasıldım."
+    },
+    {
+      "archetypeId": "inwardly",
+      "index": 3,
+      "text": "Birinin ihtiyacı çıkarsa bugünkü şeyi hemen bırakırsın. Bugünlük bırakma; on dakika sonra da orada olacak."
+    },
+    {
+      "archetypeId": "inwardly",
+      "index": 4,
+      "text": "İçeride tuttuğun şey küçülmüyor, birikiyor. Bugünkü işi yaparken aklından geçeni bir yere yaz — okuyacak kimse olmasa bile."
     }
   ],
   "mottos": [
@@ -693,6 +849,174 @@
       "id": "ai4",
       "motto": "Kendim için yapıyorum, kimse görmese de.",
       "reminder": "Kendin için, bugün de."
+    },
+    {
+      "archetypeId": "table_upsetter",
+      "detail": "Doğru cümleyi kurmak sende bir cesaret işi değil, bir refleks. Asıl iş ondan sonra başlıyor ve bedeli şu: söyleyip çıkarsan haklı olman da kimsenin işine yaramıyor.",
+      "id": "tu1",
+      "motto": "Söylemesi kolaydı, kalması değil.",
+      "reminder": "Bugün söylediğinin yanında kal."
+    },
+    {
+      "archetypeId": "table_upsetter",
+      "detail": "Kırdığın şeyi sen de görüyorsun, sadece kırmaya değer olduğunu düşünüyorsun. İkisi birden doğru olabilir; toplamayı da işin parçası say.",
+      "id": "tu2",
+      "motto": "Masayı devirdiysem toplarım.",
+      "reminder": "Bugün bir tanesini topla."
+    },
+    {
+      "archetypeId": "table_upsetter",
+      "detail": "Söylediğin şeyin yanlış olduğu nadir; zamanlaması genelde. Aynı cümle beş dakika sonra kurulduğunda kimse savunmaya geçmiyor.",
+      "id": "tu3",
+      "motto": "Sesimi değil, sırayı ayarlıyorum.",
+      "reminder": "Aynı şeyi, beş dakika sonra."
+    },
+    {
+      "archetypeId": "table_upsetter",
+      "detail": "Karşı çıkmak seni odadan çıkarmak zorunda değil. Bunu söylemek zor geliyor çünkü kalmak, itiraz etmekten daha çok şey istiyor senden.",
+      "id": "tu4",
+      "motto": "Katılmıyorum, ama buradayım.",
+      "reminder": "Katılma, ama kalmaya devam et."
+    },
+    {
+      "archetypeId": "light_footed",
+      "detail": "Yükü bırakabilmek senin en rahat özelliğin. Bedeli şu: bırakılmaması gereken şeyi de aynı kolaylıkla bırakıyorsun ve bunu aylar sonra fark ediyorsun.",
+      "id": "lf1",
+      "motto": "Taşımadan da gidilir, ama bunu değil.",
+      "reminder": "Bugün bırakmayacağın şeyi seç."
+    },
+    {
+      "archetypeId": "light_footed",
+      "detail": "Telaşlanmaman etrafındakileri rahatlatıyor. Ama bazen insanların ihtiyacı rahatlamak değil, ciddiye alındığını görmek.",
+      "id": "lf2",
+      "motto": "Sakinliğim bir cevap değil.",
+      "reminder": "Bugün birine \"ciddi bu\" de."
+    },
+    {
+      "archetypeId": "light_footed",
+      "detail": "Zorlanmadan yaptığın şeyi kendi gözünde küçültüyorsun. Bir şeyin değeri, sana kaça mal olduğuyla ölçülmüyor.",
+      "id": "lf3",
+      "motto": "Kolay geldi diye küçük değil.",
+      "reminder": "Kolay yaptığın şeyi de say."
+    },
+    {
+      "archetypeId": "light_footed",
+      "detail": "Her yerden rahat geçtiğin için hiçbir yerde iz bırakmıyorsun. Aynı yere ikinci kez uğramak, senin için tekrar değil birikim.",
+      "id": "lf4",
+      "motto": "Bugün de aynı yerden geçeyim.",
+      "reminder": "Dün nereye uğradıysan, bugün de."
+    },
+    {
+      "archetypeId": "full_glass",
+      "detail": "Elindeki her şey aynı anda acil görünüyor ve bu bir dikkat sorunu değil, bir doluluk sorunu. Bedeli şu: boşaltmadığın sürece hiçbirine sıra gelmiyor.",
+      "id": "fu1",
+      "motto": "Bir yudum boşalt, sonra taşı.",
+      "reminder": "Bugün bir tanesini bırak."
+    },
+    {
+      "archetypeId": "full_glass",
+      "detail": "Bir şeyi yoğun hissetmek sende çoğu zaman erteleme olarak çıkıyor. Aradaki bağ zorunlu değil; hissederken de yapılabiliyor.",
+      "id": "fu2",
+      "motto": "Hissetmem, yapamayacağım demek değil.",
+      "reminder": "Şu an nasılsan öyle başla."
+    },
+    {
+      "archetypeId": "full_glass",
+      "detail": "Büyük planlar seni rahatlatıyor ve sonra aynı planlar üzerine yıkılıyor. Bitmiş küçük bir şey, planlanmış büyük bir şeyden daha çok taşıyor seni.",
+      "id": "fu3",
+      "motto": "Küçük olsun, bitmiş olsun.",
+      "reminder": "Beş dakikalık olanı seç."
+    },
+    {
+      "archetypeId": "full_glass",
+      "detail": "İleriyi düşünmek sende hazırlık değil, yorgunluk üretiyor. Bugünle sınırlı kalmak bir küçülme değil; taşımayı sürdürebilmenin yolu.",
+      "id": "fu4",
+      "motto": "Bugünü kurtarmak yeterli.",
+      "reminder": "Sadece bugün. Yarını yarın."
+    },
+    {
+      "archetypeId": "word_is_bond",
+      "detail": "Verdiğin sözün tutulacağını herkes biliyor. Bedeli şu: ne kadar söz verdiğine kimse bakmıyor, senin de bakman gerekiyor.",
+      "id": "wb1",
+      "motto": "Söz verdiğim kadarı, o kadarı da tam.",
+      "reminder": "Bugün ne kadarına söz verdin?"
+    },
+    {
+      "archetypeId": "word_is_bond",
+      "detail": "\"Yapamam\" cümlesini kurmadığın için insanlar sormaya devam ediyor. O cümle bir kırgınlık değil, senin güvenilirliğinin devamı.",
+      "id": "wb2",
+      "motto": "Hayır demek de bir söz.",
+      "reminder": "Bugün bir tanesine hayır de."
+    },
+    {
+      "archetypeId": "word_is_bond",
+      "detail": "Kendi işini herkesinki bittikten sonraya koyuyorsun ve o an genelde gelmiyor. Sıraya girmek bencillik değil, sıranın var olması demek.",
+      "id": "wb3",
+      "motto": "Sıraya ben de varım.",
+      "reminder": "Bugün sırayı kendinden başlat."
+    },
+    {
+      "archetypeId": "word_is_bond",
+      "detail": "Yükü sessizce almak sana doğal geliyor. Kimse ağırlığını bilmediği için de azalmıyor — söylemek şikâyet değil, bilgi.",
+      "id": "wb4",
+      "motto": "Taşıyorum, ama görünsün.",
+      "reminder": "Bugün taşıdığın şeyi bir kişiye söyle."
+    },
+    {
+      "archetypeId": "in_its_place",
+      "detail": "İşleyen şeyi bozmamak senin en sağlam tarafın. Bedeli şu: bozulmuş olanı da yerinde sanıyorsun, çünkü uzun süredir orada.",
+      "id": "ip1",
+      "motto": "Yerinde duranı da bir yokla.",
+      "reminder": "Bugün bir şeyi yokla."
+    },
+    {
+      "archetypeId": "in_its_place",
+      "detail": "Bildiğin yol seni yanıltmıyor. Yine de bir tercih olduğunu hatırlamak, onu alışkanlık olmaktan çıkarıp karar yapıyor.",
+      "id": "ip2",
+      "motto": "Denenmişi seçtim, denemediğimi bilerek.",
+      "reminder": "Bu, seçim mi alışkanlık mı?"
+    },
+    {
+      "archetypeId": "in_its_place",
+      "detail": "Değişiklik sana masraf gibi geliyor ve çoğu zaman haklısın. Ama küçük bir sapma, kaybedecek bir şeyin olmadığı yerde ucuz.",
+      "id": "ip3",
+      "motto": "Bir kere de başka türlü.",
+      "reminder": "Bugün bir şeyi başka türlü yap."
+    },
+    {
+      "archetypeId": "in_its_place",
+      "detail": "Etrafındakiler sana göre plan yapabiliyor ve bunu sen de biliyorsun. Yalnız şu var: hep aynı yerde durmak, kimsenin sana yeni bir şey sormamasına da yol açıyor.",
+      "id": "ip4",
+      "motto": "Sağlamlığım kimseye yük değil.",
+      "reminder": "Bugün sana ne sorulsun isterdin?"
+    },
+    {
+      "archetypeId": "inwardly",
+      "detail": "Başkasının halini okumak sende otomatik. Kendi halini söylemek değil — ve söylemediğin sürece kimse sormuyor.",
+      "id": "iw1",
+      "motto": "Ben de söyleyebilirim.",
+      "reminder": "Bugün bir cümle de kendin için."
+    },
+    {
+      "archetypeId": "inwardly",
+      "detail": "Fark etmek yardım etmenin yarısı; diğer yarısı söylemek. İkincisini atladığında yükü tek başına taşımış oluyorsun.",
+      "id": "iw2",
+      "motto": "Fark ettim, artık söylüyorum.",
+      "reminder": "Fark ettiğin şeyi bugün söyle."
+    },
+    {
+      "archetypeId": "inwardly",
+      "detail": "Verdiğin ilgiyi geri istemeyi zorlama sanıyorsun. İstenmediği sürece gelmeyen şeye zorlama denmiyor, yakınlık deniyor.",
+      "id": "iw3",
+      "motto": "Yakınlık iki taraflı.",
+      "reminder": "Bugün birinden bir şey iste."
+    },
+    {
+      "archetypeId": "inwardly",
+      "detail": "Söylenmeyen şey sende küçülmüyor, birikiyor. Söylemek onu çözmüyor ama büyümesini durduruyor.",
+      "id": "iw4",
+      "motto": "İçeride kalırsa büyüyor.",
+      "reminder": "Bugün birini içeriden çıkar."
     }
   ],
   "skeletons": [
@@ -781,5 +1105,5 @@
       "title": "Bundan sonrası"
     }
   ],
-  "version": "d7b7137cea71"
+  "version": "0f9e3fcac2c5"
 }

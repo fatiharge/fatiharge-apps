@@ -69,6 +69,7 @@ Class | Method | HTTP request | Description
 *ChainResourceApi* | [**markChainDay**](doc//ChainResourceApi.md#markchainday) | **POST** /v1/chain/days | Mark a day
 *ChainResourceApi* | [**spendChainFreeze**](doc//ChainResourceApi.md#spendchainfreeze) | **POST** /v1/chain/freeze | Spend the month's make-up
 *ChainResourceApi* | [**startChain**](doc//ChainResourceApi.md#startchain) | **POST** /v1/chain/start | Start the chain and mark today
+*ChainResourceApi* | [**startNextPeriod**](doc//ChainResourceApi.md#startnextperiod) | **POST** /v1/chain/next | Begin the next fourteen days under a chosen motto
 *ContentResourceApi* | [**contentBundle**](doc//ContentResourceApi.md#contentbundle) | **GET** /v1/content | The content package
 *EntitlementResourceApi* | [**currentEntitlement**](doc//EntitlementResourceApi.md#currententitlement) | **GET** /v1/entitlements | What this device may do now
 *EntitlementResourceApi* | [**deleteMyData**](doc//EntitlementResourceApi.md#deletemydata) | **DELETE** /v1/me | Delete this device's data
@@ -116,6 +117,7 @@ Class | Method | HTTP request | Description
  - [MarkDayRequest](doc//MarkDayRequest.md)
  - [MarkedDay](doc//MarkedDay.md)
  - [MottoContent](doc//MottoContent.md)
+ - [NextPeriodRequest](doc//NextPeriodRequest.md)
  - [PeriodReport](doc//PeriodReport.md)
  - [ProfileScores](doc//ProfileScores.md)
  - [Question](doc//Question.md)

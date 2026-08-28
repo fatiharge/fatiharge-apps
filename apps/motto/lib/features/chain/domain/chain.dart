@@ -19,7 +19,14 @@ String isoDay(DateTime moment) {
 /// What the chain is.
 @immutable
 class Chain {
-  const Chain({this.startedOn, this.markedDays = const {}, this.freezeUsedOn});
+  const Chain({
+    this.startedOn,
+    this.markedDays = const {},
+    this.freezeUsedOn,
+    this.period = 1,
+    this.mottoId,
+    this.periodDone = false,
+  });
 
   final DateTime? startedOn;
 
@@ -28,6 +35,15 @@ class Chain {
 
   /// One a month. The difference between missing a day and losing the app.
   final DateTime? freezeUsedOn;
+
+  /// Which run this is. [markedDays] is this run's days and no other's.
+  final int period;
+
+  /// Which of the archetype's mottos this run is under; null means the first.
+  final String? mottoId;
+
+  /// Fourteen days marked. The run is over.
+  final bool periodDone;
 
   bool get started => startedOn != null;
 

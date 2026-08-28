@@ -3,7 +3,6 @@ import 'package:api_client_motto/api.dart' as api;
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:motto/config/effects.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/features/test/application/test_cubit.dart';
 import 'package:motto/features/test/application/test_effect.dart';
@@ -12,6 +11,7 @@ import 'package:motto/features/test/presentation/widgets/glimpse_sheet.dart';
 import 'package:motto/features/test/presentation/widgets/likert_scale.dart';
 import 'package:motto/features/test/presentation/widgets/test_progress.dart';
 import 'package:motto/route/app_router.gr.dart';
+import 'package:utility_kit/utility_kit.dart';
 
 /// One template, asked as many times as there are questions.
 ///
@@ -84,7 +84,12 @@ class _Asking extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final question = state.current;
-    if (question == null) return const SizedBox.shrink();
+    // Never nothing. There is a moment between the last answer and the next
+    // route, and drawing an empty box in it is indistinguishable from a broken
+    // app — which is exactly how it was reported.
+    if (question == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
     final cubit = context.read<TestCubit>();
 

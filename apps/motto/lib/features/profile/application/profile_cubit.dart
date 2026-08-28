@@ -1,9 +1,9 @@
 import 'dart:async';
-
 import 'package:api_client_motto/api.dart' as api;
 import 'package:bloc/bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meta/meta.dart';
+import 'package:motto/config/reported.dart';
 
 enum ProfileStatus { loading, ready, failed }
 
@@ -46,7 +46,8 @@ class ProfileCubit extends Cubit<ProfileState> {
           entitlement: entitlement,
         ),
       );
-    } on Object {
+    } on Object catch (failure, trace) {
+      reported('profile', failure, trace);
       emit(const ProfileState(status: ProfileStatus.failed));
     }
   }

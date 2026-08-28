@@ -1,19 +1,18 @@
 import 'dart:async';
 import 'package:api_client_motto/api.dart' as api;
-import 'package:bloc/bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:motto/config/effects.dart';
 import 'package:motto/features/support/application/last_archetype.dart';
 import 'package:motto/features/test/application/test_draft.dart';
 import 'package:motto/features/test/application/test_effect.dart';
 import 'package:motto/features/test/application/test_state.dart';
 import 'package:motto/infrastructure/analytics/analytics.dart';
 import 'package:motto/infrastructure/analytics/motto_event.dart';
+import 'package:utility_kit/utility_kit.dart';
 
 /// Drives the test: fetches the questions, collects the answers, and spends a
 /// use at the end.
 @injectable
-class TestCubit extends Cubit<TestState> with Effects<TestEffect, TestState> {
+class TestCubit extends EffectCubit<TestState, TestEffect> {
   TestCubit(
     this._tests,
     this._mottos,
@@ -59,6 +58,14 @@ class TestCubit extends Cubit<TestState> with Effects<TestEffect, TestState> {
       if (resumed.isEmpty) {
         await _analytics.record(MottoEvent.testStart);
       }
+
+      // A draft can come back already complete — answered on a previous run
+      // and never submitted. Nothing is left to ask, so nothing would be
+      // drawn: the screen went white and stayed there, because finishing was
+      // only ever announced by answering.
+      if (state.isFinished) {
+        emitEffect(const AnsweringFinished());
+      }
     } on Object {
       emit(
         state.copyWith(
@@ -89,7 +96,7 @@ class TestCubit extends Cubit<TestState> with Effects<TestEffect, TestState> {
       await _peek(answers);
     }
     if (index >= state.questions.length) {
-      effect(const AnsweringFinished());
+      emitEffect(const AnsweringFinished());
     }
   }
 
@@ -125,7 +132,7 @@ class TestCubit extends Cubit<TestState> with Effects<TestEffect, TestState> {
       }
       // After the archetype is remembered, so that whatever the effect opens
       // finds the app already knowing who this is.
-      if (result != null) effect(ResultClaimed(result));
+      if (result != null) emitEffect(ResultClaimed(result));
 
       // The form names itself by its length, so a longer one later reports as
       // a different type without anyone inventing a word for it.
@@ -155,7 +162,7 @@ class TestCubit extends Cubit<TestState> with Effects<TestEffect, TestState> {
       );
       if (glimpse != null) {
         emit(state.copyWith(glimpse: glimpse));
-        effect(GlimpseOffered(glimpse));
+        emitEffect(GlimpseOffered(glimpse));
       }
     } on Object {
       // Deliberately silent.

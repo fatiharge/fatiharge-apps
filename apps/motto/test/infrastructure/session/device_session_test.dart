@@ -1,93 +1,97 @@
 import 'package:api_client_auth/api.dart' as auth;
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:motto/infrastructure/identity/device_identity.dart';
 import 'package:motto/infrastructure/session/device_session.dart';
 import 'package:motto/infrastructure/session/token_store.dart';
 
-class _MockStorage extends Mock implements FlutterSecureStorage {}
-
 class _MockDevices extends Mock implements auth.DeviceResourceApi {}
 
-class _FakeIdentity implements DeviceIdentity {
-  @override
-  Future<String> hash() async => 'a' * 64;
+class _MockIdentity extends Mock implements DeviceIdentity {}
 
-  @override
-  String get platform => 'ios';
-}
+class _MockTokens extends Mock implements TokenStore {}
 
 void main() {
-  late _MockStorage storage;
   late _MockDevices devices;
-  late TokenStore tokens;
+  late _MockTokens tokens;
   late DeviceSession session;
 
-  setUp(() {
-    storage = _MockStorage();
-    devices = _MockDevices();
-    tokens = TokenStore(storage);
-    session = DeviceSession(_FakeIdentity(), devices, tokens);
+  setUpAll(
+    () => registerFallbackValue(
+      auth.RegisterDeviceRequest(deviceHash: 'x', platform: 'android'),
+    ),
+  );
 
-    registerFallbackValue(
-      auth.RegisterDeviceRequest(deviceHash: 'x', platform: 'ios'),
+  setUp(() {
+    devices = _MockDevices();
+    tokens = _MockTokens();
+    final identity = _MockIdentity();
+    when(identity.hash).thenAnswer((_) async => 'abc');
+    when(() => identity.platform).thenReturn('android');
+    when(() => devices.registerDevice(any())).thenAnswer(
+      (_) async => auth.DeviceTokenResponse(
+        deviceId: 'd',
+        token: 'fresh',
+        expiresInSeconds: 3600,
+      ),
     );
     when(
-      () => storage.write(
-        key: any(named: 'key'),
-        value: any(named: 'value'),
-        iOptions: any(named: 'iOptions'),
-      ),
+      () => tokens.save(any(), expiresAt: any(named: 'expiresAt')),
     ).thenAnswer((_) async {});
+    session = DeviceSession(identity, devices, tokens);
   });
 
-  group('DeviceSession', () {
-    test('registers when there is no token yet', () async {
-      when(
-        () => storage.read(
-          key: any(named: 'key'),
-          iOptions: any(named: 'iOptions'),
-        ),
-      ).thenAnswer((_) async => null);
-      when(() => devices.registerDevice(any())).thenAnswer(
-        (_) async => auth.DeviceTokenResponse(
-          deviceId: 'd',
-          token: 'issued',
-          expiresInSeconds: 3600,
-        ),
-      );
+  test('with no token it registers', () async {
+    when(tokens.load).thenAnswer((_) async => null);
+    when(() => tokens.expiresAt).thenReturn(null);
 
-      await session.ensure();
+    await session.ensure();
 
-      expect(tokens.current, 'issued');
-    });
+    verify(() => devices.registerDevice(any())).called(1);
+  });
 
-    test('does not register when a token is already held', () async {
-      when(
-        () => storage.read(
-          key: any(named: 'key'),
-          iOptions: any(named: 'iOptions'),
-        ),
-      ).thenAnswer((_) async => 'existing');
+  // The bug this exists for: the token lasts an hour and a stored one was
+  // trusted for ever, so an hour in, every request failed and the app never
+  // came back.
+  test('an expired token is replaced rather than kept', () async {
+    when(tokens.load).thenAnswer((_) async => 'stale');
+    when(
+      () => tokens.expiresAt,
+    ).thenReturn(DateTime.now().subtract(const Duration(minutes: 1)));
 
-      await session.ensure();
+    await session.ensure();
 
-      verifyNever(() => devices.registerDevice(any()));
-    });
+    verify(() => devices.registerDevice(any())).called(1);
+  });
 
-    test('an empty token is not stored as if it were one', () async {
-      when(
-        () => storage.read(
-          key: any(named: 'key'),
-          iOptions: any(named: 'iOptions'),
-        ),
-      ).thenAnswer((_) async => null);
-      when(() => devices.registerDevice(any())).thenAnswer((_) async => null);
+  test('a token about to expire is replaced before it does', () async {
+    when(tokens.load).thenAnswer((_) async => 'nearly');
+    when(
+      () => tokens.expiresAt,
+    ).thenReturn(DateTime.now().add(const Duration(minutes: 2)));
 
-      await session.ensure();
+    await session.ensure();
 
-      expect(tokens.current, isNull);
-    });
+    verify(() => devices.registerDevice(any())).called(1);
+  });
+
+  test('a token with time on it is left alone', () async {
+    when(tokens.load).thenAnswer((_) async => 'good');
+    when(
+      () => tokens.expiresAt,
+    ).thenReturn(DateTime.now().add(const Duration(minutes: 50)));
+
+    await session.ensure();
+
+    verifyNever(() => devices.registerDevice(any()));
+  });
+
+  test('a token stored before expiry was kept counts as expired', () async {
+    when(tokens.load).thenAnswer((_) async => 'from-an-older-build');
+    when(() => tokens.expiresAt).thenReturn(null);
+
+    await session.ensure();
+
+    verify(() => devices.registerDevice(any())).called(1);
   });
 }

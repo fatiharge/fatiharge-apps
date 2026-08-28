@@ -256,6 +256,8 @@ class ApiClient {
           return MarkedDay.fromJson(value);
         case 'MottoContent':
           return MottoContent.fromJson(value);
+        case 'NextPeriodRequest':
+          return NextPeriodRequest.fromJson(value);
         case 'PeriodReport':
           return PeriodReport.fromJson(value);
         case 'ProfileScores':

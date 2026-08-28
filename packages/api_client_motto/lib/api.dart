@@ -67,6 +67,7 @@ part 'model/leaderboard_entry.dart';
 part 'model/mark_day_request.dart';
 part 'model/marked_day.dart';
 part 'model/motto_content.dart';
+part 'model/next_period_request.dart';
 part 'model/period_report.dart';
 part 'model/profile_scores.dart';
 part 'model/question.dart';

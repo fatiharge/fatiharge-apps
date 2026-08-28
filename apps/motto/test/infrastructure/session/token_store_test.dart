@@ -27,13 +27,14 @@ void main() {
       expect(await store.load(), 'a.b.c');
       expect(await store.load(), 'a.b.c');
 
-      // Every request asks for this; the Keychain is not free.
+      // Every request asks for this; the Keychain is not free. Two keys are
+      // read — the token and when it dies — but only on the first call.
       verify(
         () => storage.read(
           key: any(named: 'key'),
           iOptions: any(named: 'iOptions'),
         ),
-      ).called(1);
+      ).called(2);
     });
 
     test('a saved token is readable without going back to storage', () async {
@@ -75,12 +76,15 @@ void main() {
       await store.clear();
 
       expect(store.current, isNull);
+      expect(store.expiresAt, isNull);
+      // Both keys: a token left behind without its expiry would be trusted
+      // for ever, which is the whole bug this pair exists to stop.
       verify(
         () => storage.delete(
           key: any(named: 'key'),
           iOptions: any(named: 'iOptions'),
         ),
-      ).called(1);
+      ).called(2);
     });
   });
 }

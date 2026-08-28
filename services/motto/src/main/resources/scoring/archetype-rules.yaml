@@ -72,3 +72,48 @@ archetypes:
   - id: as_is
     defining: [extraversion, agreeableness]
     target: {openness: 0.45, conscientiousness: 0.60, extraversion: 0.15, agreeableness: 0.15, neuroticism: 0.50}
+
+  # The six the twelve left out.
+  #
+  # Placed the same way the previous four were — by simulation rather than by
+  # eye — but from the other end: instead of looking for empty regions, thirty
+  # thousand profiles were scored against the twelve and the worst-fitting
+  # fifteen percent were clustered. Each point below is one of those clusters,
+  # which is to say each one is a group of people the table was already
+  # answering badly rather than a gap on a diagram.
+  #
+  # What the numbers protect, in the order they were checked:
+  #   · every archetype still wins on its own point — a row nobody can reach is
+  #     worse than no row at all;
+  #   · the rarest stays above three percent, so nothing reads as broken;
+  #   · the spread between rarest and commonest stays where twelve had it
+  #     (3.2x against 3.0x), so adding six did not buy variety with balance.
+  #
+  # Two of them are deliberately close to an existing point and separated by a
+  # third dimension, because that dimension is the difference a reader would
+  # actually name: Masayı Deviren is Yön Veren without the calm, and İçten İçe
+  # is Durgun Su without it.
+
+  - id: table_upsetter
+    defining: [extraversion, agreeableness, neuroticism]
+    target: {openness: 0.55, conscientiousness: 0.45, extraversion: 0.78, agreeableness: 0.15, neuroticism: 0.68}
+
+  - id: light_footed
+    defining: [extraversion, neuroticism]
+    target: {openness: 0.50, conscientiousness: 0.48, extraversion: 0.82, agreeableness: 0.55, neuroticism: 0.08}
+
+  - id: full_glass
+    defining: [conscientiousness, neuroticism]
+    target: {openness: 0.55, conscientiousness: 0.18, extraversion: 0.50, agreeableness: 0.50, neuroticism: 0.90}
+
+  - id: word_is_bond
+    defining: [agreeableness, conscientiousness]
+    target: {openness: 0.45, conscientiousness: 0.82, extraversion: 0.50, agreeableness: 0.85, neuroticism: 0.50}
+
+  - id: in_its_place
+    defining: [openness, conscientiousness, neuroticism]
+    target: {openness: 0.15, conscientiousness: 0.78, extraversion: 0.50, agreeableness: 0.55, neuroticism: 0.25}
+
+  - id: inwardly
+    defining: [agreeableness, extraversion, neuroticism]
+    target: {openness: 0.50, conscientiousness: 0.50, extraversion: 0.20, agreeableness: 0.80, neuroticism: 0.72}

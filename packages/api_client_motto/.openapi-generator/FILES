@@ -35,6 +35,7 @@ doc/MarkDayRequest.md
 doc/MarkedDay.md
 doc/MottoContent.md
 doc/MottoResourceApi.md
+doc/NextPeriodRequest.md
 doc/PeriodReport.md
 doc/ProfileScores.md
 doc/Question.md
@@ -100,6 +101,7 @@ lib/model/leaderboard_entry.dart
 lib/model/mark_day_request.dart
 lib/model/marked_day.dart
 lib/model/motto_content.dart
+lib/model/next_period_request.dart
 lib/model/period_report.dart
 lib/model/profile_scores.dart
 lib/model/question.dart
@@ -144,6 +146,7 @@ test/mark_day_request_test.dart
 test/marked_day_test.dart
 test/motto_content_test.dart
 test/motto_resource_api_test.dart
+test/next_period_request_test.dart
 test/period_report_test.dart
 test/profile_scores_test.dart
 test/question_response_test.dart

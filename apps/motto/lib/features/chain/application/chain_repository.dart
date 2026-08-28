@@ -54,6 +54,14 @@ class ChainRepository {
     }
   }
 
+  /// Begins the next fourteen days, under [mottoId].
+  Future<Chain> nextPeriod(DateTime today, {String? mottoId}) =>
+      _store.cacheAnd(
+        _chains.startNextPeriod(
+          api.NextPeriodRequest(day: dayOf(today), mottoId: mottoId),
+        ),
+      );
+
   Future<Chain> freeze(DateTime today) async {
     final state = await _chains.spendChainFreeze(
       api.MarkDayRequest(day: dayOf(today), today: dayOf(today)),
@@ -94,5 +102,8 @@ Chain _fromState(api.ChainState? state) {
     startedOn: state.startedOn,
     markedDays: {for (final marked in state.markedDays) dayOf(marked.day)},
     freezeUsedOn: state.freezeUsedOn,
+    period: state.period,
+    mottoId: state.mottoId,
+    periodDone: state.periodDone,
   );
 }

@@ -6,10 +6,13 @@ import 'package:motto/features/daily/application/daily_cubit.dart';
 import 'package:motto/features/daily/application/daily_state.dart';
 import 'package:motto/route/app_router.gr.dart';
 
-/// The motto, at length, whenever someone wants it.
+/// The motto itself — what it means, what it costs, and what it will say.
 ///
-/// Separate from the card they shared: that one is a picture for a feed, this
-/// one is the thing they came back to read.
+/// It used to repeat Bugün: the same title, the same day text, the same
+/// action, with the motto quoted on top. A screen whose only reason to exist
+/// was the button at the bottom. What belongs here was already written and had
+/// never been drawn — every motto carries a reading and a reminder line, and
+/// the app was parsing both and showing neither.
 @RoutePage()
 class MottoDetailPage extends StatelessWidget {
   const MottoDetailPage({super.key});
@@ -44,19 +47,52 @@ class _MottoDetailView extends StatelessWidget {
             return ListView(
               padding: const EdgeInsets.fromLTRB(24, 16, 24, 40),
               children: [
-                Text('“${content.motto}”', style: text.headlineSmall),
-                const SizedBox(height: 24),
-                Text(content.title, style: text.titleMedium),
+                Text(
+                  '“${content.mottoLine}”',
+                  style: text.headlineSmall?.copyWith(height: 1.25),
+                ),
+                const SizedBox(height: 28),
+                Text(
+                  'NE DEMEK',
+                  style: text.labelSmall?.copyWith(
+                    color: scheme.onSurfaceVariant,
+                    letterSpacing: 1.5,
+                  ),
+                ),
                 const SizedBox(height: 8),
-                Text(content.text, style: text.bodyLarge),
-                const SizedBox(height: 24),
+                Text(content.motto.detail, style: text.bodyLarge),
+                const SizedBox(height: 28),
                 Container(
-                  padding: const EdgeInsets.all(16),
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
                     color: scheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(14),
                   ),
-                  child: Text(content.action, style: text.bodyMedium),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.notifications_none,
+                            size: 16,
+                            color: scheme.onSurfaceVariant,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'HER GÜN ŞUNU DUYACAKSIN',
+                            style: text.labelSmall?.copyWith(
+                              color: scheme.onSurfaceVariant,
+                              letterSpacing: 1.2,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Text(content.motto.reminder, style: text.titleSmall),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 32),
                 OutlinedButton(

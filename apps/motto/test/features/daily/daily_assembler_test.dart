@@ -67,7 +67,7 @@ void main() {
           expect(day.connector.trim(), isNotEmpty);
           expect(day.fragment.trim(), isNotEmpty);
           expect(day.action.trim(), isNotEmpty);
-          expect(day.motto.trim(), isNotEmpty);
+          expect(day.mottoLine.trim(), isNotEmpty);
         }
       }
     });

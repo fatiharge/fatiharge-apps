@@ -59,7 +59,7 @@
       },
       "ChainState" : {
         "type" : "object",
-        "required" : [ "started", "markedDays", "streak", "markedToday", "broken", "canFreeze" ],
+        "required" : [ "started", "markedDays", "streak", "markedToday", "broken", "canFreeze", "period", "periodDone" ],
         "properties" : {
           "started" : {
             "type" : "boolean"
@@ -87,6 +87,16 @@
             "type" : "boolean"
           },
           "canFreeze" : {
+            "type" : "boolean"
+          },
+          "period" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "mottoId" : {
+            "type" : "string"
+          },
+          "periodDone" : {
             "type" : "boolean"
           }
         }
@@ -517,6 +527,19 @@
           }
         }
       },
+      "NextPeriodRequest" : {
+        "type" : "object",
+        "required" : [ "day" ],
+        "properties" : {
+          "day" : {
+            "type" : "string",
+            "$ref" : "#/components/schemas/LocalDate"
+          },
+          "mottoId" : {
+            "type" : "string"
+          }
+        }
+      },
       "PeriodReport" : {
         "type" : "object",
         "required" : [ "day", "daysMarked", "daysMadeUp", "tasksDone", "tasksOffered", "complete" ],
@@ -828,6 +851,47 @@
             "application/json" : {
               "schema" : {
                 "$ref" : "#/components/schemas/MarkDayRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ChainState"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        },
+        "tags" : [ "Chain Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
+    "/v1/chain/next" : {
+      "post" : {
+        "summary" : "Begin the next fourteen days under a chosen motto",
+        "operationId" : "startNextPeriod",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/NextPeriodRequest"
               }
             }
           },

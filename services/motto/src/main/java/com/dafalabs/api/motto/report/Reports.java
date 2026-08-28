@@ -22,8 +22,8 @@ import java.util.UUID;
  *
  * <p>Which dimension text a section carries depends on where this reader lands
  * on it, so two people with the same archetype read different reports. That
- * difference is the thing being paid for; eight fixed essays would read as
- * eight fixed essays.
+ * difference is the thing being paid for; eighteen fixed essays would read as
+ * eighteen fixed essays.
  */
 @ApplicationScoped
 public class Reports {
@@ -41,12 +41,20 @@ public class Reports {
   /// Which dimension each section reads from. Fixed rather than chosen per
   /// reader: a report whose sections move around is a report nobody can be
   /// told how to read.
+  ///
+  /// All five, one each. Agreeableness was the one the four-section report
+  /// left out, which meant a dimension the inventory asks four questions
+  /// about, scores, and matches an archetype on never appeared in the document
+  /// people pay for. Section 2 is not a substitute: extraversion is how much
+  /// closeness someone wants, agreeableness is what they do when only one of
+  /// two people can be right.
   private static final Map<Integer, Dimension> sectionDimension =
       Map.of(
           1, Dimension.CONSCIENTIOUSNESS,
           2, Dimension.EXTRAVERSION,
           3, Dimension.OPENNESS,
-          4, Dimension.NEUROTICISM);
+          4, Dimension.NEUROTICISM,
+          5, Dimension.AGREEABLENESS);
 
   private final ReportPieceRepository pieces;
   private final Results results;

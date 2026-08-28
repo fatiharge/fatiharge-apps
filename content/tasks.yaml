@@ -9,7 +9,7 @@
 # Slot 1 is the day's move and slot 3 is the mark — a chain works because
 # everybody walks the same fourteen days, so those two staying identical is a
 # decision rather than unfinished work. Slot 2 is the adjustment, which is
-# exactly where the eight differ: what "do half of it" costs a Kıvılcım is not
+# exactly where the archetypes differ: what "do half of it" costs a Kıvılcım is not
 # what it costs an İnce İşçi.
 #
 #   - day: 1
@@ -112,6 +112,42 @@ tasks:
           title: "Çıpanı koy, kimseye açıklama"
           detail: >-
             Bir saatin yanına koy. Bunu kimseye anlatman gerekmiyor.
+      table_upsetter:
+        2:
+          title: "Çıpanı kimseye ilan etmeden koy"
+          detail: >-
+            Bir saatin yanına koy ve bugün kimseye söyleme. Duyurmak
+            sende yapmanın yerine geçiyor.
+      light_footed:
+        2:
+          title: "Çıpanı unutulmayacak bir şeye bağla"
+          detail: >-
+            Bunu atlamak canını sıkmayacak, mesele de bu. Çıpan seni
+            rahatsız edecek kadar sabit olsun.
+      full_glass:
+        2:
+          title: "Çıpanı günün en sakin saatine koy"
+          detail: >-
+            Kalabalık bir saatin yanına koyarsan taşan gün onu da
+            alıp götürüyor. En boş anını seç.
+      word_is_bond:
+        2:
+          title: "Çıpanı kimsenin seni çağırmadığı saate koy"
+          detail: >-
+            Gün içinde biri sana ihtiyaç duyduğunda sıran bozuluyor.
+            Kimsenin uğramadığı bir saati seç.
+      in_its_place:
+        2:
+          title: "Çıpanı zaten sabit olan bir şeye bağla"
+          detail: >-
+            Sende yeni bir saat tutmuyor, ama yerleşmiş bir
+            alışkanlığın yanı tutuyor. Onun bitişine ekle.
+      inwardly:
+        2:
+          title: "Çıpanı kimsenin sana ihtiyaç duymadığı saate koy"
+          detail: >-
+            Biri bir şey isterse sıran hemen bozuluyor. Kimsenin
+            uyanık olmadığı ya da aradığı bir saat seç.
   - day: 2
     tr:
       - title: Aynısını tekrarla
@@ -191,6 +227,42 @@ tasks:
           title: "Süreyi ölçme, kendine de puan verme"
           detail: >-
             Bugün ölçme. Kendine not da verme, sadece oldu mu.
+      table_upsetter:
+        2:
+          title: "Bugün kimseye anlatma"
+          detail: >-
+            Anlattığın an iş bitmiş gibi geliyor. Bugünü anlatmadan
+            tamamla.
+      light_footed:
+        2:
+          title: "Oldu mu, onu yaz"
+          detail: >-
+            Hissine güvenme. Bugün olduysa bir yere yaz; yazmazsan
+            olmamış sayılacak.
+      full_glass:
+        2:
+          title: "Süreye bakma, taşırıyor"
+          detail: >-
+            Ne kadar sürdüğünü ölçmek sende bir yeterlilik sorusuna
+            dönüşüyor. Bugün sadece oldu mu.
+      word_is_bond:
+        2:
+          title: "Bu da bir söz; süresi önemli değil"
+          detail: >-
+            Kendine verdiğin sözü başkasına verdiğin gibi tut. Ne
+            kadar sürdüğü hiç sorulmayacak.
+      in_its_place:
+        2:
+          title: "Ölçme; bunu bir düzene çevirme"
+          detail: >-
+            Süreyi ölçersen bu iş bir sisteme dönüşür ve sistem,
+            bugünkü esnekliği öldürür.
+      inwardly:
+        2:
+          title: "\"Yeterli mi\" diye sorma"
+          detail: >-
+            Süreyi ölçmek sende bir yeterlilik sorusuna dönüşüyor ve
+            cevabı hep hayır oluyor. Bugün sorma.
   - day: 3
     tr:
       - title: Saati sabitle
@@ -274,6 +346,42 @@ tasks:
           detail: >-
             Bu senin en kolay günün. O yüzden bugün fazladan bir şey yap:
             bitince bir kişiye yaz.
+      table_upsetter:
+        2:
+          title: "Tartışacağın yeri de kapat"
+          detail: >-
+            Telefonu kaldırırken tartışmanın açık olduğu yeri de
+            kapat. İkisi aynı dikkati yiyor.
+      light_footed:
+        2:
+          title: "Kolay geldiği için atlama"
+          detail: >-
+            Bugün seni zorlayan bir şey olmayacak. Zorlanmadığın
+            günler senin en riskli günlerin.
+      full_glass:
+        2:
+          title: "Telefon kalksın, liste de kalksın"
+          detail: >-
+            Yaparken telefonu kaldır ve yapılacaklar listesini de
+            görüş alanından çıkar. İkisi aynı şeyi yapıyor.
+      word_is_bond:
+        2:
+          title: "Telefon kalksın, çünkü iş oradan geliyor"
+          detail: >-
+            Seni bölen şey dikkat dağınıklığı değil, gelen istekler.
+            Bugün o kapıyı kapat.
+      in_its_place:
+        2:
+          title: "Zaten kaldırıyorsan bugün de kaldır"
+          detail: >-
+            Bu senin için kolay gün. Kolay olması, atlanacağı
+            anlamına gelmiyor.
+      inwardly:
+        2:
+          title: "Telefon kalksın; başkasının hali oradan geliyor"
+          detail: >-
+            Seni bölen şey bildirim değil, birinin nasıl olduğunu
+            görmek. Bugün o kapıyı kapat.
   - day: 4
     tr:
       - title: Canın istemese de yap
@@ -355,6 +463,42 @@ tasks:
           detail: >-
             Yarısı yeterli. Kimseyi idare etmiyorsun ama bugün kendini biraz
             idare et.
+      table_upsetter:
+        2:
+          title: "Yarım olmasına itiraz etme"
+          detail: >-
+            Bugün yarısını yap ve yarım olduğu için kendinle
+            tartışma. Tartışma da bir erteleme biçimi.
+      light_footed:
+        2:
+          title: "Yarısı da bir şey, saymayı unutma"
+          detail: >-
+            Yarısını yapmak sana zaten kolay gelecek. Zor olan,
+            yaptığını saymak.
+      full_glass:
+        2:
+          title: "Yarısı bugün fazlasıyla yeterli"
+          detail: >-
+            Yarım yapmak sende bir başarısızlık gibi duruyor. Bugün
+            yarısı tam ölçü.
+      word_is_bond:
+        2:
+          title: "Yarısını yapmak sözü bozmak değil"
+          detail: >-
+            Yarım bıraktığında verdiğin sözü çiğnemiş gibi
+            hissedeceksin. Bugünün sözü zaten yarısıydı.
+      in_its_place:
+        2:
+          title: "Yarım bırakmak düzeni bozmuyor"
+          detail: >-
+            Yarım bırakmak sana yanlış gelecek. On dört günün
+            düzeni, her günün tam olmasına dayanmıyor.
+      inwardly:
+        2:
+          title: "Yarısı yeterli, kendini sorgulama"
+          detail: >-
+            Yarım bırakınca kendinle bir hesaplaşma başlayacak.
+            Bugünlük ölçü yarısıydı, hesaplaşma yok.
   - day: 5
     tr:
       - title: Kaçırdıysan geri dön
@@ -436,6 +580,42 @@ tasks:
           detail: >-
             Beş gündür yaptığın şeyi kimse görmedi ve bu seni rahatsız
             etmiyor. Şeklini yine de gör.
+      table_upsetter:
+        2:
+          title: "Zincire savunmaya geçmeden bak"
+          detail: >-
+            Boş günleri göreceksin ve bir açıklaman olacak.
+            Açıklamayı bugün yapma, sadece bak.
+      light_footed:
+        2:
+          title: "Zincire bak, çünkü hissetmiyorsun"
+          detail: >-
+            İlerlediğini içinden bilmiyorsun. Şekli görmek senin
+            için hatırlamanın tek yolu.
+      full_glass:
+        2:
+          title: "Boş günlere değil, dolu günlere bak"
+          detail: >-
+            Zincire bakarken gözün eksiklere gidecek. Bugün sadece
+            dolu olanları say.
+      word_is_bond:
+        2:
+          title: "Kendine tuttuğun sözlere bak"
+          detail: >-
+            Zincire bakarken başkalarına verdiğin sözleri düşünme.
+            Bu tablo sadece kendine ait.
+      in_its_place:
+        2:
+          title: "Bak, ve bir şeyi yokla"
+          detail: >-
+            Zincire bakarken işleyen bir şeyi de yokla. Uzun süredir
+            dokunmadığın bir şeyi seç.
+      inwardly:
+        2:
+          title: "Zincire kendini yargılamadan bak"
+          detail: >-
+            Eksik günleri göreceksin ve bunu bir karakter meselesine
+            çevireceksin. Bugün sadece say.
   - day: 6
     tr:
       - title: Görünür yere koy
@@ -520,6 +700,42 @@ tasks:
           detail: >-
             Seni geciktiren tek şeyi bul. Çözümü birinde varsa, bugün sormayı
             dene.
+      table_upsetter:
+        2:
+          title: "Engelin bir insan olmadığından emin ol"
+          detail: >-
+            Seni geciktiren şey birinin tavrıysa, bugün onu değil
+            başka bir engeli seç.
+      light_footed:
+        2:
+          title: "Engelin yok, o yüzden bir çıpa daha ekle"
+          detail: >-
+            Seni durduran bir şey bulamayacaksın. Bugün engel
+            kaldırmak yerine bir hatırlatıcı ekle.
+      full_glass:
+        2:
+          title: "Engel bir iş değil, bir düşünce olabilir"
+          detail: >-
+            Seni geciktiren şey çoğu zaman bir görev değil, aklında
+            duran bir cümle. Onu yaz ve kafandan çıkar.
+      word_is_bond:
+        2:
+          title: "Engel muhtemelen başkasının işi"
+          detail: >-
+            Seni geciktiren şeyi ararken kendi tembelliğini arama.
+            Büyük ihtimalle birine söz vermiştin.
+      in_its_place:
+        2:
+          title: "Yıllardır orada duran engeli seç"
+          detail: >-
+            Bugün kaldıracağın engel yeni bir şey olmasın. En
+            eskisini, en alıştığını seç.
+      inwardly:
+        2:
+          title: "Engel çoğu zaman birinin ihtiyacı"
+          detail: >-
+            Seni geciktiren şeyi ararken kendinde kusur arama.
+            Muhtemelen birinin işi araya girdi.
   - day: 7
     tr:
       - title: Haftayı oku
@@ -603,6 +819,42 @@ tasks:
           detail: >-
             Tek ayrıntıyı değiştir ve bu sefer değiştirdiğini bir kişiye
             söyle.
+      table_upsetter:
+        2:
+          title: "Bir ayrıntıyı değiştir, sistemi değil"
+          detail: >-
+            Hepsini yanlış ilan etmek sana kolay geliyor. Bugün tek
+            bir ayrıntı.
+      light_footed:
+        2:
+          title: "Değiştirme, sabitle"
+          detail: >-
+            Herkes bugün bir şeyi değiştiriyor. Sen tam tersini yap:
+            çalışan neyse onu yerine çivile.
+      full_glass:
+        2:
+          title: "Bir tanesini değiştir, listeyi değil"
+          detail: >-
+            Değiştirilecek şeylerin listesi hemen uzayacak. Sadece
+            birini değiştir, listeyi bugün yapma.
+      word_is_bond:
+        2:
+          title: "Saatini öne al, sona değil"
+          detail: >-
+            Değiştireceğin ayrıntı saat olsun ve onu güne daha erken
+            taşı. Sonda kalan hiç olmuyor.
+      in_its_place:
+        2:
+          title: "Bugün gerçekten değiştir"
+          detail: >-
+            Bu senin en zor günün. "Böyle iyiydi" cümlesi gelecek;
+            yine de tek bir ayrıntıyı değiştir.
+      inwardly:
+        2:
+          title: "Kendin için bir şeyi değiştir"
+          detail: >-
+            Değiştireceğin ayrıntı kimseyi ilgilendirmesin. Sadece
+            sana daha iyi geleni seç.
   - day: 8
     tr:
       - title: Başka bir yerde yap
@@ -682,6 +934,42 @@ tasks:
           title: "Yarını kolaylaştır"
           detail: >-
             Yarınki ilk hareketi hazırla. Bu senin zaten iyi olduğun şey.
+      table_upsetter:
+        2:
+          title: "Yarın için bir kolaylık bırak"
+          detail: >-
+            Yarınki sen de aynı odada. Bugün onun işini bir adım
+            azalt.
+      light_footed:
+        2:
+          title: "Zaten kolay; bugün zorlaştırma da"
+          detail: >-
+            Yarını kolaylaştırmaya çalışırken işi büsbütün
+            hafifletme. Tutunacak bir ağırlık kalsın.
+      full_glass:
+        2:
+          title: "Yarını bugünden hafiflet"
+          detail: >-
+            Yarınki senin bir şeyi daha az düşünmesi için bugün
+            küçük bir hazırlık yap.
+      word_is_bond:
+        2:
+          title: "Yarınki sen de senin sözün"
+          detail: >-
+            Kendine kolaylık hazırlamak bencillik değil. Yarın
+            sabahki seni de birine söz verdiğin gibi düşün.
+      in_its_place:
+        2:
+          title: "Kolaylaştırmak da bakımın parçası"
+          detail: >-
+            Bir şeyi kolaylaştırmak onu bozmak değil. Sen zaten
+            bakım yapıyorsun; bu da o.
+      inwardly:
+        2:
+          title: "Yarınki sen de birisi"
+          detail: >-
+            Başkası için hazırlık yapmak sana kolay geliyor. Bugün
+            aynı özeni yarınki kendine göster.
   - day: 9
     tr:
       - title: Bahane cümleni yaz
@@ -762,6 +1050,42 @@ tasks:
           title: "Bahanen “kimseye borcum yok” ise yine yap"
           detail: >-
             Doğru, kimseye borcun yok. Bu, kendine olan sözü de siliyor mu?
+      table_upsetter:
+        2:
+          title: "Bahanen haklı olabilir, yine de yap"
+          detail: >-
+            Senin bahanelerin genelde doğru oluyor. Doğru olması
+            yapmamak için yetmiyor.
+      light_footed:
+        2:
+          title: "Bahanen yok, sadece unutuyorsun"
+          detail: >-
+            Senin bahane cümlen yok. Senin cümlen "aklıma gelmedi" —
+            onu yaz.
+      full_glass:
+        2:
+          title: "Hissederken de yapılabiliyor"
+          detail: >-
+            Bahane cümlen muhtemelen bir duyguyla başlıyor. Duygu
+            doğru; yapılamayacağı kısmı değil.
+      word_is_bond:
+        2:
+          title: "Bahanen genelde bir başkası"
+          detail: >-
+            Bahane cümleni yazdığında içinde bir kişi olacak. Bugün
+            o kişiyi yazmadan da yapılabilir mi, dene.
+      in_its_place:
+        2:
+          title: "Bahanen \"böyle iyiydi\" olacak"
+          detail: >-
+            Senin bahane cümlen bir şikâyet değil, bir memnuniyet.
+            Onu yaz ve yine de yap.
+      inwardly:
+        2:
+          title: "Bahanen \"başkasının işi vardı\" olacak"
+          detail: >-
+            Bahane cümleni yazdığında içinde bir başkası olacak. Bu
+            doğru olabilir ve yine de yapılabilir.
   - day: 10
     tr:
       - title: Ölçmeyi bırak
@@ -836,6 +1160,41 @@ tasks:
           title: "Sadece yap"
           detail: >-
             Düşünmeden, tartmadan yap. Sonrasını da kimseye anlatma.
+      table_upsetter:
+        2:
+          title: "İtiraz etme, sadece yap"
+          detail: >-
+            Bugün ne yaptığına dair bir görüşün olmasın. Sadece yap.
+      light_footed:
+        2:
+          title: "Sadece yap ve bir yere işaretle"
+          detail: >-
+            Ölçmeyi bırakmak sana zaten doğal. Bugün bırakmayacağın
+            tek şey işaret.
+      full_glass:
+        2:
+          title: "Düşünmeden başla, düşünmek seni durduruyor"
+          detail: >-
+            Bugün tartma. Sende tartmak, seçenekleri çoğaltmaktan
+            başka bir işe yaramıyor.
+      word_is_bond:
+        2:
+          title: "Kimseye sormadan yap"
+          detail: >-
+            Bugün doğru yapıp yapmadığını kimseye onaylatma. Sadece
+            yap.
+      in_its_place:
+        2:
+          title: "Gerekçe arama, sadece yap"
+          detail: >-
+            Bugün bir sebep istemeden yap. Sebep istemek senin en
+            sağlam ve en yavaş tarafın.
+      inwardly:
+        2:
+          title: "Kimsenin gününü sormadan başla"
+          detail: >-
+            Bugün önce kendi işini yap, sonra sor. Sıra bir kez de
+            böyle kurulsun.
   - day: 11
     tr:
       - title: Süreyi yarıya indir
@@ -914,6 +1273,42 @@ tasks:
           title: "Neden yaptığını hatırla"
           detail: >-
             Tek cümle. Cümlen “kimse karışmasın diye” çıkıyorsa bir daha yaz.
+      table_upsetter:
+        2:
+          title: "Kime karşı değil, ne için"
+          detail: >-
+            Başlarken bir şeye karşı mı başlamıştın, bir şey için
+            mi? İkincisini tek cümleyle yaz.
+      light_footed:
+        2:
+          title: "Kolay olduğu için değil, ne için"
+          detail: >-
+            Bunu seçme sebebin kolaylığı mıydı? Değilse, asıl sebebi
+            tek cümleyle yaz.
+      full_glass:
+        2:
+          title: "Tek cümle, uzatma"
+          detail: >-
+            Neden başladığını hatırlamak seni bir muhasebeye
+            çekecek. Tek cümlede bırak.
+      word_is_bond:
+        2:
+          title: "Bunu kimin için istiyordun"
+          detail: >-
+            Başlarken aklında bir başkası mı vardı, sen mi? Cevabı
+            tek cümleyle yaz.
+      in_its_place:
+        2:
+          title: "Alışkanlık mı, karar mı"
+          detail: >-
+            Bunu hâlâ istediğin için mi yapıyorsun, yoksa başladığın
+            için mi? Cevap ikisi de olabilir.
+      inwardly:
+        2:
+          title: "Bunu kendin için istiyordun"
+          detail: >-
+            Başlarken aklında kim vardı? Cevap sen olmalıydı; öyle
+            miydi, tek cümleyle yaz.
   - day: 12
     tr:
       - title: Bir kişiye söyle
@@ -994,6 +1389,42 @@ tasks:
           title: "Bir kişiye söyle — asıl görev bu"
           detail: >-
             Bu senin en zor günün. Bir kişi. Bugün kapıyı bir aralık aç.
+      table_upsetter:
+        2:
+          title: "Seninle tartışmayacak birine söyle"
+          detail: >-
+            Söyleyeceğin kişi seni onaylamak zorunda değil, ama
+            bugün tartışmasın.
+      light_footed:
+        2:
+          title: "Birine söyle ki bir ağırlığı olsun"
+          detail: >-
+            Sende hiçbir şey ağırlaşmıyor. Birinin biliyor olması,
+            bu işe bir ağırlık ekliyor.
+      full_glass:
+        2:
+          title: "Söylemek yükü küçültüyor"
+          detail: >-
+            Birine söylediğinde bir şey istemiş olmuyorsun. Sadece
+            taşıdığın şey bir kişi daha biliyor.
+      word_is_bond:
+        2:
+          title: "Bugün sen iste"
+          detail: >-
+            Sen hep verilen taraftasın. Bugün birinden küçük bir şey
+            iste; reddedilse bile.
+      in_its_place:
+        2:
+          title: "Kimseye söylemiyorsun; bugün söyle"
+          detail: >-
+            Bu tür şeyleri anlatmıyorsun çünkü anlatılacak bir şey
+            görmüyorsun. Bir kişiye söyle.
+      inwardly:
+        2:
+          title: "Bugün iste; söylemek de sayılıyor"
+          detail: >-
+            Yardım istemek zorunda değilsin ama söylemek zorundasın.
+            Bir kişiye söyle.
   - day: 13
     tr:
       - title: Neyi bıraktığını fark et
@@ -1074,6 +1505,42 @@ tasks:
           detail: >-
             Bıraktığın şey seni yormuyordu, o yüzden geri almak kolay gelecek.
             Alma.
+      table_upsetter:
+        2:
+          title: "Bıraktığın şeyi savunma"
+          detail: >-
+            Geri alma isteği bir savunmayla gelecek. Savunmayı
+            yazma, bugünü tamamla.
+      light_footed:
+        2:
+          title: "Geri almak sana kolay gelecek"
+          detail: >-
+            Bıraktığın şeyi geri almak canını yakmayacak, o yüzden
+            farkına varmadan alacaksın. Bugün alma.
+      full_glass:
+        2:
+          title: "Bugün yeni bir şey ekleme"
+          detail: >-
+            Bıraktığını geri almak sende genelde yeni bir şey
+            eklemek olarak geliyor. Bugün ekleme.
+      word_is_bond:
+        2:
+          title: "Geri isteyen olursa hayır de"
+          detail: >-
+            Bıraktığın şeyi birinin geri istemesi muhtemel. Bugünlük
+            hayır demeyi dene.
+      in_its_place:
+        2:
+          title: "Eskiye dönme isteği bugün gelecek"
+          detail: >-
+            Bıraktığın şey sana yerinde duruyormuş gibi gelecek.
+            Bugün geri koyma.
+      inwardly:
+        2:
+          title: "Birinin ihtiyacı olsa da geri alma"
+          detail: >-
+            Bıraktığın şeyi geri almanın sebebi bugün büyük
+            ihtimalle bir başkası olacak. Yine de alma.
   - day: 14
     tr:
       - title: Yarına karar ver
@@ -1150,3 +1617,39 @@ tasks:
           detail: >-
             Tek cümle yaz, sonra bir kişiye gönder. On dört gün kimseye
             söylemedin; bugünü ayrı tut.
+      table_upsetter:
+        2:
+          title: "Neyi devirmediğini de yaz"
+          detail: >-
+            On dört günde neye itiraz etmedin? Bir cümle de ona
+            ayır.
+      light_footed:
+        2:
+          title: "Hissettiğini değil, kaydettiğini yaz"
+          detail: >-
+            Geriye ne kaldığını hissine sorma. Yazdıklarına bak ve
+            oradan bir cümle çıkar.
+      full_glass:
+        2:
+          title: "Kaç gün değil, ne değişti"
+          detail: >-
+            Sayıya bakarsan eksik göreceksin. Ne değiştiğine bak ve
+            onu yaz.
+      word_is_bond:
+        2:
+          title: "Kendine ne kaldı, onu yaz"
+          detail: >-
+            On dört günün sonunda başkalarına ne kaldığını zaten
+            biliyorsun. Sana ne kaldı?
+      in_its_place:
+        2:
+          title: "Ne değişti, onu yaz"
+          detail: >-
+            Sende değişen şeyi görmek zor, çünkü etraf aynı duruyor.
+            Tek bir farkı bul ve yaz.
+      inwardly:
+        2:
+          title: "Kendine ne söyledin, onu yaz"
+          detail: >-
+            On dört günde başkalarına ne söylediğini biliyorsun.
+            Kendine ne söyledin?

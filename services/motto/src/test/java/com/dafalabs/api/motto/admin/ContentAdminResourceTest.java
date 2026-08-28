@@ -105,4 +105,37 @@ class ContentAdminResourceTest {
         .statusCode(200)
         .body("tasks", equalTo(0));
   }
+
+  /**
+   * Writes the last section the report actually has.
+   *
+   * <p>The table used to allow four and the report grew a fifth, and nothing
+   * caught it: content is tested through the classpath and the fixture, and
+   * neither of those goes near an INSERT. A check constraint is only real on
+   * the way into the database, so this test has to take that road.
+   */
+  @Test
+  @DisplayName("a piece in the report's last section reaches the table")
+  void theLastSectionIsWritable() {
+    var piece =
+        new java.util.HashMap<String, Object>(
+            Map.of(
+                "kind", "fragment",
+                "archetypeId", "quiet_builder",
+                "section", 5,
+                "text", "Bölümün son parçası.",
+                "placeholder", false));
+    piece.put("dimension", null);
+    piece.put("band", null);
+
+    given()
+        .header(AdminTokenFilter.HEADER, TOKEN)
+        .contentType(ContentType.JSON)
+        .body(List.of(piece))
+        .when()
+        .put("/admin/content/report-pieces")
+        .then()
+        .statusCode(200)
+        .body("written", equalTo(1));
+  }
 }

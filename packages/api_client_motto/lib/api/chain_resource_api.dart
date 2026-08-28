@@ -275,4 +275,68 @@ class ChainResourceApi {
     }
     return null;
   }
+
+  /// Begin the next fourteen days under a chosen motto
+  ///
+  /// Note: This method returns the HTTP [Response].
+  ///
+  /// Parameters:
+  ///
+  /// * [NextPeriodRequest] nextPeriodRequest (required):
+  Future<Response> startNextPeriodWithHttpInfo(
+    NextPeriodRequest nextPeriodRequest, {
+    Future<void>? abortTrigger,
+  }) async {
+    // ignore: prefer_const_declarations
+    final path = r'/v1/chain/next';
+
+    // ignore: prefer_final_locals
+    Object? postBody = nextPeriodRequest;
+
+    final queryParams = <QueryParam>[];
+    final headerParams = <String, String>{};
+    final formParams = <String, String>{};
+
+    const contentTypes = <String>['application/json'];
+
+    return apiClient.invokeAPI(
+      path,
+      'POST',
+      queryParams,
+      postBody,
+      headerParams,
+      formParams,
+      contentTypes.isEmpty ? null : contentTypes.first,
+      abortTrigger: abortTrigger,
+    );
+  }
+
+  /// Begin the next fourteen days under a chosen motto
+  ///
+  /// Parameters:
+  ///
+  /// * [NextPeriodRequest] nextPeriodRequest (required):
+  Future<ChainState?> startNextPeriod(
+    NextPeriodRequest nextPeriodRequest, {
+    Future<void>? abortTrigger,
+  }) async {
+    final response = await startNextPeriodWithHttpInfo(
+      nextPeriodRequest,
+      abortTrigger: abortTrigger,
+    );
+    if (response.statusCode >= HttpStatus.badRequest) {
+      throw ApiException(response.statusCode, await _decodeBodyBytes(response));
+    }
+    // When a remote server returns no body with a status of 204, we shall not decode it.
+    // At the time of writing this, `dart:convert` will throw an "Unexpected end of input"
+    // FormatException when trying to decode an empty string.
+    if (response.body.isNotEmpty &&
+        response.statusCode != HttpStatus.noContent) {
+      return await apiClient.deserializeAsync(
+        await _decodeBodyBytes(response),
+        'ChainState',
+      ) as ChainState;
+    }
+    return null;
+  }
 }

@@ -53,6 +53,10 @@ sections:
     tr: >-
       Bu bölüm sana ne pahalıya mal olduğuyla ilgili. Güçlü tarafın bedava
       gelmiyor.
+  - section: 5
+    tr: >-
+      Bu bölüm ikinizin aynı anda haklı olamadığı anlarla ilgili: nerede
+      bırakıyor, nerede tutuyorsun.
 
 limitation:
   tr: >-
@@ -225,6 +229,41 @@ overviews:
       Sen, kendini pazarlamayan birisin. Yakınlık için uğraşmıyorsun,
       araları düzeltmek için de; seni tanıyan tam olarak seni tanıyor,
       çünkü gösterdiğin başka bir sen yok.
+  table_upsetter:
+    tr: >-
+      Sen, odadaki sessizliği bozan birisin. Kimsenin söylemek istemediği şeyi
+      söylüyorsun ve çoğu zaman söylenmesi gerekiyordu. Mesele cesaret değil:
+      o cümleyi tutmak sende söylemekten daha zor. Bedeli, söyledikten sonraki
+      kısımda ortaya çıkıyor.
+  light_footed:
+    tr: >-
+      Sen, yükü üstünde bırakmayan birisin. Kalabalık seni yormuyor, aksilik
+      seni sarsmıyor; ikisinin içinden de aynı rahatlıkla geçiyorsun. Bu senin
+      en dinlendirici tarafın, ve hiçbir şeyin sende iz bırakmamasının da aynı
+      sebebi.
+  full_glass:
+    tr: >-
+      Sen, her şeyi aynı anda hisseden birisin. Elindekilerin hepsi aynı
+      derecede acil görünüyor ve bu bir ilgi sorunu değil, bir doluluk sorunu.
+      Yapabileceklerinin listesi uzun; hangisinin önce geleceğine karar vermek
+      kısa değil.
+  word_is_bond:
+    tr: >-
+      Sen, sözünün arkasında duran birisin. İnsanlar sana bir iş bıraktığında
+      bir daha sormuyorlar, çünkü sormaya gerek olmadığını öğrendiler. Bu,
+      etrafındaki herkesin işini kolaylaştırıyor ve seninkini en sona
+      bırakıyor.
+  in_its_place:
+    tr: >-
+      Sen, işleyen şeyi bozmayan birisin. Denenmişi denenmiş olduğu için
+      seçiyorsun; bu seni sarsılmaz yapıyor ve etrafındakiler sana göre plan
+      kurabiliyor. Aynı sağlamlık, değişmesi gereken şeyin de yerinde
+      kalmasına yol açıyor.
+  inwardly:
+    tr: >-
+      Sen, söylemeden fark eden birisin. Birinin canı sıkkınsa sen zaten
+      görmüşsündür, ve genelde bir şey de yapmışsındır. Sıra kendi halinde
+      olan bitene geldiğinde ise aynı hız kayboluyor.
 strengths:
   quiet_builder:
     tr: >-
@@ -286,6 +325,36 @@ strengths:
       Sözünün karşılığı var. Kimseyi idare etmediğin için evet dediğinde
       evet oluyor, ve bu, insanların zamanla neyi sana emanet ettiğini
       değiştiriyor.
+  table_upsetter:
+    tr: >-
+      Yanlış olduğunu bildiğin bir şeyin yanından sessizce geçemiyorsun. Çoğu
+      ekipte bu iş kimsede yok: birinin ilk cümleyi kurması gerekiyor ve o
+      cümlenin bedelini herkes biliyor. Ödeyen sensin.
+  light_footed:
+    tr: >-
+      Kötü giden bir şey seni işlevsiz bırakmıyor. Etrafındakiler
+      telaşlanırken senin hâlâ düşünebiliyor olman, bir kriz anında ekibe
+      kattığın en somut şey — ve kimse bunu bir beceri olarak saymıyor, sen de
+      dahil.
+  full_glass:
+    tr: >-
+      Hissettiğin şeyin şiddeti, aynı zamanda fark ettiğin şeyin çözünürlüğü.
+      Başkalarının gözünden kaçan şey senden kaçmıyor, çünkü sende hiçbir şey
+      arka planda kalmıyor.
+  word_is_bond:
+    tr: >-
+      Verdiğin söz tutuluyor, ve bu çevrende bir zemin oluşturuyor. İnsanların
+      bir işi takip etmeden bırakabilmesi nadir bir güven; onu üreten sensin.
+  in_its_place:
+    tr: >-
+      İşin sıkıcı ve tekrar eden kısmı sende aksamıyor. Heyecan bittiğinde çoğu
+      insanın bıraktığı yerde sen aynı hızda devam ediyorsun, ve uzun işlerde
+      belirleyici olan tam olarak bu.
+  inwardly:
+    tr: >-
+      İnsanların söylemediği şeyi duyuyorsun. Bu bir incelik değil, bir
+      çözünürlük meselesi: odadaki gerginliği senden önce kimse fark etmiyor,
+      senden sonra herkes rahatlıyor.
 costs:
   quiet_builder:
     tr: >-
@@ -359,6 +428,38 @@ costs:
       Bir süre sonra kimse sormuyor. Uzak durman bir tercihti ama tercih
       olduğunu kontrol etmeyi bıraktığında alışkanlığa dönüşüyor — ve
       bunu ancak bir şeye ihtiyacın olduğunda fark ediyorsun.
+  table_upsetter:
+    tr: >-
+      Söylediğin doğru, ama söyledikten sonra ortada kalan işi genelde başkası
+      topluyor. Bir süre sonra insanlar seni dinlemiyor, bekliyor — ne
+      diyeceğini değil, ne zaman geçeceğini. Kaybettiğin şey haklılık değil,
+      etkinlik.
+  light_footed:
+    tr: >-
+      Hiçbir şeyi büyütmediğin için gerçekten büyük olanı da geç fark
+      ediyorsun. Bu, kendi başına gelenlerde değil, başkasının sana anlattığı
+      şeylerde pahalıya patlıyor: ciddiye alınmayı bekleyen biri, sakinliğini
+      ilgisizlik diye okuyor.
+  full_glass:
+    tr: >-
+      Taşmamak için harcadığın enerji, işin kendisine ayıracağından fazla.
+      Günün sonunda yorgunsun ve geriye bakınca yapılmış bir şey yok — o
+      boşluk da ertesi günü daha ağır başlatıyor.
+  word_is_bond:
+    tr: >-
+      Kimse senden "yapamam" duymadığı için sormaya devam ediyor. Sıra kendi
+      işine geldiğinde gün bitmiş oluyor ve bunu kimse fark etmiyor, çünkü
+      söylemiyorsun da. Bir gün durduğunda herkes şaşırıyor.
+  in_its_place:
+    tr: >-
+      Bozulmuş olanı da yerinde sanıyorsun, çünkü uzun süredir orada.
+      Ertelemenin maliyeti hemen görünmüyor; birikip bir anda geliyor, ve o an
+      geldiğinde küçük bir düzeltme artık yetmiyor.
+  inwardly:
+    tr: >-
+      Fark ettiğini söylemediğin için yardım tek yönlü akıyor. Yıllar içinde şu
+      ortaya çıkıyor: bir şeye ihtiyacın olduğunda kimsenin aklına gelmiyorsun,
+      çünkü hiç ihtiyacın olmamış gibi durdun.
 dimensions:
   CONSCIENTIOUSNESS:
     low:
@@ -566,6 +667,71 @@ portraits:
       Senin yapman gereken şey sosyalleşmek değil — ara ara, hâlâ tercih
       mi diye bakmak. Çoğu zaman evet çıkacak. Bazen çıkmayacak, ve o
       bazen önemli.
+  table_upsetter:
+    tr: >-
+      Sende itiraz bir seçim değil, bir hız meselesi: yanlış olanı görmenle
+      söylemen arasında kimseye yetecek kadar boşluk kalmıyor. Bu, odadaki en
+      dürüst kişi olmanı sağlıyor ve aynı hız, söylediğin şeyin arkasında
+      durmanı zorlaştırıyor — çünkü tepki geçtiğinde iş duruyor, sen de
+      duruyorsun. Zamanla insanlar seni ciddiye almayı bırakmıyor ama
+      beklemeye başlıyor: itirazın geçeceğini, kararın sensiz alınabileceğini
+      öğreniyorlar. Kaybettiğin şey haklılığın değil, haklılığının bir işe
+      yaraması. Değiştirmen gereken şey söylediklerin değil, söyledikten
+      sonraki ilk hafta.
+  light_footed:
+    tr: >-
+      Sende sakinlik bir çaba değil, bir varsayılan — ve bu, etrafındaki
+      insanların gizlice yaslandığı şey. Bir aksilik olduğunda odadaki
+      sıcaklığı düşüren sensin, üstelik bunu yaptığını bile bilmiyorsun. Aynı
+      varsayılanın diğer tarafı şu: sende hiçbir şey ağırlaşmadığı için hiçbir
+      şey birikmiyor da. Zorlanmadan yaptığın işi kendi gözünde küçültüyorsun,
+      ve büyütmediğin için de sürdürmüyorsun. Senin için tekrar bir sıkıntı
+      değil, sadece görünmez bir şey — o yüzden işaretlemen gerekiyor. On dört
+      gün sonra elinde kalacak olan şey, hissettiğin ilerleme değil, yazdığın
+      kayıt.
+  full_glass:
+    tr: >-
+      Sende yoğunluk bir arıza değil, çözünürlük: herkesin arka planda tuttuğu
+      şeyleri sen ön planda tutuyorsun ve bu yüzden hiçbiri sırasını
+      bekleyemiyor. Fark etme gücün ile başlama gücün aynı yerden besleniyor,
+      o yüzden ikisi aynı anda tükeniyor. Erteleme sende tembellik değil, dolu
+      bir bardağı taşırmama refleksi — ve gün sonunda geriye yapılmış bir şey
+      kalmadığında bunu bir karakter kusuru gibi okuyorsun, ki asıl yorucu olan
+      bu okuma. Sende işe yarayan tek ölçek küçük olan: beş dakikada biten bir
+      şey, planlanmış bir saatten daha çok taşıyor seni. Değiştirmen gereken
+      şey hissetme şiddetin değil, bir günü kaçırdığında kendine söylediğin
+      cümle.
+  word_is_bond:
+    tr: >-
+      Senin güvenilirliğin bir tercih değil, bir kimlik — ve kimlik olduğu için
+      pazarlığa açık değil. Sözünü tuttuğun için insanlar seni takip etmiyor,
+      ve takip edilmediğin için de yükünün ne kadar olduğunu kimse bilmiyor.
+      "Yapamam" cümlesini kurmamanın sebebi korku değil, o cümlenin sana kendi
+      tanımını bozuyormuş gibi gelmesi. Oysa bir sözün değeri kaç tane
+      verdiğinle ters orantılı: hepsini kabul ettiğinde tuttuğun her söz biraz
+      daha ucuzluyor, ve önce senin kendi işin ödüyor. Değiştirmen gereken şey
+      sözünü tutman değil, sözü vermeden önce geçen üç saniye.
+  in_its_place:
+    tr: >-
+      Sende istikrar bir alışkanlık değil, bir yöntem: denenmiş olanı seçmek
+      seni yanıltmıyor ve yanıltmadığı için de sorgulanmıyor. Etrafındakiler
+      sana göre plan kurabiliyor, ki bu insanların çoğunda olmayan bir şey. Bu
+      yöntemin görünmeyen maliyeti şu: bir şeyin bozulduğunu, uzun süredir
+      orada olduğu için geç fark ediyorsun. Değişimi geciktirmek sana hiçbir
+      şeye mal olmuyormuş gibi duruyor, çünkü faturası hemen değil birikerek
+      geliyor — ve geldiğinde artık küçük bir düzeltmeyle kapanmıyor.
+      Değiştirmen gereken şey düzenin değil, düzene ne zaman baktığın.
+  inwardly:
+    tr: >-
+      Sende fark etmek istemsiz: odadaki gerginliği, birinin sesindeki
+      değişikliği, söylenmeyen şeyi görüyorsun ve görür görmez bir şey de
+      yapıyorsun. Bunun karşılığını istememen bir alçakgönüllülük değil, bir
+      alışkanlık — istemek sana zorlama gibi geliyor, oysa istenmediği sürece
+      gelmeyen şeye zorlama değil yakınlık deniyor. İçeride tuttuğun şey
+      küçülmüyor, birikiyor, ve biriken şeyi de yine tek başına taşıyorsun.
+      Yıllar içinde ortaya çıkan tablo şu: herkes senin iyi olduğunu sanıyor,
+      çünkü hiç kötü olmadığını söylemedin. Değiştirmen gereken şey ne kadar
+      fark ettiğin değil, fark ettiğin şeyin kaçta kaçını söylediğin.
 fragments:
   quiet_builder:
     1:
@@ -585,6 +751,11 @@ fragments:
       tr: >-
         Sana pahalıya gelen şey görünmezlik. İşin konuşulduğu odada adın
         geçmediğinde bunu düzeltmiyorsun, ve düzeltmediğin için tekrar oluyor.
+    5:
+      tr: >-
+        Anlaşmazlıkta tartışmıyorsun, çekiliyor ve kendi bildiğini
+        yapmaya devam ediyorsun. Bu bir uzlaşma değil, sessiz bir ısrar — ve
+        karşındaki anlaştığınızı sanıyor.
   spark:
     1:
       tr: >-
@@ -602,6 +773,11 @@ fragments:
       tr: >-
         Sana pahalıya gelen şey yarım kalanların birikmesi. Her biri tek başına
         önemsiz, hepsi birlikte "ben bitiremem" cümlesini kuruyor.
+    5:
+      tr: >-
+        Anlaşmazlık seni uzun süre meşgul etmiyor, çünkü aklın çoktan bir
+        sonraki fikirde. Karşındaki hâlâ konuşulanı düşünürken sen konuyu
+        kapatmış oluyorsun.
   night_watch:
     1:
       tr: >-
@@ -620,6 +796,11 @@ fragments:
       tr: >-
         Sana pahalıya gelen şey dinlenememek. Nöbeti kimseye devretmediğin için
         nöbet hiç bitmiyor, ve bitmeyen nöbet dikkati de köreltiyor.
+    5:
+      tr: >-
+        Anlaşmazlıkta neyin ters gidebileceğini önce sen görüyorsun ve
+        haklı çıkma ihtimalin yüksek. Bedeli şu: karşındaki uyarıldığını
+        değil, suçlandığını duyuyor.
   table_setter:
     1:
       tr: >-
@@ -638,6 +819,11 @@ fragments:
         Sana pahalıya gelen şey sıranın hiç sana gelmemesi. Kimse seni sona
         koymuyor — sen koyuyorsun, ve o kadar sessiz koyuyorsun ki kimsenin
         itiraz etmesi için sebep olmuyor.
+    5:
+      tr: >-
+        Anlaşmazlığı bir an önce kapatmak istiyorsun, çünkü açık kalan
+        gerginlik sana fiziksel geliyor. Kapatmak çözmek değil; kapattığın şey
+        ertesi hafta aynı yerden açılıyor.
   fine_worker:
     1:
       tr: >-
@@ -657,6 +843,10 @@ fragments:
         Sana pahalıya gelen şey bitirememek. Ortaya çıkmamış mükemmel iş, ortaya
         çıkmış iyi işten hiçbir ölçüde daha değerli değil — ama içeriden öyle
         hissettirmiyor.
+    5:
+      tr: >-
+        Anlaşmazlıkta standardın tarafını tutuyorsun, karşındakinin
+        değil. Haklı olduğun yerde bile bu, tartışmayı işten kişiye taşıyor.
   compass:
     1:
       tr: >-
@@ -675,6 +865,11 @@ fragments:
       tr: >-
         Sana pahalıya gelen şey yalnızlık. Kararın doğruluğu, o kararı tek
         başına vermiş olmanın açtığı mesafeyi kapatmıyor.
+    5:
+      tr: >-
+        Anlaşmazlıkta pozisyonunu netleştirip orada duruyorsun. Herkesin
+        katılmasını beklemediğin için karar hızlı çıkıyor, ve arkanda kimse
+        kalmıyor.
   still_water:
     1:
       tr: >-
@@ -693,6 +888,11 @@ fragments:
       tr: >-
         Sana pahalıya gelen şey söylememek. Sorun etmediğin şey büyüyor ve
         büyüdüğünde artık senin meselen olmaktan çıkmış oluyor.
+    5:
+      tr: >-
+        Anlaşmazlıkta sesini yükseltmiyorsun ve bu odayı sakinleştiriyor.
+        Aynı sakinlik, gerçekten çözülmesi gereken şeyin hiç gündeme
+        gelmemesine de yol açıyor.
   deep_diver:
     1:
       tr: >-
@@ -714,6 +914,10 @@ fragments:
 # Yakın arketiple karşılaştırma. Aynı bandı paylaştığın biriyle nerede
 # ayrıldığını söyler — arketip adının bir kategori değil, bir yorum olduğunu
 # en açık gösteren yer burası.
+    5:
+      tr: >-
+        Anlaşmazlığı günlerce taşıyorsun, karşındaki ertesi gün unutmuş
+        oluyor. Aradaki fark seni haksız değil, yalnız bırakıyor.
   own_clock:
     1:
       tr: >-
@@ -732,6 +936,11 @@ fragments:
       tr: >-
         Sana pahalıya gelen şey biriktirememek. Yaptığın işler tek tek
         iyi, ama üst üste konmadıkları için hiçbiri bir şeye dönüşmüyor.
+    5:
+      tr: >-
+        Anlaşmazlıkta karşı çıkmıyorsun, o iş sadece sende olmuyor.
+        Karşındaki bunu itiraz olarak değil ihmal olarak okuyor, ve ikisi ayrı
+        şeyler.
   contrarian:
     1:
       tr: >-
@@ -750,6 +959,11 @@ fragments:
       tr: >-
         Sana pahalıya gelen şey yalnız kalmak. Haklı olmak, kimsenin
         seni aramamasını telafi etmiyor.
+    5:
+      tr: >-
+        Anlaşmazlık senin en rahat olduğun yer; katılmadığını söylemek
+        sana hiçbir şeye mal olmuyor. Bedeli sonra çıkıyor: bir şeye ihtiyacın
+        olduğunda harcadığın iyi niyet orada olmuyor.
   feet_on_ground:
     1:
       tr: >-
@@ -768,6 +982,11 @@ fragments:
       tr: >-
         Sana pahalıya gelen şey aynı kalmak. Elindekiyle çözmek bir
         beceri, ama elindeki hiç değişmiyorsa çözüm de değişmiyor.
+    5:
+      tr: >-
+        Anlaşmazlıkta teoriye girmiyor, "şu an ne yapacağız" diye
+        soruyorsun. Bu tartışmayı kısaltıyor, ve tartışmanın asıl sebebini
+        olduğu yerde bırakıyor.
   as_is:
     1:
       tr: >-
@@ -786,6 +1005,155 @@ fragments:
         Sana pahalıya gelen şey sorulmamak. Kimse seni dışarıda
         bırakmıyor; sen kapıyı kapalı tutuyorsun ve kapalı kapı bir süre
         sonra çalınmıyor.
+    5:
+      tr: >-
+        Anlaşmazlıkta araları düzeltmek için uğraşmıyorsun; olan olmuştur.
+        Bu dürüst, ama karşındaki için kapının kapandığı an — ve sen
+        kapandığını fark etmiyorsun.
+  table_upsetter:
+    1:
+      tr: >-
+        Karar sende bir tartışmanın sonunda değil, ortasında oluşuyor. Bu
+        yüzden hızlısın, ve bu yüzden kararın kime ait olduğu sonradan
+        tartışılıyor.
+    2:
+      tr: >-
+        İnsanlar seninle konuşurken kendilerini toparlıyor, çünkü ne
+        diyeceğini bilmiyorlar. Bu sana yakınlık değil, dikkat kazandırıyor;
+        ikisini karıştırdığında yalnız kalıyorsun.
+    3:
+      tr: >-
+        İşin ortası senin en zayıf yerin: itiraz bittiğinde ilgi de bitiyor.
+        Devirdiğin masayı toplamak, devirmek kadar senin işin.
+    4:
+      tr: >-
+        Sana pahalıya gelen şey haklılık değil, haklılığının bir işe
+        yaramaması. Bir süre sonra insanlar seni dinlemiyor, geçmeni bekliyor.
+    5:
+      tr: >-
+        Sen ve karşındaki aynı anda haklı olamadığında geri adım atmak sana
+        kaybetmek gibi geliyor. Oysa bir kez bıraktığında, bir dahaki sefere
+        söylediğin şey daha ağır basıyor.
+  light_footed:
+    1:
+      tr: >-
+        Karar sende bir yük olmuyor, o yüzden karardan sonra da geri dönüp
+        bakmıyorsun. İyi kararlarda bu bir hız, kötülerde bir gecikme.
+    2:
+      tr: >-
+        Odaya girdiğinde ortam yumuşuyor ve bunu yaptığını bilmiyorsun. Aynı
+        rahatlık, kimsenin sana ciddi bir şey açmamasına da yol açıyor.
+    3:
+      tr: >-
+        Ortada zorlanmadığın için ortayı fark etmiyorsun. Bir işin bittiğini
+        anlamak sende, başladığını anlamaktan daha zor.
+    4:
+      tr: >-
+        Sana pahalıya gelen şey ağırlığın olmaması. Hiçbir şey seni
+        yormadığı için hiçbir şey birikmiyor, ve birikmediği için de
+        sürdürmenin bir sebebi doğmuyor.
+    5:
+      tr: >-
+        Anlaşmazlıkta genelde sen bırakıyorsun, çünkü bırakmak sana bir şeye
+        mal olmuyor. Bunun bedelini karşındaki ödüyor: senin gerçekten neye
+        önem verdiğini hiç öğrenemiyor.
+  full_glass:
+    1:
+      tr: >-
+        Karar sende bilgi eksikliğinden değil, seçenek fazlalığından
+        gecikiyor. Hepsi aynı anda önemli görününce hiçbiri sırasını
+        bekleyemiyor.
+    2:
+      tr: >-
+        İnsanlarla aranı bozan şey mesafe değil, dalgalanma. Aynı hafta
+        içinde çok yakın ve çok uzak olabiliyorsun, ve karşındaki hangisinin
+        gerçek olduğunu bilmiyor.
+    3:
+      tr: >-
+        İşin ortası sende en dolu yer: başlarken hissettiğin şey daha
+        bitmeden bir sonrakine geçmiş oluyor. Ortada durabilmek için işin
+        küçük olması gerekiyor.
+    4:
+      tr: >-
+        Sana pahalıya gelen şey, taşmamak için harcadığın enerji. İşin
+        kendisine kalan pay küçülüyor, ve gün sonundaki boşluk ertesi günü
+        ağırlaştırıyor.
+    5:
+      tr: >-
+        Anlaşmazlık sende konudan çok önce hissediliyor, o yüzden ya çok
+        erken geri çekiliyor ya da olduğundan büyük tepki veriyorsun. İkisi de
+        aynı doluluktan çıkıyor.
+  word_is_bond:
+    1:
+      tr: >-
+        Karar sende "yapılabilir mi" değil, "söz verdim mi" üzerinden
+        işliyor. Bu seni güvenilir yapıyor ve yanlış bir sözü de sonuna kadar
+        taşıtıyor.
+    2:
+      tr: >-
+        İnsanlar sana yaklaşmakta zorlanmıyor, çünkü hiç geri çevirmiyorsun.
+        Yakınlığın da yükün de aynı kapıdan giriyor.
+    3:
+      tr: >-
+        İşin ortasında aksamıyorsun; senin aksadığın yer kendi işinin ortası.
+        Başkasının işi araya girdiğinde seninki her seferinde bekliyor.
+    4:
+      tr: >-
+        Sana pahalıya gelen şey hayır diyememek değil, hayır demediğini
+        kimsenin fark etmemesi. Yükün görünmediği için azalmıyor.
+    5:
+      tr: >-
+        Sen ve karşındaki aynı anda haklı olamadığında, haklı olanı onun
+        olması senin için daha kolay. Bunu bir incelik sanıyorsun; bir süre
+        sonra bir beklentiye dönüşüyor.
+  in_its_place:
+    1:
+      tr: >-
+        Karar sende yeni bilgiyle değil, denenmişlikle veriliyor. Bu seni
+        yanıltmıyor, ama denenmemiş olanın ne getireceğini de hiç öğrenmiyorsun.
+    2:
+      tr: >-
+        İnsanlar senin nerede duracağını biliyor ve bu onları rahatlatıyor.
+        Aynı öngörülebilirlik, kimsenin sana yeni bir şey sormamasına da yol
+        açıyor.
+    3:
+      tr: >-
+        İşin ortası senin en güçlü yerin: heyecan bittiğinde de aynı hızda
+        gidiyorsun. Fark etmediğin şey, aynı hızla yanlış yöne de
+        gidilebildiği.
+    4:
+      tr: >-
+        Sana pahalıya gelen şey ertelenen değişimin faturası. Hemen
+        görünmüyor, birikerek geliyor, ve geldiğinde küçük bir düzeltme
+        yetmiyor.
+    5:
+      tr: >-
+        Anlaşmazlıkta pozisyonunu değiştirmiyorsun, çünkü pozisyonun bir
+        görüş değil bir zemin. Karşındakinin haklı olduğu durumda bile geri
+        adım, sana zemini kaybetmek gibi geliyor.
+  inwardly:
+    1:
+      tr: >-
+        Karar sende kendi isteğinle değil, kimin etkileneceğiyle veriliyor.
+        Bu seni dikkatli yapıyor, ve kendi isteğinin ne olduğunu unutturuyor.
+    2:
+      tr: >-
+        Az kişiyle çok derin bir yakınlık kuruyorsun ve o yakınlığı sen
+        taşıyorsun. Karşı tarafın taşıması gerektiğini söylemek, senin için
+        yakınlığı riske atmak demek.
+    3:
+      tr: >-
+        İşin ortasında durup durmadığını kimse bilmiyor, çünkü tıkandığını
+        söylemiyorsun. Sessizce ilerlemenin bedeli, sessizce takılıp kalmak.
+    4:
+      tr: >-
+        Sana pahalıya gelen şey söylenmeyenin birikmesi. Herkes iyi olduğunu
+        sanıyor, çünkü kötü olduğunu hiç söylemedin.
+    5:
+      tr: >-
+        Anlaşmazlıkta karşındakinin haklı olmasına izin vermek sende bir
+        refleks. Bunu barış sanıyorsun; karşındaki için bu, senin ne
+        düşündüğünü hiç öğrenememek.
 comparisons:
   quiet_builder:
     tr: >-
@@ -860,3 +1228,43 @@ comparisons:
       yumuşatmıyorsunuz ama onunki bir liderlik biçimi, seninki bir
       mesafe. Onun bedeli arkasında insan bırakmak, seninki hiç yanına
       almamak.
+  table_upsetter:
+    tr: >-
+      Yön Veren ile aynı cesareti taşıyorsunuz: ikiniz de kimsenin almadığı
+      pozisyonu alıyorsunuz. Fark şurada — o soğukkanlı olduğu için
+      söylüyor, sen dayanamadığın için. Onun itirazı bir karara dönüşüyor,
+      seninki bir ana. Bu yüzden onun çıkmazı yalnız kalmak, seninki
+      söylediğinin peşini bırakmak.
+  light_footed:
+    tr: >-
+      Kıvılcım ile aynı hafiflikle giriyorsunuz işlere. Fark şurada — onu
+      taşıyan şey merak, seni taşıyan rahatlık. O yeni bir kapı açıldığı için
+      bırakıyor, sen bırakmak canını yakmadığı için bırakıyorsun. Bu yüzden
+      onun çıkmazı seçmek, seninki devam etmeyi önemsemek.
+  full_glass:
+    tr: >-
+      Gece Nöbetçisi ile aynı tetikte duruyorsunuz: ikiniz de olacak olanı
+      önceden hissediyorsunuz. Fark şurada — o hissettiğini bir düzene
+      çeviriyor, sen bir yüke. Onun tetikte olması hazırlık üretiyor, seninki
+      yorgunluk. Bu yüzden onun çıkmazı dinlenememek, seninki başlayamamak.
+  word_is_bond:
+    tr: >-
+      Sofra Kuran ile aynı yerden besleniyorsunuz: ikiniz de başkasının iyi
+      olmasını kendi işinizin önüne koyuyorsunuz. Fark şurada — o insanları bir
+      araya getirerek yapıyor, sen sözünü tutarak. Onunki bir davet, seninki
+      bir yükümlülük. Bu yüzden onun çıkmazı masada kendine yer kalmaması,
+      seninki listede kendi satırının olmaması.
+  in_its_place:
+    tr: >-
+      Ayağı Yerde ile aynı yere bakıyorsunuz: ikiniz de teoriye ihtiyaç
+      duymuyorsunuz. Fark şurada — o elindekiyle o an çözüyor, sen elindekini
+      yıllardır aynı şekilde çalışır tutuyorsun. Onunki doğaçlama, seninki
+      bakım. Bu yüzden onun çıkmazı hiçbir şeyin birikmemesi, seninki biriken
+      şeyin hiç değişmemesi.
+  inwardly:
+    tr: >-
+      Durgun Su ile aynı mesafeyi koruyorsunuz: ikiniz de az kişiyle, sessizce
+      ve derinden. Fark şurada — o sakin olduğu için sessiz, sen dolu olduğun
+      için. Onun sessizliği bir rahatlık, seninki bir tutma. Bu yüzden onun
+      çıkmazı gerçekten sorun olanı da geciktirmek, seninki taşıdığını kimseye
+      söylememek.
