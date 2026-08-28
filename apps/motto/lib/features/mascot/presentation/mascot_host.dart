@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
+import 'package:motto/config/app_ready.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/features/mascot/application/mascot_controller.dart';
 import 'package:motto/features/mascot/application/mascot_store.dart';
@@ -29,6 +30,11 @@ class MascotHost extends StatefulWidget {
 
   /// The controller, for a screen that wants it to react — a finished task,
   /// a claimed motto.
+  /// How much room a bottom action needs below the mascot. The resting spot
+  /// has to leave at least this much, or the mascot lands on the button.
+  @visibleForTesting
+  static const bottomActionRoom = 120.0;
+
   static MascotController? of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<_MascotScope>()?.controller;
 
@@ -62,8 +68,12 @@ class _MascotHostState extends State<MascotHost>
     with SingleTickerProviderStateMixin {
   static const _size = 96.0;
 
-  /// Where it sits when nobody has moved it: bottom right, above the bar.
-  static const _home = Offset(-24, -140);
+  /// Where it sits when nobody has moved it, measured in from the far edge.
+  ///
+  /// High enough to clear a button at the bottom of the screen: every screen
+  /// here puts its one action there, and a cat on the action is worse than no
+  /// cat.
+  static const _home = Offset(-16, -180);
 
   MascotController? _controller;
   Offset? _position;
@@ -122,10 +132,10 @@ class _MascotHostState extends State<MascotHost>
     final at = _position;
     if (at != null) return at;
     // Negative home coordinates are read from the far edge, so the resting
-    // corner survives a rotation without being recomputed anywhere.
+    // spot survives a rotation without being recomputed anywhere.
     return Offset(
-      _home.dx < 0 ? bounds.right + _home.dx + 24 : _home.dx,
-      _home.dy < 0 ? bounds.bottom + _home.dy + 140 : _home.dy,
+      _home.dx < 0 ? bounds.right + _home.dx : _home.dx,
+      _home.dy < 0 ? bounds.bottom + _home.dy : _home.dy,
     );
   }
 
@@ -178,56 +188,57 @@ class _MascotHostState extends State<MascotHost>
           final bounds = _bounds;
           final at = _resolved(bounds);
 
-          // The host wraps every route, including the one that builds the
-          // container — so on the first frame there is nothing to ask. No
-          // mascot on the splash is the right answer anyway, and the builder
-          // runs again when bootstrap replaces the route.
-          final store = getIt.isRegistered<MascotStore>()
-              ? getIt<MascotStore>()
-              : null;
-          if (store == null) return widget.child;
-
-          // A `Positioned` has to be a direct child of the `Stack`, so the
-          // switch is read around the whole thing rather than around the
-          // mascot.
+          // This builder runs once — `MaterialApp.builder` wraps the router,
+          // not the page — so the container being empty on that one frame is
+          // not something to shrug at: it is the mascot never appearing. The
+          // notifier is what brings the build back.
           return ValueListenableBuilder<bool>(
-            valueListenable: store.onScreen,
-            builder: (context, visible, _) => Stack(
-              children: [
-                widget.child,
-                // Off means gone: no widget, no state machine, no timers.
-                // Opacity would keep paying for something somebody asked not
-                // to have.
-                if (visible)
-                  Positioned(
-                    left: at.dx,
-                    top: at.dy,
-                    child: GestureDetector(
-                      // Opaque so the whole box catches a drag: the mascot is
-                      // a round thing on a transparent square, and a pull that
-                      // only works on the ink mostly does not work.
-                      behavior: HitTestBehavior.opaque,
-                      onPanStart: (_) {
-                        _settle.stop();
-                        _controller?.drag(held: true);
-                      },
-                      onPanUpdate: (details) => _dragTo(details.delta, bounds),
-                      onPanEnd: (_) => _release(bounds),
-                      onPanCancel: () => _release(bounds),
-                      child: Mascot(
-                        size: _size,
-                        followsFinger: false,
-                        loadFile: widget.loadFile,
-                        onGameOffered: widget.onGameOffered,
-                        onReady: (mascot) =>
-                            setState(() => _controller = mascot),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
+            valueListenable: appReady,
+            builder: (context, ready, _) =>
+                !ready ? widget.child : _withMascot(context, bounds, at),
           );
         },
+      ),
+    );
+  }
+
+  Widget _withMascot(BuildContext context, Rect bounds, Offset at) {
+    // A `Positioned` has to be a direct child of the `Stack`, so the switch is
+    // read around the whole thing rather than around the mascot.
+    return ValueListenableBuilder<bool>(
+      valueListenable: getIt<MascotStore>().onScreen,
+      builder: (context, visible, _) => Stack(
+        children: [
+          widget.child,
+          // Off means gone: no widget, no state machine, no timers.
+          // Opacity would keep paying for something somebody asked not
+          // to have.
+          if (visible)
+            Positioned(
+              left: at.dx,
+              top: at.dy,
+              child: GestureDetector(
+                // Opaque so the whole box catches a drag: the mascot is
+                // a round thing on a transparent square, and a pull that
+                // only works on the ink mostly does not work.
+                behavior: HitTestBehavior.opaque,
+                onPanStart: (_) {
+                  _settle.stop();
+                  _controller?.drag(held: true);
+                },
+                onPanUpdate: (details) => _dragTo(details.delta, bounds),
+                onPanEnd: (_) => _release(bounds),
+                onPanCancel: () => _release(bounds),
+                child: Mascot(
+                  size: _size,
+                  followsFinger: false,
+                  loadFile: widget.loadFile,
+                  onGameOffered: widget.onGameOffered,
+                  onReady: (mascot) => setState(() => _controller = mascot),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }

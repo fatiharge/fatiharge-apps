@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:motto/config/app_ready.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/features/mascot/application/mascot_store.dart';
 import 'package:motto/features/mascot/presentation/mascot.dart';
@@ -26,9 +27,13 @@ void main() {
     getIt.registerSingleton<MascotStore>(
       MascotStore(await SharedPreferences.getInstance()),
     );
+    appReady.value = true;
   });
 
-  tearDown(getIt.reset);
+  tearDown(() async {
+    appReady.value = false;
+    await getIt.reset();
+  });
 
   testWidgets('switching it off takes it off the screen', (tester) async {
     await tester.pumpWidget(hosted());
@@ -65,6 +70,24 @@ void main() {
 
     expect(at.dx, greaterThan(screen.width / 2));
     expect(at.dy, greaterThan(screen.height / 2));
+  });
+
+  testWidgets('and clear of the button every screen puts at the bottom', (
+    tester,
+  ) async {
+    await tester.pumpWidget(hosted());
+    await tester.pump();
+    tester.takeException();
+
+    final screen = tester.getSize(find.byType(MaterialApp));
+    final bottom = tester.getBottomLeft(find.byType(Mascot)).dy;
+
+    // It resolved to the exact corner before this: the offsets said "up and
+    // in" and the arithmetic added them straight back.
+    expect(
+      screen.height - bottom,
+      greaterThanOrEqualTo(MascotHost.bottomActionRoom),
+    );
   });
 
   testWidgets('it can be dragged anywhere and settles against a side', (
@@ -148,18 +171,24 @@ void main() {
     expect(arrived.dx, lessThan(24));
   });
 
-  testWidgets('it survives being built before the container exists', (
+  testWidgets('it waits for the container rather than reading an empty one', (
     tester,
   ) async {
-    // The host wraps every route, including the one whose job is to build the
-    // container. Reading get_it on that frame threw and took the app down.
-    await getIt.reset();
-
+    // This builder runs once, before the container exists. Reading get_it
+    // there threw; skipping it silently meant the mascot never appeared at
+    // all, which is what actually shipped.
+    appReady.value = false;
     await tester.pumpWidget(hosted());
     await tester.pump();
 
     expect(tester.takeException(), isNull);
-    expect(find.text('a screen'), findsOneWidget);
     expect(find.byType(Mascot), findsNothing);
+
+    appReady.value = true;
+    await tester.pump();
+    // The loader fails here on purpose; the mascot widget is what matters.
+    tester.takeException();
+
+    expect(find.byType(Mascot), findsOneWidget);
   });
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bootstrap_kit/bootstrap_kit.dart';
+import 'package:motto/config/app_ready.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/features/content/application/content_repository.dart';
 import 'package:motto/features/onboarding/application/onboarding_store.dart';
@@ -46,6 +47,9 @@ class BootstrapAdapter implements BootstrapPort {
   /// been here, been here and has no result, or has one.
   @override
   void bootstrapFinished() {
+    // Everything above the router — the mascot — is waiting for this.
+    appReady.value = true;
+
     final router = getIt<AppRouter>();
 
     if (!getIt<OnboardingStore>().seen) {
