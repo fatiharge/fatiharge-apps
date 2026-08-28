@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:meta/meta.dart';
 import 'package:motto/features/chain/application/chain_repository.dart';
+import 'package:motto/features/chain/domain/chain.dart';
 import 'package:motto/features/content/application/content_repository.dart';
 import 'package:motto/features/daily/application/daily_state.dart';
 import 'package:motto/features/daily/application/daily_widget.dart';
@@ -31,6 +33,11 @@ class DailyCubit extends Cubit<DailyState> {
   final Analytics _analytics;
   final DailyWidget _widget;
 
+  /// Injected the way the chain cubit does it, so "yesterday" is a fact a
+  /// test can set rather than one it has to wait for.
+  @visibleForTesting
+  DateTime Function() now = DateTime.now;
+
   void unawaitedLoad() => unawaited(load());
 
   Future<void> load() async {
@@ -42,6 +49,20 @@ class DailyCubit extends Cubit<DailyState> {
     } on Object {
       emit(const DailyState(status: DailyStatus.failed));
     }
+  }
+
+  /// Null when there was no yesterday to keep.
+  ///
+  /// A chain started today has a yesterday on the calendar and none in the
+  /// app, and calling that a missed day accuses somebody of failing before
+  /// they began.
+  bool? _keptYesterday(Chain chain) {
+    final started = chain.startedOn;
+    if (started == null) return null;
+
+    final yesterday = dayOf(now()).subtract(const Duration(days: 1));
+    if (yesterday.isBefore(dayOf(started))) return null;
+    return chain.isMarked(yesterday);
   }
 
   Future<void> _load() async {
@@ -67,8 +88,23 @@ class DailyCubit extends Cubit<DailyState> {
       return;
     }
 
-    emit(DailyState(status: DailyStatus.ready, content: content));
-    await _widget.publish(content, streak: chain.streakOn(DateTime.now()));
+    // Assembled the same way, one day on. Naming tomorrow costs nothing and is
+    // the only thing on this screen that points forwards.
+    final tomorrow = DailyAssembler.assemble(
+      pack: pack,
+      archetypeId: _archetype.id,
+      daysMarked: chain.markedDays.length + 1,
+    );
+
+    emit(
+      DailyState(
+        status: DailyStatus.ready,
+        content: content,
+        keptYesterday: _keptYesterday(chain),
+        tomorrow: tomorrow?.title,
+      ),
+    );
+    await _widget.publish(content, streak: chain.streakOn(now()));
     await _analytics.record(
       MottoEvent.dailyContentView,
       properties: {'day_n': '${content.day}'},

@@ -159,6 +159,28 @@ class _TodayViewState extends State<_TodayView> {
           ),
         ),
         const SizedBox(height: 28),
+        // What happened before today. One line, and only once the chain has
+        // started — a screen that opens the same way on day one and day nine
+        // is a screen nobody is inside of.
+        if (state.keptYesterday case final bool kept) ...[
+          Row(
+            children: [
+              Icon(
+                kept ? Icons.check_circle_outline : Icons.remove_circle_outline,
+                size: 16,
+                color: kept ? scheme.primary : scheme.onSurfaceVariant,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                kept ? 'Dün işaretledin.' : 'Dün kaçtı.',
+                style: text.bodyMedium?.copyWith(
+                  color: kept ? scheme.primary : scheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+        ],
         Text(
           '${content.day}. GÜN',
           style: text.labelSmall?.copyWith(
@@ -179,6 +201,33 @@ class _TodayViewState extends State<_TodayView> {
           ),
           child: Text(content.action, style: text.bodyMedium),
         ),
+        // And what is waiting. Named rather than teased: "yarın bir sürprizin
+        // var" is the sentence people learn to ignore.
+        if (state.tomorrow case final String next) ...[
+          const SizedBox(height: 28),
+          Divider(color: scheme.outlineVariant, height: 1),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Text(
+                'YARIN',
+                style: text.labelSmall?.copyWith(
+                  color: scheme.onSurfaceVariant,
+                  letterSpacing: 1.5,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  next,
+                  style: text.titleSmall?.copyWith(
+                    color: scheme.onSurfaceVariant,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ],
     );
   }

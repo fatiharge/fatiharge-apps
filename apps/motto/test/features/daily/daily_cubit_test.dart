@@ -36,7 +36,11 @@ void main() {
     registerFallbackValue(_FakeContent());
   });
 
-  Future<DailyCubit> build({String? archetype, int marked = 0}) async {
+  Future<DailyCubit> build({
+    String? archetype,
+    int marked = 0,
+    DateTime? today,
+  }) async {
     SharedPreferences.setMockInitialValues({});
     preferences = await SharedPreferences.getInstance();
 
@@ -78,7 +82,7 @@ void main() {
       chains,
       Analytics(EventQueue(preferences), events),
       widget,
-    );
+    )..now = () => today ?? DateTime(2026, 3, marked + 1);
   }
 
   test('without a result there is nothing personal to say', () async {
@@ -133,5 +137,57 @@ void main() {
       const DailyWidget().publish(cubit.state.content!, streak: 2),
       completes,
     );
+  });
+
+  group('what is around today', () {
+    test('a chain that kept yesterday says so', () async {
+      // Three days marked, the first three of March, and today is the fourth.
+      final cubit = await build(archetype: 'quiet_builder', marked: 3);
+      await cubit.load();
+
+      expect(cubit.state.keptYesterday, isTrue);
+    });
+
+    test('a day missed yesterday is not hidden', () async {
+      final cubit = await build(
+        archetype: 'quiet_builder',
+        marked: 3,
+        today: DateTime(2026, 3, 6),
+      );
+      await cubit.load();
+
+      expect(cubit.state.keptYesterday, isFalse);
+    });
+
+    test(
+      'before the chain starts there is no yesterday to have kept',
+      () async {
+        final cubit = await build(archetype: 'quiet_builder');
+        await cubit.load();
+
+        expect(cubit.state.keptYesterday, isNull);
+      },
+    );
+
+    // Otherwise the first day opens by telling somebody they already failed.
+    test('a chain started today has no yesterday either', () async {
+      final cubit = await build(
+        archetype: 'quiet_builder',
+        marked: 1,
+        today: DateTime(2026, 3),
+      );
+      await cubit.load();
+
+      expect(cubit.state.keptYesterday, isNull);
+    });
+
+    // Naming it is the only thing on that screen pointing forwards.
+    test('tomorrow is named, and it is not today', () async {
+      final cubit = await build(archetype: 'quiet_builder', marked: 3);
+      await cubit.load();
+
+      expect(cubit.state.tomorrow, isNotNull);
+      expect(cubit.state.tomorrow, isNot(cubit.state.content!.title));
+    });
   });
 }
