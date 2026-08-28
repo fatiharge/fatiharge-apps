@@ -158,6 +158,15 @@ class _DailyTasksView extends StatelessWidget {
       );
     }
 
+    // A finished run stops taking days. Marking a fifteenth would make the
+    // strip read 15/14 and the period mean nothing.
+    if (state.chain.periodDone) {
+      return FilledButton(
+        onPressed: () => context.router.push(const PeriodDoneRoute()),
+        child: const Text('Dönemi kapat'),
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [

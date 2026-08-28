@@ -102,6 +102,7 @@ class DailyCubit extends Cubit<DailyState> {
         content: content,
         keptYesterday: _keptYesterday(chain),
         tomorrow: tomorrow?.title,
+        pool: pack.mottosFor(_archetype.id),
       ),
     );
     await _widget.publish(content, streak: chain.streakOn(now()));

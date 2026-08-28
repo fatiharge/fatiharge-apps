@@ -1,4 +1,5 @@
 import 'package:meta/meta.dart';
+import 'package:motto/features/daily/domain/content_pack.dart';
 import 'package:motto/features/daily/domain/daily_content.dart';
 
 enum DailyStatus { loading, ready, noResultYet, noContent, failed }
@@ -10,6 +11,7 @@ class DailyState {
     this.content,
     this.keptYesterday,
     this.tomorrow,
+    this.pool = const [],
   });
 
   final DailyStatus status;
@@ -22,4 +24,8 @@ class DailyState {
   /// What tomorrow asks for, by name. A day that ends without saying what the
   /// next one is is a day with no reason to come back to.
   final String? tomorrow;
+
+  /// The archetype's four mottos. Written from the start and unreachable until
+  /// a period could end — three of every four were never seen by anybody.
+  final List<PackMotto> pool;
 }

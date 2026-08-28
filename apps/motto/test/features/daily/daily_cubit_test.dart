@@ -190,4 +190,18 @@ void main() {
       expect(cubit.state.tomorrow, isNot(cubit.state.content!.title));
     });
   });
+
+  // Four were written per archetype and only the first was ever reachable;
+  // the pool is what a second period picks from.
+  test("the archetype's whole motto pool reaches the screen", () async {
+    final cubit = await build(archetype: 'quiet_builder', marked: 3);
+    await cubit.load();
+
+    expect(cubit.state.pool.length, greaterThan(1));
+    expect(
+      cubit.state.pool.every((m) => m.archetypeId == 'quiet_builder'),
+      isTrue,
+    );
+    expect(cubit.state.pool.first.motto, cubit.state.content!.mottoLine);
+  });
 }

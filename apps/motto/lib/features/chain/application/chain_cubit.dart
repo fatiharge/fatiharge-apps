@@ -89,6 +89,24 @@ class ChainCubit extends Cubit<ChainState> {
     await _reschedule();
   }
 
+  /// Starts the next fourteen days under [mottoId].
+  ///
+  /// The server refuses if the period is not actually done, so the button can
+  /// be wrong without the chain being wrong.
+  Future<void> beginNextPeriod({String? mottoId}) async {
+    try {
+      emit(
+        state.copyWith(
+          chain: await _chains.nextPeriod(now(), mottoId: mottoId),
+        ),
+      );
+    } on Object {
+      return;
+    }
+    await _analytics.record(MottoEvent.chainStart);
+    await _reschedule();
+  }
+
   Future<void> useFreeze() async {
     if (!state.canFreeze(now())) return;
 

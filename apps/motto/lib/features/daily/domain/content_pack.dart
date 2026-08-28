@@ -39,6 +39,13 @@ class ContentPack {
   final List<String> connectors;
   final List<PackMotto> mottos;
 
+  /// Every motto written for an archetype, in the order they were written —
+  /// the first is the one on the result card.
+  List<PackMotto> mottosFor(String? archetypeId) => [
+    for (final motto in mottos)
+      if (motto.archetypeId == archetypeId) motto,
+  ];
+
   List<DayFragment> fragmentsFor(String archetypeId) => [
     for (final fragment in fragments)
       if (fragment.archetypeId == archetypeId) fragment,
