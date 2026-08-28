@@ -203,7 +203,7 @@ class _TodayViewState extends State<_TodayView> {
         title: const Text('Bugünün üç şeyi'),
         subtitle: Text(done == all ? 'Hepsi yapıldı' : '$done / $all'),
         trailing: const Icon(Icons.chevron_right),
-        onTap: () => context.router.push(const DailyTasksRoute()),
+        onTap: () => context.tabsRouter.setActiveIndex(1),
       ),
     );
   }

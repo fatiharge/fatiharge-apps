@@ -7,9 +7,10 @@ import 'package:motto/route/app_router.gr.dart';
 
 /// The day's three things, on their own.
 ///
-/// A screen rather than a strip under the day: three checkboxes squeezed
-/// between two blocks of text is a list nobody reads, and the detail behind
-/// each one is the reason they are worth doing rather than ticking.
+/// A tab rather than a strip under the day: three checkboxes squeezed between
+/// two blocks of text is a list nobody reads, and the detail behind each one is
+/// the reason they are worth doing rather than ticking. It is also the thing
+/// the app is opened to do, and that belongs in the bar.
 @RoutePage()
 class DailyTasksPage extends StatelessWidget {
   const DailyTasksPage({super.key});
@@ -32,7 +33,11 @@ class _DailyTasksView extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Bugünün üç şeyi')),
+      // No back arrow: this is a tab, and there is nowhere behind it.
+      appBar: AppBar(
+        title: const Text('Bugünün üç şeyi'),
+        automaticallyImplyLeading: false,
+      ),
       body: SafeArea(
         child: BlocBuilder<TaskCubit, TaskState>(
           builder: (context, state) {
@@ -60,7 +65,7 @@ class _DailyTasksView extends StatelessWidget {
             }
 
             return ListView(
-              padding: const EdgeInsets.fromLTRB(24, 8, 24, 40),
+              padding: const EdgeInsets.fromLTRB(24, 8, 24, 110),
               children: [
                 Text(
                   '${state.day}. GÜN · ${state.done}/${state.tasks.length}',

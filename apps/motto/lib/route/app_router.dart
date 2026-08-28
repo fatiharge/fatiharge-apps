@@ -19,6 +19,7 @@ class AppRouter extends RootStackRouter {
       page: ShellRoute.page,
       children: [
         AutoRoute(page: TodayRoute.page, initial: true),
+        AutoRoute(page: DailyTasksRoute.page),
         AutoRoute(page: ProfileRoute.page),
       ],
     ),
@@ -28,7 +29,6 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: FaqRoute.page),
     AutoRoute(page: MethodRoute.page),
     AutoRoute(page: FeedbackRoute.page),
-    AutoRoute(page: DailyTasksRoute.page),
     AutoRoute(page: TaskDetailRoute.page),
     AutoRoute(page: MottoDetailRoute.page),
     AutoRoute(page: PeriodReportRoute.page),

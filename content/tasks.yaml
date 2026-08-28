@@ -91,6 +91,27 @@ tasks:
           detail: >-
             Bir saatin yanına koy, ve bitiş için alarm kur. Girmek senin
             sorunun değil, çıkmak.
+      own_clock:
+        2:
+          title: "Çıpanı dalgadan bağımsız koy"
+          detail: >-
+            İlham geldiğinde zaten yapıyorsun. Çıpanı ilhamın olmadığı bir
+            saate koy.
+      contrarian:
+        2:
+          title: "Çıpayı sen koy, ben değil"
+          detail: >-
+            Saati sana ben söylemiyorum. Sen seç, ve seçtiğin için tut.
+      feet_on_ground:
+        2:
+          title: "Çıpanı somutla: nerede, ne zaman"
+          detail: >-
+            Saat ve yer belli olsun. Belirsiz bırakırsan sende hiç olmuyor.
+      as_is:
+        2:
+          title: "Çıpanı koy, kimseye açıklama"
+          detail: >-
+            Bir saatin yanına koy. Bunu kimseye anlatman gerekmiyor.
   - day: 2
     tr:
       - title: Aynısını tekrarla
@@ -149,6 +170,27 @@ tasks:
           title: "Süreyi ölçme ama bitişi işaretle"
           detail: >-
             Ne kadar sürdüğüne bakma. Sadece nerede bitirdiğini işaretle.
+      own_clock:
+        2:
+          title: "Süreyi ölçme, dalga sanma"
+          detail: >-
+            Bugün az sürdüyse dalga çekilmiş demek değil. Sadece oldu mu.
+      contrarian:
+        2:
+          title: "Süreyi ölçme, itiraz da etme"
+          detail: >-
+            Bugün ölçme. Bu göreve itirazın varsa da bugün itiraz etme, sadece
+            yap.
+      feet_on_ground:
+        2:
+          title: "Süreyi ölçme, sadece oldu mu"
+          detail: >-
+            Bugün ne kadar sürdüğü önemli değil. Oldu mu, olmadı mı.
+      as_is:
+        2:
+          title: "Süreyi ölçme, kendine de puan verme"
+          detail: >-
+            Bugün ölçme. Kendine not da verme, sadece oldu mu.
   - day: 3
     tr:
       - title: Saati sabitle
@@ -208,6 +250,30 @@ tasks:
           title: "Telefonu kaldır, kapıyı da"
           detail: >-
             Dalarken bölünmek sana pahalıya geliyor. Bugün baştan kapat.
+      own_clock:
+        2:
+          title: "Telefonu kaldır, dalgayı bekleme"
+          detail: >-
+            Telefonu bırak ve hazır hissetmeyi bekleme. Bugün hazır
+            hissetmeyeceksin.
+      contrarian:
+        2:
+          title: "Telefonu kaldır, kuralı sen koy"
+          detail: >-
+            Telefonu nereye koyacağına sen karar ver. Karar senin olsun ama
+            karar olsun.
+      feet_on_ground:
+        2:
+          title: "Telefonu başka odaya koy"
+          detail: >-
+            Basit kural: yaparken telefon başka odada. Karmaşık kural sende
+            tutmuyor.
+      as_is:
+        2:
+          title: "Telefonu kaldır, zaten kolay"
+          detail: >-
+            Bu senin en kolay günün. O yüzden bugün fazladan bir şey yap:
+            bitince bir kişiye yaz.
   - day: 4
     tr:
       - title: Canın istemese de yap
@@ -266,6 +332,29 @@ tasks:
           title: "Yarısını yap, derinleşme"
           detail: >-
             Yarısı yeterli. Bugün yarısını daha derin yapmaya çalışma.
+      own_clock:
+        2:
+          title: "Yarısını yap, dalga yokken"
+          detail: >-
+            Yarısı bugünlük tam sayılır. Asıl mesele dalga yokken de bir şey
+            olması.
+      contrarian:
+        2:
+          title: "Yarısını yap, pazarlık etme"
+          detail: >-
+            Yarısı yeterli. Yarıyı çeyreğe indirme pazarlığını bugün açma.
+      feet_on_ground:
+        2:
+          title: "Yarısını yap, gerisini yarına bırakma"
+          detail: >-
+            Yarısı bugünlük tamam. Kalan yarıyı yarına ekleme, yarının kendi
+            yarısı var.
+      as_is:
+        2:
+          title: "Yarısını yap, kendine sert olma"
+          detail: >-
+            Yarısı yeterli. Kimseyi idare etmiyorsun ama bugün kendini biraz
+            idare et.
   - day: 5
     tr:
       - title: Kaçırdıysan geri dön
@@ -324,6 +413,29 @@ tasks:
           detail: >-
             Beş güne bak ve neye işaret ettiğini çözmeye çalışma. Bugün sadece
             say.
+      own_clock:
+        2:
+          title: "Zincire bak: ilk kez birikiyor"
+          detail: >-
+            Beş gün üst üste. Senin için asıl yeni olan şey bu — şekline bak.
+      contrarian:
+        2:
+          title: "Zincire bak, kimse kurmadı"
+          detail: >-
+            Beş gündür duran şeyi kimse sana kurdurtmadı. Kendi kurduğun tek
+            düzen bu.
+      feet_on_ground:
+        2:
+          title: "Zincire bak, sayıyı gör"
+          detail: >-
+            Beş gün. Anlamını çıkarma, sayıyı gör — sende işe yarayan şey
+            sayı.
+      as_is:
+        2:
+          title: "Zincire bak, kendin için tut"
+          detail: >-
+            Beş gündür yaptığın şeyi kimse görmedi ve bu seni rahatsız
+            etmiyor. Şeklini yine de gör.
   - day: 6
     tr:
       - title: Görünür yere koy
@@ -384,6 +496,30 @@ tasks:
           detail: >-
             Seni geciktiren şey iş değil, taşıdığın şey. Bugün bir tanesini
             bir yere yaz ve bırak.
+      own_clock:
+        2:
+          title: "Engelin eşiğinse, küçült"
+          detail: >-
+            Seni durduran şey işin büyüklüğü. Bugün onu gülünecek kadar
+            küçült.
+      contrarian:
+        2:
+          title: "Engelin “bana dayatıldı” ise, sahiplen"
+          detail: >-
+            Seni durduran şey işin kendisi değil, birinin söylemiş olması.
+            Bugün onu kendi işin say.
+      feet_on_ground:
+        2:
+          title: "Engelini elle kaldır"
+          detail: >-
+            Seni geciktiren tek şeyi bul ve bugün fiziksel olarak yerini
+            değiştir.
+      as_is:
+        2:
+          title: "Engelini kaldır, gerekirse sorarak"
+          detail: >-
+            Seni geciktiren tek şeyi bul. Çözümü birinde varsa, bugün sormayı
+            dene.
   - day: 7
     tr:
       - title: Haftayı oku
@@ -443,6 +579,30 @@ tasks:
           detail: >-
             Tek bir ayrıntı değiştir. Neden işe yaramadığını bugün anlamaya
             çalışma.
+      own_clock:
+        2:
+          title: "Bir şeyi değiştir, sistemi kurma"
+          detail: >-
+            Tek bir ayrıntı değiştir. Kendine yeni bir düzen kurma isteğini
+            bugün geçir.
+      contrarian:
+        2:
+          title: "Bir şeyi değiştir, hepsini reddetme"
+          detail: >-
+            Tek ayrıntıyı değiştir. Sistemi tümden reddetme isteğini bugün
+            geçir.
+      feet_on_ground:
+        2:
+          title: "Bir ayrıntı değiştir: yer ya da saat"
+          detail: >-
+            Soyut bir şey değiştirme. Yerini değiştir ya da saatini, ikisinden
+            biri.
+      as_is:
+        2:
+          title: "Bir şeyi değiştir, birine söyle"
+          detail: >-
+            Tek ayrıntıyı değiştir ve bu sefer değiştirdiğini bir kişiye
+            söyle.
   - day: 8
     tr:
       - title: Başka bir yerde yap
@@ -499,6 +659,29 @@ tasks:
           title: "Yarını kolaylaştır: çıkışı hazırla"
           detail: >-
             Yarın için hazırladığın tek şey, ne zaman bırakacağın olsun.
+      own_clock:
+        2:
+          title: "Yarını kolaylaştır, ilhamı bekleme"
+          detail: >-
+            Yarınki ilk hareketi bugün hazırla. Yarın hazır hissetmeyeceksin,
+            o zaman da yapacaksın.
+      contrarian:
+        2:
+          title: "Yarını kolaylaştır, kendin için"
+          detail: >-
+            Yarınki hazırlığı yap. Bunu kimse istemedi, o yüzden itiraz edecek
+            bir şey de yok.
+      feet_on_ground:
+        2:
+          title: "Yarını kolaylaştır: eşyayı hazırla"
+          detail: >-
+            Yarın için gereken şeyi bu akşam ortaya çıkar. Hatırlamaya
+            güvenme, eşyaya güven.
+      as_is:
+        2:
+          title: "Yarını kolaylaştır"
+          detail: >-
+            Yarınki ilk hareketi hazırla. Bu senin zaten iyi olduğun şey.
   - day: 9
     tr:
       - title: Bahane cümleni yaz
@@ -557,6 +740,28 @@ tasks:
           title: "Ağır bir gündeyken yap"
           detail: >-
             Bahanen genelde bugün taşıdığın şey. Bugün onu taşırken yap.
+      own_clock:
+        2:
+          title: "Bahanen “bugün gelmedi” ise yine yap"
+          detail: >-
+            Dalga gelmedi, doğru. On dört günün dördü dalgalıydı ve zincir
+            dokuz gündür duruyor.
+      contrarian:
+        2:
+          title: "Bahanen “saçma bir görev” ise yine yap"
+          detail: >-
+            Saçma olabilir. Saçma bir şeyi on dört gün sürdürmek, haklı
+            olmaktan zor.
+      feet_on_ground:
+        2:
+          title: "Bahanen “gerek yok” ise yine yap"
+          detail: >-
+            Gerek olmayabilir. Zincirin gereği bugün yapılması.
+      as_is:
+        2:
+          title: "Bahanen “kimseye borcum yok” ise yine yap"
+          detail: >-
+            Doğru, kimseye borcun yok. Bu, kendine olan sözü de siliyor mu?
   - day: 10
     tr:
       - title: Ölçmeyi bırak
@@ -611,6 +816,26 @@ tasks:
           title: "Sadece yap, üstüne düşünme"
           detail: >-
             Düşünmeden yap ve sonrasında ne hissettiğini çözmeye kalkma.
+      own_clock:
+        2:
+          title: "Sadece yap, dalgayı sorma"
+          detail: >-
+            Düşünmeden yap. Bugün kendine hazır mısın diye sorma.
+      contrarian:
+        2:
+          title: "Sadece yap, tartışma"
+          detail: >-
+            Düşünmeden, tartmadan, ve kendinle tartışmadan yap.
+      feet_on_ground:
+        2:
+          title: "Sadece yap, en doğal günün"
+          detail: >-
+            Düşünmeden yapmak zaten senin yöntemin. Bugün onu bilerek kullan.
+      as_is:
+        2:
+          title: "Sadece yap"
+          detail: >-
+            Düşünmeden, tartmadan yap. Sonrasını da kimseye anlatma.
   - day: 11
     tr:
       - title: Süreyi yarıya indir
@@ -667,6 +892,28 @@ tasks:
           title: "Neden yaptığını hatırla, tek cümle"
           detail: >-
             Tek cümle. Uzattığını fark edersen kes; bugün kısa olması önemli.
+      own_clock:
+        2:
+          title: "Neden yaptığını hatırla"
+          detail: >-
+            Tek cümle. Cümlen “canım istediğinde” ile başlıyorsa bir daha yaz.
+      contrarian:
+        2:
+          title: "Neden yaptığını hatırla"
+          detail: >-
+            Tek cümle. Cümlende “onlar öyle yapıyor diye değil” geçiyorsa, o
+            zaman ne diye?
+      feet_on_ground:
+        2:
+          title: "Neden yaptığını hatırla, somut"
+          detail: >-
+            Tek cümle. Soyut çıkarsa bir daha yaz: ne değişsin istiyorsun,
+            elle tutulur olarak.
+      as_is:
+        2:
+          title: "Neden yaptığını hatırla"
+          detail: >-
+            Tek cümle. Cümlen “kimse karışmasın diye” çıkıyorsa bir daha yaz.
   - day: 12
     tr:
       - title: Bir kişiye söyle
@@ -725,6 +972,28 @@ tasks:
           detail: >-
             Birinin bilmesi yeterli. Anlatmayı bir sohbete çevirme, bugün tek
             cümle yeter.
+      own_clock:
+        2:
+          title: "Bir kişiye söyle, seni beklesin"
+          detail: >-
+            Kimse seni beklemediği için kimse hatırlatmıyor. Bugün bir kişiye
+            söyle.
+      contrarian:
+        2:
+          title: "Bir kişiye söyle, savunmadan"
+          detail: >-
+            Birinin bilmesi yeterli. Neden yaptığını savunmak zorunda
+            değilsin.
+      feet_on_ground:
+        2:
+          title: "Bir kişiye söyle, kısaca"
+          detail: >-
+            Birinin bilmesi yeterli. Uzun anlatma, tek cümle söyle.
+      as_is:
+        2:
+          title: "Bir kişiye söyle — asıl görev bu"
+          detail: >-
+            Bu senin en zor günün. Bir kişi. Bugün kapıyı bir aralık aç.
   - day: 13
     tr:
       - title: Neyi bıraktığını fark et
@@ -782,6 +1051,29 @@ tasks:
           detail: >-
             Bıraktığın şey bugün anlamlı görünecek. Anlamlı olması geri alman
             gerektiği anlamına gelmiyor.
+      own_clock:
+        2:
+          title: "Bıraktığını geri alma"
+          detail: >-
+            Bıraktığın şey dalga geldiğinde çok cazip gelecek. Bugün alma.
+      contrarian:
+        2:
+          title: "Bıraktığını geri alma"
+          detail: >-
+            Bıraktığın şeyi geri almak bugün bir özgürlük gibi görünecek.
+            Değil, alışkanlık.
+      feet_on_ground:
+        2:
+          title: "Bıraktığını geri alma"
+          detail: >-
+            Bıraktığın şey pratik göründüğü için geri gelmek isteyecek. Bugün
+            alma.
+      as_is:
+        2:
+          title: "Bıraktığını geri alma"
+          detail: >-
+            Bıraktığın şey seni yormuyordu, o yüzden geri almak kolay gelecek.
+            Alma.
   - day: 14
     tr:
       - title: Yarına karar ver
@@ -837,3 +1129,24 @@ tasks:
           title: "Ne kaldığını yaz, bir cümle"
           detail: >-
             On dört günden geriye ne kaldı? Bir cümleyi geçme.
+      own_clock:
+        2:
+          title: "Ne kaldığını yaz: ilk kez kalan"
+          detail: >-
+            On dört günden geriye ne kaldı? Senin için asıl soru bu.
+      contrarian:
+        2:
+          title: "Ne kaldığını yaz, kime rağmen değil"
+          detail: >-
+            On dört günden geriye ne kaldı? Cümlende kimseye inat geçmesin.
+      feet_on_ground:
+        2:
+          title: "Ne kaldığını yaz, elle tutulur"
+          detail: >-
+            On dört günden geriye ne kaldı? Cümlen somut bir şeyi göstersin.
+      as_is:
+        2:
+          title: "Ne kaldığını yaz ve birine gönder"
+          detail: >-
+            Tek cümle yaz, sonra bir kişiye gönder. On dört gün kimseye
+            söylemedin; bugünü ayrı tut.

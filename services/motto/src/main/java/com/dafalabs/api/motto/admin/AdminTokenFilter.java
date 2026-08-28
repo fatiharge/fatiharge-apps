@@ -10,7 +10,7 @@ import jakarta.ws.rs.ext.Provider;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Optional;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.config.ConfigProvider;
 
 /**
  * The one door into the content tables, and it is shut unless a deployment
@@ -28,16 +28,34 @@ public class AdminTokenFilter implements ContainerRequestFilter {
 
   static final String HEADER = "X-Admin-Token";
 
-  private final Optional<String> expected;
+  /**
+   * Looked up on the first request rather than injected.
+   *
+   * <p>A {@code @Provider} is constructed during static initialisation, and a
+   * native image runs that at build time, where there is no environment to read
+   * — so the token would be baked in as null and Quarkus refuses to start when
+   * the runtime value disagrees. It is right to refuse: the alternative is an
+   * image that silently ships with the door welded shut.
+   */
+  private volatile Optional<String> expected;
 
-  AdminTokenFilter(@ConfigProperty(name = "motto.admin.token") Optional<String> expected) {
-    this.expected = expected.filter(token -> !token.isBlank());
+  private Optional<String> expected() {
+    Optional<String> known = expected;
+    if (known == null) {
+      known =
+          ConfigProvider.getConfig()
+              .getOptionalValue("motto.admin.token", String.class)
+              .filter(token -> !token.isBlank());
+      expected = known;
+    }
+    return known;
   }
 
   @Override
   public void filter(ContainerRequestContext request) {
+    Optional<String> wanted = expected();
     String offered = request.getHeaderString(HEADER);
-    if (expected.isEmpty() || offered == null || !matches(expected.get(), offered)) {
+    if (wanted.isEmpty() || offered == null || !matches(wanted.get(), offered)) {
       request.abortWith(
           Response.status(Response.Status.NOT_FOUND)
               .type(MediaType.APPLICATION_JSON)

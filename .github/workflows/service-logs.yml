@@ -95,7 +95,18 @@ jobs:
 
           # Filtered into the job's output rather than printed and then
           # trimmed: this step's output is the public part.
-          grep -vE '^([^|]*\| *)?(at |\.\.\. [0-9]+ more)' raw.log || echo "(nothing)"
+          #
+          # Redacted before it is printed, because a startup failure quotes the
+          # configuration it choked on — that is how an admin token once
+          # reached a public log. The masks below are deliberately blunt: a
+          # line naming a secret loses its value, and any long opaque run of
+          # base64 loses itself. Over-masking costs a second look at the
+          # server; under-masking costs a rotation.
+          grep -vE '^([^|]*\| *)?(at |\.\.\. [0-9]+ more)' raw.log \
+            | sed -E \
+              -e "s/([Tt][Oo][Kk][Ee][Nn]|[Pp][Aa][Ss][Ss][Ww][Oo][Rr][Dd]|[Ss][Ee][Cc][Rr][Ee][Tt]|[Kk][Ee][Yy])([^A-Za-z0-9]{0,4})[^ ]{6,}/\\1\\2***REDACTED***/g" \
+              -e "s/\\[[A-Za-z0-9+\\/]{24,}={0,2}\\]/[***REDACTED***]/g" \
+            || echo "(nothing)"
 
       - name: Remove the key
         if: always()

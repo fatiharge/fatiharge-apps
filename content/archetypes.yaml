@@ -1,4 +1,4 @@
-# The eight archetypes the launch ships with.
+# The twelve archetypes the launch ships with.
 #
 # Text only. The thresholds that decide which one a profile vector lands on are
 # data of their own, and they live with the scoring service — a copy edit must
@@ -83,3 +83,43 @@ archetypes:
         Her şeyi bir kat daha derinden yaşıyorsun; iyisini de kötüsünü de.
         Yüzeyde kalabilseydin rahat ederdin ama o zaman sen olmazdın.
       motto: Derinde kalmak değil, dalıp çıkmak.
+
+  - id: own_clock
+    profile: düzenlilik ↓ · dışadönüklük ↓
+    tr:
+      name: Kendi Saatinde
+      summary: >-
+        Sistemle değil, dalgayla çalışıyorsun; geldiğinde tamamen geliyor.
+        Bedeli şu: hiçbir şey birikmiyor, ve kimse sana göre plan yapamıyor —
+        sen de dahil.
+      motto: Kendi saatimde ama her gün.
+
+  - id: contrarian
+    profile: düzenlilik ↓ · uyumluluk ↓
+    tr:
+      name: Aykırı
+      summary: >-
+        Ne düzenmiş gibi yapıyorsun ne de katılıyormuş gibi, o yüzden senden
+        duyduğun şey gerçek olan. Bedeli şu: sonradan ihtiyacın olacak iyi
+        niyeti bugün harcıyorsun.
+      motto: Karşı çıkmak kolay, sürdürmek zor.
+
+  - id: feet_on_ground
+    profile: açıklık ↓ · düzenlilik ↓
+    tr:
+      name: Ayağı Yerde
+      summary: >-
+        Bugünün işine bakıyorsun ve elindekiyle çözüyorsun; teoriye de plana da
+        ihtiyacın olmuyor. Bedeli şu: hiçbir şey değişmiyor, çünkü değişim ya
+        merak ister ya plan, ikisini de taşımıyorsun.
+      motto: Bugün elimde olanla.
+
+  - id: as_is
+    profile: dışadönüklük ↓ · uyumluluk ↓
+    tr:
+      name: Olduğu Gibi
+      summary: >-
+        Ne yakınlık için uğraşıyorsun ne de araları düzeltmek için; seni
+        tanıyan, tam olarak seni tanıyor. Bedeli şu: bir süre sonra kimse
+        sormuyor, ve bunu ancak bir şeye ihtiyacın olduğunda fark ediyorsun.
+      motto: Az kişiye açık, onlara tamamen.
