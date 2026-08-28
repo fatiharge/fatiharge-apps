@@ -433,3 +433,213 @@ mottos:
         Motivasyonun dışarıdan gelmiyor, bu yüzden dışarıdan da bozulmuyor.
         Bedeli, tıkandığında kimsenin fark etmemesi.
       reminder: Kendin için, bugün de.
+
+  # Masayı Deviren
+  - id: tu1
+    archetype: table_upsetter
+    tr:
+      motto: Söylemesi kolaydı, kalması değil.
+      detail: >-
+        Doğru cümleyi kurmak sende bir cesaret işi değil, bir refleks. Asıl iş
+        ondan sonra başlıyor ve bedeli şu: söyleyip çıkarsan haklı olman da
+        kimsenin işine yaramıyor.
+      reminder: Bugün söylediğinin yanında kal.
+  - id: tu2
+    archetype: table_upsetter
+    tr:
+      motto: Masayı devirdiysem toplarım.
+      detail: >-
+        Kırdığın şeyi sen de görüyorsun, sadece kırmaya değer olduğunu
+        düşünüyorsun. İkisi birden doğru olabilir; toplamayı da işin parçası
+        say.
+      reminder: Bugün bir tanesini topla.
+  - id: tu3
+    archetype: table_upsetter
+    tr:
+      motto: Sesimi değil, sırayı ayarlıyorum.
+      detail: >-
+        Söylediğin şeyin yanlış olduğu nadir; zamanlaması genelde. Aynı cümle
+        beş dakika sonra kurulduğunda kimse savunmaya geçmiyor.
+      reminder: Aynı şeyi, beş dakika sonra.
+  - id: tu4
+    archetype: table_upsetter
+    tr:
+      motto: Katılmıyorum, ama buradayım.
+      detail: >-
+        Karşı çıkmak seni odadan çıkarmak zorunda değil. Bunu söylemek zor
+        geliyor çünkü kalmak, itiraz etmekten daha çok şey istiyor senden.
+      reminder: Katılma, ama kalmaya devam et.
+
+  # Hafif Ayaklı
+  - id: lf1
+    archetype: light_footed
+    tr:
+      motto: Taşımadan da gidilir, ama bunu değil.
+      detail: >-
+        Yükü bırakabilmek senin en rahat özelliğin. Bedeli şu: bırakılmaması
+        gereken şeyi de aynı kolaylıkla bırakıyorsun ve bunu aylar sonra fark
+        ediyorsun.
+      reminder: Bugün bırakmayacağın şeyi seç.
+  - id: lf2
+    archetype: light_footed
+    tr:
+      motto: Sakinliğim bir cevap değil.
+      detail: >-
+        Telaşlanmaman etrafındakileri rahatlatıyor. Ama bazen insanların
+        ihtiyacı rahatlamak değil, ciddiye alındığını görmek.
+      reminder: Bugün birine "ciddi bu" de.
+  - id: lf3
+    archetype: light_footed
+    tr:
+      motto: Kolay geldi diye küçük değil.
+      detail: >-
+        Zorlanmadan yaptığın şeyi kendi gözünde küçültüyorsun. Bir şeyin
+        değeri, sana kaça mal olduğuyla ölçülmüyor.
+      reminder: Kolay yaptığın şeyi de say.
+  - id: lf4
+    archetype: light_footed
+    tr:
+      motto: Bugün de aynı yerden geçeyim.
+      detail: >-
+        Her yerden rahat geçtiğin için hiçbir yerde iz bırakmıyorsun. Aynı
+        yere ikinci kez uğramak, senin için tekrar değil birikim.
+      reminder: Dün nereye uğradıysan, bugün de.
+
+  # Dolu Bardak
+  - id: fu1
+    archetype: full_glass
+    tr:
+      motto: Bir yudum boşalt, sonra taşı.
+      detail: >-
+        Elindeki her şey aynı anda acil görünüyor ve bu bir dikkat sorunu
+        değil, bir doluluk sorunu. Bedeli şu: boşaltmadığın sürece hiçbirine
+        sıra gelmiyor.
+      reminder: Bugün bir tanesini bırak.
+  - id: fu2
+    archetype: full_glass
+    tr:
+      motto: Hissetmem, yapamayacağım demek değil.
+      detail: >-
+        Bir şeyi yoğun hissetmek sende çoğu zaman erteleme olarak çıkıyor.
+        Aradaki bağ zorunlu değil; hissederken de yapılabiliyor.
+      reminder: Şu an nasılsan öyle başla.
+  - id: fu3
+    archetype: full_glass
+    tr:
+      motto: Küçük olsun, bitmiş olsun.
+      detail: >-
+        Büyük planlar seni rahatlatıyor ve sonra aynı planlar üzerine
+        yıkılıyor. Bitmiş küçük bir şey, planlanmış büyük bir şeyden daha çok
+        taşıyor seni.
+      reminder: Beş dakikalık olanı seç.
+  - id: fu4
+    archetype: full_glass
+    tr:
+      motto: Bugünü kurtarmak yeterli.
+      detail: >-
+        İleriyi düşünmek sende hazırlık değil, yorgunluk üretiyor. Bugünle
+        sınırlı kalmak bir küçülme değil; taşımayı sürdürebilmenin yolu.
+      reminder: Sadece bugün. Yarını yarın.
+
+  # Sözü Senet
+  - id: wb1
+    archetype: word_is_bond
+    tr:
+      motto: Söz verdiğim kadarı, o kadarı da tam.
+      detail: >-
+        Verdiğin sözün tutulacağını herkes biliyor. Bedeli şu: ne kadar söz
+        verdiğine kimse bakmıyor, senin de bakman gerekiyor.
+      reminder: Bugün ne kadarına söz verdin?
+  - id: wb2
+    archetype: word_is_bond
+    tr:
+      motto: Hayır demek de bir söz.
+      detail: >-
+        "Yapamam" cümlesini kurmadığın için insanlar sormaya devam ediyor. O
+        cümle bir kırgınlık değil, senin güvenilirliğinin devamı.
+      reminder: Bugün bir tanesine hayır de.
+  - id: wb3
+    archetype: word_is_bond
+    tr:
+      motto: Sıraya ben de varım.
+      detail: >-
+        Kendi işini herkesinki bittikten sonraya koyuyorsun ve o an genelde
+        gelmiyor. Sıraya girmek bencillik değil, sıranın var olması demek.
+      reminder: Bugün sırayı kendinden başlat.
+  - id: wb4
+    archetype: word_is_bond
+    tr:
+      motto: Taşıyorum, ama görünsün.
+      detail: >-
+        Yükü sessizce almak sana doğal geliyor. Kimse ağırlığını bilmediği için
+        de azalmıyor — söylemek şikâyet değil, bilgi.
+      reminder: Bugün taşıdığın şeyi bir kişiye söyle.
+
+  # Yerli Yerinde
+  - id: ip1
+    archetype: in_its_place
+    tr:
+      motto: Yerinde duranı da bir yokla.
+      detail: >-
+        İşleyen şeyi bozmamak senin en sağlam tarafın. Bedeli şu: bozulmuş
+        olanı da yerinde sanıyorsun, çünkü uzun süredir orada.
+      reminder: Bugün bir şeyi yokla.
+  - id: ip2
+    archetype: in_its_place
+    tr:
+      motto: Denenmişi seçtim, denemediğimi bilerek.
+      detail: >-
+        Bildiğin yol seni yanıltmıyor. Yine de bir tercih olduğunu hatırlamak,
+        onu alışkanlık olmaktan çıkarıp karar yapıyor.
+      reminder: Bu, seçim mi alışkanlık mı?
+  - id: ip3
+    archetype: in_its_place
+    tr:
+      motto: Bir kere de başka türlü.
+      detail: >-
+        Değişiklik sana masraf gibi geliyor ve çoğu zaman haklısın. Ama küçük
+        bir sapma, kaybedecek bir şeyin olmadığı yerde ucuz.
+      reminder: Bugün bir şeyi başka türlü yap.
+  - id: ip4
+    archetype: in_its_place
+    tr:
+      motto: Sağlamlığım kimseye yük değil.
+      detail: >-
+        Etrafındakiler sana göre plan yapabiliyor ve bunu sen de biliyorsun.
+        Yalnız şu var: hep aynı yerde durmak, kimsenin sana yeni bir şey
+        sormamasına da yol açıyor.
+      reminder: Bugün sana ne sorulsun isterdin?
+
+  # İçten İçe
+  - id: iw1
+    archetype: inwardly
+    tr:
+      motto: Ben de söyleyebilirim.
+      detail: >-
+        Başkasının halini okumak sende otomatik. Kendi halini söylemek değil —
+        ve söylemediğin sürece kimse sormuyor.
+      reminder: Bugün bir cümle de kendin için.
+  - id: iw2
+    archetype: inwardly
+    tr:
+      motto: Fark ettim, artık söylüyorum.
+      detail: >-
+        Fark etmek yardım etmenin yarısı; diğer yarısı söylemek. İkincisini
+        atladığında yükü tek başına taşımış oluyorsun.
+      reminder: Fark ettiğin şeyi bugün söyle.
+  - id: iw3
+    archetype: inwardly
+    tr:
+      motto: Yakınlık iki taraflı.
+      detail: >-
+        Verdiğin ilgiyi geri istemeyi zorlama sanıyorsun. İstenmediği sürece
+        gelmeyen şeye zorlama denmiyor, yakınlık deniyor.
+      reminder: Bugün birinden bir şey iste.
+  - id: iw4
+    archetype: inwardly
+    tr:
+      motto: İçeride kalırsa büyüyor.
+      detail: >-
+        Söylenmeyen şey sende küçülmüyor, birikiyor. Söylemek onu çözmüyor ama
+        büyümesini durduruyor.
+      reminder: Bugün birini içeriden çıkar.

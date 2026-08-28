@@ -13,7 +13,7 @@ is one request rather than a deploy.
 
 | File | What it holds |
 |---|---|
-| `archetypes.yaml` | the eight archetypes: name, summary, motto |
+| `archetypes.yaml` | the eighteen archetypes: name, summary, motto |
 | `items.yaml` | the short form: twenty statements, four per dimension |
 | `mottos.yaml` | four mottos per archetype, each with what it means and its reminder line |
 | `daily_skeletons.yaml` | the fourteen days, without the person in them |
@@ -24,9 +24,9 @@ is one request rather than a deploy.
 | `support.yaml` | the FAQ, the privacy summary and the deletion copy |
 
 A day someone reads is `skeleton.body` + a connector + a fragment. Fourteen
-bodies and eight sets of four fragments is a hundred and twelve days of text
-from forty-six pieces — which only works while the connectors are written by
-hand. The moment they become a template, every day reads like the same
+bodies and eighteen sets of four fragments is two hundred and fifty-two days of
+text from ninety-six pieces — which only works while the connectors are written
+by hand. The moment they become a template, every day reads like the same
 sentence with a different ending, and that is what a horoscope is.
 
 ## The voice

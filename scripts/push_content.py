@@ -37,7 +37,6 @@ DIMENSIONS = [
     "NEUROTICISM",
 ]
 BANDS = ["low", "mid", "high"]
-SECTIONS = [1, 2, 3, 4]
 LANGUAGE = "tr"
 
 
@@ -102,6 +101,10 @@ def stand_in(kind, archetype, dimension, band, section) -> str:
 
 def report_for(archetypes: list[str]) -> list[dict]:
     report = load("report.yaml")
+    # Read from the skeletons rather than written here. The report grew a fifth
+    # section and this list did not, which is exactly the kind of drift a
+    # constant invites.
+    sections = [entry["section"] for entry in report["sections"]]
     readings = report.get("readings", {})
     dimensions = report.get("dimensions", {})
     fragments = report.get("fragments", {})
@@ -133,7 +136,7 @@ def report_for(archetypes: list[str]) -> list[dict]:
                     archetype=archetype,
                 )
             )
-        for section in SECTIONS:
+        for section in sections:
             pieces.append(
                 piece(
                     "fragment",

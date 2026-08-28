@@ -4,7 +4,7 @@
 # A fragment is not advice. It is the sentence that says "this is the shape of
 # the trouble you specifically have with today's idea" — which only works if it
 # names the same cost the archetype's summary named. A fragment that would fit
-# any of the eight is a fragment that has not been written yet.
+# any of the eighteen is a fragment that has not been written yet.
 #
 # Four each, rotated across the fourteen days, so nobody sees the same one twice
 # in a week.
@@ -271,3 +271,135 @@ fragments:
     tr: >-
       Tıkandığında kimse fark etmiyor, çünkü kimseye söylemiyorsun. Bugün
       tıkanırsan, en azından kendine söyle.
+
+  # Masayı Deviren — dışadönüklük ↑ · uyumluluk ↓ · duygusal tepkisellik ↑
+  - archetype: table_upsetter
+    index: 1
+    tr: >-
+      Senin için zor olan başlamak değil, başladığını duyurduktan sonra
+      geri adım atmadan sürdürmek. Bugün kimseye duyurmadan yap.
+  - archetype: table_upsetter
+    index: 2
+    tr: >-
+      Bir şeyin yanlış olduğunu görmek sende hızlı, düzeltmek yavaş. Bugün
+      itiraz ettiğin bir şeyin yerine ne koyacağını da yaz.
+  - archetype: table_upsetter
+    index: 3
+    tr: >-
+      Tepkin geçtikten sonra ortada kalan işi genelde başkası topluyor.
+      Bugünkü küçük şeyi sonuna kadar sen taşı.
+  - archetype: table_upsetter
+    index: 4
+    tr: >-
+      Haklı olduğun bir konuda ısrar etmek sana bedava geliyor; ısrar
+      etmediğinde ne olacağını denemek pahalı. Bugün bir kez deneme.
+
+  # Hafif Ayaklı — dışadönüklük ↑ · duygusal tepkisellik ↓
+  - archetype: light_footed
+    index: 1
+    tr: >-
+      Bugünkü şeyi atlarsan canını sıkmayacak, mesele de bu. Seni tutan şey
+      rahatsızlık olmayacak; o yüzden çıpanı sağlam bir yere bağla.
+  - archetype: light_footed
+    index: 2
+    tr: >-
+      Zorlanmadığın için ilerlediğini de fark etmiyorsun. Bugün yaptığını bir
+      yere işaretle, yoksa yapmamışsın gibi duracak.
+  - archetype: light_footed
+    index: 3
+    tr: >-
+      Bir aksilik seni durdurmuyor ama bir boşluk durduruyor. Bugün araya bir
+      gün girerse, ertesi gün aynı saatte orada ol.
+  - archetype: light_footed
+    index: 4
+    tr: >-
+      Herkesle iyi geçindiğin için kimseye söz vermiyorsun. Bugünkü şeyi bir
+      kişiye söyle; ağırlığı oradan gelsin.
+
+  # Dolu Bardak — düzenlilik ↓ · duygusal tepkisellik ↑
+  - archetype: full_glass
+    index: 1
+    tr: >-
+      Bugünkü şey sana küçük geldiyse doğru seçmişsin. Sende plan büyüdükçe
+      yapılma ihtimali düşüyor, tersi değil.
+  - archetype: full_glass
+    index: 2
+    tr: >-
+      Kötü bir gün senin için "bugün olmaz" demek zorunda değil. Yarısını yap
+      ve yarısını yapmış say — zincir bunu kabul ediyor.
+  - archetype: full_glass
+    index: 3
+    tr: >-
+      Aklında aynı anda duran şeylerin sayısı, bugünkü işi zorlaştıran asıl
+      sebep. Yapmadan önce bir tanesini bir yere yaz ve kafandan çıkar.
+  - archetype: full_glass
+    index: 4
+    tr: >-
+      Bir günü kaçırdığında bunu bir karakter meselesi yapıyorsun. Kaçan gün
+      bir gün; ertesi sabah aynı yerden devam.
+
+  # Sözü Senet — uyumluluk ↑ · düzenlilik ↑
+  - archetype: word_is_bond
+    index: 1
+    tr: >-
+      Bugünkü şey sana ait ve sadece sana. Başkasının işine dönüşme ihtimali
+      olan her şeyi bugünlük dışarıda bırak.
+  - archetype: word_is_bond
+    index: 2
+    tr: >-
+      Birine söz verseydin çoktan yapmıştın. Bugünkü şeye de aynı gözle bak:
+      bu da bir söz, sadece muhatabı sensin.
+  - archetype: word_is_bond
+    index: 3
+    tr: >-
+      Sıra sana geldiğinde gün bitmiş oluyor. Bugün onu en sona değil, ilk
+      boşluğa koy.
+  - archetype: word_is_bond
+    index: 4
+    tr: >-
+      Yükü sessizce almak sana doğal geliyor, o yüzden kimse azaltmıyor.
+      Bugün bir kişiye ne taşıdığını söyle.
+
+  # Yerli Yerinde — açıklık ↓ · düzenlilik ↑ · duygusal tepkisellik ↓
+  - archetype: in_its_place
+    index: 1
+    tr: >-
+      Bugünkü şeyi zaten yapıyorsan onu değiştirme, yerini değiştir. Sende
+      sürdürmek kolay, tazelemek zor.
+  - archetype: in_its_place
+    index: 2
+    tr: >-
+      Yeni bir şeyi denemeden önce gerekçe istiyorsun ve bu genelde doğru.
+      Bugünlük gerekçe şu: on dört gün sonra hâlâ aynı yerde olmak istemiyorsun.
+  - archetype: in_its_place
+    index: 3
+    tr: >-
+      Bir şeyin bozulduğunu geç fark ediyorsun, çünkü uzun süredir orada.
+      Bugün, alışkanlıktan yaptığın bir şeyi bir kez sorgula.
+  - archetype: in_its_place
+    index: 4
+    tr: >-
+      Düzenin sağlam olduğu için bugünkü şeyi de düzenin içine gömeceksin.
+      Bugünlük onu ayrı tut; ayrı durursa görünür.
+
+  # İçten İçe — uyumluluk ↑ · dışadönüklük ↓ · duygusal tepkisellik ↑
+  - archetype: inwardly
+    index: 1
+    tr: >-
+      Bugünkü şeyi kimseye söylemeyeceksin, biliyorum. Bir kişiye söyle;
+      söylediğin an senin için de gerçek oluyor.
+  - archetype: inwardly
+    index: 2
+    tr: >-
+      Başkasının gününü okumak sende otomatik, kendi gününü okumak değil.
+      Bugün bir kez kendine sor: bugün nasıldım.
+  - archetype: inwardly
+    index: 3
+    tr: >-
+      Birinin ihtiyacı çıkarsa bugünkü şeyi hemen bırakırsın. Bugünlük
+      bırakma; on dakika sonra da orada olacak.
+  - archetype: inwardly
+    index: 4
+    tr: >-
+      İçeride tuttuğun şey küçülmüyor, birikiyor. Bugünkü işi yaparken
+      aklından geçeni bir yere yaz — okuyacak kimse olmasa bile.
