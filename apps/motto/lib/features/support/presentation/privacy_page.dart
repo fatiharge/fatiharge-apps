@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/features/chain/application/chain_cubit.dart';
 import 'package:motto/features/chain/application/chain_state.dart';
-import 'package:motto/features/support/domain/privacy_text.dart';
+import 'package:motto/features/support/application/support_copy_cubit.dart';
 import 'package:motto/route/app_router.gr.dart';
 
 @RoutePage()
@@ -13,8 +13,11 @@ class PrivacyPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => getIt<ChainCubit>()..unawaitedLoad(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => getIt<ChainCubit>()..unawaitedLoad()),
+        BlocProvider(create: (_) => getIt<SupportCopyCubit>()..unawaitedLoad()),
+      ],
       child: const _PrivacyView(),
     );
   }
@@ -36,16 +39,33 @@ class _PrivacyView extends StatelessWidget {
           children: [
             Text('Veriler', style: text.titleMedium),
             const SizedBox(height: 12),
-            for (final line in privacySummary) ...[
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('• ', style: text.bodyMedium),
-                  Expanded(child: Text(line, style: text.bodyMedium)),
-                ],
-              ),
-              const SizedBox(height: 8),
-            ],
+            BlocBuilder<SupportCopyCubit, SupportCopyState>(
+              builder: (context, copy) {
+                if (copy.copy == null) {
+                  return Text(
+                    copy.status == SupportCopyStatus.failed
+                        ? 'Metin yüklenemedi.'
+                        : '…',
+                    style: text.bodyMedium,
+                  );
+                }
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    for (final line in copy.copy!.privacy) ...[
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('• ', style: text.bodyMedium),
+                          Expanded(child: Text(line, style: text.bodyMedium)),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                    ],
+                  ],
+                );
+              },
+            ),
             const SizedBox(height: 24),
             Text('İzinler', style: text.titleMedium),
             const SizedBox(height: 12),

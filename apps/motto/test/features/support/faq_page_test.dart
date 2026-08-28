@@ -1,40 +1,74 @@
+import 'package:api_client_motto/api.dart' as api;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:motto/features/support/domain/faq.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:motto/config/injectable.dart';
+import 'package:motto/features/support/application/support_copy_cubit.dart';
 import 'package:motto/features/support/presentation/faq_page.dart';
 
-void main() {
-  testWidgets('the questions render with no network at all', (tester) async {
-    // The moment someone wonders where their data went is the moment they are
-    // least likely to have a connection. Nothing on this screen may need one.
-    await tester.pumpWidget(const MaterialApp(home: FaqPage()));
+class _MockSupport extends Mock implements api.SupportResourceApi {}
 
-    // A count would only assert how many fit on screen — the list is lazy.
-    expect(find.text(faq.first.question), findsOneWidget);
-    expect(find.byType(ExpansionTile), findsWidgets);
-    expect(tester.takeException(), isNull);
+api.SupportCopy copy() => api.SupportCopy(
+  version: 'abc123',
+  privacy: ['Hesap yok.'],
+  deletion: api.DeletionCopy(
+    goes: ['Arketibin'],
+    stays: ['Cihaz kimliğin'],
+    counterReason: 'Sayaç kalır.',
+    answersNote: 'Cevaplar saklanmıyor.',
+  ),
+  faq: [
+    api.FaqEntry(
+      id: 'lost_data',
+      question: 'Telefonumu değiştirirsem?',
+      answer: 'Zincirin gider.',
+    ),
+    api.FaqEntry(
+      id: 'chain_broken',
+      question: 'Zincirim kırıldı?',
+      answer: 'Telafi hakkın var.',
+    ),
+  ],
+  privacyPolicyUrl: 'https://dafalabs.com/motto/privacy',
+);
+
+void main() {
+  late _MockSupport support;
+
+  setUp(() {
+    support = _MockSupport();
+    when(support.supportCopy).thenAnswer((_) async => copy());
+    getIt.registerFactory<SupportCopyCubit>(() => SupportCopyCubit(support));
+  });
+
+  tearDown(getIt.reset);
+
+  testWidgets('the questions come from the server', (tester) async {
+    await tester.pumpWidget(const MaterialApp(home: FaqPage()));
+    await tester.pumpAndSettle();
+
+    // Served rather than shipped, so a wrong answer is fixed in one deploy.
+    expect(find.text('Telefonumu değiştirirsem?'), findsOneWidget);
+    expect(find.byType(ExpansionTile), findsNWidgets(2));
   });
 
   testWidgets('a linked entry is already open', (tester) async {
     await tester.pumpWidget(
       const MaterialApp(home: FaqPage(openItem: 'chain_broken')),
     );
+    await tester.pumpAndSettle();
 
-    final answer = faq.firstWhere((item) => item.id == 'chain_broken').answer;
-    expect(find.text(answer), findsOneWidget);
+    expect(find.text('Telafi hakkın var.'), findsOneWidget);
   });
 
-  test('every entry has a unique id, or a link would be ambiguous', () {
-    expect(faq.map((item) => item.id).toSet(), hasLength(faq.length));
-  });
+  testWidgets('copy that cannot be fetched says so', (tester) async {
+    when(support.supportCopy).thenThrow(Exception('offline'));
 
-  test('the questions that get asked are all answered', () {
-    // Twelve is the floor the plan set: below it the complaints this exists to
-    // absorb start arriving as store reviews instead.
-    expect(faq.length, greaterThanOrEqualTo(12));
-    expect(
-      faq.map((item) => item.id),
-      containsAll(['lost_data', 'delete_data', 'not_me', 'chain_broken']),
-    );
+    await tester.pumpWidget(const MaterialApp(home: FaqPage()));
+    await tester.pumpAndSettle();
+
+    // No cache, by decision: a wrong answer about where somebody's data is
+    // has to be fixable in one deploy.
+    expect(find.textContaining('yüklenemedi'), findsOneWidget);
   });
 }

@@ -13,9 +13,8 @@ import 'package:motto/features/support/application/data_deletion.dart';
 import 'package:motto/features/support/application/feedback_cubit.dart';
 import 'package:motto/features/support/application/last_archetype.dart';
 import 'package:motto/features/support/application/support_context.dart';
-import 'package:motto/features/support/domain/deletion_text.dart';
+import 'package:motto/features/support/application/support_copy_cubit.dart';
 import 'package:motto/features/support/domain/method_text.dart';
-import 'package:motto/features/support/domain/privacy_text.dart';
 import 'package:motto/features/support/presentation/data_deletion_page.dart';
 import 'package:motto/features/support/presentation/feedback_page.dart';
 import 'package:motto/features/support/presentation/method_page.dart';
@@ -36,6 +35,21 @@ class _MockEvents extends Mock implements api.EventResourceApi {}
 class _MockFeedback extends Mock implements api.FeedbackResourceApi {}
 
 class _MockEntitlements extends Mock implements api.EntitlementResourceApi {}
+
+class _MockSupport extends Mock implements api.SupportResourceApi {}
+
+api.SupportCopy supportCopy() => api.SupportCopy(
+  version: 'abc123',
+  privacy: ['Adın, e-postan ya da telefon numaran istenmiyor. Hesap yok.'],
+  deletion: api.DeletionCopy(
+    goes: ['Arketibin ve aldığın mottolar'],
+    stays: ['Cihaz kimliğin', 'Kullandığın hak sayısı'],
+    counterReason: 'Kullanım hakkı sayacı, suistimali önlemek için saklanır.',
+    answersNote: 'Test cevapların zaten saklanmıyor.',
+  ),
+  faq: [],
+  privacyPolicyUrl: 'https://dafalabs.com/motto/privacy',
+);
 
 class _FakeIdentity implements DeviceIdentity {
   @override
@@ -90,7 +104,11 @@ void main() {
     when(() => chains.cached).thenReturn(const Chain());
     when(() => chains.load(any())).thenAnswer((_) async => const Chain());
 
+    final support = _MockSupport();
+    when(support.supportCopy).thenAnswer((_) async => supportCopy());
+
     getIt
+      ..registerFactory<SupportCopyCubit>(() => SupportCopyCubit(support))
       ..registerFactory<ChainCubit>(
         () => ChainCubit(chains, ChainStore(preferences), scheduler, analytics),
       )
@@ -132,7 +150,7 @@ void main() {
     await tester.pumpWidget(const MaterialApp(home: PrivacyPage()));
     await tester.pumpAndSettle();
 
-    expect(find.text(privacySummary.first), findsOneWidget);
+    expect(find.text(supportCopy().privacy.first), findsOneWidget);
     expect(find.text('Verilerimi sil'), findsOneWidget);
   });
 
@@ -140,17 +158,19 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(const MaterialApp(home: DataDeletionPage()));
+    await tester.pumpAndSettle();
 
     // Finding out afterwards that the counter stays is how this screen becomes
     // a one-star review.
-    expect(find.text(deletionCounterReason), findsOneWidget);
-    for (final item in deletionStays) {
+    expect(find.text(supportCopy().deletion.counterReason), findsWidgets);
+    for (final item in supportCopy().deletion.stays) {
       expect(find.text('• $item'), findsOneWidget);
     }
   });
 
   testWidgets('deleting asks the server', (tester) async {
     await tester.pumpWidget(const MaterialApp(home: DataDeletionPage()));
+    await tester.pumpAndSettle();
 
     await tester.tap(find.widgetWithText(FilledButton, 'Verilerimi sil'));
     await tester.pumpAndSettle();
