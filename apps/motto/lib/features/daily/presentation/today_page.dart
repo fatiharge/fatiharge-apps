@@ -295,7 +295,6 @@ class _TodayViewState extends State<_TodayView> {
     await tasks.load();
   }
 
-
   /// The hour is asked for rather than assumed: a reminder at the wrong time
   /// of day is the one that teaches people to swipe them away.
   Future<void> _askHourThenStart(BuildContext context) async {
@@ -323,9 +322,7 @@ class _Chip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: done
-            ? scheme.primaryContainer
-            : scheme.surfaceContainerHighest,
+        color: done ? scheme.primaryContainer : scheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(

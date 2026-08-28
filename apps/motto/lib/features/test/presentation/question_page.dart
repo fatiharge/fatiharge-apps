@@ -58,11 +58,11 @@ class QuestionPage extends StatelessWidget implements AutoRouteWrapper {
     final cubit = context.read<TestCubit>();
     unawaited(
       showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      builder: (sheetContext) => GlimpseSheet(
-        archetype: state.glimpse!,
-        onContinue: () => Navigator.of(sheetContext).pop(),
+        context: context,
+        isScrollControlled: true,
+        builder: (sheetContext) => GlimpseSheet(
+          archetype: state.glimpse!,
+          onContinue: () => Navigator.of(sheetContext).pop(),
         ),
       ).whenComplete(cubit.dismissGlimpse),
     );

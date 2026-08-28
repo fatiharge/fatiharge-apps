@@ -16,7 +16,9 @@ void main() {
 
   Widget card(ThemeData theme) => MaterialApp(
     theme: theme,
-    home: Scaffold(body: Center(child: ShareCard(archetype: archetype))),
+    home: Scaffold(
+      body: Center(child: ShareCard(archetype: archetype)),
+    ),
   );
 
   testWidgets('carries the name, what it means and the motto', (tester) async {
@@ -43,10 +45,12 @@ void main() {
     // It has one deliberate look, and this is the single place the system
     // theme is ignored on purpose.
     final ground = tester.widget<ColoredBox>(
-      find.descendant(
-        of: find.byType(ShareCard),
-        matching: find.byType(ColoredBox),
-      ).first,
+      find
+          .descendant(
+            of: find.byType(ShareCard),
+            matching: find.byType(ColoredBox),
+          )
+          .first,
     );
     expect(ground.color, MottoPalette.darkSurface);
   });

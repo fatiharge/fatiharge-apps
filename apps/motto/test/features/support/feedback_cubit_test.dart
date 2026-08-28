@@ -65,8 +65,9 @@ void main() {
 
     await cubit.send(message: 'Sorular yüklenmedi', email: 'a@b.com');
 
-    final sent = verify(() => feedback.submitFeedback(captureAny())).captured
-        .single as api.FeedbackRequest;
+    final sent =
+        verify(() => feedback.submitFeedback(captureAny())).captured.single
+            as api.FeedbackRequest;
     expect(sent.kind, api.FeedbackKind.BUG);
     expect(sent.message, 'Sorular yüklenmedi');
     expect(sent.email, 'a@b.com');
@@ -76,8 +77,9 @@ void main() {
   test('the archetype rides along, so the report is about something', () async {
     await cubit.send(message: 'bir şey');
 
-    final sent = verify(() => feedback.submitFeedback(captureAny())).captured
-        .single as api.FeedbackRequest;
+    final sent =
+        verify(() => feedback.submitFeedback(captureAny())).captured.single
+            as api.FeedbackRequest;
     expect(sent.context['archetypeId'], 'quiet_builder');
     expect(sent.context['platform'], 'android');
     expect(sent.context['appVersion'], '0.1.0+1');
@@ -86,8 +88,9 @@ void main() {
   test('a rejection is sent as its own kind, with no form to fill', () async {
     await cubit.rejectArchetype('Tam tersi gibi');
 
-    final sent = verify(() => feedback.submitFeedback(captureAny())).captured
-        .single as api.FeedbackRequest;
+    final sent =
+        verify(() => feedback.submitFeedback(captureAny())).captured.single
+            as api.FeedbackRequest;
     expect(sent.kind, api.FeedbackKind.ARCHETYPE_REJECTED);
     expect(sent.message, 'Tam tersi gibi');
   });

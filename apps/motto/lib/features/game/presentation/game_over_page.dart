@@ -88,5 +88,4 @@ class GameOverPage extends StatelessWidget {
       ),
     );
   }
-
 }

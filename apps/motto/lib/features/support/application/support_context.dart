@@ -20,8 +20,7 @@ class SupportContext {
     'appVersion': await _version(),
     'platform': _identity.platform,
     'osVersion': Platform.operatingSystemVersion,
-    if (_lastArchetype.id case final String archetype)
-      'archetypeId': archetype,
+    if (_lastArchetype.id case final String archetype) 'archetypeId': archetype,
   };
 
   /// A version we could not read is worth less than the report it would

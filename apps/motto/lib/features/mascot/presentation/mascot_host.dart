@@ -27,15 +27,13 @@ class MascotHost extends StatefulWidget {
 
   /// The controller, for a screen that wants it to react — a finished task,
   /// a claimed motto.
-  static MascotController? of(BuildContext context) => context
-      .dependOnInheritedWidgetOfExactType<_MascotScope>()
-      ?.controller;
+  static MascotController? of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<_MascotScope>()?.controller;
 
   /// Walks the mascot somewhere by itself. Onboarding uses it to introduce the
   /// app: a mascot that only ever moves when dragged is a decoration.
-  static MascotMovement? movementOf(BuildContext context) => context
-      .dependOnInheritedWidgetOfExactType<_MascotScope>()
-      ?.movement;
+  static MascotMovement? movementOf(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<_MascotScope>()?.movement;
 
   @override
   State<MascotHost> createState() => _MascotHostState();
@@ -201,8 +199,7 @@ class _MascotHostState extends State<MascotHost>
                     followsFinger: false,
                     loadFile: widget.loadFile,
                     onGameOffered: widget.onGameOffered,
-                    onReady: (mascot) =>
-                        setState(() => _controller = mascot),
+                    onReady: (mascot) => setState(() => _controller = mascot),
                   ),
                 ),
               ),

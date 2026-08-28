@@ -73,9 +73,8 @@ class _FeedbackViewState extends State<_FeedbackView> {
                       ChoiceChip(
                         label: Text(entry.value),
                         selected: state.kind == entry.key,
-                        onSelected: (_) => context
-                            .read<FeedbackCubit>()
-                            .chooseKind(entry.key),
+                        onSelected: (_) =>
+                            context.read<FeedbackCubit>().chooseKind(entry.key),
                       ),
                   ],
                 ),

@@ -57,8 +57,9 @@ void main() {
       final day = invocation.positionalArguments[0] as DateTime;
       return chainOf(marked).mark(day);
     });
-    when(() => chains.freeze(any()))
-        .thenAnswer((_) async => chainOf([3, 4, 5]));
+    when(
+      () => chains.freeze(any()),
+    ).thenAnswer((_) async => chainOf([3, 4, 5]));
 
     final events = _MockEvents();
     when(() => events.recordEvents(any())).thenAnswer(

@@ -178,17 +178,19 @@ void main() {
       expect(draft.read(), isEmpty);
     });
 
-    test('a refusal keeps its code, so the app can say which rule refused',
-        () async {
-      await draft.write({'q1': 3});
-      when(() => mottos.claimMotto(any())).thenThrow(
-        api.ApiException(409, '{"code":"cooldown_open","message":"x"}'),
-      );
+    test(
+      'a refusal keeps its code, so the app can say which rule refused',
+      () async {
+        await draft.write({'q1': 3});
+        when(() => mottos.claimMotto(any())).thenThrow(
+          api.ApiException(409, '{"code":"cooldown_open","message":"x"}'),
+        );
 
-      await cubit.submitSaved();
+        await cubit.submitSaved();
 
-      expect(cubit.state.status, TestStatus.failed);
-      expect(cubit.state.errorCode, 'cooldown_open');
-    });
+        expect(cubit.state.status, TestStatus.failed);
+        expect(cubit.state.errorCode, 'cooldown_open');
+      },
+    );
   });
 }
