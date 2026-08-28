@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:motto/config/injectable.dart';
+import 'package:motto/features/tasks/application/task_cubit.dart';
+import 'package:motto/features/tasks/presentation/daily_tasks_page.dart';
 import 'package:motto/features/tasks/presentation/period_report_page.dart';
 import 'package:motto/features/tasks/presentation/task_detail_page.dart';
 
@@ -121,6 +123,50 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Rapor alınamadı.'), findsOneWidget);
+    });
+  });
+
+  group("the day's three things", () {
+    late _MockTasks tasks;
+
+    setUp(() {
+      tasks = _MockTasks();
+      when(() => tasks.dailyTasks(today: any(named: 'today'))).thenAnswer(
+        (_) async => api.DailyTasks(
+          day: 3,
+          tasks: [task(), task(done: true)],
+        ),
+      );
+      when(
+        () => tasks.completeTask(any(), today: any(named: 'today')),
+      ).thenAnswer((_) async => null);
+      getIt.registerFactory<TaskCubit>(() => TaskCubit(tasks));
+    });
+
+    tearDown(getIt.reset);
+
+    testWidgets('they get a screen of their own', (tester) async {
+      await tester.pumpWidget(const MaterialApp(home: DailyTasksPage()));
+      await tester.pumpAndSettle();
+
+      // Three checkboxes squeezed between two blocks of text is a list nobody
+      // reads.
+      expect(find.text('Bir dakikanı seç'), findsNWidgets(2));
+      expect(find.textContaining('3. GÜN'), findsOneWidget);
+      expect(find.byType(Checkbox), findsNWidgets(2));
+    });
+
+    testWidgets('a day that cannot be fetched says so', (tester) async {
+      when(
+        () => tasks.dailyTasks(today: any(named: 'today')),
+      ).thenThrow(Exception('offline'));
+
+      await tester.pumpWidget(const MaterialApp(home: DailyTasksPage()));
+      await tester.pumpAndSettle();
+
+      // An empty list and a failed request looked identical, which is how a
+      // broken endpoint hid for a whole feature.
+      expect(find.textContaining('alınamadı'), findsOneWidget);
     });
   });
 }
