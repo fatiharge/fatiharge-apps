@@ -59,11 +59,16 @@ class MascotRules {
   }
 
   /// Untouched for this long and it does something to be noticed.
-  static const idleBeforeAttention = Duration(seconds: 20);
+  static const idleBeforeAttention = Duration(seconds: 3);
 
-  /// And this long before it offers the game — far enough apart that the two
-  /// never read as one twitchy character.
-  static const idleBeforeOffer = Duration(seconds: 75);
+  /// And this long before it offers the game.
+  ///
+  /// Ten seconds, not the seventy-five it used to be. Seventy-five is longer
+  /// than anybody sits still on a screen they have already read, so the offer
+  /// arrived after they had gone — which made the game unreachable rather than
+  /// hidden. The two are still far enough apart to read as one character
+  /// getting bored rather than twitching.
+  static const idleBeforeOffer = Duration(seconds: 10);
 
   static double decayed(double annoyance, Duration since) {
     final calmed = annoyance - decayPerSecond * since.inMilliseconds / 1000;
