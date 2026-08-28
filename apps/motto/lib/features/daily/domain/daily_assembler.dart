@@ -12,6 +12,15 @@ abstract final class DailyAssembler {
     return (position % cycleDays) + 1;
   }
 
+  /// The count that stands for tomorrow.
+  ///
+  /// Nothing marked and one day marked are both day one — the first day is
+  /// day one whether or not it has been ticked. Adding one to a count of zero
+  /// therefore gave day one again, and tomorrow showed today's text until the
+  /// chain had started.
+  static int tomorrowFrom(int daysMarked) =>
+      (daysMarked < 1 ? 1 : daysMarked) + 1;
+
   /// Null without a result: saying something general would be the horoscope
   /// this is trying not to be.
   static DailyContent? assemble({

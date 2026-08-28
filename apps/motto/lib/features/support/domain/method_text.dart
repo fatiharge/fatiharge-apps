@@ -29,7 +29,7 @@ const methodSections = <MethodSection>[
   ),
   MethodSection(
     'Arketip nasıl seçiliyor',
-    'Cevaplar beş boyutlu bir profile dönüşüyor ve bu profil, sekiz '
+    'Cevaplar beş boyutlu bir profile dönüşüyor ve bu profil, on sekiz '
         'arketibin her birinin tanımlı noktasına olan uzaklığına göre '
         'eşleşiyor — eşik sırası değil, en yakın nokta. Bu yüzden iki '
         'arketip arasında kalan bir profil, hangi eşiği önce geçtiğine '

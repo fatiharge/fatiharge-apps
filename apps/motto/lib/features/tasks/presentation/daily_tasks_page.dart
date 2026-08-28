@@ -49,25 +49,61 @@ class _DailyTasksView extends StatelessWidget {
       body: SafeArea(
         child: BlocBuilder<TaskCubit, TaskState>(
           builder: (context, state) {
+            // The run is drawn from the cache, so it stays whatever the
+            // network did. Losing the day count and the mark button because
+            // the task list failed took a working chain off the screen.
+            final chain = BlocBuilder<ChainCubit, ChainState>(
+              builder: (context, chainState) {
+                final now = DateTime.now();
+                return ChainStrip(
+                  chain: chainState.chain,
+                  today: now,
+                  streak: chainState.streakToday(now),
+                );
+              },
+            );
+
             if (state.status == TaskStatus.loading) {
-              return const Center(child: CircularProgressIndicator());
+              return _framed(
+                context,
+                chain,
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 48),
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+              );
             }
             if (state.status == TaskStatus.failed) {
-              return const Center(
-                child: Padding(
-                  padding: EdgeInsets.all(24),
-                  child: Text(
-                    'Bugünün görevleri alınamadı. Bağlantını kontrol edip '
-                    'tekrar dene.',
+              return _framed(
+                context,
+                chain,
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 32),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Bugünün görevleri alınamadı. Bağlantını kontrol edip '
+                        'tekrar dene.',
+                        style: text.bodyLarge,
+                      ),
+                      const SizedBox(height: 16),
+                      OutlinedButton(
+                        onPressed: context.read<TaskCubit>().unawaitedLoad,
+                        child: const Text('Tekrar dene'),
+                      ),
+                    ],
                   ),
                 ),
               );
             }
             if (state.tasks.isEmpty) {
-              return const Center(
-                child: Padding(
-                  padding: EdgeInsets.all(24),
-                  child: Text('Bugün için bir şey yok.'),
+              return _framed(
+                context,
+                chain,
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 32),
+                  child: Text('Bugün için bir şey yok.', style: text.bodyLarge),
                 ),
               );
             }
@@ -75,16 +111,7 @@ class _DailyTasksView extends StatelessWidget {
             return ListView(
               padding: const EdgeInsets.fromLTRB(24, 8, 24, 110),
               children: [
-                BlocBuilder<ChainCubit, ChainState>(
-                  builder: (context, chainState) {
-                    final now = DateTime.now();
-                    return ChainStrip(
-                      chain: chainState.chain,
-                      today: now,
-                      streak: chainState.streakToday(now),
-                    );
-                  },
-                ),
+                chain,
                 const SizedBox(height: 28),
                 Text(
                   'BUGÜNÜN ÜÇ ŞEYİ · ${state.done}/${state.tasks.length}',
@@ -138,6 +165,26 @@ class _DailyTasksView extends StatelessWidget {
           },
         ),
       ),
+    );
+  }
+
+  /// The run, then whatever the task list has to say, then the day's button.
+  /// Three things that fail independently and should look like it.
+  Widget _framed(BuildContext context, Widget chain, Widget middle) {
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(24, 8, 24, 110),
+      children: [
+        chain,
+        middle,
+        BlocBuilder<ChainCubit, ChainState>(
+          builder: (context, chainState) => _closing(
+            context,
+            chainState,
+            Theme.of(context).textTheme,
+            Theme.of(context).colorScheme,
+          ),
+        ),
+      ],
     );
   }
 

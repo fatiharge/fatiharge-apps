@@ -95,7 +95,12 @@ class ChainStrip extends StatelessWidget {
     required DateTime? start,
     required DateTime now,
   }) {
-    if (start == null) return _DayState.ahead;
+    // Before it starts, the first day is still today's place. Fourteen
+    // identical grey bars read as a disabled control rather than a run
+    // somebody is about to begin.
+    if (start == null) {
+      return offset == 0 ? _DayState.today : _DayState.ahead;
+    }
 
     final day = start.add(Duration(days: offset));
     if (chain.isMarked(day)) return _DayState.done;

@@ -66,11 +66,24 @@ class _ShareCardPageState extends State<ShareCardPage> {
             children: [
               Expanded(
                 child: Center(
-                  // Wraps exactly the card, so the export has none of the
-                  // screen around it.
-                  child: RepaintBoundary(
-                    key: _boundaryKey,
-                    child: ShareCard(archetype: widget.archetype),
+                  // The edge sits outside the boundary, so it frames the card
+                  // on screen without reaching the exported image. In dark
+                  // mode the card and the page are the same black, and the
+                  // card stopped reading as an object at all.
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.outlineVariant,
+                      ),
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    // Wraps exactly the card, so the export has none of the
+                    // screen around it.
+                    child: RepaintBoundary(
+                      key: _boundaryKey,
+                      child: ShareCard(archetype: widget.archetype),
+                    ),
                   ),
                 ),
               ),

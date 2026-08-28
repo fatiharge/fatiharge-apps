@@ -7,6 +7,7 @@ import 'package:motto/features/chain/application/chain_cubit.dart';
 import 'package:motto/features/chain/application/chain_state.dart';
 import 'package:motto/features/daily/application/daily_cubit.dart';
 import 'package:motto/features/daily/application/daily_state.dart';
+import 'package:motto/features/daily/domain/content_pack.dart';
 import 'package:motto/features/profile/application/profile_cubit.dart';
 import 'package:motto/route/app_router.gr.dart';
 
@@ -74,14 +75,23 @@ class _TodayViewState extends State<_TodayView> {
             // The way to the result, and through it to the deep report. It was
             // reachable only from the profile, which is the tab people open
             // last — a paid thing nobody can find is not a paid thing.
+            //
+            // From the server when it answers, from the package and what this
+            // device remembers when it does not: the door to the paid thing
+            // should not close because the train went into a tunnel.
             BlocBuilder<ProfileCubit, ProfileState>(
-              builder: (context, profile) => switch (profile.current) {
-                final api.ResultSummary result => Padding(
-                  padding: const EdgeInsets.only(top: 28),
-                  child: _ArchetypeRow(result: result),
-                ),
-                _ => const SizedBox.shrink(),
-              },
+              builder: (context, profile) =>
+                  BlocBuilder<DailyCubit, DailyState>(
+                    builder: (context, daily) {
+                      final row = _row(profile, daily);
+                      return row == null
+                          ? const SizedBox.shrink()
+                          : Padding(
+                              padding: const EdgeInsets.only(top: 28),
+                              child: row,
+                            );
+                    },
+                  ),
             ),
           ],
         ),
@@ -263,10 +273,44 @@ class _TodayViewState extends State<_TodayView> {
 }
 
 /// Who somebody is, one row, opening the result.
-class _ArchetypeRow extends StatelessWidget {
-  const _ArchetypeRow({required this.result});
+/// The server's answer if there is one, otherwise what the package and this
+/// device already hold.
+Widget? _row(ProfileState profile, DailyState daily) {
+  if (profile.current case final api.ResultSummary result) {
+    return _ArchetypeRow(
+      name: result.archetype.name,
+      archetype: result.archetype,
+      resultId: result.id,
+    );
+  }
+  if (daily.mine case final PackArchetype mine) {
+    if (daily.resultId case final int id) {
+      return _ArchetypeRow(
+        name: mine.name,
+        archetype: api.ArchetypeResponse(
+          id: mine.id,
+          name: mine.name,
+          summary: mine.summary,
+          motto: mine.motto,
+          confident: true,
+        ),
+        resultId: id,
+      );
+    }
+  }
+  return null;
+}
 
-  final api.ResultSummary result;
+class _ArchetypeRow extends StatelessWidget {
+  const _ArchetypeRow({
+    required this.name,
+    required this.archetype,
+    required this.resultId,
+  });
+
+  final String name;
+  final api.ArchetypeResponse archetype;
+  final int resultId;
 
   @override
   Widget build(BuildContext context) {
@@ -276,7 +320,7 @@ class _ArchetypeRow extends StatelessWidget {
     return InkWell(
       borderRadius: BorderRadius.circular(14),
       onTap: () => context.router.push(
-        ResultRoute(archetype: result.archetype, resultId: result.id),
+        ResultRoute(archetype: archetype, resultId: resultId),
       ),
       child: Container(
         padding: const EdgeInsets.fromLTRB(18, 16, 12, 16),
@@ -298,7 +342,7 @@ class _ArchetypeRow extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 6),
-                  Text(result.archetype.name, style: text.titleMedium),
+                  Text(name, style: text.titleMedium),
                   const SizedBox(height: 4),
                   Text(
                     'Raporun ve derin raporun burada.',

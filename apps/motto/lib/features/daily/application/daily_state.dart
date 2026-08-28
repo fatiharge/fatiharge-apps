@@ -13,6 +13,8 @@ class DailyState {
     this.tomorrow,
     this.pool = const [],
     this.archetypes = const [],
+    this.mine,
+    this.resultId,
   });
 
   final DailyStatus status;
@@ -32,4 +34,11 @@ class DailyState {
 
   /// Every archetype the package knows, for the gallery.
   final List<PackArchetype> archetypes;
+
+  /// This device's archetype, read from the package rather than the server, so
+  /// the way into the result survives a dead network.
+  final PackArchetype? mine;
+
+  /// Which result that archetype came from.
+  final int? resultId;
 }

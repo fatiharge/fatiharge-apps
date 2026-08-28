@@ -99,7 +99,7 @@ class _DeepReportPageState extends State<DeepReportPage> {
         ),
         const SizedBox(height: 24),
         Text(
-          'Dört bölüm, senin profiline göre kuruluyor. Aynı arketipteki iki '
+          'Beş bölüm, senin profiline göre kuruluyor. Aynı arketipteki iki '
           'kişi aynı raporu okumuyor.',
           style: text.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
         ),
