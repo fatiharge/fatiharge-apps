@@ -53,7 +53,12 @@ def text_of(entry) -> str | None:
 
 
 def tasks_for(archetypes: list[str]) -> list[dict]:
-    days = load("tasks.yaml")["tasks"]
+    content = load("tasks.yaml")
+    days = content["tasks"]
+    # Which of the three the archetype is supposed to own. The other two are
+    # the day's move and the day's mark — the same for everyone by design, so
+    # they are not stand-ins waiting to be replaced.
+    personal = content["personal_slot"]
     rows = []
     for day in days:
         shared = day[LANGUAGE]
@@ -69,10 +74,7 @@ def tasks_for(archetypes: list[str]) -> list[dict]:
                         "ordinal": ordinal,
                         "title": (one or fallback)["title"],
                         "detail": (one or fallback)["detail"],
-                        # The shared text is a real sentence, but it is the same
-                        # sentence for all eight — a stand-in until this
-                        # archetype has its own.
-                        "placeholder": one is None,
+                        "placeholder": ordinal == personal and one is None,
                     }
                 )
     return rows
