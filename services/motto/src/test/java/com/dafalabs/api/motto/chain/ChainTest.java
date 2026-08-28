@@ -53,19 +53,23 @@ class ChainTest {
   }
 
   @Test
-  @DisplayName("starting marks today")
-  void startingMarksToday() {
+  @DisplayName("starting begins the run and leaves today to be marked")
+  void startingDoesNotCloseTheFirstDay() {
     var state = chains.start(device, TODAY);
+    chains.mark(device, TODAY, TODAY);
 
     assertTrue(state.started());
-    assertEquals(1, state.streak());
-    assertTrue(state.markedToday());
+    // The mark is what closes a day, and the first day is a day like the
+    // others: its three things have not been done yet either.
+    assertEquals(0, state.streak());
+    assertFalse(state.markedToday());
   }
 
   @Test
   @DisplayName("marking the same day twice marks it once")
   void markingTwiceIsMarkingOnce() {
     chains.start(device, TODAY);
+    chains.mark(device, TODAY, TODAY);
     var state = chains.mark(device, TODAY, TODAY);
 
     // The offline queue will send the same day twice sooner or later.
@@ -77,6 +81,7 @@ class ChainTest {
   @DisplayName("the streak survives a chain that survives the app")
   void theStreakAccumulates() {
     chains.start(device, TODAY.minusDays(2));
+    chains.mark(device, TODAY.minusDays(2), TODAY.minusDays(2));
     chains.mark(device, TODAY.minusDays(1), TODAY);
     var state = chains.mark(device, TODAY, TODAY);
 
@@ -87,6 +92,7 @@ class ChainTest {
   @DisplayName("the make-up fills the missed day and cannot be spent twice")
   void theMakeUpIsMonthly() {
     chains.start(device, TODAY.minusDays(2));
+    chains.mark(device, TODAY.minusDays(2), TODAY.minusDays(2));
     var state = chains.state(device, TODAY);
     assertTrue(state.broken());
     assertTrue(state.canFreeze());
@@ -118,6 +124,7 @@ class ChainTest {
   @DisplayName("a day queued offline yesterday still counts")
   void acceptsARecentBackdate() {
     chains.start(device, TODAY);
+    chains.mark(device, TODAY, TODAY);
     var state = chains.mark(device, TODAY.minusDays(1), TODAY);
 
     // The state that comes back is the state now, not the state on the day
@@ -141,6 +148,7 @@ class ChainTest {
   void allowsClockSkew() {
     // Time zones span more than a day end to end.
     var state = chains.start(device, TODAY.plusDays(1));
+    chains.mark(device, TODAY.plusDays(1), TODAY.plusDays(1));
 
     assertTrue(state.started());
   }
@@ -149,6 +157,7 @@ class ChainTest {
   @DisplayName("deleting takes the chain and its days with it")
   void deletionRemovesEverything() {
     chains.start(device, TODAY);
+    chains.mark(device, TODAY, TODAY);
     chains.deleteForDevice(device);
 
     assertFalse(chains.state(device, TODAY).started());
@@ -183,6 +192,7 @@ class ChainTest {
   @DisplayName("the next period cannot be started before the fourteen are done")
   void anUnfinishedPeriodCannotBeSkipped() {
     chains.start(device, TODAY);
+    chains.mark(device, TODAY, TODAY);
 
     // Letting somebody restart early would make the period mean nothing, and
     // the period is the product.

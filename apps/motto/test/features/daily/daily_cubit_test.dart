@@ -225,4 +225,25 @@ void main() {
     expect(cubit.state.status, DailyStatus.noResultYet);
     expect(cubit.state.archetypes, isNotEmpty);
   });
+
+  // The row that opens the result — and through it the paid report — used to
+  // come from the server alone, so the door closed whenever the network did.
+  test('my own archetype comes from the package, not the server', () async {
+    final cubit = await build(archetype: 'quiet_builder', marked: 1);
+    await cubit.load();
+
+    expect(cubit.state.mine, isNotNull);
+    expect(cubit.state.mine!.id, 'quiet_builder');
+    expect(cubit.state.mine!.name, isNotEmpty);
+  });
+
+  test('tomorrow is not today, even before the chain starts', () async {
+    final cubit = await build(archetype: 'quiet_builder');
+    await cubit.load();
+
+    // Nothing marked and one day marked are both day one, so adding one to a
+    // count of zero used to give day one again and "yarın" repeated today.
+    expect(cubit.state.content!.day, 1);
+    expect(cubit.state.tomorrow, isNot(cubit.state.content!.title));
+  });
 }

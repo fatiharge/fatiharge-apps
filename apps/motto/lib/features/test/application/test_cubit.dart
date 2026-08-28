@@ -128,7 +128,7 @@ class TestCubit extends EffectCubit<TestState, TestEffect> {
       emit(state.copyWith(status: TestStatus.asking, result: result));
 
       if (result?.archetype.id case final String archetype) {
-        await _lastArchetype.remember(archetype);
+        await _lastArchetype.remember(archetype, resultId: result?.id);
       }
       // After the archetype is remembered, so that whatever the effect opens
       // finds the app already knowing who this is.

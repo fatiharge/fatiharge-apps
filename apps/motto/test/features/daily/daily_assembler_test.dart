@@ -153,4 +153,31 @@ void main() {
       expect(day, isNull);
     });
   });
+
+  group('tomorrow', () {
+    test('the day after an unstarted chain is day two, not day one', () {
+      // Nothing marked and one day marked are both day one, so adding one to
+      // the count gave day one twice and "yarın" repeated today.
+      expect(
+        DailyAssembler.dayIndex(DailyAssembler.tomorrowFrom(0)),
+        2,
+      );
+    });
+
+    test('and the day after day three is day four', () {
+      expect(
+        DailyAssembler.dayIndex(DailyAssembler.tomorrowFrom(3)),
+        4,
+      );
+    });
+
+    test('it wraps with the cycle rather than running past it', () {
+      expect(
+        DailyAssembler.dayIndex(
+          DailyAssembler.tomorrowFrom(DailyAssembler.cycleDays),
+        ),
+        1,
+      );
+    });
+  });
 }

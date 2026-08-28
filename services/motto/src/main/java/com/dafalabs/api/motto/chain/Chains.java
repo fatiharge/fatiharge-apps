@@ -36,13 +36,21 @@ public class Chains {
     this.clock = clock;
   }
 
+  /**
+   * Begins the run without closing its first day.
+   *
+   * <p>Starting used to mark today as well, which made day one the only day
+   * whose button was already spent: the three things were still untouched and
+   * the day was over. The mark is what closes a day, and the first day is a
+   * day like the others.
+   */
   @Transactional
   public ChainState start(UUID deviceId, LocalDate today) {
     verify(today);
     if (chains.findById(deviceId) == null) {
       chains.persist(Chain.startedBy(deviceId, today));
     }
-    return mark(deviceId, today, today);
+    return state(deviceId, today);
   }
 
   @Transactional

@@ -52,6 +52,13 @@ class DailyCubit extends Cubit<DailyState> {
     }
   }
 
+  PackArchetype? _mine(ContentPack pack) {
+    for (final archetype in pack.archetypes) {
+      if (archetype.id == _archetype.id) return archetype;
+    }
+    return null;
+  }
+
   /// Null when there was no yesterday to keep.
   ///
   /// A chain started today has a yesterday on the calendar and none in the
@@ -92,6 +99,8 @@ class DailyCubit extends Cubit<DailyState> {
         DailyState(
           status: DailyStatus.noResultYet,
           archetypes: pack.archetypes,
+          mine: _mine(pack),
+          resultId: _archetype.resultId,
         ),
       );
       return;
@@ -102,7 +111,7 @@ class DailyCubit extends Cubit<DailyState> {
     final tomorrow = DailyAssembler.assemble(
       pack: pack,
       archetypeId: _archetype.id,
-      daysMarked: chain.markedDays.length + 1,
+      daysMarked: DailyAssembler.tomorrowFrom(chain.markedDays.length),
     );
 
     emit(
@@ -113,6 +122,8 @@ class DailyCubit extends Cubit<DailyState> {
         tomorrow: tomorrow?.title,
         pool: pack.mottosFor(_archetype.id),
         archetypes: pack.archetypes,
+        mine: _mine(pack),
+        resultId: _archetype.resultId,
       ),
     );
     await _widget.publish(content, streak: chain.streakOn(now()));

@@ -79,9 +79,12 @@ class _Point extends StatelessWidget {
           height: _size,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: isSelected ? scheme.primary : Colors.transparent,
+            // Filled faintly rather than left empty: an outline alone on a
+            // dark ground is a ring nobody can see, and this is the only
+            // control on the screen.
+            color: isSelected ? scheme.primary : scheme.surfaceContainerHighest,
             border: Border.all(
-              color: isSelected ? scheme.primary : scheme.outlineVariant,
+              color: isSelected ? scheme.primary : scheme.outline,
               width: 2,
             ),
           ),

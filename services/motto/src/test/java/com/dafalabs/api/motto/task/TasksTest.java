@@ -74,6 +74,7 @@ class TasksTest {
   @DisplayName("nothing is asked of someone with no result")
   void noResultMeansNoTasks() {
     chains.start(device, TODAY);
+    chains.mark(device, TODAY, TODAY);
 
     assertTrue(tasks.forToday(device, chains.state(device, TODAY)).tasks().isEmpty());
   }
@@ -83,6 +84,7 @@ class TasksTest {
   void aDayHasThreeTasks() {
     givenAResult();
     chains.start(device, TODAY);
+    chains.mark(device, TODAY, TODAY);
 
     var today = tasks.forToday(device, chains.state(device, TODAY));
 
@@ -96,6 +98,7 @@ class TasksTest {
   void tickingIsIdempotent() {
     givenAResult();
     chains.start(device, TODAY);
+    chains.mark(device, TODAY, TODAY);
     var first = tasks.forToday(device, chains.state(device, TODAY)).tasks().get(0);
     assertFalse(first.done());
 
@@ -122,6 +125,7 @@ class TasksTest {
   void theReportSeparatesMadeUpDays() {
     givenAResult();
     chains.start(device, TODAY.minusDays(2));
+    chains.mark(device, TODAY.minusDays(2), TODAY.minusDays(2));
     chains.freeze(device, TODAY);
 
     var report = tasks.report(device, chains.state(device, TODAY));
@@ -138,6 +142,7 @@ class TasksTest {
   void thePeriodCompletes() {
     givenAResult();
     chains.start(device, TODAY.minusDays(6));
+    chains.mark(device, TODAY.minusDays(6), TODAY.minusDays(6));
     for (int back = 5; back >= 0; back--) {
       chains.mark(device, TODAY.minusDays(back), TODAY);
     }
