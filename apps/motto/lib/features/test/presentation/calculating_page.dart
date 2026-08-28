@@ -10,6 +10,7 @@ import 'package:motto/features/test/application/test_cubit.dart';
 import 'package:motto/features/test/application/test_effect.dart';
 import 'package:motto/features/test/application/test_state.dart';
 import 'package:motto/route/app_router.gr.dart';
+import 'package:motto/theme/motto_loading.dart';
 
 /// The pause between the last answer and the result.
 ///
@@ -57,17 +58,7 @@ class CalculatingPage extends StatelessWidget implements AutoRouteWrapper {
           body: Center(
             child: state.status == TestStatus.failed
                 ? _Failed(code: state.errorCode)
-                : Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const CircularProgressIndicator(),
-                      const SizedBox(height: 24),
-                      Text(
-                        'Cevapların okunuyor',
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                    ],
-                  ),
+                : const MottoLoading(label: 'Cevapların okunuyor'),
           ),
         ),
       ),
