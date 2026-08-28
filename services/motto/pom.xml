@@ -74,6 +74,12 @@
       <artifactId>quarkus-test-security-jwt</artifactId>
       <scope>test</scope>
     </dependency>
+    <!-- The weekly award is the only scheduled work this service has, and it
+         has to run somewhere. Quartz is not needed: one instance, one job. -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-scheduler</artifactId>
+    </dependency>
   </dependencies>
 
   <build>

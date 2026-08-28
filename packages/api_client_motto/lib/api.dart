@@ -36,6 +36,7 @@ part 'api/feedback_resource_api.dart';
 part 'api/motto_resource_api.dart';
 part 'api/report_resource_api.dart';
 part 'api/result_resource_api.dart';
+part 'api/score_resource_api.dart';
 part 'api/task_resource_api.dart';
 part 'api/test_resource_api.dart';
 
@@ -57,6 +58,8 @@ part 'model/event_entry.dart';
 part 'model/feedback_kind.dart';
 part 'model/feedback_request.dart';
 part 'model/fragment.dart';
+part 'model/leaderboard.dart';
+part 'model/leaderboard_entry.dart';
 part 'model/mark_day_request.dart';
 part 'model/marked_day.dart';
 part 'model/motto_content.dart';
@@ -68,6 +71,7 @@ part 'model/report_section.dart';
 part 'model/result_history.dart';
 part 'model/result_response.dart';
 part 'model/result_summary.dart';
+part 'model/score_submission.dart';
 
 /// An [ApiClient] instance that uses the default values obtained from
 /// the OpenAPI specification file.

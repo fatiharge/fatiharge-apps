@@ -77,6 +77,8 @@ Class | Method | HTTP request | Description
 *MottoResourceApi* | [**claimMotto**](doc//MottoResourceApi.md#claimmotto) | **POST** /v1/mottos/claim | Spend a use and get a motto
 *ReportResourceApi* | [**deepReport**](doc//ReportResourceApi.md#deepreport) | **GET** /v1/reports/{resultId} | The deep report for a result
 *ResultResourceApi* | [**resultHistory**](doc//ResultResourceApi.md#resulthistory) | **GET** /v1/me/results | Past results, newest first
+*ScoreResourceApi* | [**leaderboard**](doc//ScoreResourceApi.md#leaderboard) | **GET** /v1/scores | This week's board
+*ScoreResourceApi* | [**recordScore**](doc//ScoreResourceApi.md#recordscore) | **POST** /v1/scores | Record a game and get the board
 *TaskResourceApi* | [**completeTask**](doc//TaskResourceApi.md#completetask) | **POST** /v1/tasks/{id}/complete | Tick a task off
 *TaskResourceApi* | [**dailyTasks**](doc//TaskResourceApi.md#dailytasks) | **GET** /v1/tasks | The three things today asks for
 *TaskResourceApi* | [**periodReport**](doc//TaskResourceApi.md#periodreport) | **GET** /v1/tasks/report | What the period came to
@@ -104,6 +106,8 @@ Class | Method | HTTP request | Description
  - [FeedbackKind](doc//FeedbackKind.md)
  - [FeedbackRequest](doc//FeedbackRequest.md)
  - [Fragment](doc//Fragment.md)
+ - [Leaderboard](doc//Leaderboard.md)
+ - [LeaderboardEntry](doc//LeaderboardEntry.md)
  - [MarkDayRequest](doc//MarkDayRequest.md)
  - [MarkedDay](doc//MarkedDay.md)
  - [MottoContent](doc//MottoContent.md)
@@ -115,6 +119,7 @@ Class | Method | HTTP request | Description
  - [ResultHistory](doc//ResultHistory.md)
  - [ResultResponse](doc//ResultResponse.md)
  - [ResultSummary](doc//ResultSummary.md)
+ - [ScoreSubmission](doc//ScoreSubmission.md)
 
 
 ## Documentation For Authorization
