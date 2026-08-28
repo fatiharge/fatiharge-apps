@@ -1,7 +1,11 @@
+import 'dart:async';
+
+import 'package:api_client_motto/api.dart' as api;
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motto/config/injectable.dart';
+import 'package:motto/features/mascot/presentation/mascot_free_zone.dart';
 import 'package:motto/features/test/application/test_cubit.dart';
 import 'package:motto/features/test/application/test_state.dart';
 import 'package:motto/route/app_router.gr.dart';
@@ -18,9 +22,11 @@ class CalculatingPage extends StatelessWidget implements AutoRouteWrapper {
   static const _minimumDwell = Duration(milliseconds: 1800);
 
   @override
-  Widget wrappedRoute(BuildContext context) => BlocProvider(
-    create: (_) => getIt<TestCubit>()..unawaitedSubmit(),
-    child: this,
+  Widget wrappedRoute(BuildContext context) => MascotFreeZone(
+    child: BlocProvider(
+      create: (_) => getIt<TestCubit>()..unawaitedSubmit(),
+      child: this,
+    ),
   );
 
   @override
@@ -64,14 +70,48 @@ class CalculatingPage extends StatelessWidget implements AutoRouteWrapper {
   }
 }
 
-class _Failed extends StatelessWidget {
+class _Failed extends StatefulWidget {
   const _Failed({this.code});
 
   final String? code;
 
+  @override
+  State<_Failed> createState() => _FailedState();
+}
+
+class _FailedState extends State<_Failed> {
+  int _skipsLeft = 0;
+  bool _spending = false;
+
+  String? get code => widget.code;
+
+  @override
+  void initState() {
+    super.initState();
+    if (code == 'cooldown_open') unawaited(_loadSkips());
+  }
+
+  /// The claim's refusal does not say how many skips are left, and the whole
+  /// point of a skip is that it opens a closed cooldown — so the screen that
+  /// reports the cooldown is the one screen that has to know.
+  Future<void> _loadSkips() async {
+    try {
+      final state = await getIt<api.EntitlementResourceApi>()
+          .currentEntitlement();
+      if (mounted) setState(() => _skipsLeft = state?.skipsLeft ?? 0);
+    } on Object {
+      // Then it simply is not offered.
+    }
+  }
+
+  Future<void> _spendSkip() async {
+    setState(() => _spending = true);
+    await context.read<TestCubit>().submitSaved(spendSkip: true);
+    if (mounted) setState(() => _spending = false);
+  }
+
   /// The API answers with a code; the sentence belongs to the app, in the
-  /// app's language. A message from a server is a message in whatever language
-  /// the server was written in.
+  /// app's language.
   String get _message => switch (code) {
     'cooldown_open' => 'Yeni bir motto için biraz beklemen gerekiyor.',
     'no_uses_left' => 'Ücretsiz hakların doldu.',
@@ -88,10 +128,31 @@ class _Failed extends StatelessWidget {
         children: [
           Text(_message, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 16),
-          FilledButton(
-            onPressed: () => context.router.maybePop(),
-            child: const Text('Geri dön'),
-          ),
+          if (code == 'cooldown_open' && _skipsLeft > 0) ...[
+            Text(
+              'Bir atlama hakkın var. Kullanırsan beklemeden devam edersin.',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: 16),
+            FilledButton(
+              onPressed: _spending ? null : _spendSkip,
+              child: Text(
+                _spending ? 'Bekle…' : 'Atlama hakkımı kullan ($_skipsLeft)',
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextButton(
+              onPressed: () => context.router.maybePop(),
+              child: const Text('Beklerim'),
+            ),
+          ] else
+            FilledButton(
+              onPressed: () => context.router.maybePop(),
+              child: const Text('Geri dön'),
+            ),
         ],
       ),
     );

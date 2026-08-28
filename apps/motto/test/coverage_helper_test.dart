@@ -42,6 +42,7 @@ import 'package:motto/features/mascot/application/mascot_controller.dart';
 import 'package:motto/features/mascot/application/mascot_store.dart';
 import 'package:motto/features/mascot/application/rive_mascot_controller.dart';
 import 'package:motto/features/mascot/presentation/mascot.dart';
+import 'package:motto/features/mascot/presentation/mascot_free_zone.dart';
 import 'package:motto/features/mascot/presentation/mascot_host.dart';
 import 'package:motto/features/onboarding/application/onboarding_store.dart';
 import 'package:motto/features/onboarding/presentation/onboarding_page.dart';

@@ -191,7 +191,7 @@ class _MascotHostState extends State<MascotHost>
           // switch is read around the whole thing rather than around the
           // mascot.
           return ValueListenableBuilder<bool>(
-            valueListenable: store.visible,
+            valueListenable: store.onScreen,
             builder: (context, visible, _) => Stack(
               children: [
                 widget.child,

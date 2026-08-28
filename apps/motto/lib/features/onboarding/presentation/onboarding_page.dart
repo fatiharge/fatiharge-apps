@@ -122,9 +122,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   child: const Text('Geç'),
                 ),
               ),
-              const Spacer(),
-              // The text sits low so the mascot has the upper half to move
-              // through without ever crossing a line someone is reading.
+              // Room for the mascot to move through, but not half a screen of
+              // it: an empty upper half reads as a page that failed to load.
+              const Spacer(flex: 2),
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 260),
                 child: Column(
@@ -137,7 +137,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   ],
                 ),
               ),
-              const SizedBox(height: 32),
+              const Spacer(),
               Row(
                 children: [
                   for (var i = 0; i < _steps.length; i++) ...[

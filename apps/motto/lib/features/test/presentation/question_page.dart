@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motto/config/injectable.dart';
+import 'package:motto/features/mascot/presentation/mascot_free_zone.dart';
 import 'package:motto/features/test/application/test_cubit.dart';
 import 'package:motto/features/test/application/test_state.dart';
 import 'package:motto/features/test/presentation/widgets/glimpse_sheet.dart';
@@ -20,9 +21,11 @@ class QuestionPage extends StatelessWidget implements AutoRouteWrapper {
   const QuestionPage({super.key});
 
   @override
-  Widget wrappedRoute(BuildContext context) => BlocProvider(
-    create: (_) => getIt<TestCubit>()..unawaitedStart(),
-    child: this,
+  Widget wrappedRoute(BuildContext context) => MascotFreeZone(
+    child: BlocProvider(
+      create: (_) => getIt<TestCubit>()..unawaitedStart(),
+      child: this,
+    ),
   );
 
   @override
@@ -98,12 +101,15 @@ class _Asking extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Spacer(),
+                // Weighted rather than even: a question floating in the
+                // middle of an empty screen reads as a page that failed to
+                // load, and the scale is what the thumb is reaching for.
+                const Spacer(flex: 2),
                 Text(
                   question.text,
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
-                const Spacer(),
+                const Spacer(flex: 3),
                 LikertScale(
                   selected: state.answers[question.id],
                   onSelected: cubit.answer,
