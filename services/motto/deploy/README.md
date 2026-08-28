@@ -53,6 +53,7 @@ MOTTO_IMAGE=
 MOTTO_DB_PASSWORD=<openssl rand -base64 24>
 MOTTO_JWT_PUBLIC_KEY="<auth's public PEM, one line, newlines escaped>"
 MOTTO_ADMIN_TOKEN=<openssl rand -base64 32>
+MOTTO_ADMIN_RESET_ENABLED=true
 ```
 
 The public key comes from [auth](../../auth/deploy/README.md), which generated
@@ -67,6 +68,11 @@ own password.
   pieces get into the database — see [content](#content). Leave the line out
   and the endpoints answer 404 to everyone, which is what production should do
   until there is a reason not to.
+- `MOTTO_ADMIN_RESET_ENABLED` additionally opens the one that forgets every
+  device. **Stage only.** It is a separate switch from the token because a
+  leaked token should not be able to empty a database, and it is read at
+  runtime because images are promoted to production by digest — a build-time
+  flag would travel with the image, and this one cannot.
 - `MOTTO_IMAGE` stays empty. Every deploy rewrites it.
 - `PROXY_NETWORK`, `TRAEFIK_ENTRYPOINT` and `TRAEFIK_CERTRESOLVER` only need a
   line if the server's Traefik ever stops matching the defaults above.
@@ -191,3 +197,16 @@ curl -H "X-Admin-Token: $MOTTO_ADMIN_TOKEN" \
 
 Wrong token and missing token both answer **404**, not 401. An endpoint nobody
 is meant to know about should not confirm it exists to somebody guessing.
+
+### Back to nobody having used it
+
+Walking the first-run flow again needs a database with no devices in it:
+
+```bash
+curl -X DELETE -H "X-Admin-Token: $MOTTO_ADMIN_TOKEN" \
+  "https://mottostage.dafalabs.com/admin/content/devices?confirm=evet-hepsini-sil"
+```
+
+Content stays; results, chains, completions, scores, entitlements, events and
+feedback go. Three things have to be true at once — the token, the switch, and
+the spelled-out confirmation — and production has none of them.

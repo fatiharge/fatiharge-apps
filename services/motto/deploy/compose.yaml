@@ -33,6 +33,11 @@ services:
       # nobody can write content there, which is the right default for
       # production. Stage sets it so scripts/push_content.py can reach it.
       MOTTO_ADMIN_TOKEN: ${MOTTO_ADMIN_TOKEN:-}
+      # Wipes every device so the first-run flow can be walked again. Runtime
+      # rather than build-time on purpose: an image is promoted to production
+      # by digest, so a build-time flag would travel with it. This one cannot.
+      # Production never sets it.
+      MOTTO_ADMIN_RESET_ENABLED: ${MOTTO_ADMIN_RESET_ENABLED:-false}
     depends_on:
       db:
         condition: service_healthy
