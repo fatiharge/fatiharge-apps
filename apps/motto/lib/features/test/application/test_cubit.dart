@@ -59,6 +59,14 @@ class TestCubit extends Cubit<TestState> with Effects<TestEffect, TestState> {
       if (resumed.isEmpty) {
         await _analytics.record(MottoEvent.testStart);
       }
+
+      // A draft can come back already complete — answered on a previous run
+      // and never submitted. Nothing is left to ask, so nothing would be
+      // drawn: the screen went white and stayed there, because finishing was
+      // only ever announced by answering.
+      if (state.isFinished) {
+        effect(const AnsweringFinished());
+      }
     } on Object {
       emit(
         state.copyWith(

@@ -4,6 +4,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:motto/features/support/application/last_archetype.dart';
 import 'package:motto/features/test/application/test_cubit.dart';
 import 'package:motto/features/test/application/test_draft.dart';
+import 'package:motto/features/test/application/test_effect.dart';
 import 'package:motto/features/test/application/test_state.dart';
 import 'package:motto/infrastructure/analytics/analytics.dart';
 import 'package:motto/infrastructure/analytics/event_queue.dart';
@@ -81,6 +82,36 @@ void main() {
       // becomes an abandoned one.
       expect(cubit.state.index, 2);
       expect(cubit.state.answers, {'q1': 4, 'q2': 2});
+    });
+
+    // The white screen: a draft answered on an earlier run and never sent
+    // comes back with nothing left to ask, and the screen drew an empty box
+    // for ever because finishing was only ever announced by answering.
+    test('a draft that is already complete says so at once', () async {
+      when(() => tests.testQuestions()).thenAnswer((_) async => _questions(3));
+      await draft.write({'q1': 3, 'q2': 3, 'q3': 3});
+
+      final effects = <TestEffect>[];
+      final watching = cubit.effects.listen(effects.add);
+      await cubit.start();
+      await Future<void>.delayed(Duration.zero);
+      await watching.cancel();
+
+      expect(cubit.state.isFinished, isTrue);
+      expect(effects, contains(isA<AnsweringFinished>()));
+    });
+
+    test('a half-finished draft does not claim to be finished', () async {
+      when(() => tests.testQuestions()).thenAnswer((_) async => _questions(3));
+      await draft.write({'q1': 3});
+
+      final effects = <TestEffect>[];
+      final watching = cubit.effects.listen(effects.add);
+      await cubit.start();
+      await Future<void>.delayed(Duration.zero);
+      await watching.cancel();
+
+      expect(effects, isEmpty);
     });
 
     test('a server that will not answer leaves a retryable failure', () async {

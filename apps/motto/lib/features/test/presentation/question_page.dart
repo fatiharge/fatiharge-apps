@@ -84,7 +84,12 @@ class _Asking extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final question = state.current;
-    if (question == null) return const SizedBox.shrink();
+    // Never nothing. There is a moment between the last answer and the next
+    // route, and drawing an empty box in it is indistinguishable from a broken
+    // app — which is exactly how it was reported.
+    if (question == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
     final cubit = context.read<TestCubit>();
 
