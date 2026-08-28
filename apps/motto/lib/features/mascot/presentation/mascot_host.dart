@@ -1,9 +1,9 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 import 'package:motto/config/app_ready.dart';
 import 'package:motto/config/injectable.dart';
+import 'package:motto/features/mascot/application/mascot_attention.dart';
 import 'package:motto/features/mascot/application/mascot_controller.dart';
 import 'package:motto/features/mascot/application/mascot_store.dart';
 import 'package:motto/features/mascot/presentation/mascot.dart';
@@ -79,6 +79,11 @@ class _MascotHostState extends State<MascotHost>
   Offset? _position;
   Rect _bounds = Rect.zero;
   late final AnimationController _settle;
+
+  /// Owned here rather than inside the mascot, because the tap that answers
+  /// the offer is caught here.
+  final _attention = MascotAttention();
+  Timer? _idle;
   Offset _from = Offset.zero;
   Offset _to = Offset.zero;
 
@@ -93,8 +98,42 @@ class _MascotHostState extends State<MascotHost>
 
   @override
   void dispose() {
+    _idle?.cancel();
     _settle.dispose();
     super.dispose();
+  }
+
+  void _startIdleClock() {
+    _idle?.cancel();
+    _idle = Timer.periodic(const Duration(seconds: 5), (_) {
+      final mascot = _controller;
+      if (mascot == null) return;
+      switch (_attention.nudge()) {
+        case MascotNudge.offer:
+          mascot.offerGame();
+        case MascotNudge.attention:
+          mascot.attention();
+        case MascotNudge.none:
+          break;
+      }
+    });
+  }
+
+  /// A tap on an offer opens the game; anything else is a poke.
+  void _tapped() {
+    final mascot = _controller;
+    if (mascot == null) return;
+
+    if (_attention.tapAccepts()) {
+      widget.onGameOffered?.call();
+      return;
+    }
+    mascot.annoyance = mascot.annoyance + MascotRules.perPoke;
+    if (mascot.annoyance >= MascotRules.fleeAt) {
+      mascot.flee();
+      return;
+    }
+    mascot.poke();
   }
 
   void _followSettle() {
@@ -222,7 +261,9 @@ class _MascotHostState extends State<MascotHost>
                 // a round thing on a transparent square, and a pull that
                 // only works on the ink mostly does not work.
                 behavior: HitTestBehavior.opaque,
+                onTap: _tapped,
                 onPanStart: (_) {
+                  _attention.touched();
                   _settle.stop();
                   _controller?.drag(held: true);
                 },
@@ -234,7 +275,10 @@ class _MascotHostState extends State<MascotHost>
                   followsFinger: false,
                   loadFile: widget.loadFile,
                   onGameOffered: widget.onGameOffered,
-                  onReady: (mascot) => setState(() => _controller = mascot),
+                  onReady: (mascot) {
+                    setState(() => _controller = mascot);
+                    _startIdleClock();
+                  },
                 ),
               ),
             ),

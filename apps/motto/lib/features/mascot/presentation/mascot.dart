@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
+import 'package:motto/features/mascot/application/mascot_attention.dart';
 import 'package:motto/features/mascot/application/mascot_controller.dart';
 import 'package:motto/features/mascot/application/rive_mascot_controller.dart';
 import 'package:rive/rive.dart';
@@ -53,8 +54,7 @@ class _MascotState extends State<Mascot>
 
   Timer? _idle;
   Timer? _decay;
-  DateTime _lastTouched = DateTime.now();
-  bool _offering = false;
+  final _attention = MascotAttention();
 
   /// How far the finger has pulled it from where it sits. The file has a
   /// "held" pose but no idea where the hand is; moving it is the app's job.
@@ -143,22 +143,25 @@ class _MascotState extends State<Mascot>
     _idle?.cancel();
     _decay?.cancel();
 
-    _idle = Timer.periodic(const Duration(seconds: 5), (_) => _whenIdle());
     _decay = Timer.periodic(const Duration(seconds: 1), (_) => _calmDown());
+
+    // Hosted, the host runs the idle clock: it is the one that owns the tap,
+    // and being bored only means something if a tap can answer it.
+    if (!widget.followsFinger) return;
+    _idle = Timer.periodic(const Duration(seconds: 5), (_) => _whenIdle());
   }
 
   void _whenIdle() {
     final mascot = _mascot;
     if (mascot == null) return;
 
-    final alone = DateTime.now().difference(_lastTouched);
-    if (alone > MascotRules.idleBeforeOffer && !_offering) {
-      _offering = true;
-      mascot.offerGame();
-      return;
-    }
-    if (alone > MascotRules.idleBeforeAttention) {
-      mascot.attention();
+    switch (_attention.nudge()) {
+      case MascotNudge.offer:
+        mascot.offerGame();
+      case MascotNudge.attention:
+        mascot.attention();
+      case MascotNudge.none:
+        break;
     }
   }
 
@@ -193,23 +196,18 @@ class _MascotState extends State<Mascot>
     );
   }
 
-  void _touched() {
-    _lastTouched = DateTime.now();
-    _offering = false;
-  }
+  void _touched() => _attention.touched();
 
   void _onTap() {
     final mascot = _mascot;
     if (mascot == null) return;
 
     // An accepted offer opens the game; a poke on top of an offer is not one.
-    if (_offering) {
-      _touched();
+    if (_attention.tapAccepts()) {
       widget.onGameOffered?.call();
       return;
     }
 
-    _touched();
     mascot.annoyance = mascot.annoyance + MascotRules.perPoke;
     if (mascot.annoyance >= MascotRules.fleeAt) {
       mascot.flee();
@@ -239,7 +237,10 @@ class _MascotState extends State<Mascot>
       // host's drag never fired, which looked like a mascot that does not
       // move. Taps still work: a pan only claims the gesture once the finger
       // travels.
-      return GestureDetector(onTap: _onTap, child: drawn);
+      // Hosted: the host owns every gesture. Two detectors, one inside the
+      // other, put a tap and a drag in the same arena and the outer one won —
+      // which is why poking the mascot did nothing at all.
+      return drawn;
     }
 
     return GestureDetector(
