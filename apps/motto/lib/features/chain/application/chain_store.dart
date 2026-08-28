@@ -37,6 +37,9 @@ class ChainStore {
             DateTime.parse(day as String),
         },
         freezeUsedOn: _date(decoded['freezeUsedOn']),
+        period: decoded['period'] as int? ?? 1,
+        mottoId: decoded['mottoId'] as String?,
+        periodDone: decoded['periodDone'] as bool? ?? false,
       );
     } on FormatException {
       return const Chain();
@@ -49,6 +52,9 @@ class ChainStore {
       'startedOn': chain.startedOn?.toIso8601String(),
       'markedDays': [for (final day in chain.markedDays) day.toIso8601String()],
       'freezeUsedOn': chain.freezeUsedOn?.toIso8601String(),
+      'period': chain.period,
+      'mottoId': chain.mottoId,
+      'periodDone': chain.periodDone,
     }),
   );
 

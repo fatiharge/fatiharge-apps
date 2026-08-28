@@ -27,14 +27,24 @@ public class ChainDay {
   @Column(name = "made_up", nullable = false, updatable = false)
   private boolean madeUp;
 
+  /// Which run this day belongs to. A finished period keeps its days so its
+  /// report stays readable after the next one starts.
+  @Column(nullable = false, updatable = false)
+  private short period;
+
   protected ChainDay() {}
 
-  static ChainDay of(UUID deviceId, LocalDate day, boolean madeUp) {
+  static ChainDay of(UUID deviceId, LocalDate day, boolean madeUp, short period) {
     ChainDay marked = new ChainDay();
     marked.deviceId = deviceId;
     marked.day = day;
     marked.madeUp = madeUp;
+    marked.period = period;
     return marked;
+  }
+
+  public short period() {
+    return period;
   }
 
   public LocalDate day() {

@@ -21,6 +21,9 @@ class ChainState {
     required this.markedToday,
     required this.broken,
     required this.canFreeze,
+    required this.period,
+    this.mottoId,
+    required this.periodDone,
   });
 
   bool started;
@@ -51,6 +54,18 @@ class ChainState {
 
   bool canFreeze;
 
+  int period;
+
+  ///
+  /// Please note: This property should have been non-nullable! Since the specification file
+  /// does not include a default value (using the "default:" property), however, the generated
+  /// source code must fall back to having a nullable type.
+  /// Consider adding a "default:" property in the specification file to hide this note.
+  ///
+  String? mottoId;
+
+  bool periodDone;
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -62,7 +77,10 @@ class ChainState {
           other.streak == streak &&
           other.markedToday == markedToday &&
           other.broken == broken &&
-          other.canFreeze == canFreeze;
+          other.canFreeze == canFreeze &&
+          other.period == period &&
+          other.mottoId == mottoId &&
+          other.periodDone == periodDone;
 
   @override
   int get hashCode =>
@@ -74,11 +92,14 @@ class ChainState {
       (streak.hashCode) +
       (markedToday.hashCode) +
       (broken.hashCode) +
-      (canFreeze.hashCode);
+      (canFreeze.hashCode) +
+      (period.hashCode) +
+      (mottoId == null ? 0 : mottoId!.hashCode) +
+      (periodDone.hashCode);
 
   @override
   String toString() =>
-      'ChainState[started=$started, startedOn=$startedOn, markedDays=$markedDays, freezeUsedOn=$freezeUsedOn, streak=$streak, markedToday=$markedToday, broken=$broken, canFreeze=$canFreeze]';
+      'ChainState[started=$started, startedOn=$startedOn, markedDays=$markedDays, freezeUsedOn=$freezeUsedOn, streak=$streak, markedToday=$markedToday, broken=$broken, canFreeze=$canFreeze, period=$period, mottoId=$mottoId, periodDone=$periodDone]';
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
@@ -98,6 +119,13 @@ class ChainState {
     json[r'markedToday'] = this.markedToday;
     json[r'broken'] = this.broken;
     json[r'canFreeze'] = this.canFreeze;
+    json[r'period'] = this.period;
+    if (this.mottoId != null) {
+      json[r'mottoId'] = this.mottoId;
+    } else {
+      json[r'mottoId'] = null;
+    }
+    json[r'periodDone'] = this.periodDone;
     return json;
   }
 
@@ -136,6 +164,14 @@ class ChainState {
             'Required key "ChainState[canFreeze]" is missing from JSON.');
         assert(json[r'canFreeze'] != null,
             'Required key "ChainState[canFreeze]" has a null value in JSON.');
+        assert(json.containsKey(r'period'),
+            'Required key "ChainState[period]" is missing from JSON.');
+        assert(json[r'period'] != null,
+            'Required key "ChainState[period]" has a null value in JSON.');
+        assert(json.containsKey(r'periodDone'),
+            'Required key "ChainState[periodDone]" is missing from JSON.');
+        assert(json[r'periodDone'] != null,
+            'Required key "ChainState[periodDone]" has a null value in JSON.');
         return true;
       }());
 
@@ -148,6 +184,9 @@ class ChainState {
         markedToday: mapValueOfType<bool>(json, r'markedToday')!,
         broken: mapValueOfType<bool>(json, r'broken')!,
         canFreeze: mapValueOfType<bool>(json, r'canFreeze')!,
+        period: mapValueOfType<int>(json, r'period')!,
+        mottoId: mapValueOfType<String>(json, r'mottoId'),
+        periodDone: mapValueOfType<bool>(json, r'periodDone')!,
       );
     }
     return null;
@@ -210,5 +249,7 @@ class ChainState {
     'markedToday',
     'broken',
     'canFreeze',
+    'period',
+    'periodDone',
   };
 }

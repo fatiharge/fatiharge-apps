@@ -62,7 +62,7 @@ public class Chains {
     // Marking the same day twice is marking it once — and the offline queue
     // will send it twice sooner or later.
     if (!days.exists(deviceId, day)) {
-      days.persist(ChainDay.of(deviceId, day, false));
+      days.persist(ChainDay.of(deviceId, day, false, chain.period()));
     }
     return state(deviceId, today);
   }
@@ -81,7 +81,7 @@ public class Chains {
           409, "cannot_freeze", "The make-up does not apply right now.");
     }
 
-    days.persist(ChainDay.of(deviceId, today.minusDays(1), true));
+    days.persist(ChainDay.of(deviceId, today.minusDays(1), true, chain.period()));
     chain.spendFreeze(today);
     return state(deviceId, today);
   }
@@ -91,12 +91,12 @@ public class Chains {
     verify(today);
     Chain chain = chains.findById(deviceId);
     if (chain == null) {
-      return new ChainState(false, null, List.of(), null, 0, false, false, false);
+      return new ChainState(false, null, List.of(), null, 0, false, false, false, 1, null, false);
     }
 
     Set<LocalDate> marked = markedDays(deviceId);
     List<MarkedDay> reported =
-        days.forDevice(deviceId).stream()
+        days.forPeriod(deviceId, chain.period()).stream()
             .sorted(java.util.Comparator.comparing(ChainDay::day))
             .map(day -> new MarkedDay(day.day(), day.madeUp()))
             .toList();
@@ -109,7 +109,32 @@ public class Chains {
         ChainRules.streakOn(marked, today),
         marked.contains(today),
         ChainRules.isBrokenOn(marked, today),
-        ChainRules.canFreezeOn(marked, chain.freezeUsedOn(), today));
+        ChainRules.canFreezeOn(marked, chain.freezeUsedOn(), today),
+        chain.period(),
+        chain.mottoId(),
+        ChainRules.periodDone(reported.size()));
+  }
+
+  /**
+   * Starts the next run, under a different motto.
+   *
+   * <p>Only once the fourteen days are actually done. Letting somebody restart
+   * early would make the period mean nothing, and the period is the product.
+   */
+  @Transactional
+  public ChainState nextPeriod(UUID deviceId, String mottoId, LocalDate today) {
+    verify(today);
+    Chain chain = chains.findById(deviceId);
+    if (chain == null) {
+      throw new CustomRuntimeException(409, "no_chain", "There is no chain to continue.");
+    }
+    if (!ChainRules.periodDone(days.forPeriod(deviceId, chain.period()).size())) {
+      throw new CustomRuntimeException(
+          409, "period_unfinished", "The fourteen days are not done yet.");
+    }
+
+    chain.beginNextPeriod(today, mottoId);
+    return state(deviceId, today);
   }
 
   @Transactional

@@ -3,6 +3,7 @@ package com.dafalabs.api.motto.chain;
 import com.dafalabs.api.core.auth.AuthenticatedDevice;
 import com.dafalabs.api.motto.chain.dto.ChainState;
 import com.dafalabs.api.motto.chain.dto.MarkDayRequest;
+import com.dafalabs.api.motto.chain.dto.NextPeriodRequest;
 import io.quarkus.security.Authenticated;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
@@ -52,6 +53,15 @@ public class ChainResource {
   @Operation(operationId = "markChainDay", summary = "Mark a day")
   public ChainState mark(MarkDayRequest request) {
     return chains.mark(current.id(), request.day(), request.todayOrDay());
+  }
+
+  @POST
+  @Path("/next")
+  @Operation(
+      operationId = "startNextPeriod",
+      summary = "Begin the next fourteen days under a chosen motto")
+  public ChainState next(NextPeriodRequest request) {
+    return chains.nextPeriod(current.id(), request.mottoId(), request.day());
   }
 
   @POST

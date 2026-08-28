@@ -13,6 +13,12 @@ public class ChainDayRepository implements PanacheRepositoryBase<ChainDay, Chain
     return list("deviceId", deviceId);
   }
 
+  /// This run's days. The finished ones stay in the table under their own
+  /// period so their report keeps working.
+  public List<ChainDay> forPeriod(UUID deviceId, short period) {
+    return list("deviceId = ?1 and period = ?2", deviceId, period);
+  }
+
   public boolean exists(UUID deviceId, LocalDate day) {
     return count("deviceId = ?1 and day = ?2", deviceId, day) > 0;
   }
