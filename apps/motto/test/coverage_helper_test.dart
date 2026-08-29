@@ -49,6 +49,7 @@ import 'package:motto/features/game/presentation/game_page.dart';
 import 'package:motto/features/game/presentation/game_rules_page.dart';
 import 'package:motto/features/mascot/application/mascot_attention.dart';
 import 'package:motto/features/mascot/application/mascot_controller.dart';
+import 'package:motto/features/mascot/application/mascot_placement.dart';
 import 'package:motto/features/mascot/application/mascot_store.dart';
 import 'package:motto/features/mascot/application/rive_mascot_controller.dart';
 import 'package:motto/features/mascot/presentation/mascot.dart';
