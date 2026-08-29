@@ -303,6 +303,9 @@ public class ContentWriter {
   public int sections(List<SectionWrite> incoming) {
     for (SectionWrite s : incoming) {
       Dimension.of(s.dimension());
+      if (s.dimension2() != null) {
+        Dimension.of(s.dimension2());
+      }
       revise(
           "section",
           String.valueOf(s.section()),
@@ -312,15 +315,26 @@ public class ContentWriter {
           """,
           Map.of("section", s.section()),
           s);
-      run(
-          """
-          INSERT INTO report_sections (section, locale, dimension)
-          VALUES (:section, :locale, :dimension)
-          ON CONFLICT (section, locale) DO UPDATE SET dimension = :dimension
-          """,
-          Map.of(
-              "section", s.section(),
-              "dimension", s.dimension().toUpperCase(java.util.Locale.ROOT)));
+      Query query =
+          entities
+              .createNativeQuery(
+                  """
+                  INSERT INTO report_sections (section, locale, dimension, dimension_2)
+                  VALUES (:section, :locale, :dimension, :second)
+                  ON CONFLICT (section, locale) DO UPDATE
+                    SET dimension = :dimension, dimension_2 = :second
+                  """)
+              .setParameter("section", s.section())
+              .setParameter("locale", ContentStore.locale)
+              .setParameter("dimension", s.dimension().toUpperCase(java.util.Locale.ROOT))
+              // Spelled out rather than run through the helper: a section that
+              // reads one axis has no second, and Map.of has no null.
+              .setParameter(
+                  "second",
+                  s.dimension2() == null
+                      ? null
+                      : s.dimension2().toUpperCase(java.util.Locale.ROOT));
+      query.executeUpdate();
     }
     return incoming.size();
   }

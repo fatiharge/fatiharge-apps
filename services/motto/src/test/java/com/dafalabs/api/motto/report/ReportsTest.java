@@ -117,6 +117,40 @@ class ReportsTest {
   }
 
   @Test
+  @DisplayName("one archetype, two people, two reports")
+  void theSecondAxisSeparatesThem() {
+    // Both land on the same archetype and on the same band of the axis the
+    // first section is about. Everything the archetype owns — the portrait,
+    // the section fragments, the comparison — is word for word the same for
+    // them. What is left is the paragraph the section reads, and if that does
+    // not move with the second axis then the report is an archetype essay
+    // with the reader's name on it.
+    Dimension first = content.firstSectionDimension();
+    Dimension second = content.secondSectionDimension();
+
+    var braced = givenAProfile(Map.of(first, 0.9, second, 0.9));
+    var loose = givenAProfile(Map.of(first, 0.9, second, 0.1));
+    entitlements.grantPremium(device);
+
+    var one = reports.forResult(device, braced.id()).sections().get(0);
+    var other = reports.forResult(device, loose.id()).sections().get(0);
+
+    assertEquals(one.opening(), other.opening());
+    assertEquals(one.fragment(), other.fragment());
+    assertFalse(one.reading().equals(other.reading()));
+  }
+
+  @Transactional
+  Result givenAProfile(Map<Dimension, Double> moved) {
+    Map<Dimension, Double> scores = new EnumMap<>(Dimension.class);
+    for (Dimension dimension : Dimension.values()) {
+      scores.put(dimension, 0.5);
+    }
+    scores.putAll(moved);
+    return results.record(device, GivenContent.ARCHETYPE, new ProfileVector(scores));
+  }
+
+  @Test
   @DisplayName("somebody else's result is not readable")
   void refusesAnotherDevicesResult() {
     var result = givenAResult(0.5);

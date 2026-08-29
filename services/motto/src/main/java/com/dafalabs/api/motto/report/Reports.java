@@ -56,13 +56,20 @@ public class Reports {
     this.content = content;
   }
 
-  /// Which dimension each section reads from, from the table. Fixed per
-  /// reader — a report whose sections move around is one nobody can be told
-  /// how to read — but not fixed per release: a sixth section is a row.
-  private Map<Integer, Dimension> sectionDimension() {
-    Map<Integer, Dimension> bySection = new HashMap<>();
+  /// The axes each section reads, from the table. Fixed per reader — a report
+  /// whose sections move around is one nobody can be told how to read — but
+  /// not fixed per release: a sixth section is a row, and so is the day a
+  /// section starts crossing a second axis.
+  private record Axes(Dimension first, Dimension second) {}
+
+  private Map<Integer, Axes> sectionAxes() {
+    Map<Integer, Axes> bySection = new HashMap<>();
     for (ReportSectionRow row : content.reportSections()) {
-      bySection.put(row.section(), Dimension.of(row.dimension()));
+      bySection.put(
+          row.section(),
+          new Axes(
+              Dimension.of(row.dimension()),
+              row.dimension2() == null ? null : Dimension.of(row.dimension2())));
     }
     return bySection;
   }
@@ -144,7 +151,7 @@ public class Reports {
 
   private List<ReportSection> assemble(Result result, String archetype) {
     Map<Dimension, Double> profile = result.profile();
-    Map<Integer, Dimension> sectionDimension = sectionDimension();
+    Map<Integer, Axes> sectionAxes = sectionAxes();
     Map<Integer, String> fragments = new HashMap<>();
     for (ReportPiece fragment : pieces.fragments(archetype)) {
       fragments.put(fragment.section(), fragment.text());
@@ -153,14 +160,23 @@ public class Reports {
     List<ReportSection> sections = new ArrayList<>();
     for (ReportPiece skeleton : pieces.skeletons()) {
       int number = skeleton.section();
-      Dimension dimension = sectionDimension.getOrDefault(number, Dimension.OPENNESS);
-      String band = bandOf(profile.getOrDefault(dimension, 0.5));
+      Axes axes = sectionAxes.getOrDefault(number, new Axes(Dimension.OPENNESS, null));
+      String band = bandOf(profile.getOrDefault(axes.first(), 0.5));
+      String second =
+          axes.second() == null ? null : bandOf(profile.getOrDefault(axes.second(), 0.5));
 
       sections.add(
           new ReportSection(
               number,
               skeleton.text(),
-              pieces.dimension(dimension.name(), band).map(ReportPiece::text).orElse(""),
+              pieces
+                  .dimension(
+                      axes.first().name(),
+                      band,
+                      axes.second() == null ? null : axes.second().name(),
+                      second)
+                  .map(ReportPiece::text)
+                  .orElse(""),
               fragments.getOrDefault(number, "")));
     }
     return sections;
