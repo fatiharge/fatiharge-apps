@@ -7,12 +7,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.dafalabs.api.motto.content.dto.ContentBundle;
 import com.dafalabs.api.motto.content.dto.Fragment;
 import com.dafalabs.api.motto.scoring.ArchetypeCatalog;
+import com.dafalabs.api.motto.admin.GivenContent;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -21,6 +23,12 @@ class ContentCatalogTest {
 
   @Inject ContentCatalog catalog;
   @Inject ArchetypeCatalog archetypes;
+  @Inject GivenContent given;
+
+  @BeforeEach
+  void seed() {
+    given.everything();
+  }
 
   @Test
   @DisplayName("the package carries every piece a day is made of")

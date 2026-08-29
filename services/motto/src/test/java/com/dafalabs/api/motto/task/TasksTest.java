@@ -56,7 +56,7 @@ class TasksTest {
     for (Dimension dimension : Dimension.values()) {
       scores.put(dimension, 0.5);
     }
-    results.record(device, "quiet_builder", new ProfileVector(scores));
+    results.record(device, GivenContent.ARCHETYPE, new ProfileVector(scores));
   }
 
   @Test

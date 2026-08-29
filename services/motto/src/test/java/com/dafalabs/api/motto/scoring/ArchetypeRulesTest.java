@@ -3,10 +3,12 @@ package com.dafalabs.api.motto.scoring;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import com.dafalabs.api.motto.admin.GivenContent;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import java.util.EnumMap;
 import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -15,6 +17,12 @@ class ArchetypeRulesTest {
 
   @Inject ArchetypeRules rules;
   @Inject ArchetypeCatalog catalog;
+  @Inject GivenContent given;
+
+  @BeforeEach
+  void seed() {
+    given.everything();
+  }
 
   /**
    * Every archetype has to win on its own target. It sounds tautological and is

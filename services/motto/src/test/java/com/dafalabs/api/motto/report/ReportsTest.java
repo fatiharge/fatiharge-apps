@@ -43,14 +43,17 @@ class ReportsTest {
     content.everything();
   }
 
+  /// Moves the dimension the report's first section reads from, whichever
+  /// that is: the section table decides, and a dimension named here would only
+  /// agree with it by luck.
   @Transactional
-  Result givenAResult(double conscientiousness) {
+  Result givenAResult(double score) {
     Map<Dimension, Double> scores = new EnumMap<>(Dimension.class);
     for (Dimension dimension : Dimension.values()) {
       scores.put(dimension, 0.5);
     }
-    scores.put(Dimension.CONSCIENTIOUSNESS, conscientiousness);
-    return results.record(device, "quiet_builder", new ProfileVector(scores));
+    scores.put(content.firstSectionDimension(), score);
+    return results.record(device, GivenContent.ARCHETYPE, new ProfileVector(scores));
   }
 
   @Test
@@ -152,8 +155,9 @@ class ReportsTest {
   }
 
   private String bandFor(ResultReport report) {
+    String moved = content.firstSectionDimension().name();
     return report.readings().stream()
-        .filter(reading -> reading.dimension().equals(Dimension.CONSCIENTIOUSNESS.name()))
+        .filter(reading -> reading.dimension().equals(moved))
         .findFirst()
         .orElseThrow()
         .band();
