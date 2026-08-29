@@ -1,7 +1,14 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:motto/config/injectable.dart';
+import 'package:motto/features/chain/application/chain_cubit.dart';
+import 'package:motto/features/daily/application/daily_cubit.dart';
+import 'package:motto/features/profile/application/profile_cubit.dart';
 import 'package:motto/features/shell/presentation/widgets/floating_nav_bar.dart';
+import 'package:motto/features/tasks/application/task_cubit.dart';
 import 'package:motto/route/app_router.gr.dart';
+import 'package:motto/route/reloads_on_return.dart';
 
 /// The three places there are.
 ///
@@ -11,10 +18,35 @@ import 'package:motto/route/app_router.gr.dart';
 /// The day's tasks are a tab rather than a screen pushed from Bugün. They are
 /// what somebody opens the app to do — a thing reached by tapping a summary
 /// card is a thing most people never reach twice.
+///
+/// The four cubits are provided here rather than in each tab. Two tabs used to
+/// build their own [ChainCubit], which is two readings of one chain that can
+/// disagree; and a cubit built inside a tab is one nothing can reach when the
+/// inventory is filled in on a screen pushed over the whole shell.
 @RoutePage()
 class ShellPage extends StatelessWidget {
   const ShellPage({super.key});
 
+  @override
+  Widget build(BuildContext context) => MultiBlocProvider(
+    providers: [
+      BlocProvider(create: (_) => getIt<DailyCubit>()..unawaitedLoad()),
+      BlocProvider(create: (_) => getIt<ProfileCubit>()..unawaitedLoad()),
+      BlocProvider(create: (_) => getIt<ChainCubit>()..unawaitedLoad()),
+      BlocProvider(create: (_) => getIt<TaskCubit>()..unawaitedLoad()),
+    ],
+    child: const _ShellView(),
+  );
+}
+
+class _ShellView extends StatefulWidget {
+  const _ShellView();
+
+  @override
+  State<_ShellView> createState() => _ShellViewState();
+}
+
+class _ShellViewState extends State<_ShellView> with ReloadsOnReturn {
   static const _items = [
     NavItem(icon: Icons.today_outlined, filled: Icons.today, label: 'Bugün'),
     NavItem(
@@ -24,6 +56,17 @@ class ShellPage extends StatelessWidget {
     ),
     NavItem(icon: Icons.person_outline, filled: Icons.person, label: 'Profil'),
   ];
+
+  /// Everything the three tabs read. The inventory, the report and a marked
+  /// day all happen on screens pushed over this one, and every one of them
+  /// changes what at least two tabs should say.
+  @override
+  void reload() {
+    context.read<DailyCubit>().unawaitedLoad();
+    context.read<ProfileCubit>().unawaitedLoad();
+    context.read<ChainCubit>().unawaitedLoad();
+    context.read<TaskCubit>().unawaitedLoad();
+  }
 
   @override
   Widget build(BuildContext context) {

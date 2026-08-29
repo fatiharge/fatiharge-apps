@@ -1,5 +1,6 @@
 import 'package:api_client_motto/api.dart' as api;
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:motto/config/injectable.dart';
@@ -180,8 +181,19 @@ void main() {
 
     tearDown(getIt.reset);
 
+    /// The cubits live on the shell now, so the page reads them from above
+    /// rather than building its own. A test that pumps it bare is testing a
+    /// page the app never shows.
+    Widget hosted() => MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => getIt<TaskCubit>()..unawaitedLoad()),
+        BlocProvider(create: (_) => getIt<ChainCubit>()..unawaitedLoad()),
+      ],
+      child: const MaterialApp(home: DailyTasksPage()),
+    );
+
     testWidgets('they get a screen of their own', (tester) async {
-      await tester.pumpWidget(const MaterialApp(home: DailyTasksPage()));
+      await tester.pumpWidget(hosted());
       await tester.pumpAndSettle();
 
       // Three checkboxes squeezed between two blocks of text is a list nobody
@@ -206,7 +218,7 @@ void main() {
         () => tasks.dailyTasks(today: any(named: 'today')),
       ).thenThrow(Exception('offline'));
 
-      await tester.pumpWidget(const MaterialApp(home: DailyTasksPage()));
+      await tester.pumpWidget(hosted());
       await tester.pumpAndSettle();
 
       // An empty list and a failed request looked identical, which is how a
