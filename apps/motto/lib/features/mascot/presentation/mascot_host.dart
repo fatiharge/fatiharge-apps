@@ -242,11 +242,15 @@ class _MascotHostState extends State<MascotHost>
                 onPanCancel: () => _release(bounds),
                 child: Mascot(
                   size: MascotPlacement.size,
-                  followsFinger: false,
                   loadFile: widget.loadFile,
-                  onGameOffered: widget.onGameOffered,
                   onReady: (mascot) {
-                    setState(() => _controller = mascot);
+                    // Wrapped so a celebration driven from a screen also
+                    // counts as somebody paying attention — otherwise the
+                    // mascot asks to play while it is being congratulated.
+                    setState(
+                      () =>
+                          _controller = _TouchAware(mascot, _attention.touched),
+                    );
                     _startIdleClock();
                   },
                 ),
@@ -270,4 +274,45 @@ class _MascotScope extends InheritedWidget {
 
   @override
   bool updateShouldNotify(_MascotScope old) => controller != old.controller;
+}
+
+/// The controller, with the idle clock reset on anything a person did.
+class _TouchAware implements MascotController {
+  _TouchAware(this._inner, this._touched);
+
+  final MascotController _inner;
+  final VoidCallback _touched;
+
+  @override
+  double get annoyance => _inner.annoyance;
+
+  @override
+  set annoyance(double value) => _inner.annoyance = value;
+
+  @override
+  void poke() {
+    _touched();
+    _inner.poke();
+  }
+
+  @override
+  void drag({required bool held, double x = 0, double y = 0}) {
+    _touched();
+    _inner.drag(held: held, x: x, y: y);
+  }
+
+  @override
+  void celebrate() {
+    _touched();
+    _inner.celebrate();
+  }
+
+  @override
+  void flee() => _inner.flee();
+
+  @override
+  void attention() => _inner.attention();
+
+  @override
+  void offerGame() => _inner.offerGame();
 }
