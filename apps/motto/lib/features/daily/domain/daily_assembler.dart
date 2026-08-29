@@ -1,9 +1,9 @@
 import 'package:motto/features/daily/domain/content_pack.dart';
 import 'package:motto/features/daily/domain/daily_content.dart';
 
-/// Builds a day out of the pieces: fourteen bodies, four fragments per
-/// archetype, ten hand-written connectors — a hundred and twelve days from
-/// forty-six pieces.
+/// Builds a day out of the pieces: fourteen bodies, ten hand-written
+/// connectors, and one fragment per archetype per day — two hundred and fifty
+/// two days of text, none of which repeats inside a period.
 abstract final class DailyAssembler {
   static const cycleDays = 14;
 

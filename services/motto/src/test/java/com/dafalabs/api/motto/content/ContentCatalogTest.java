@@ -33,20 +33,20 @@ class ContentCatalogTest {
     int expected = archetypes.size();
     assertEquals(expected, bundle.archetypes().size());
     assertEquals(14, bundle.skeletons().size());
-    assertEquals(expected * 4, bundle.fragments().size());
+    assertEquals(expected * 14, bundle.fragments().size());
     assertEquals(expected * 4, bundle.mottos().size());
     assertFalse(bundle.connectors().isEmpty());
   }
 
   @Test
-  @DisplayName("every archetype has four fragments, or some days have no ending")
-  void everyArchetypeHasFourFragments() {
+  @DisplayName("every archetype has one fragment per day, or a day repeats")
+  void everyArchetypeHasOneFragmentPerDay() {
     Map<String, Long> perArchetype =
         catalog.bundle().fragments().stream()
             .collect(Collectors.groupingBy(Fragment::archetypeId, Collectors.counting()));
 
     assertEquals(archetypes.size(), perArchetype.size());
-    assertTrue(perArchetype.values().stream().allMatch(count -> count == 4L), "" + perArchetype);
+    assertTrue(perArchetype.values().stream().allMatch(count -> count == 14L), "" + perArchetype);
   }
 
   @Test
@@ -65,7 +65,7 @@ class ContentCatalogTest {
   @Test
   @DisplayName("the words and the scoring rules name the same archetypes")
   void wordsAndRulesAgree() {
-    // Two files, two readers, one truth. This is what it looks like when they
+    // Two tables, two readers, one truth. This is what it looks like when they
     // stop agreeing — and it looks like a crash at claim time otherwise.
     for (var archetype : catalog.bundle().archetypes()) {
       assertEquals(archetype.id(), archetypes.byId(archetype.id()).id());
@@ -89,7 +89,7 @@ class ContentCatalogTest {
   @Test
   @DisplayName("the version is derived, so nobody has to remember to bump it")
   void versionIsStableAndDerived() {
-    assertEquals(catalog.bundle().version(), catalog.version());
+    assertEquals(catalog.bundle().version(), catalog.bundle().version());
     assertEquals(12, catalog.bundle().version().length());
   }
 

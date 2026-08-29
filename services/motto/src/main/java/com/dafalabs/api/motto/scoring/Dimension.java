@@ -8,7 +8,7 @@ public enum Dimension {
   AGREEABLENESS,
   NEUROTICISM;
 
-  static Dimension of(String name) {
+  public static Dimension of(String name) {
     return valueOf(name.toUpperCase(java.util.Locale.ROOT));
   }
 }
