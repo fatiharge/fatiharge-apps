@@ -25,6 +25,14 @@ public class ReportPiece {
 
   private String band;
 
+  /// The second axis a section reads, and where this reader lands on it. Null
+  /// on every piece that is not a paired reading.
+  @Column(name = "dimension_2")
+  private String dimension2;
+
+  @Column(name = "band_2")
+  private String band2;
+
   private Integer section;
 
   @Column(nullable = false)
@@ -45,11 +53,27 @@ public class ReportPiece {
       Integer section,
       String text,
       boolean placeholder) {
+    return of(kind, archetypeId, dimension, band, null, null, section, text, placeholder);
+  }
+
+  /** Written by the content push, and by nothing else. */
+  public static ReportPiece of(
+      String kind,
+      String archetypeId,
+      String dimension,
+      String band,
+      String dimension2,
+      String band2,
+      Integer section,
+      String text,
+      boolean placeholder) {
     ReportPiece piece = new ReportPiece();
     piece.kind = kind;
     piece.archetypeId = archetypeId;
     piece.dimension = dimension;
     piece.band = band;
+    piece.dimension2 = dimension2;
+    piece.band2 = band2;
     piece.section = section;
     piece.rewrite(text, placeholder);
     return piece;
@@ -66,6 +90,14 @@ public class ReportPiece {
 
   public String archetypeId() {
     return archetypeId;
+  }
+
+  public String dimension2() {
+    return dimension2;
+  }
+
+  public String band2() {
+    return band2;
   }
 
   public String dimension() {

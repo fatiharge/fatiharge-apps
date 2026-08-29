@@ -21,6 +21,11 @@ public class ReportSectionRow {
   @Column(nullable = false)
   private String dimension;
 
+  /// The second axis this section reads. Null while it reads only one, which
+  /// is what every section did before the report learned to cross them.
+  @Column(name = "dimension_2")
+  private String dimension2;
+
   protected ReportSectionRow() {}
 
   public static ReportSectionRow of(int section, String locale, String dimension) {
@@ -41,6 +46,10 @@ public class ReportSectionRow {
 
   public String dimension() {
     return dimension;
+  }
+
+  public String dimension2() {
+    return dimension2;
   }
 
   public static class Key implements Serializable {

@@ -75,6 +75,14 @@ public class GivenContent {
         .orElseThrow();
   }
 
+  /** The second axis the report's first section crosses. */
+  public Dimension secondSectionDimension() {
+    return store.reportSections().stream()
+        .min(java.util.Comparator.comparingInt(ReportSectionRow::section))
+        .map(row -> Dimension.of(row.dimension2()))
+        .orElseThrow();
+  }
+
   public List<Integer> sections() {
     return store.reportSections().stream().map(ReportSectionRow::section).toList();
   }
@@ -95,9 +103,11 @@ public class GivenContent {
   /// and there is nothing to write against until the sections exist.
   private void sectionsFirst() {
     List<SectionWrite> sections = new ArrayList<>();
-    int number = 1;
-    for (Dimension dimension : Dimension.values()) {
-      sections.add(new SectionWrite(number++, dimension.name()));
+    Dimension[] all = Dimension.values();
+    for (int i = 0; i < all.length; i++) {
+      // Crossed with the next one round, so the fixture exercises the paired
+      // lookup rather than only the single-axis fallback.
+      sections.add(new SectionWrite(i + 1, all[i].name(), all[(i + 1) % all.length].name()));
     }
     writer.sections(sections);
   }
@@ -241,7 +251,16 @@ public class GivenContent {
     for (Dimension dimension : Dimension.values()) {
       for (String band : BANDS) {
         pieces.add(piece("reading", null, dimension.name(), band, null));
+        // The single-axis paragraph a section falls back to, and the nine it
+        // prefers when it crosses a second.
         pieces.add(piece("dimension", null, dimension.name(), band, null));
+        for (Dimension second : Dimension.values()) {
+          for (String secondBand : BANDS) {
+            pieces.add(
+                piece(
+                    "dimension", null, dimension.name(), band, second.name(), secondBand, null));
+          }
+        }
       }
     }
     for (String kind : List.of("overview", "strength", "cost", "portrait", "comparison")) {
@@ -252,11 +271,31 @@ public class GivenContent {
 
   private static ReportPieceWrite piece(
       String kind, String archetype, String dimension, String band, Integer section) {
+    return piece(kind, archetype, dimension, band, null, null, section);
+  }
+
+  private static ReportPieceWrite piece(
+      String kind,
+      String archetype,
+      String dimension,
+      String band,
+      String dimension2,
+      String band2,
+      Integer section) {
+    // The whole address, so two pieces that differ only in the axis they cross
+    // do not come out saying the same thing.
     String slot =
         String.join(
             " ",
-            List.of(kind, String.valueOf(archetype), String.valueOf(dimension),
-                String.valueOf(band), String.valueOf(section)));
-    return new ReportPieceWrite(kind, archetype, dimension, band, section, slot, false);
+            List.of(
+                kind,
+                String.valueOf(archetype),
+                String.valueOf(dimension),
+                String.valueOf(band),
+                String.valueOf(dimension2),
+                String.valueOf(band2),
+                String.valueOf(section)));
+    return new ReportPieceWrite(
+        kind, archetype, dimension, band, dimension2, band2, section, slot, false);
   }
 }

@@ -63,7 +63,13 @@ public class ContentAdmin {
     for (ReportPieceWrite piece : incoming) {
       pieces
           .inSlot(
-              piece.kind(), piece.archetypeId(), piece.dimension(), piece.band(), piece.section())
+              piece.kind(),
+              piece.archetypeId(),
+              piece.dimension(),
+              piece.band(),
+              piece.dimension2(),
+              piece.band2(),
+              piece.section())
           .ifPresentOrElse(
               existing -> existing.rewrite(piece.text(), piece.placeholder()),
               () ->
@@ -73,6 +79,8 @@ public class ContentAdmin {
                           piece.archetypeId(),
                           piece.dimension(),
                           piece.band(),
+                          piece.dimension2(),
+                          piece.band2(),
                           piece.section(),
                           piece.text(),
                           piece.placeholder())));
