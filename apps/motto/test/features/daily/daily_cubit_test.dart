@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:api_client_motto/api.dart' as api;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -15,6 +12,8 @@ import 'package:motto/features/support/application/last_archetype.dart';
 import 'package:motto/infrastructure/analytics/analytics.dart';
 import 'package:motto/infrastructure/analytics/event_queue.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../support/a_content_pack.dart';
 
 class _MockContent extends Mock implements ContentRepository {}
 
@@ -59,11 +58,7 @@ void main() {
 
     content = _MockContent();
     when(content.current).thenAnswer(
-      (_) async =>
-          jsonDecode(
-                File('test/fixtures/content_bundle.json').readAsStringSync(),
-              )
-              as Map<String, dynamic>,
+      (_) async => aContentPackJson(ids: const ['quiet_builder', 'spark']),
     );
 
     final events = _MockEvents();

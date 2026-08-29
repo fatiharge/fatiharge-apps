@@ -139,8 +139,8 @@ public class ContentAdminResource {
   /**
    * The package a phone would receive, without being a phone.
    *
-   * <p>The app's tests run the day assembler against real content, and this is
-   * where the fixture they read comes from now that no file holds it.
+   * <p>Nothing in the repository holds the words any more, so looking at what
+   * a deployment is actually serving needs a door. This is it.
    */
   @GET
   @Path("/bundle")
