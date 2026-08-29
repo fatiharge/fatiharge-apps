@@ -3,13 +3,11 @@ import 'dart:async';
 import 'package:api_client_motto/api.dart' as motto;
 import 'package:http/http.dart' show Response;
 
-/// An API client that registers again when the server says it does not know
-/// this device, and retries once.
+/// Registers again on a 401 and retries once.
 ///
-/// The expiry check in `DeviceSession` handles the ordinary case. This handles
-/// every other way a token stops working — a clock that disagrees, a signing
-/// key rotated on the server, a device deleted — none of which the app can
-/// predict and all of which used to end with every screen failing for ever.
+/// `DeviceSession` handles the ordinary expiry. This handles the rest — a
+/// clock that disagrees, a rotated signing key, a deleted device — none of
+/// which the app can predict.
 class RenewingApiClient extends motto.ApiClient {
   RenewingApiClient({
     required super.basePath,
@@ -20,8 +18,7 @@ class RenewingApiClient extends motto.ApiClient {
   /// Registers the device again. Called at most once per failed request.
   final Future<void> Function() renew;
 
-  /// Shared, so ten screens failing at once cause one registration and not
-  /// ten. Whoever arrives while it is in flight waits for the same answer.
+  /// Shared, so ten screens failing at once cause one registration.
   Future<void>? _renewing;
 
   @override

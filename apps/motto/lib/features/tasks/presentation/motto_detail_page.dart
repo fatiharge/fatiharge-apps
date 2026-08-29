@@ -6,13 +6,10 @@ import 'package:motto/features/daily/application/daily_cubit.dart';
 import 'package:motto/features/daily/application/daily_state.dart';
 import 'package:motto/route/app_router.gr.dart';
 
-/// The motto itself — what it means, what it costs, and what it will say.
+/// The motto itself — what it means, and what it will say every day.
 ///
-/// It used to repeat Bugün: the same title, the same day text, the same
-/// action, with the motto quoted on top. A screen whose only reason to exist
-/// was the button at the bottom. What belongs here was already written and had
-/// never been drawn — every motto carries a reading and a reminder line, and
-/// the app was parsing both and showing neither.
+/// Both were written from the start and neither was ever drawn; this screen
+/// used to repeat Bugün with the motto quoted on top.
 @RoutePage()
 class MottoDetailPage extends StatelessWidget {
   const MottoDetailPage({super.key});

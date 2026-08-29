@@ -5,6 +5,7 @@ import 'package:motto/config/app_ready.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/features/mascot/application/mascot_attention.dart';
 import 'package:motto/features/mascot/application/mascot_controller.dart';
+import 'package:motto/features/mascot/application/mascot_placement.dart';
 import 'package:motto/features/mascot/application/mascot_store.dart';
 import 'package:motto/features/mascot/presentation/mascot.dart';
 import 'package:rive/rive.dart';
@@ -66,14 +67,11 @@ typedef MascotMovement =
 
 class _MascotHostState extends State<MascotHost>
     with SingleTickerProviderStateMixin {
-  static const _size = 96.0;
-
   /// Where it sits when nobody has moved it, measured in from the far edge.
   ///
   /// High enough to clear a button at the bottom of the screen: every screen
   /// here puts its one action there, and a cat on the action is worse than no
   /// cat.
-  static const _home = Offset(-16, -180);
 
   MascotController? _controller;
   Offset? _position;
@@ -146,12 +144,8 @@ class _MascotHostState extends State<MascotHost>
   }) {
     if (_bounds.isEmpty) return Future.value();
 
-    final alignment = spot.at;
     _from = _resolved(_bounds);
-    _to = Offset(
-      _bounds.left + (alignment.x + 1) / 2 * _bounds.width,
-      _bounds.top + (alignment.y + 1) / 2 * _bounds.height,
-    );
+    _to = MascotPlacement.spotIn(spot.at, _bounds);
     _settle
       ..duration = over
       ..value = 0;
@@ -160,33 +154,11 @@ class _MascotHostState extends State<MascotHost>
 
   /// The area the mascot may occupy, inset so it never sits under a notch or
   /// half off the bottom.
-  Rect _boundsIn(BoxConstraints box, EdgeInsets safe) => Rect.fromLTRB(
-    safe.left + 8,
-    safe.top + 8,
-    box.maxWidth - safe.right - _size - 8,
-    box.maxHeight - safe.bottom - _size - 8,
-  );
+  Offset _resolved(Rect bounds) => MascotPlacement.resolved(_position, bounds);
 
-  Offset _resolved(Rect bounds) {
-    final at = _position;
-    if (at != null) return at;
-    // Negative home coordinates are read from the far edge, so the resting
-    // spot survives a rotation without being recomputed anywhere.
-    return Offset(
-      _home.dx < 0 ? bounds.right + _home.dx : _home.dx,
-      _home.dy < 0 ? bounds.bottom + _home.dy : _home.dy,
-    );
-  }
-
-  void _dragTo(Offset delta, Rect bounds) {
-    final at = _resolved(bounds) + delta;
-    setState(() {
-      _position = Offset(
-        at.dx.clamp(bounds.left, bounds.right),
-        at.dy.clamp(bounds.top, bounds.bottom),
-      );
-    });
-  }
+  void _dragTo(Offset delta, Rect bounds) => setState(() {
+    _position = MascotPlacement.draggedTo(_resolved(bounds), delta, bounds);
+  });
 
   /// Settles against the nearer side rather than staying wherever it was let
   /// go. Left in the middle it covers what someone is reading; against an edge
@@ -194,11 +166,9 @@ class _MascotHostState extends State<MascotHost>
   void _release(Rect bounds) {
     _controller?.drag(held: false);
     final at = _resolved(bounds);
-    final left = (at.dx - bounds.left).abs();
-    final right = (bounds.right - at.dx).abs();
 
     _from = at;
-    _to = Offset(left < right ? bounds.left : bounds.right, at.dy);
+    _to = MascotPlacement.settledFrom(at, bounds);
     _settle
       ..duration = const Duration(milliseconds: 420)
       ..value = 0;
@@ -223,7 +193,7 @@ class _MascotHostState extends State<MascotHost>
       movement: goTo,
       child: LayoutBuilder(
         builder: (context, box) {
-          _bounds = _boundsIn(box, safe);
+          _bounds = MascotPlacement.boundsIn(box.biggest, safe);
           final bounds = _bounds;
           final at = _resolved(bounds);
 
@@ -271,7 +241,7 @@ class _MascotHostState extends State<MascotHost>
                 onPanEnd: (_) => _release(bounds),
                 onPanCancel: () => _release(bounds),
                 child: Mascot(
-                  size: _size,
+                  size: MascotPlacement.size,
                   followsFinger: false,
                   loadFile: widget.loadFile,
                   onGameOffered: widget.onGameOffered,
