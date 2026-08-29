@@ -25,6 +25,13 @@ class ContentAdminResourceTest {
 
   private static final String TOKEN = "open-sesame";
 
+  @jakarta.inject.Inject GivenContent given;
+
+  @org.junit.jupiter.api.BeforeEach
+  void seed() {
+    given.everything();
+  }
+
   @Test
   @DisplayName("without the token it does not admit to existing")
   void theDoorIsShut() {

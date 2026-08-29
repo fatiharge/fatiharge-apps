@@ -17,12 +17,14 @@ import com.dafalabs.api.motto.report.dto.ResultReport;
 import com.dafalabs.api.motto.result.Result;
 import com.dafalabs.api.motto.result.Results;
 import com.dafalabs.api.motto.task.TaskRepository;
+import com.dafalabs.api.motto.admin.GivenContent;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -47,6 +49,12 @@ class ThreeProfilesTest {
   @Inject Reports reports;
   @Inject TaskRepository tasks;
   @Inject Entitlements entitlements;
+  @Inject GivenContent given;
+
+  @BeforeEach
+  void seed() {
+    given.everything();
+  }
 
   /// 5 is "agree", 1 is "disagree". Reverse-keyed items are marked in the
   /// table, so these read as the person would answer them, not as points.

@@ -5,9 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.dafalabs.api.core.error.CustomRuntimeException;
+import com.dafalabs.api.motto.admin.GivenContent;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -15,6 +17,12 @@ import org.junit.jupiter.api.Test;
 class ScoringTest {
 
   @Inject Scoring scoring;
+  @Inject GivenContent given;
+
+  @BeforeEach
+  void seed() {
+    given.everything();
+  }
 
   @Test
   @DisplayName("agreeing with a reverse-coded item counts against its dimension")

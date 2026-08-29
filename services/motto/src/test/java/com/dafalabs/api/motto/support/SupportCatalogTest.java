@@ -5,10 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.dafalabs.api.motto.support.dto.FaqEntry;
+import com.dafalabs.api.motto.admin.GivenContent;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -16,6 +18,12 @@ import org.junit.jupiter.api.Test;
 class SupportCatalogTest {
 
   @Inject SupportCatalog catalog;
+  @Inject GivenContent given;
+
+  @BeforeEach
+  void seed() {
+    given.everything();
+  }
 
   @Test
   @DisplayName("the copy carries everything the support screens show")

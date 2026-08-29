@@ -4,12 +4,14 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 
+import com.dafalabs.api.motto.admin.GivenContent;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.security.TestSecurity;
 import io.quarkus.test.security.jwt.Claim;
 import io.quarkus.test.security.jwt.JwtSecurity;
 import jakarta.inject.Inject;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -19,6 +21,12 @@ class SupportResourceTest {
   private static final String DEVICE = "33333333-3333-3333-3333-333333333333";
 
   @Inject SupportCatalog catalog;
+  @Inject GivenContent given;
+
+  @BeforeEach
+  void seed() {
+    given.everything();
+  }
 
   @Test
   @TestSecurity(user = DEVICE)
