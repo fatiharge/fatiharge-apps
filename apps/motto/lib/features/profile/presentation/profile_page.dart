@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:motto/config/injectable.dart';
 import 'package:motto/features/profile/application/profile_cubit.dart';
 import 'package:motto/route/app_router.gr.dart';
 
@@ -11,10 +10,7 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => getIt<ProfileCubit>()..unawaitedLoad(),
-      child: const _ProfileView(),
-    );
+    return const _ProfileView();
   }
 }
 

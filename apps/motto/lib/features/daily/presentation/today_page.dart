@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:motto/config/injectable.dart';
 import 'package:motto/features/chain/application/chain_cubit.dart';
 import 'package:motto/features/chain/application/chain_state.dart';
 import 'package:motto/features/daily/application/daily_cubit.dart';
@@ -18,22 +17,6 @@ import 'package:motto/features/profile/application/profile_cubit.dart';
 @RoutePage()
 class TodayPage extends StatelessWidget {
   const TodayPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (_) => getIt<DailyCubit>()..unawaitedLoad()),
-        BlocProvider(create: (_) => getIt<ProfileCubit>()..unawaitedLoad()),
-        BlocProvider(create: (_) => getIt<ChainCubit>()..unawaitedLoad()),
-      ],
-      child: const _TodayView(),
-    );
-  }
-}
-
-class _TodayView extends StatelessWidget {
-  const _TodayView();
 
   @override
   Widget build(BuildContext context) {
