@@ -6,138 +6,87 @@ import com.dafalabs.api.motto.content.dto.ContentBundle;
 import com.dafalabs.api.motto.content.dto.DailySkeleton;
 import com.dafalabs.api.motto.content.dto.Fragment;
 import com.dafalabs.api.motto.content.dto.MottoContent;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import jakarta.annotation.PostConstruct;
+import com.dafalabs.api.motto.content.store.ArchetypeRow;
+import com.dafalabs.api.motto.content.store.ConnectorRow;
+import com.dafalabs.api.motto.content.store.ContentStore;
+import com.dafalabs.api.motto.content.store.FragmentRow;
+import com.dafalabs.api.motto.content.store.MottoRow;
+import com.dafalabs.api.motto.content.store.SkeletonRow;
 import jakarta.enterprise.context.ApplicationScoped;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.HexFormat;
 import java.util.List;
 
 /**
- * The words, read once at startup from the files the writers edit.
+ * The words, read from the tables the writers edit.
  *
- * <p>No tables and no seed migration: the build copies {@code content/} onto
- * the classpath and a merge to main deploys in minutes, so a wording change
- * already ships without a store release. Tables would add a second copy that
- * can disagree with git.
+ * <p>Read per request rather than cached: content changes while the service
+ * runs, and a cache filled at startup is a screen showing yesterday's sentence
+ * with no way to tell.
  *
- * <p>The version is a hash of the files, so there is nothing to remember to
- * bump.
+ * <p>The version is a hash of what was read — see {@link ContentVersion}.
  */
 @ApplicationScoped
 public class ContentCatalog {
 
-  private static final String LANGUAGE = "tr";
+  private final ContentStore content;
 
-  /// Order matters: the version is a hash over these, read in this sequence.
-  private static final List<String> FILES =
-      List.of(
-          "content/archetypes.yaml",
-          "content/mottos.yaml",
-          "content/daily_skeletons.yaml",
-          "content/fragments.yaml",
-          "content/connectors.yaml");
-
-  private ContentBundle bundle;
-
-  @PostConstruct
-  void load() {
-    YAMLMapper yaml = new YAMLMapper();
-
-    List<ArchetypeContent> archetypes = new ArrayList<>();
-    for (JsonNode node : read(yaml, "content/archetypes.yaml").withArray("archetypes")) {
-      JsonNode text = node.get(LANGUAGE);
-      archetypes.add(
-          new ArchetypeContent(
-              node.get("id").asText(),
-              text.get("name").asText(),
-              text.get("summary").asText(),
-              text.get("motto").asText()));
-    }
-
-    List<MottoContent> mottos = new ArrayList<>();
-    for (JsonNode node : read(yaml, "content/mottos.yaml").withArray("mottos")) {
-      JsonNode text = node.get(LANGUAGE);
-      mottos.add(
-          new MottoContent(
-              node.get("id").asText(),
-              node.get("archetype").asText(),
-              text.get("motto").asText(),
-              text.get("detail").asText(),
-              text.get("reminder").asText()));
-    }
-
-    List<DailySkeleton> skeletons = new ArrayList<>();
-    for (JsonNode node : read(yaml, "content/daily_skeletons.yaml").withArray("skeletons")) {
-      JsonNode text = node.get(LANGUAGE);
-      skeletons.add(
-          new DailySkeleton(
-              node.get("day").asInt(),
-              text.get("title").asText(),
-              text.get("body").asText(),
-              text.get("action").asText()));
-    }
-
-    List<Fragment> fragments = new ArrayList<>();
-    for (JsonNode node : read(yaml, "content/fragments.yaml").withArray("fragments")) {
-      fragments.add(
-          new Fragment(
-              node.get("archetype").asText(),
-              node.get("index").asInt(),
-              node.get(LANGUAGE).asText()));
-    }
-
-    List<Connector> connectors = new ArrayList<>();
-    for (JsonNode node : read(yaml, "content/connectors.yaml").withArray("connectors")) {
-      connectors.add(new Connector(node.get("id").asText(), node.get(LANGUAGE).asText()));
-    }
-
-    bundle =
-        new ContentBundle(version(), archetypes, mottos, skeletons, fragments, connectors);
+  ContentCatalog(ContentStore content) {
+    this.content = content;
   }
 
   public ContentBundle bundle() {
-    return bundle;
-  }
-
-  public String version() {
-    return bundle == null ? hashOfFiles() : bundle.version();
-  }
-
-  private JsonNode read(YAMLMapper yaml, String resource) {
-    try (InputStream stream = open(resource)) {
-      return yaml.readTree(stream);
-    } catch (IOException unreadable) {
-      throw new UncheckedIOException("could not read " + resource, unreadable);
+    List<ArchetypeContent> archetypes = new ArrayList<>();
+    for (ArchetypeRow row : content.archetypes()) {
+      archetypes.add(
+          new ArchetypeContent(row.id(), row.name(), row.summary(), row.motto()));
     }
+
+    List<MottoContent> mottos = new ArrayList<>();
+    for (MottoRow row : content.mottos()) {
+      mottos.add(
+          new MottoContent(
+              row.id(), row.archetypeId(), row.motto(), row.detail(), row.reminder()));
+    }
+
+    List<DailySkeleton> skeletons = new ArrayList<>();
+    for (SkeletonRow row : content.skeletons()) {
+      skeletons.add(new DailySkeleton(row.day(), row.title(), row.body(), row.action()));
+    }
+
+    List<Fragment> fragments = new ArrayList<>();
+    for (FragmentRow row : content.fragments()) {
+      fragments.add(new Fragment(row.archetypeId(), row.ordinal(), row.text()));
+    }
+
+    List<Connector> connectors = new ArrayList<>();
+    for (ConnectorRow row : content.connectors()) {
+      connectors.add(new Connector(row.id(), row.text()));
+    }
+
+    return new ContentBundle(
+        version(archetypes, mottos, skeletons, fragments, connectors),
+        archetypes,
+        mottos,
+        skeletons,
+        fragments,
+        connectors);
   }
 
-  private String hashOfFiles() {
-    try {
-      MessageDigest digest = MessageDigest.getInstance("SHA-256");
-      for (String resource : FILES) {
-        try (InputStream stream = open(resource)) {
-          digest.update(stream.readAllBytes());
-        }
-      }
-      return HexFormat.of().formatHex(digest.digest()).substring(0, 12);
-    } catch (NoSuchAlgorithmException | IOException impossible) {
-      throw new IllegalStateException(impossible);
-    }
-  }
-
-  private InputStream open(String resource) {
-    InputStream stream =
-        Thread.currentThread().getContextClassLoader().getResourceAsStream(resource);
-    if (stream == null) {
-      throw new IllegalStateException(resource + " is not on the classpath");
-    }
-    return stream;
+  /// Over the values rather than the row count: renaming an archetype has to
+  /// change the version, and it does not move a single row.
+  private static String version(
+      List<ArchetypeContent> archetypes,
+      List<MottoContent> mottos,
+      List<DailySkeleton> skeletons,
+      List<Fragment> fragments,
+      List<Connector> connectors) {
+    ContentVersion version = new ContentVersion();
+    archetypes.forEach(a -> version.of(a.id(), a.name(), a.summary(), a.motto()));
+    mottos.forEach(
+        m -> version.of(m.id(), m.archetypeId(), m.motto(), m.detail(), m.reminder()));
+    skeletons.forEach(s -> version.of(s.title(), s.body(), s.action()).of(s.day()));
+    fragments.forEach(f -> version.of(f.archetypeId(), f.text()).of(f.index()));
+    connectors.forEach(c -> version.of(c.id(), c.text()));
+    return version.toString();
   }
 }

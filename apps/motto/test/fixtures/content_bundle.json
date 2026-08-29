@@ -1,1109 +1,1638 @@
 {
-  "archetypes": [
-    {
-      "id": "quiet_builder",
-      "motto": "Acele etmeyen ama durmayan.",
-      "name": "Sessiz İnşacı",
-      "summary": "Gürültü çıkarmadan biriktirirsin; kimse ilk taşı görmez, herkes duvarı görür. Bedeli şu: görünmediğin için çoğu zaman hakkın da teslim edilmez."
-    },
-    {
-      "id": "spark",
-      "motto": "Bugün sadece bir tanesi.",
-      "name": "Kıvılcım",
-      "summary": "Bir sürü şeye başlarsın ve sorun ilgisizlik değil — hepsinin gerçekten iyi fikir olması. Zor olan tutuşturmak değil, birini seçmek."
-    },
-    {
-      "id": "night_watch",
-      "motto": "Tetikte olmak da bir güç, dinlenmek de.",
-      "name": "Gece Nöbetçisi",
-      "summary": "Sen fark ettiğinde iş henüz olmamıştır. Herkes rahatken senin çoktan düşünmüş olman yorucu, ama defalarca işe yaradı."
-    },
-    {
-      "id": "table_setter",
-      "motto": "Onlardan önce bir de bana sor.",
-      "name": "Sofra Kuran",
-      "summary": "İnsanları bir araya getiren sensin ve bunu kimse senden istemiyor bile. Herkesin iyi hissetmesini o kadar önemsiyorsun ki, sıra sana geldiğinde masada yer kalmıyor."
-    },
-    {
-      "id": "fine_worker",
-      "motto": "Mükemmel değil, bitmiş olsun.",
-      "name": "İnce İşçi",
-      "summary": "\"Olur böyle\" cümlesi sende çalışmıyor; farkı kimsenin görmediği yerde de görüyorsun. Bitirmeni zorlaştıran şey tembellik değil, standardın."
-    },
-    {
-      "id": "compass",
-      "motto": "Karar vermek de bir yük, taşıyorum.",
-      "name": "Yön Veren",
-      "summary": "Kimse karar vermeyince sen veriyorsun ve genelde doğru çıkıyor. Bedeli: herkesin katılmasını beklemediğin için bazen yalnız yürüyorsun."
-    },
-    {
-      "id": "still_water",
-      "motto": "Sakinim, kayıtsız değil.",
-      "name": "Durgun Su",
-      "summary": "Herkes telaşlanırken sen sakin kalıyorsun ve bu, etrafındakileri de sakinleştiriyor. Ama o kadar sorun etmiyorsun ki, gerçekten sorun olan şey de gecikiyor."
-    },
-    {
-      "id": "deep_diver",
-      "motto": "Derinde kalmak değil, dalıp çıkmak.",
-      "name": "Derin Dalgıç",
-      "summary": "Her şeyi bir kat daha derinden yaşıyorsun; iyisini de kötüsünü de. Yüzeyde kalabilseydin rahat ederdin ama o zaman sen olmazdın."
-    },
-    {
-      "id": "own_clock",
-      "motto": "Kendi saatimde ama her gün.",
-      "name": "Kendi Saatinde",
-      "summary": "Sistemle değil, dalgayla çalışıyorsun; geldiğinde tamamen geliyor. Bedeli şu: hiçbir şey birikmiyor, ve kimse sana göre plan yapamıyor — sen de dahil."
-    },
-    {
-      "id": "contrarian",
-      "motto": "Karşı çıkmak kolay, sürdürmek zor.",
-      "name": "Aykırı",
-      "summary": "Ne düzenmiş gibi yapıyorsun ne de katılıyormuş gibi, o yüzden senden duyduğun şey gerçek olan. Bedeli şu: sonradan ihtiyacın olacak iyi niyeti bugün harcıyorsun."
-    },
-    {
-      "id": "feet_on_ground",
-      "motto": "Bugün elimde olanla.",
-      "name": "Ayağı Yerde",
-      "summary": "Bugünün işine bakıyorsun ve elindekiyle çözüyorsun; teoriye de plana da ihtiyacın olmuyor. Bedeli şu: hiçbir şey değişmiyor, çünkü değişim ya merak ister ya plan, ikisini de taşımıyorsun."
-    },
-    {
-      "id": "as_is",
-      "motto": "Az kişiye açık, onlara tamamen.",
-      "name": "Olduğu Gibi",
-      "summary": "Ne yakınlık için uğraşıyorsun ne de araları düzeltmek için; seni tanıyan, tam olarak seni tanıyor. Bedeli şu: bir süre sonra kimse sormuyor, ve bunu ancak bir şeye ihtiyacın olduğunda fark ediyorsun."
-    },
-    {
-      "id": "table_upsetter",
-      "motto": "Söylemesi kolaydı, kalması değil.",
-      "name": "Masayı Deviren",
-      "summary": "Odada kimsenin söylemediği şeyi sen söylüyorsun ve genelde söylenmesi gerekiyordu. Bedeli şu: söyledikten sonra orada kalman gerekiyor, ve kalmak söylemekten çok daha zor."
-    },
-    {
-      "id": "light_footed",
-      "motto": "Taşımadan da gidilir, ama bunu değil.",
-      "name": "Hafif Ayaklı",
-      "summary": "Kalabalık da aksilik de seni yormuyor; ikisinin içinden aynı rahatlıkla geçiyorsun. Bedeli şu: hiçbir şeyi büyütmediğin için gerçekten büyük olanı da geç fark ediyorsun."
-    },
-    {
-      "id": "full_glass",
-      "motto": "Bir yudum boşalt, sonra taşı.",
-      "name": "Dolu Bardak",
-      "summary": "Her şeyi aynı anda ve tamamen hissediyorsun, o yüzden zor olan ne yapacağın değil neyi önce yapacağın. Bedeli şu: taşmamak için harcadığın enerjiyi işin kendisine ayıramıyorsun."
-    },
-    {
-      "id": "word_is_bond",
-      "motto": "Söz verdiğim kadarı, o kadarı da tam.",
-      "name": "Sözü Senet",
-      "summary": "Söylediğin şey oluyor ve insanlar bunu sen söylemeden önce biliyorlar. Bedeli şu: kimse senden \"yapamam\" duymadığı için sormaya da devam ediyor, ve sıra kendi işine en son geliyor."
-    },
-    {
-      "id": "in_its_place",
-      "motto": "Yerinde duranı da bir yokla.",
-      "name": "Yerli Yerinde",
-      "summary": "Denenmiş olanı denenmiş olduğu için seçiyorsun ve bu seni sarsılmaz yapıyor; etrafındakiler de bunu bilerek plan yapıyor. Bedeli şu: değişmesi gereken şey de aynı yerde duruyor, çünkü onu da yerinde sanıyorsun."
-    },
-    {
-      "id": "inwardly",
-      "motto": "Ben de söyleyebilirim.",
-      "name": "İçten İçe",
-      "summary": "Kimseye söylemeden çok şey taşıyorsun; birinin canı sıkkınsa sen zaten fark etmişsindir. Bedeli şu: fark ettiğini söylemediğin için yardım hep tek yönlü akıyor, ve bir gün sana lazım olduğunda kimsenin aklına gelmiyorsun."
-    }
-  ],
-  "connectors": [
-    {
-      "id": "c1",
-      "text": "Sende bunun karşılığı şu."
-    },
-    {
-      "id": "c2",
-      "text": "Senin için zor olan kısmı ise başka."
-    },
-    {
-      "id": "c3",
-      "text": "Bu, sana özellikle şöyle uğruyor."
-    },
-    {
-      "id": "c4",
-      "text": "Aynı şeyin sendeki hâli daha farklı."
-    },
-    {
-      "id": "c5",
-      "text": "Şunu da eklemek gerek, çünkü seni ilgilendiren tarafı bu."
-    },
-    {
-      "id": "c6",
-      "text": "Bunun sende nereye denk düştüğüne bak."
-    },
-    {
-      "id": "c7",
-      "text": "Sen bu cümleyi muhtemelen başka bir yerinden okuyorsun."
-    },
-    {
-      "id": "c8",
-      "text": "Senin durumunda asıl mesele burada."
-    },
-    {
-      "id": "c9",
-      "text": "Bunu senin için biraz daha açalım."
-    },
-    {
-      "id": "c10",
-      "text": "Ve sende bu, tanıdık bir yerden geliyor."
-    }
-  ],
-  "fragments": [
-    {
-      "archetypeId": "quiet_builder",
-      "index": 1,
-      "text": "Sen zaten küçük başlıyorsun. Senin zorlandığın yer başlamak değil, başladığını birine söylemek."
-    },
-    {
-      "archetypeId": "quiet_builder",
-      "index": 2,
-      "text": "Sessizce biriktirdiğin için ilerlemeni sen de geç fark ediyorsun. Bugün fark ettiğin şeyi bir yere yaz, yoksa olmamış sayılıyor."
-    },
-    {
-      "archetypeId": "quiet_builder",
-      "index": 3,
-      "text": "Kimse bakmıyorken devam edebiliyorsun; bu nadir bir şey. Bedeli, kimse bakmadığı için durduğunda da kimsenin fark etmemesi."
-    },
-    {
-      "archetypeId": "quiet_builder",
-      "index": 4,
-      "text": "Duvarı bitirmeden göstermek istemiyorsun. Bugünlük ilk taşı göster."
-    },
-    {
-      "archetypeId": "spark",
-      "index": 1,
-      "text": "Senin için tek bir şey seçmek, kötü olanları elemek değil; iyi olanlardan vazgeçmek. Zor olan da bu."
-    },
-    {
-      "archetypeId": "spark",
-      "index": 2,
-      "text": "Bugün yeni bir fikir gelirse yaz ve bırak. Yarın da orada olacak; olmazsa zaten tutmayacaktı."
-    },
-    {
-      "archetypeId": "spark",
-      "index": 3,
-      "text": "Sıkıldığın an bırakma anın değil, alışkanlığa dönüşme anın. Heyecan biterse geriye kalan şey işin kendisi."
-    },
-    {
-      "archetypeId": "spark",
-      "index": 4,
-      "text": "Bir şeye başlamak sende hiç sorun olmadı. Bugünün ölçüsü kaç şey başlattığın değil, kaçıncı gün aynı şeye döndüğün."
-    },
-    {
-      "archetypeId": "night_watch",
-      "index": 1,
-      "text": "Ters gidebilecekleri zaten düşündün. Bugünlük sadece gidebilecek olanı yap, listenin tamamını değil."
-    },
-    {
-      "archetypeId": "night_watch",
-      "index": 2,
-      "text": "Bir günü kaçırınca aklından geçen senaryo, kaçırmanın kendisinden daha yorucu. Zincir bir günü affediyor, sen de affet."
-    },
-    {
-      "archetypeId": "night_watch",
-      "index": 3,
-      "text": "Tetikte olmak enerji harcıyor ve o enerji bir yerden geliyor. Bugün dinlenmeyi de yapılacak işlerden biri say."
-    },
-    {
-      "archetypeId": "night_watch",
-      "index": 4,
-      "text": "Hazırlıklı olmanı defalarca işe yaradığı için bırakmıyorsun. Doğru; ama her gün nöbet tutulmuyor."
-    },
-    {
-      "archetypeId": "table_setter",
-      "index": 1,
-      "text": "Bugünkü bir dakika senin. Kimseye faydası olmayacak ve bu bir sorun değil."
-    },
-    {
-      "archetypeId": "table_setter",
-      "index": 2,
-      "text": "Birine söz verdiğinde tutuyorsun. Bu sefer sözü kendine verdiğin için daha kolay bırakıyorsun — fark ettin mi?"
-    },
-    {
-      "archetypeId": "table_setter",
-      "index": 3,
-      "text": "Herkesin iyi hissetmesini ayarlarken sıra sana gelmiyor. Bugün sıraya önden gir."
-    },
-    {
-      "archetypeId": "table_setter",
-      "index": 4,
-      "text": "Anlatacak birini bulmak sende kolay. Zor olan, anlattığın şeyin sadece seninle ilgili olması."
-    },
-    {
-      "archetypeId": "fine_worker",
-      "index": 1,
-      "text": "Bir dakikayı \"yeterince iyi\" yapmak sende zaman alıyor. Bugünlük ölçü kalite değil, olmuş olması."
-    },
-    {
-      "archetypeId": "fine_worker",
-      "index": 2,
-      "text": "Yarım bıraktığın şeylerin çoğu tembellikten değil, standardından yarım kaldı. Bugün standardı bir kademe indir."
-    },
-    {
-      "archetypeId": "fine_worker",
-      "index": 3,
-      "text": "Farkı kimsenin görmediği yerde de görüyorsun. Bugün görmediğin yerde bırak."
-    },
-    {
-      "archetypeId": "fine_worker",
-      "index": 4,
-      "text": "\"Böyle olmaz\" demek yerine bugün \"şimdilik böyle\" de. Yarın düzeltirsin."
-    },
-    {
-      "archetypeId": "compass",
-      "index": 1,
-      "text": "Karar vermek sende hızlı. Bugünkü karar küçük olduğu için değersiz görünüyor; asıl zor olan küçük kararı da vermek."
-    },
-    {
-      "archetypeId": "compass",
-      "index": 2,
-      "text": "Herkesi beklemeden yürüyorsun ve genelde doğru çıkıyor. Bugün kimseyi ikna etmen gerekmiyor, sadece kendini."
-    },
-    {
-      "archetypeId": "compass",
-      "index": 3,
-      "text": "Bir şey yavaş ilerliyorsa müdahale etme refleksin var. Bugün bırak ilerlesin."
-    },
-    {
-      "archetypeId": "compass",
-      "index": 4,
-      "text": "Yön göstermek yorucu bir iş ve kimse bunu senden istemiyor. Bugünkü yön sadece seninki."
-    },
-    {
-      "archetypeId": "still_water",
-      "index": 1,
-      "text": "Telaşa kapılmadığın için acele de etmiyorsun. Bugün acele etmeden ama ertelemeden yap."
-    },
-    {
-      "archetypeId": "still_water",
-      "index": 2,
-      "text": "Sakin kalabilmen çevrendekilere iyi geliyor; bunun bir bedeli olduğunu genelde sadece sen biliyorsun."
-    },
-    {
-      "archetypeId": "still_water",
-      "index": 3,
-      "text": "Bir şeyi ertelediğinde huzursuz olmuyorsun, o yüzden erteleme sende sessiz ilerliyor. Bugün sessizliği bozan tek şey bu olsun."
-    },
-    {
-      "archetypeId": "still_water",
-      "index": 4,
-      "text": "Kimseyi rahatsız etmeden yaşamayı beceriyorsun. Bugün kendini biraz rahatsız et."
-    },
-    {
-      "archetypeId": "deep_diver",
-      "index": 1,
-      "text": "Bir konuya girdiğinde dibine kadar gidiyorsun. Bugünkü iş sığ ve bu bilerek böyle."
-    },
-    {
-      "archetypeId": "deep_diver",
-      "index": 2,
-      "text": "Anlamadığın bir şeyi yapmak sana ters. Bugün anlamadan yap, anlamı sonra gelecek."
-    },
-    {
-      "archetypeId": "deep_diver",
-      "index": 3,
-      "text": "Derine indiğin için yüzeyde olan biteni kaçırıyorsun. Bugün bir dakika yüzeyde kal."
-    },
-    {
-      "archetypeId": "deep_diver",
-      "index": 4,
-      "text": "Hazır olduğunda başlamayı seviyorsun. Hazır olmak diye bir gün yok; bugün de yok."
-    },
-    {
-      "archetypeId": "own_clock",
-      "index": 1,
-      "text": "Bugünün fikri sana kolay geliyor; zor olan yarın da aynı şeyi yapmak. Senin eksiğin istek değil, tekrar."
-    },
-    {
-      "archetypeId": "own_clock",
-      "index": 2,
-      "text": "Dalga geldiğinde çok şey yapıyorsun ve arada hiçbir şey. Bugün az yapmak, dalgayı beklemekten daha değerli."
-    },
-    {
-      "archetypeId": "own_clock",
-      "index": 3,
-      "text": "Kimseye söylemediğin için kimse hatırlatmıyor. Bugün hatırlatıcın sadece sensin, ve bu yeterli olmak zorunda."
-    },
-    {
-      "archetypeId": "own_clock",
-      "index": 4,
-      "text": "Sana kurulacak düzen tutmuyor. Bugünü düzen olarak değil, tek bir gün olarak al — o tutuyor."
-    },
-    {
-      "archetypeId": "contrarian",
-      "index": 1,
-      "text": "Bugünün fikrine itirazın hazır. İtirazın haklı bile olsa, bugün itiraz etmek yapmanın yerine geçmiyor."
-    },
-    {
-      "archetypeId": "contrarian",
-      "index": 2,
-      "text": "Başkasının kurduğu şeyi sürdürmek sana ağır geliyor. Bunu kendi kurduğun bir şey say, o zaman ağırlığı düşüyor."
-    },
-    {
-      "archetypeId": "contrarian",
-      "index": 3,
-      "text": "Kimseye hesap vermiyorsun ve bu, hesap vereceğin tek kişinin sen olduğun anlamına geliyor. Bugün o kişi biraz sıkı olsun."
-    },
-    {
-      "archetypeId": "contrarian",
-      "index": 4,
-      "text": "Uymamak seni özgür yapıyor, sürdürmemek yapmıyor. Bugün ikisinin farkını bir kere yaşa."
-    },
-    {
-      "archetypeId": "feet_on_ground",
-      "index": 1,
-      "text": "Bugünün fikri sana fazla soyut gelebilir. Somutla: nerede, ne zaman, ne kadar. Üçü belliyse gerisi kolay."
-    },
-    {
-      "archetypeId": "feet_on_ground",
-      "index": 2,
-      "text": "Sen anlatılanla değil, yapılanla öğreniyorsun. Bugün anlamaya çalışma, bir kere yap ve sonra bak."
-    },
-    {
-      "archetypeId": "feet_on_ground",
-      "index": 3,
-      "text": "Yeni olan seni çekmiyor ve bu bir sorun değil. Bugün merak etmeden yap; merak sonradan gelirse gelir."
-    },
-    {
-      "archetypeId": "feet_on_ground",
-      "index": 4,
-      "text": "Planı olmayan şeyi de yapabiliyorsun, bu senin avantajın. Bugünkü tek şart: bir kere olsun."
-    },
-    {
-      "archetypeId": "as_is",
-      "index": 1,
-      "text": "Bugünün fikrini kimseye anlatmayacaksın, biliyorum. O yüzden bugün tek tanık sensin — ve tanıklık da bir iş."
-    },
-    {
-      "archetypeId": "as_is",
-      "index": 2,
-      "text": "Kimseyi idare etmediğin için kendini de idare etmiyorsun. Bugün bu iyi bir şey: bahane üretmiyorsun."
-    },
-    {
-      "archetypeId": "as_is",
-      "index": 3,
-      "text": "Uzak durmak sana enerji kazandırıyor. Bugün o enerjinin bir kısmını buraya harca, tamamını değil."
-    },
-    {
-      "archetypeId": "as_is",
-      "index": 4,
-      "text": "Tıkandığında kimse fark etmiyor, çünkü kimseye söylemiyorsun. Bugün tıkanırsan, en azından kendine söyle."
-    },
-    {
-      "archetypeId": "table_upsetter",
-      "index": 1,
-      "text": "Senin için zor olan başlamak değil, başladığını duyurduktan sonra geri adım atmadan sürdürmek. Bugün kimseye duyurmadan yap."
-    },
-    {
-      "archetypeId": "table_upsetter",
-      "index": 2,
-      "text": "Bir şeyin yanlış olduğunu görmek sende hızlı, düzeltmek yavaş. Bugün itiraz ettiğin bir şeyin yerine ne koyacağını da yaz."
-    },
-    {
-      "archetypeId": "table_upsetter",
-      "index": 3,
-      "text": "Tepkin geçtikten sonra ortada kalan işi genelde başkası topluyor. Bugünkü küçük şeyi sonuna kadar sen taşı."
-    },
-    {
-      "archetypeId": "table_upsetter",
-      "index": 4,
-      "text": "Haklı olduğun bir konuda ısrar etmek sana bedava geliyor; ısrar etmediğinde ne olacağını denemek pahalı. Bugün bir kez deneme."
-    },
-    {
-      "archetypeId": "light_footed",
-      "index": 1,
-      "text": "Bugünkü şeyi atlarsan canını sıkmayacak, mesele de bu. Seni tutan şey rahatsızlık olmayacak; o yüzden çıpanı sağlam bir yere bağla."
-    },
-    {
-      "archetypeId": "light_footed",
-      "index": 2,
-      "text": "Zorlanmadığın için ilerlediğini de fark etmiyorsun. Bugün yaptığını bir yere işaretle, yoksa yapmamışsın gibi duracak."
-    },
-    {
-      "archetypeId": "light_footed",
-      "index": 3,
-      "text": "Bir aksilik seni durdurmuyor ama bir boşluk durduruyor. Bugün araya bir gün girerse, ertesi gün aynı saatte orada ol."
-    },
-    {
-      "archetypeId": "light_footed",
-      "index": 4,
-      "text": "Herkesle iyi geçindiğin için kimseye söz vermiyorsun. Bugünkü şeyi bir kişiye söyle; ağırlığı oradan gelsin."
-    },
-    {
-      "archetypeId": "full_glass",
-      "index": 1,
-      "text": "Bugünkü şey sana küçük geldiyse doğru seçmişsin. Sende plan büyüdükçe yapılma ihtimali düşüyor, tersi değil."
-    },
-    {
-      "archetypeId": "full_glass",
-      "index": 2,
-      "text": "Kötü bir gün senin için \"bugün olmaz\" demek zorunda değil. Yarısını yap ve yarısını yapmış say — zincir bunu kabul ediyor."
-    },
-    {
-      "archetypeId": "full_glass",
-      "index": 3,
-      "text": "Aklında aynı anda duran şeylerin sayısı, bugünkü işi zorlaştıran asıl sebep. Yapmadan önce bir tanesini bir yere yaz ve kafandan çıkar."
-    },
-    {
-      "archetypeId": "full_glass",
-      "index": 4,
-      "text": "Bir günü kaçırdığında bunu bir karakter meselesi yapıyorsun. Kaçan gün bir gün; ertesi sabah aynı yerden devam."
-    },
-    {
-      "archetypeId": "word_is_bond",
-      "index": 1,
-      "text": "Bugünkü şey sana ait ve sadece sana. Başkasının işine dönüşme ihtimali olan her şeyi bugünlük dışarıda bırak."
-    },
-    {
-      "archetypeId": "word_is_bond",
-      "index": 2,
-      "text": "Birine söz verseydin çoktan yapmıştın. Bugünkü şeye de aynı gözle bak: bu da bir söz, sadece muhatabı sensin."
-    },
-    {
-      "archetypeId": "word_is_bond",
-      "index": 3,
-      "text": "Sıra sana geldiğinde gün bitmiş oluyor. Bugün onu en sona değil, ilk boşluğa koy."
-    },
-    {
-      "archetypeId": "word_is_bond",
-      "index": 4,
-      "text": "Yükü sessizce almak sana doğal geliyor, o yüzden kimse azaltmıyor. Bugün bir kişiye ne taşıdığını söyle."
-    },
-    {
-      "archetypeId": "in_its_place",
-      "index": 1,
-      "text": "Bugünkü şeyi zaten yapıyorsan onu değiştirme, yerini değiştir. Sende sürdürmek kolay, tazelemek zor."
-    },
-    {
-      "archetypeId": "in_its_place",
-      "index": 2,
-      "text": "Yeni bir şeyi denemeden önce gerekçe istiyorsun ve bu genelde doğru. Bugünlük gerekçe şu: on dört gün sonra hâlâ aynı yerde olmak istemiyorsun."
-    },
-    {
-      "archetypeId": "in_its_place",
-      "index": 3,
-      "text": "Bir şeyin bozulduğunu geç fark ediyorsun, çünkü uzun süredir orada. Bugün, alışkanlıktan yaptığın bir şeyi bir kez sorgula."
-    },
-    {
-      "archetypeId": "in_its_place",
-      "index": 4,
-      "text": "Düzenin sağlam olduğu için bugünkü şeyi de düzenin içine gömeceksin. Bugünlük onu ayrı tut; ayrı durursa görünür."
-    },
-    {
-      "archetypeId": "inwardly",
-      "index": 1,
-      "text": "Bugünkü şeyi kimseye söylemeyeceksin, biliyorum. Bir kişiye söyle; söylediğin an senin için de gerçek oluyor."
-    },
-    {
-      "archetypeId": "inwardly",
-      "index": 2,
-      "text": "Başkasının gününü okumak sende otomatik, kendi gününü okumak değil. Bugün bir kez kendine sor: bugün nasıldım."
-    },
-    {
-      "archetypeId": "inwardly",
-      "index": 3,
-      "text": "Birinin ihtiyacı çıkarsa bugünkü şeyi hemen bırakırsın. Bugünlük bırakma; on dakika sonra da orada olacak."
-    },
-    {
-      "archetypeId": "inwardly",
-      "index": 4,
-      "text": "İçeride tuttuğun şey küçülmüyor, birikiyor. Bugünkü işi yaparken aklından geçeni bir yere yaz — okuyacak kimse olmasa bile."
-    }
-  ],
-  "mottos": [
-    {
-      "archetypeId": "quiet_builder",
-      "detail": "Hızlanmak sana bir şey kazandırmıyor, durmak her şeyi kaybettiriyor. Bedeli, ilerlediğini uzun süre kimsenin — bazen senin bile — fark etmemesi.",
-      "id": "qb1",
-      "motto": "Acele etmeyen ama durmayan.",
-      "reminder": "Bugün de bir taş."
-    },
-    {
-      "archetypeId": "quiet_builder",
-      "detail": "Duvarı herkes görür, nereden başladığını sen bilirsin. Bunu bilmek yeterli olmalı; çoğu zaman olmuyor ve bu yorucu.",
-      "id": "qb2",
-      "motto": "İlk taşı ben biliyorum.",
-      "reminder": "Nereden başladığını hatırla."
-    },
-    {
-      "archetypeId": "quiet_builder",
-      "detail": "Bitmemiş bir şeyi göstermek sana yanlış geliyor. Ama hiç göstermezsen hakkın da teslim edilmiyor — bu ikisi arasında bir yer var.",
-      "id": "qb3",
-      "motto": "Gösterebileceğim kadarı yeter.",
-      "reminder": "Bugünlük bu kadarı görünsün."
-    },
-    {
-      "archetypeId": "quiet_builder",
-      "detail": "Ses çıkarmadan çalışmak, az çalışmak sanılıyor. Doğrusunu bilmek senin işine yarar; başkasına anlatmak da bazen gerekiyor.",
-      "id": "qb4",
-      "motto": "Sessizlik yavaşlık değil.",
-      "reminder": "Sessiz ama duruyor."
-    },
-    {
-      "archetypeId": "spark",
-      "detail": "Fikirlerin kötü değil, fazla. Seçmek eleme değil vazgeçme olduğu için zor — ve vazgeçmediğin sürece hiçbiri ilerlemiyor.",
-      "id": "sp1",
-      "motto": "Bugün sadece bir tanesi.",
-      "reminder": "Bir tanesi. Sadece bugün."
-    },
-    {
-      "archetypeId": "spark",
-      "detail": "Başlangıçta iyisin ve bunu biliyorsun. Asıl mesele heyecan bittikten sonra kalan kısım, ki orası sıkıcı olduğu için yürüyor.",
-      "id": "sp2",
-      "motto": "Tutuşturmak kolay, taşımak marifet.",
-      "reminder": "Heyecan bitti, iş duruyor."
-    },
-    {
-      "archetypeId": "spark",
-      "detail": "Yeni fikir gelmesini engelleyemezsin, peşinden gitmeyi erteleyebilirsin. Bir yere yazılan fikir kaçmıyor; kovalanan fikir bugünü yiyor.",
-      "id": "sp3",
-      "motto": "Yaz ve bırak.",
-      "reminder": "Yazdın mı? Yeter."
-    },
-    {
-      "archetypeId": "spark",
-      "detail": "Sende ölçü hep üretilen sayıydı. Bu sefer ölçü aynı şeye kaçıncı kez döndüğün — daha az heyecanlı ama daha çok işe yarıyor.",
-      "id": "sp4",
-      "motto": "Kaçıncı gün, kaç fikir değil.",
-      "reminder": "Aynı şeye bir kez daha dön."
-    },
-    {
-      "archetypeId": "night_watch",
-      "detail": "Önceden görmen defalarca işe yaradı, o yüzden bırakmıyorsun. Ama nöbet her gün tutulmuyor ve bunu kimse sana söylemiyor.",
-      "id": "nw1",
-      "motto": "Tetikte olmak da bir güç, dinlenmek de.",
-      "reminder": "Bugün nöbet yok."
-    },
-    {
-      "archetypeId": "night_watch",
-      "detail": "Ters gidebilecek her şeyi zaten düşündün. Hepsini bugün çözmeye çalışmak, hiçbirini çözmemekle aynı yere çıkıyor.",
-      "id": "nw2",
-      "motto": "Listenin tamamı bugünün işi değil.",
-      "reminder": "Bir madde. Bugünlük o kadar."
-    },
-    {
-      "archetypeId": "night_watch",
-      "detail": "Kaçırdığın gün değil, kaçırdıktan sonra kurduğun senaryo yoruyor. Zincir bir günü affediyor — sen genelde affetmiyorsun.",
-      "id": "nw3",
-      "motto": "Bir gün affedilir.",
-      "reminder": "Bir gün bir şey değiştirmez."
-    },
-    {
-      "archetypeId": "night_watch",
-      "detail": "Hazırlanmak sende hiç bitmiyor çünkü her zaman bir ihtimal daha var. Bir yerde durmak, hazırlıksız kalmak değil.",
-      "id": "nw4",
-      "motto": "Hazırlık da bir iş, o da bitiyor.",
-      "reminder": "Yeterince hazırsın."
-    },
-    {
-      "archetypeId": "table_setter",
-      "detail": "Herkesin iyi hissetmesini ayarlarken sıra sana gelmiyor. Bu bir fedakârlık değil, alışkanlık — ve alışkanlıklar değişebiliyor.",
-      "id": "ts1",
-      "motto": "Onlardan önce bir de bana sor.",
-      "reminder": "Bugünkü dakika senin."
-    },
-    {
-      "archetypeId": "table_setter",
-      "detail": "Başkasına verdiğin sözü tutuyorsun. Kendine verdiğini bozarken kimseden özür dilemediğin için bedava geliyor; gelmiyor.",
-      "id": "ts2",
-      "motto": "Kendime verdiğim söz de sözdür.",
-      "reminder": "Söz vermiştin."
-    },
-    {
-      "archetypeId": "table_setter",
-      "detail": "İnsanları bir araya getirmek senin işin oldu. Sofrada kendine yer ayırmak, o işi bırakmak anlamına gelmiyor.",
-      "id": "ts3",
-      "motto": "Masayı kuran da oturur.",
-      "reminder": "Otur."
-    },
-    {
-      "archetypeId": "table_setter",
-      "detail": "Yaptığın çoğu şeyin bir izleyicisi var. Bunun yok, ve olmaması onu değersiz yapmıyor — sadece sessiz yapıyor.",
-      "id": "ts4",
-      "motto": "Bunu kimseye anlatmak zorunda değilim.",
-      "reminder": "Kimse görmese de olur."
-    },
-    {
-      "archetypeId": "fine_worker",
-      "detail": "Yarım kalanların çoğu tembellikten değil standardından yarım kaldı. Standart iyi bir şey; her yerde aynı standardı uygulamak değil.",
-      "id": "fw1",
-      "motto": "Mükemmel değil, bitmiş olsun.",
-      "reminder": "Bitmiş olsun, yeter."
-    },
-    {
-      "archetypeId": "fine_worker",
-      "detail": "\"Böyle olmaz\" cümlesi işi durduruyor, \"şimdilik böyle\" ilerletiyor. İkisi de geçici, biri ilerleme bırakıyor.",
-      "id": "fw2",
-      "motto": "Şimdilik böyle.",
-      "reminder": "Şimdilik yeter."
-    },
-    {
-      "archetypeId": "fine_worker",
-      "detail": "Kimsenin görmediği farkı görmek bir yetenek ve bir yük. Bugünlük yükü bırakmak, yeteneği kaybetmek değil.",
-      "id": "fw3",
-      "motto": "Farkı ben görüyorum, bugün görmeyeyim.",
-      "reminder": "Bugün bakma."
-    },
-    {
-      "archetypeId": "fine_worker",
-      "detail": "En iyisini yapmak zaman alıyor ve o zaman başka bir şeyden çalınıyor. Neyin en iyi olması gerektiğini seçmek de bir ustalık.",
-      "id": "fw4",
-      "motto": "Bir kademe aşağısı da iş görür.",
-      "reminder": "Bir kademe aşağı."
-    },
-    {
-      "archetypeId": "compass",
-      "detail": "Kimse karar vermeyince sen veriyorsun ve genelde doğru çıkıyor. Bedeli, taşıdığın şeyin ağırlığını kimsenin görmemesi — küçük kararlar dahil.",
-      "id": "cp1",
-      "motto": "Karar vermek de bir yük, taşıyorum.",
-      "reminder": "Bugünkü karar küçük. Yine de sende."
-    },
-    {
-      "archetypeId": "compass",
-      "detail": "Herkesi beklemeden yürüyorsun ve genelde haklı çıkıyorsun. Bugünkü işin kimseyi ilgilendirmiyor; ikna edilecek tek kişi sensin.",
-      "id": "cp2",
-      "motto": "Bu sefer kimseyi ikna etmeyeceğim.",
-      "reminder": "Sadece seni ilgilendiriyor."
-    },
-    {
-      "archetypeId": "compass",
-      "detail": "Yavaş gideni hızlandırma refleksin var. Bazı şeyler müdahaleyle değil, zamanla ilerliyor — ve beklemek sende en zor kısım.",
-      "id": "cp3",
-      "motto": "Bırak ilerlesin.",
-      "reminder": "Bugün karışma."
-    },
-    {
-      "archetypeId": "compass",
-      "detail": "Kimse senden istemedi ama sen yapıyorsun. Yorulmanın sebebi iş değil, işin kime ait olduğunun hiç konuşulmaması.",
-      "id": "cp4",
-      "motto": "Yön göstermek de yoruyor.",
-      "reminder": "Bugünkü yön seninki."
-    },
-    {
-      "archetypeId": "still_water",
-      "detail": "Telaşa kapılmaman umursamamak sanılıyor. Aynı sakinlik ertelemeyi de rahatsız edici olmaktan çıkarıyor — asıl dikkat etmen gereken yer orası.",
-      "id": "sw1",
-      "motto": "Sakinim, kayıtsız değil.",
-      "reminder": "Sakin ol ama bugün yap."
-    },
-    {
-      "archetypeId": "still_water",
-      "detail": "Çevrendekiler senin sakinliğinden faydalanıyor. Bunun sana neye mal olduğunu genelde sadece sen biliyorsun ve söylemiyorsun.",
-      "id": "sw2",
-      "motto": "Sakinliğin bir bedeli var.",
-      "reminder": "Bugün kendine de bak."
-    },
-    {
-      "archetypeId": "still_water",
-      "detail": "Kimseyi rahatsız etmeden yaşamayı beceriyorsun. Değişim tam olarak rahatsızlığın olduğu yerde oluyor.",
-      "id": "sw3",
-      "motto": "Kendimi biraz rahatsız edeyim.",
-      "reminder": "Küçük bir rahatsızlık."
-    },
-    {
-      "archetypeId": "still_water",
-      "detail": "Dışarıdan hareketsiz görünmek durmakla karıştırılıyor. Aradaki farkı bilen tek kişi sensin; bugün onu doğru tarafta tut.",
-      "id": "sw4",
-      "motto": "Durgun, ama duruyor.",
-      "reminder": "Duruyorsun."
-    },
-    {
-      "archetypeId": "deep_diver",
-      "detail": "Bir konuya girdiğinde dibine gidiyorsun; orada kalmak da kolay. Değerli olan derinlik değil, geri çıkıp bir şey getirebilmen.",
-      "id": "dd1",
-      "motto": "Derinde kalmak değil, dalıp çıkmak.",
-      "reminder": "Dal, sonra çık."
-    },
-    {
-      "archetypeId": "deep_diver",
-      "detail": "Anlamadığın bir şeyi yapmak sana ters geliyor. Ama bazı şeyler yapıldıkça anlaşılıyor, öncesinde değil.",
-      "id": "dd2",
-      "motto": "Anlamadan da yapılır.",
-      "reminder": "Anlamı sonra gelecek."
-    },
-    {
-      "archetypeId": "deep_diver",
-      "detail": "Hazır hissettiğinde başlamayı seviyorsun. O his gelmiyor; gelenler başlamış olanlar.",
-      "id": "dd3",
-      "motto": "Hazır olacağım gün yok.",
-      "reminder": "Bugün başla."
-    },
-    {
-      "archetypeId": "deep_diver",
-      "detail": "Derinde olan biteni görüyorsun, yüzeydekini kaçırıyorsun. Kaçırdığın şeylerin çoğu orada duruyor.",
-      "id": "dd4",
-      "motto": "Yüzeyde de bir şeyler oluyor.",
-      "reminder": "Bir dakika yukarı çık."
-    },
-    {
-      "archetypeId": "own_clock",
-      "detail": "Saatini değiştirmene gerek yok, her gün olmasına var. Bedeli, ilhamın gelmediği günlerde de küçük bir şey yapmayı kabul etmek.",
-      "id": "oc1",
-      "motto": "Kendi saatimde ama her gün.",
-      "reminder": "Bugün de kendi saatinde."
-    },
-    {
-      "archetypeId": "own_clock",
-      "detail": "İyi günde çok, kötü günde az — ama ikisinde de var. Bedeli, az olan günü bir başarısızlık saymamayı öğrenmek.",
-      "id": "oc2",
-      "motto": "Dalga geçtiğinde de kıyıdayım.",
-      "reminder": "Az da olsa bugün de."
-    },
-    {
-      "archetypeId": "own_clock",
-      "detail": "Sana kurulacak düzen yaramıyor; yarayan tek şey bugünün kendisi. Bedeli, yarını kimsenin — senin de — kestirememesi.",
-      "id": "oc3",
-      "motto": "Sistem değil, bugün.",
-      "reminder": "Sadece bugün. Yeter."
-    },
-    {
-      "archetypeId": "own_clock",
-      "detail": "Şimdiye kadar biriken bir şey olmadı ve bu bir kusur değil, bir alışkanlık boşluğu. Bedeli, ilk iki haftanın sıkıcı geçmesi.",
-      "id": "oc4",
-      "motto": "Biriktirmeyi yeni öğreniyorum.",
-      "reminder": "Bir gün daha ekle."
-    },
-    {
-      "archetypeId": "contrarian",
-      "detail": "İtiraz etmek sana bedavaya geliyor; asıl mesele itiraz ettiğin şeyin yerine bir şey koyup onu sürdürmek. Bedeli, haklı olmanın yetmediğini kabul etmek.",
-      "id": "ct1",
-      "motto": "Karşı çıkmak kolay, sürdürmek zor.",
-      "reminder": "Bugün sürdür."
-    },
-    {
-      "archetypeId": "contrarian",
-      "detail": "Başkasının kurduğu düzen sende tutmuyor, kendi kurduğun tutabilir. Bedeli, tutmadığında suçlayacak kimsenin olmaması.",
-      "id": "ct2",
-      "motto": "Kimseye değil, kendime söz verdim.",
-      "reminder": "Sözün sana."
-    },
-    {
-      "archetypeId": "contrarian",
-      "detail": "Katılmamak bir duruş, ortadan kaybolmak değil. Bedeli, kalıp tartışmanın kaçmaktan daha yorucu olması.",
-      "id": "ct3",
-      "motto": "Uymuyorum, kaçmıyorum.",
-      "reminder": "Bugün kal ve yap."
-    },
-    {
-      "archetypeId": "contrarian",
-      "detail": "Cilalamadığın için insanlar seninle nerede olduklarını biliyor. Bedeli, cilanın bazen kapı açtığı yerlerde kapının kapalı kalması.",
-      "id": "ct4",
-      "motto": "Ham hâlim, işlenmiş hâlimden dürüst.",
-      "reminder": "Olduğun gibi, ama bugün yap."
-    },
-    {
-      "archetypeId": "feet_on_ground",
-      "detail": "Hazırlık beklemiyorsun, elindekiyle başlıyorsun ve bu çoğu insanın yapamadığı şey. Bedeli, elindeki hep aynı kaldığı için sonucun da aynı kalması.",
-      "id": "fg1",
-      "motto": "Bugün elimde olanla.",
-      "reminder": "Elindekiyle başla."
-    },
-    {
-      "archetypeId": "feet_on_ground",
-      "detail": "Büyük planlar sende çalışmıyor; tek bir ayrıntı çalışıyor. Bedeli, tek ayrıntının sonucu göstermesinin haftalar sürmesi.",
-      "id": "fg2",
-      "motto": "Küçük bir şeyi değiştirmek de değişimdir.",
-      "reminder": "Bir şeyi değiştir."
-    },
-    {
-      "archetypeId": "feet_on_ground",
-      "detail": "Anlatılan şey sende tutmuyor, yapılan tutuyor. Bedeli, aynı hatayı bir kere yapmadan öğrenememek.",
-      "id": "fg3",
-      "motto": "Yaparak öğrenirim, okuyarak değil.",
-      "reminder": "Bugün yaparak öğren."
-    },
-    {
-      "archetypeId": "feet_on_ground",
-      "detail": "Yeni olan seni çekmiyor ve çekmesine gerek de yok — denemek merak gerektirmiyor. Bedeli, ilk denemenin garip hissettirmesi.",
-      "id": "fg4",
-      "motto": "Merak etmesem de deneyebilirim.",
-      "reminder": "Merak etmeden dene."
-    },
-    {
-      "archetypeId": "as_is",
-      "detail": "Herkese biraz olmaktansa birkaç kişiye tamamen olmayı seçiyorsun. Bedeli, o birkaç kişi meşgulken kimsenin kalmaması.",
-      "id": "ai1",
-      "motto": "Az kişiye açık, onlara tamamen.",
-      "reminder": "Bugün bir kişiye yaz."
-    },
-    {
-      "archetypeId": "as_is",
-      "detail": "Kimseyi idare etmediğin için sözün karşılığı var. Bedeli, idare edilmeyi bekleyen insanların bir daha gelmemesi.",
-      "id": "ai2",
-      "motto": "Evetim evet, hayırım hayır.",
-      "reminder": "Bugünkü sözün sana."
-    },
-    {
-      "archetypeId": "as_is",
-      "detail": "Uzak durman bir eksiklik değil, bir tercih — ama tercih olduğunu ara ara kontrol etmek gerekiyor. Bedeli, kontrol etmeyi unuttuğunda tercihin alışkanlığa dönüşmesi.",
-      "id": "ai3",
-      "motto": "Yalnızlık değil, seçicilik.",
-      "reminder": "Bugün bir kere kontrol et."
-    },
-    {
-      "archetypeId": "as_is",
-      "detail": "Motivasyonun dışarıdan gelmiyor, bu yüzden dışarıdan da bozulmuyor. Bedeli, tıkandığında kimsenin fark etmemesi.",
-      "id": "ai4",
-      "motto": "Kendim için yapıyorum, kimse görmese de.",
-      "reminder": "Kendin için, bugün de."
-    },
-    {
-      "archetypeId": "table_upsetter",
-      "detail": "Doğru cümleyi kurmak sende bir cesaret işi değil, bir refleks. Asıl iş ondan sonra başlıyor ve bedeli şu: söyleyip çıkarsan haklı olman da kimsenin işine yaramıyor.",
-      "id": "tu1",
-      "motto": "Söylemesi kolaydı, kalması değil.",
-      "reminder": "Bugün söylediğinin yanında kal."
-    },
-    {
-      "archetypeId": "table_upsetter",
-      "detail": "Kırdığın şeyi sen de görüyorsun, sadece kırmaya değer olduğunu düşünüyorsun. İkisi birden doğru olabilir; toplamayı da işin parçası say.",
-      "id": "tu2",
-      "motto": "Masayı devirdiysem toplarım.",
-      "reminder": "Bugün bir tanesini topla."
-    },
-    {
-      "archetypeId": "table_upsetter",
-      "detail": "Söylediğin şeyin yanlış olduğu nadir; zamanlaması genelde. Aynı cümle beş dakika sonra kurulduğunda kimse savunmaya geçmiyor.",
-      "id": "tu3",
-      "motto": "Sesimi değil, sırayı ayarlıyorum.",
-      "reminder": "Aynı şeyi, beş dakika sonra."
-    },
-    {
-      "archetypeId": "table_upsetter",
-      "detail": "Karşı çıkmak seni odadan çıkarmak zorunda değil. Bunu söylemek zor geliyor çünkü kalmak, itiraz etmekten daha çok şey istiyor senden.",
-      "id": "tu4",
-      "motto": "Katılmıyorum, ama buradayım.",
-      "reminder": "Katılma, ama kalmaya devam et."
-    },
-    {
-      "archetypeId": "light_footed",
-      "detail": "Yükü bırakabilmek senin en rahat özelliğin. Bedeli şu: bırakılmaması gereken şeyi de aynı kolaylıkla bırakıyorsun ve bunu aylar sonra fark ediyorsun.",
-      "id": "lf1",
-      "motto": "Taşımadan da gidilir, ama bunu değil.",
-      "reminder": "Bugün bırakmayacağın şeyi seç."
-    },
-    {
-      "archetypeId": "light_footed",
-      "detail": "Telaşlanmaman etrafındakileri rahatlatıyor. Ama bazen insanların ihtiyacı rahatlamak değil, ciddiye alındığını görmek.",
-      "id": "lf2",
-      "motto": "Sakinliğim bir cevap değil.",
-      "reminder": "Bugün birine \"ciddi bu\" de."
-    },
-    {
-      "archetypeId": "light_footed",
-      "detail": "Zorlanmadan yaptığın şeyi kendi gözünde küçültüyorsun. Bir şeyin değeri, sana kaça mal olduğuyla ölçülmüyor.",
-      "id": "lf3",
-      "motto": "Kolay geldi diye küçük değil.",
-      "reminder": "Kolay yaptığın şeyi de say."
-    },
-    {
-      "archetypeId": "light_footed",
-      "detail": "Her yerden rahat geçtiğin için hiçbir yerde iz bırakmıyorsun. Aynı yere ikinci kez uğramak, senin için tekrar değil birikim.",
-      "id": "lf4",
-      "motto": "Bugün de aynı yerden geçeyim.",
-      "reminder": "Dün nereye uğradıysan, bugün de."
-    },
-    {
-      "archetypeId": "full_glass",
-      "detail": "Elindeki her şey aynı anda acil görünüyor ve bu bir dikkat sorunu değil, bir doluluk sorunu. Bedeli şu: boşaltmadığın sürece hiçbirine sıra gelmiyor.",
-      "id": "fu1",
-      "motto": "Bir yudum boşalt, sonra taşı.",
-      "reminder": "Bugün bir tanesini bırak."
-    },
-    {
-      "archetypeId": "full_glass",
-      "detail": "Bir şeyi yoğun hissetmek sende çoğu zaman erteleme olarak çıkıyor. Aradaki bağ zorunlu değil; hissederken de yapılabiliyor.",
-      "id": "fu2",
-      "motto": "Hissetmem, yapamayacağım demek değil.",
-      "reminder": "Şu an nasılsan öyle başla."
-    },
-    {
-      "archetypeId": "full_glass",
-      "detail": "Büyük planlar seni rahatlatıyor ve sonra aynı planlar üzerine yıkılıyor. Bitmiş küçük bir şey, planlanmış büyük bir şeyden daha çok taşıyor seni.",
-      "id": "fu3",
-      "motto": "Küçük olsun, bitmiş olsun.",
-      "reminder": "Beş dakikalık olanı seç."
-    },
-    {
-      "archetypeId": "full_glass",
-      "detail": "İleriyi düşünmek sende hazırlık değil, yorgunluk üretiyor. Bugünle sınırlı kalmak bir küçülme değil; taşımayı sürdürebilmenin yolu.",
-      "id": "fu4",
-      "motto": "Bugünü kurtarmak yeterli.",
-      "reminder": "Sadece bugün. Yarını yarın."
-    },
-    {
-      "archetypeId": "word_is_bond",
-      "detail": "Verdiğin sözün tutulacağını herkes biliyor. Bedeli şu: ne kadar söz verdiğine kimse bakmıyor, senin de bakman gerekiyor.",
-      "id": "wb1",
-      "motto": "Söz verdiğim kadarı, o kadarı da tam.",
-      "reminder": "Bugün ne kadarına söz verdin?"
-    },
-    {
-      "archetypeId": "word_is_bond",
-      "detail": "\"Yapamam\" cümlesini kurmadığın için insanlar sormaya devam ediyor. O cümle bir kırgınlık değil, senin güvenilirliğinin devamı.",
-      "id": "wb2",
-      "motto": "Hayır demek de bir söz.",
-      "reminder": "Bugün bir tanesine hayır de."
-    },
-    {
-      "archetypeId": "word_is_bond",
-      "detail": "Kendi işini herkesinki bittikten sonraya koyuyorsun ve o an genelde gelmiyor. Sıraya girmek bencillik değil, sıranın var olması demek.",
-      "id": "wb3",
-      "motto": "Sıraya ben de varım.",
-      "reminder": "Bugün sırayı kendinden başlat."
-    },
-    {
-      "archetypeId": "word_is_bond",
-      "detail": "Yükü sessizce almak sana doğal geliyor. Kimse ağırlığını bilmediği için de azalmıyor — söylemek şikâyet değil, bilgi.",
-      "id": "wb4",
-      "motto": "Taşıyorum, ama görünsün.",
-      "reminder": "Bugün taşıdığın şeyi bir kişiye söyle."
-    },
-    {
-      "archetypeId": "in_its_place",
-      "detail": "İşleyen şeyi bozmamak senin en sağlam tarafın. Bedeli şu: bozulmuş olanı da yerinde sanıyorsun, çünkü uzun süredir orada.",
-      "id": "ip1",
-      "motto": "Yerinde duranı da bir yokla.",
-      "reminder": "Bugün bir şeyi yokla."
-    },
-    {
-      "archetypeId": "in_its_place",
-      "detail": "Bildiğin yol seni yanıltmıyor. Yine de bir tercih olduğunu hatırlamak, onu alışkanlık olmaktan çıkarıp karar yapıyor.",
-      "id": "ip2",
-      "motto": "Denenmişi seçtim, denemediğimi bilerek.",
-      "reminder": "Bu, seçim mi alışkanlık mı?"
-    },
-    {
-      "archetypeId": "in_its_place",
-      "detail": "Değişiklik sana masraf gibi geliyor ve çoğu zaman haklısın. Ama küçük bir sapma, kaybedecek bir şeyin olmadığı yerde ucuz.",
-      "id": "ip3",
-      "motto": "Bir kere de başka türlü.",
-      "reminder": "Bugün bir şeyi başka türlü yap."
-    },
-    {
-      "archetypeId": "in_its_place",
-      "detail": "Etrafındakiler sana göre plan yapabiliyor ve bunu sen de biliyorsun. Yalnız şu var: hep aynı yerde durmak, kimsenin sana yeni bir şey sormamasına da yol açıyor.",
-      "id": "ip4",
-      "motto": "Sağlamlığım kimseye yük değil.",
-      "reminder": "Bugün sana ne sorulsun isterdin?"
-    },
-    {
-      "archetypeId": "inwardly",
-      "detail": "Başkasının halini okumak sende otomatik. Kendi halini söylemek değil — ve söylemediğin sürece kimse sormuyor.",
-      "id": "iw1",
-      "motto": "Ben de söyleyebilirim.",
-      "reminder": "Bugün bir cümle de kendin için."
-    },
-    {
-      "archetypeId": "inwardly",
-      "detail": "Fark etmek yardım etmenin yarısı; diğer yarısı söylemek. İkincisini atladığında yükü tek başına taşımış oluyorsun.",
-      "id": "iw2",
-      "motto": "Fark ettim, artık söylüyorum.",
-      "reminder": "Fark ettiğin şeyi bugün söyle."
-    },
-    {
-      "archetypeId": "inwardly",
-      "detail": "Verdiğin ilgiyi geri istemeyi zorlama sanıyorsun. İstenmediği sürece gelmeyen şeye zorlama denmiyor, yakınlık deniyor.",
-      "id": "iw3",
-      "motto": "Yakınlık iki taraflı.",
-      "reminder": "Bugün birinden bir şey iste."
-    },
-    {
-      "archetypeId": "inwardly",
-      "detail": "Söylenmeyen şey sende küçülmüyor, birikiyor. Söylemek onu çözmüyor ama büyümesini durduruyor.",
-      "id": "iw4",
-      "motto": "İçeride kalırsa büyüyor.",
-      "reminder": "Bugün birini içeriden çıkar."
-    }
-  ],
-  "skeletons": [
-    {
-      "action": "Bir dakikanı alacak tek bir şey seç ve bugün onu yap.",
-      "body": "Bugün başlayan şey küçük olmak zorunda. Büyük başlayan her şey ikinci gün pazarlık konusu oluyor; küçük başlayan, sıkıcı olduğu için hayatta kalıyor.",
-      "day": 1,
-      "title": "Bir dakika"
-    },
-    {
-      "action": "Dün ne yaptıysan bugün aynısını yap. Daha fazlasını değil.",
-      "body": "İlk gün heyecanla olur. İkinci gün olmaz — çünkü ikinci günde heyecan yoktur, sadece yapılacak iş vardır. Zincirin gerçekte bugün başlıyor.",
-      "day": 2,
-      "title": "İkinci gün"
-    },
-    {
-      "action": "Bugünkü saati not et. Yarın da o saat.",
-      "body": "Hatırlamak zorunda kaldığın şey unutulur. Aynı saate bağlanan şey hatırlanmaz, sadece olur. Saatin ne olduğu önemli değil, aynı olması önemli.",
-      "day": 3,
-      "title": "Aynı saat"
-    },
-    {
-      "action": "Bugün canın istemese de yap. Kısa tut, ama yap.",
-      "body": "Dördüncü gün civarında içinden \"bugün olmasa da olur\" geçer. Bu bir işaret değil, sadece yeniliğin bitmesi. Yenilik bittiğinde geriye kalan şeye alışkanlık deniyor.",
-      "day": 4,
-      "title": "İlk direnç"
-    },
-    {
-      "action": "Kaçırdıysan bugün geri dön. Telafi etmeye çalışma, sadece devam et.",
-      "body": "Bir gün kaçırmak zinciri bitirmez; kaçırdıktan sonra \"nasılsa bozuldu\" demek bitirir. Bir gün boşluktur, iki gün karardır.",
-      "day": 5,
-      "title": "Kaçırdığın gün"
-    },
-    {
-      "action": "Yapacağın şeyi göreceğin bir yere koy. Kitabı yastığa, şişeyi masaya.",
-      "body": "Akılda tutulan şey unutulur, gözün önündeki şey yapılır. İrade dediğimiz şeyin çoğu aslında yerleştirme meselesi.",
-      "day": 6,
-      "title": "Görünür yer"
-    },
-    {
-      "action": "Bu hafta ne fark ettin? Tek cümleyle kendine söyle.",
-      "body": "Yedi gün, bir şeyin sende tuttuğunu anlamak için yeterli. Değişen şey sen değilsin; kararı her gün yeniden vermek zorunda kalmaman.",
-      "day": 7,
-      "title": "Bir hafta"
-    },
-    {
-      "action": "Bugün aynı şeyi başka bir yerde ya da başka bir sırada yap.",
-      "body": "Aynı odada, aynı insanlarla, aynı saatte zor olan şey, ortam biraz değişince kolaylaşabiliyor. Zorlanıyorsan sen değil, koşullar ayarlanabilir.",
-      "day": 8,
-      "title": "Çevre"
-    },
-    {
-      "action": "Kendi bahane cümleni yaz. Bir daha duyduğunda tanıyacaksın.",
-      "body": "Herkesin bir cümlesi var: \"yorgunum\", \"bugün olmaz\", \"yarın telafi ederim\". Cümleyi tanımak onu etkisiz kılmıyor ama görünür kılıyor.",
-      "day": 9,
-      "title": "Bahane cümlesi"
-    },
-    {
-      "action": "Bugün ne kadar yaptığını ölçme. Sadece yap.",
-      "body": "Ne kadar ilerlediğini sürekli kontrol etmek, ilerlemeyi yavaşlatan şeylerden biri. Bugün sayacı unut; zaten sayıyor.",
-      "day": 10,
-      "title": "Ölçmeyi bırak"
-    },
-    {
-      "action": "Bugün süreyi yarıya indir ama atlama. Küçük olan devam eder.",
-      "body": "İkinci haftanın ortası, çoğu şeyin sessizce bırakıldığı yer. Sebebi başarısızlık değil, dikkatin başka bir şeye kayması.",
-      "day": 11,
-      "title": "Yavaşlama"
-    },
-    {
-      "action": "Ne yaptığını bir kişiye söyle. Övünmek için değil, söylemiş olmak için.",
-      "body": "Bir şeyi başkasına anlattığında iki şey oluyor: kendin için netleşiyor ve bırakması zorlaşıyor. İkincisi işe yarıyor.",
-      "day": 12,
-      "title": "Anlat"
-    },
-    {
-      "action": "Bu on üç günde neyi daha az yaptığını fark et.",
-      "body": "Yeni bir şey eklemek her zaman bir şeyin yerine geçer. Neyin yerine geçtiğini bilmiyorsan, geri gelecek olan da o.",
-      "day": 13,
-      "title": "Neyi bırakacaksın"
-    },
-    {
-      "action": "Yarın da yapacaksan bugün karar ver. Vermezsen yarın karar veremezsin.",
-      "body": "On dört gün bir bitiş değil, ölçüm. Bundan sonra devam eden şey artık bir deneme değil, senin yaptığın bir şey.",
-      "day": 14,
-      "title": "Bundan sonrası"
-    }
-  ],
-  "version": "0f9e3fcac2c5"
+  "version" : "a967230bf4db",
+  "archetypes" : [ {
+    "id" : "quiet_builder",
+    "name" : "Sessiz İnşacı",
+    "summary" : "Gürültü çıkarmadan biriktirirsin; kimse ilk taşı görmez, herkes duvarı görür. Bedeli şu: görünmediğin için çoğu zaman hakkın da teslim edilmez.",
+    "motto" : "Acele etmeyen ama durmayan."
+  }, {
+    "id" : "spark",
+    "name" : "Kıvılcım",
+    "summary" : "Bir sürü şeye başlarsın ve sorun ilgisizlik değil — hepsinin gerçekten iyi fikir olması. Zor olan tutuşturmak değil, birini seçmek.",
+    "motto" : "Bugün sadece bir tanesi."
+  }, {
+    "id" : "night_watch",
+    "name" : "Gece Nöbetçisi",
+    "summary" : "Sen fark ettiğinde iş henüz olmamıştır. Herkes rahatken senin çoktan düşünmüş olman yorucu, ama defalarca işe yaradı.",
+    "motto" : "Tetikte olmak da bir güç, dinlenmek de."
+  }, {
+    "id" : "table_setter",
+    "name" : "Sofra Kuran",
+    "summary" : "İnsanları bir araya getiren sensin ve bunu kimse senden istemiyor bile. Herkesin iyi hissetmesini o kadar önemsiyorsun ki, sıra sana geldiğinde masada yer kalmıyor.",
+    "motto" : "Onlardan önce bir de bana sor."
+  }, {
+    "id" : "fine_worker",
+    "name" : "İnce İşçi",
+    "summary" : "\"Olur böyle\" cümlesi sende çalışmıyor; farkı kimsenin görmediği yerde de görüyorsun. Bitirmeni zorlaştıran şey tembellik değil, standardın.",
+    "motto" : "Mükemmel değil, bitmiş olsun."
+  }, {
+    "id" : "compass",
+    "name" : "Yön Veren",
+    "summary" : "Kimse karar vermeyince sen veriyorsun ve genelde doğru çıkıyor. Bedeli: herkesin katılmasını beklemediğin için bazen yalnız yürüyorsun.",
+    "motto" : "Karar vermek de bir yük, taşıyorum."
+  }, {
+    "id" : "still_water",
+    "name" : "Durgun Su",
+    "summary" : "Herkes telaşlanırken sen sakin kalıyorsun ve bu, etrafındakileri de sakinleştiriyor. Ama o kadar sorun etmiyorsun ki, gerçekten sorun olan şey de gecikiyor.",
+    "motto" : "Sakinim, kayıtsız değil."
+  }, {
+    "id" : "deep_diver",
+    "name" : "Derin Dalgıç",
+    "summary" : "Her şeyi bir kat daha derinden yaşıyorsun; iyisini de kötüsünü de. Yüzeyde kalabilseydin rahat ederdin ama o zaman sen olmazdın.",
+    "motto" : "Derinde kalmak değil, dalıp çıkmak."
+  }, {
+    "id" : "own_clock",
+    "name" : "Kendi Saatinde",
+    "summary" : "Sistemle değil, dalgayla çalışıyorsun; geldiğinde tamamen geliyor. Bedeli şu: hiçbir şey birikmiyor, ve kimse sana göre plan yapamıyor — sen de dahil.",
+    "motto" : "Kendi saatimde ama her gün."
+  }, {
+    "id" : "contrarian",
+    "name" : "Aykırı",
+    "summary" : "Ne düzenmiş gibi yapıyorsun ne de katılıyormuş gibi, o yüzden senden duyduğun şey gerçek olan. Bedeli şu: sonradan ihtiyacın olacak iyi niyeti bugün harcıyorsun.",
+    "motto" : "Karşı çıkmak kolay, sürdürmek zor."
+  }, {
+    "id" : "feet_on_ground",
+    "name" : "Ayağı Yerde",
+    "summary" : "Bugünün işine bakıyorsun ve elindekiyle çözüyorsun; teoriye de plana da ihtiyacın olmuyor. Bedeli şu: hiçbir şey değişmiyor, çünkü değişim ya merak ister ya plan, ikisini de taşımıyorsun.",
+    "motto" : "Bugün elimde olanla."
+  }, {
+    "id" : "as_is",
+    "name" : "Olduğu Gibi",
+    "summary" : "Ne yakınlık için uğraşıyorsun ne de araları düzeltmek için; seni tanıyan, tam olarak seni tanıyor. Bedeli şu: bir süre sonra kimse sormuyor, ve bunu ancak bir şeye ihtiyacın olduğunda fark ediyorsun.",
+    "motto" : "Az kişiye açık, onlara tamamen."
+  }, {
+    "id" : "table_upsetter",
+    "name" : "Masayı Deviren",
+    "summary" : "Odada kimsenin söylemediği şeyi sen söylüyorsun ve genelde söylenmesi gerekiyordu. Bedeli şu: söyledikten sonra orada kalman gerekiyor, ve kalmak söylemekten çok daha zor.",
+    "motto" : "Söylemesi kolaydı, kalması değil."
+  }, {
+    "id" : "light_footed",
+    "name" : "Hafif Ayaklı",
+    "summary" : "Kalabalık da aksilik de seni yormuyor; ikisinin içinden aynı rahatlıkla geçiyorsun. Bedeli şu: hiçbir şeyi büyütmediğin için gerçekten büyük olanı da geç fark ediyorsun.",
+    "motto" : "Taşımadan da gidilir, ama bunu değil."
+  }, {
+    "id" : "full_glass",
+    "name" : "Dolu Bardak",
+    "summary" : "Her şeyi aynı anda ve tamamen hissediyorsun, o yüzden zor olan ne yapacağın değil neyi önce yapacağın. Bedeli şu: taşmamak için harcadığın enerjiyi işin kendisine ayıramıyorsun.",
+    "motto" : "Bir yudum boşalt, sonra taşı."
+  }, {
+    "id" : "word_is_bond",
+    "name" : "Sözü Senet",
+    "summary" : "Söylediğin şey oluyor ve insanlar bunu sen söylemeden önce biliyorlar. Bedeli şu: kimse senden \"yapamam\" duymadığı için sormaya da devam ediyor, ve sıra kendi işine en son geliyor.",
+    "motto" : "Söz verdiğim kadarı, o kadarı da tam."
+  }, {
+    "id" : "in_its_place",
+    "name" : "Yerli Yerinde",
+    "summary" : "Denenmiş olanı denenmiş olduğu için seçiyorsun ve bu seni sarsılmaz yapıyor; etrafındakiler de bunu bilerek plan yapıyor. Bedeli şu: değişmesi gereken şey de aynı yerde duruyor, çünkü onu da yerinde sanıyorsun.",
+    "motto" : "Yerinde duranı da bir yokla."
+  }, {
+    "id" : "inwardly",
+    "name" : "İçten İçe",
+    "summary" : "Kimseye söylemeden çok şey taşıyorsun; birinin canı sıkkınsa sen zaten fark etmişsindir. Bedeli şu: fark ettiğini söylemediğin için yardım hep tek yönlü akıyor, ve bir gün sana lazım olduğunda kimsenin aklına gelmiyorsun.",
+    "motto" : "Ben de söyleyebilirim."
+  } ],
+  "mottos" : [ {
+    "id" : "ai1",
+    "archetypeId" : "as_is",
+    "motto" : "Az kişiye açık, onlara tamamen.",
+    "detail" : "Herkese biraz olmaktansa birkaç kişiye tamamen olmayı seçiyorsun. Bedeli, o birkaç kişi meşgulken kimsenin kalmaması.",
+    "reminder" : "Bugün bir kişiye yaz."
+  }, {
+    "id" : "ai2",
+    "archetypeId" : "as_is",
+    "motto" : "Evetim evet, hayırım hayır.",
+    "detail" : "Kimseyi idare etmediğin için sözün karşılığı var. Bedeli, idare edilmeyi bekleyen insanların bir daha gelmemesi.",
+    "reminder" : "Bugünkü sözün sana."
+  }, {
+    "id" : "ai3",
+    "archetypeId" : "as_is",
+    "motto" : "Yalnızlık değil, seçicilik.",
+    "detail" : "Uzak durman bir eksiklik değil, bir tercih — ama tercih olduğunu ara ara kontrol etmek gerekiyor. Bedeli, kontrol etmeyi unuttuğunda tercihin alışkanlığa dönüşmesi.",
+    "reminder" : "Bugün bir kere kontrol et."
+  }, {
+    "id" : "ai4",
+    "archetypeId" : "as_is",
+    "motto" : "Kendim için yapıyorum, kimse görmese de.",
+    "detail" : "Motivasyonun dışarıdan gelmiyor, bu yüzden dışarıdan da bozulmuyor. Bedeli, tıkandığında kimsenin fark etmemesi.",
+    "reminder" : "Kendin için, bugün de."
+  }, {
+    "id" : "cp1",
+    "archetypeId" : "compass",
+    "motto" : "Karar vermek de bir yük, taşıyorum.",
+    "detail" : "Kimse karar vermeyince sen veriyorsun ve genelde doğru çıkıyor. Bedeli, taşıdığın şeyin ağırlığını kimsenin görmemesi — küçük kararlar dahil.",
+    "reminder" : "Bugünkü karar küçük. Yine de sende."
+  }, {
+    "id" : "cp2",
+    "archetypeId" : "compass",
+    "motto" : "Bu sefer kimseyi ikna etmeyeceğim.",
+    "detail" : "Herkesi beklemeden yürüyorsun ve genelde haklı çıkıyorsun. Bugünkü işin kimseyi ilgilendirmiyor; ikna edilecek tek kişi sensin.",
+    "reminder" : "Sadece seni ilgilendiriyor."
+  }, {
+    "id" : "cp3",
+    "archetypeId" : "compass",
+    "motto" : "Bırak ilerlesin.",
+    "detail" : "Yavaş gideni hızlandırma refleksin var. Bazı şeyler müdahaleyle değil, zamanla ilerliyor — ve beklemek sende en zor kısım.",
+    "reminder" : "Bugün karışma."
+  }, {
+    "id" : "cp4",
+    "archetypeId" : "compass",
+    "motto" : "Yön göstermek de yoruyor.",
+    "detail" : "Kimse senden istemedi ama sen yapıyorsun. Yorulmanın sebebi iş değil, işin kime ait olduğunun hiç konuşulmaması.",
+    "reminder" : "Bugünkü yön seninki."
+  }, {
+    "id" : "ct1",
+    "archetypeId" : "contrarian",
+    "motto" : "Karşı çıkmak kolay, sürdürmek zor.",
+    "detail" : "İtiraz etmek sana bedavaya geliyor; asıl mesele itiraz ettiğin şeyin yerine bir şey koyup onu sürdürmek. Bedeli, haklı olmanın yetmediğini kabul etmek.",
+    "reminder" : "Bugün sürdür."
+  }, {
+    "id" : "ct2",
+    "archetypeId" : "contrarian",
+    "motto" : "Kimseye değil, kendime söz verdim.",
+    "detail" : "Başkasının kurduğu düzen sende tutmuyor, kendi kurduğun tutabilir. Bedeli, tutmadığında suçlayacak kimsenin olmaması.",
+    "reminder" : "Sözün sana."
+  }, {
+    "id" : "ct3",
+    "archetypeId" : "contrarian",
+    "motto" : "Uymuyorum, kaçmıyorum.",
+    "detail" : "Katılmamak bir duruş, ortadan kaybolmak değil. Bedeli, kalıp tartışmanın kaçmaktan daha yorucu olması.",
+    "reminder" : "Bugün kal ve yap."
+  }, {
+    "id" : "ct4",
+    "archetypeId" : "contrarian",
+    "motto" : "Ham hâlim, işlenmiş hâlimden dürüst.",
+    "detail" : "Cilalamadığın için insanlar seninle nerede olduklarını biliyor. Bedeli, cilanın bazen kapı açtığı yerlerde kapının kapalı kalması.",
+    "reminder" : "Olduğun gibi, ama bugün yap."
+  }, {
+    "id" : "dd1",
+    "archetypeId" : "deep_diver",
+    "motto" : "Derinde kalmak değil, dalıp çıkmak.",
+    "detail" : "Bir konuya girdiğinde dibine gidiyorsun; orada kalmak da kolay. Değerli olan derinlik değil, geri çıkıp bir şey getirebilmen.",
+    "reminder" : "Dal, sonra çık."
+  }, {
+    "id" : "dd2",
+    "archetypeId" : "deep_diver",
+    "motto" : "Anlamadan da yapılır.",
+    "detail" : "Anlamadığın bir şeyi yapmak sana ters geliyor. Ama bazı şeyler yapıldıkça anlaşılıyor, öncesinde değil.",
+    "reminder" : "Anlamı sonra gelecek."
+  }, {
+    "id" : "dd3",
+    "archetypeId" : "deep_diver",
+    "motto" : "Hazır olacağım gün yok.",
+    "detail" : "Hazır hissettiğinde başlamayı seviyorsun. O his gelmiyor; gelenler başlamış olanlar.",
+    "reminder" : "Bugün başla."
+  }, {
+    "id" : "dd4",
+    "archetypeId" : "deep_diver",
+    "motto" : "Yüzeyde de bir şeyler oluyor.",
+    "detail" : "Derinde olan biteni görüyorsun, yüzeydekini kaçırıyorsun. Kaçırdığın şeylerin çoğu orada duruyor.",
+    "reminder" : "Bir dakika yukarı çık."
+  }, {
+    "id" : "fg1",
+    "archetypeId" : "feet_on_ground",
+    "motto" : "Bugün elimde olanla.",
+    "detail" : "Hazırlık beklemiyorsun, elindekiyle başlıyorsun ve bu çoğu insanın yapamadığı şey. Bedeli, elindeki hep aynı kaldığı için sonucun da aynı kalması.",
+    "reminder" : "Elindekiyle başla."
+  }, {
+    "id" : "fg2",
+    "archetypeId" : "feet_on_ground",
+    "motto" : "Küçük bir şeyi değiştirmek de değişimdir.",
+    "detail" : "Büyük planlar sende çalışmıyor; tek bir ayrıntı çalışıyor. Bedeli, tek ayrıntının sonucu göstermesinin haftalar sürmesi.",
+    "reminder" : "Bir şeyi değiştir."
+  }, {
+    "id" : "fg3",
+    "archetypeId" : "feet_on_ground",
+    "motto" : "Yaparak öğrenirim, okuyarak değil.",
+    "detail" : "Anlatılan şey sende tutmuyor, yapılan tutuyor. Bedeli, aynı hatayı bir kere yapmadan öğrenememek.",
+    "reminder" : "Bugün yaparak öğren."
+  }, {
+    "id" : "fg4",
+    "archetypeId" : "feet_on_ground",
+    "motto" : "Merak etmesem de deneyebilirim.",
+    "detail" : "Yeni olan seni çekmiyor ve çekmesine gerek de yok — denemek merak gerektirmiyor. Bedeli, ilk denemenin garip hissettirmesi.",
+    "reminder" : "Merak etmeden dene."
+  }, {
+    "id" : "fw1",
+    "archetypeId" : "fine_worker",
+    "motto" : "Mükemmel değil, bitmiş olsun.",
+    "detail" : "Yarım kalanların çoğu tembellikten değil standardından yarım kaldı. Standart iyi bir şey; her yerde aynı standardı uygulamak değil.",
+    "reminder" : "Bitmiş olsun, yeter."
+  }, {
+    "id" : "fw2",
+    "archetypeId" : "fine_worker",
+    "motto" : "Şimdilik böyle.",
+    "detail" : "\"Böyle olmaz\" cümlesi işi durduruyor, \"şimdilik böyle\" ilerletiyor. İkisi de geçici, biri ilerleme bırakıyor.",
+    "reminder" : "Şimdilik yeter."
+  }, {
+    "id" : "fw3",
+    "archetypeId" : "fine_worker",
+    "motto" : "Farkı ben görüyorum, bugün görmeyeyim.",
+    "detail" : "Kimsenin görmediği farkı görmek bir yetenek ve bir yük. Bugünlük yükü bırakmak, yeteneği kaybetmek değil.",
+    "reminder" : "Bugün bakma."
+  }, {
+    "id" : "fw4",
+    "archetypeId" : "fine_worker",
+    "motto" : "Bir kademe aşağısı da iş görür.",
+    "detail" : "En iyisini yapmak zaman alıyor ve o zaman başka bir şeyden çalınıyor. Neyin en iyi olması gerektiğini seçmek de bir ustalık.",
+    "reminder" : "Bir kademe aşağı."
+  }, {
+    "id" : "fu1",
+    "archetypeId" : "full_glass",
+    "motto" : "Bir yudum boşalt, sonra taşı.",
+    "detail" : "Elindeki her şey aynı anda acil görünüyor ve bu bir dikkat sorunu değil, bir doluluk sorunu. Bedeli şu: boşaltmadığın sürece hiçbirine sıra gelmiyor.",
+    "reminder" : "Bugün bir tanesini bırak."
+  }, {
+    "id" : "fu2",
+    "archetypeId" : "full_glass",
+    "motto" : "Hissetmem, yapamayacağım demek değil.",
+    "detail" : "Bir şeyi yoğun hissetmek sende çoğu zaman erteleme olarak çıkıyor. Aradaki bağ zorunlu değil; hissederken de yapılabiliyor.",
+    "reminder" : "Şu an nasılsan öyle başla."
+  }, {
+    "id" : "fu3",
+    "archetypeId" : "full_glass",
+    "motto" : "Küçük olsun, bitmiş olsun.",
+    "detail" : "Büyük planlar seni rahatlatıyor ve sonra aynı planlar üzerine yıkılıyor. Bitmiş küçük bir şey, planlanmış büyük bir şeyden daha çok taşıyor seni.",
+    "reminder" : "Beş dakikalık olanı seç."
+  }, {
+    "id" : "fu4",
+    "archetypeId" : "full_glass",
+    "motto" : "Bugünü kurtarmak yeterli.",
+    "detail" : "İleriyi düşünmek sende hazırlık değil, yorgunluk üretiyor. Bugünle sınırlı kalmak bir küçülme değil; taşımayı sürdürebilmenin yolu.",
+    "reminder" : "Sadece bugün. Yarını yarın."
+  }, {
+    "id" : "ip1",
+    "archetypeId" : "in_its_place",
+    "motto" : "Yerinde duranı da bir yokla.",
+    "detail" : "İşleyen şeyi bozmamak senin en sağlam tarafın. Bedeli şu: bozulmuş olanı da yerinde sanıyorsun, çünkü uzun süredir orada.",
+    "reminder" : "Bugün bir şeyi yokla."
+  }, {
+    "id" : "ip2",
+    "archetypeId" : "in_its_place",
+    "motto" : "Denenmişi seçtim, denemediğimi bilerek.",
+    "detail" : "Bildiğin yol seni yanıltmıyor. Yine de bir tercih olduğunu hatırlamak, onu alışkanlık olmaktan çıkarıp karar yapıyor.",
+    "reminder" : "Bu, seçim mi alışkanlık mı?"
+  }, {
+    "id" : "ip3",
+    "archetypeId" : "in_its_place",
+    "motto" : "Bir kere de başka türlü.",
+    "detail" : "Değişiklik sana masraf gibi geliyor ve çoğu zaman haklısın. Ama küçük bir sapma, kaybedecek bir şeyin olmadığı yerde ucuz.",
+    "reminder" : "Bugün bir şeyi başka türlü yap."
+  }, {
+    "id" : "ip4",
+    "archetypeId" : "in_its_place",
+    "motto" : "Sağlamlığım kimseye yük değil.",
+    "detail" : "Etrafındakiler sana göre plan yapabiliyor ve bunu sen de biliyorsun. Yalnız şu var: hep aynı yerde durmak, kimsenin sana yeni bir şey sormamasına da yol açıyor.",
+    "reminder" : "Bugün sana ne sorulsun isterdin?"
+  }, {
+    "id" : "iw1",
+    "archetypeId" : "inwardly",
+    "motto" : "Ben de söyleyebilirim.",
+    "detail" : "Başkasının halini okumak sende otomatik. Kendi halini söylemek değil — ve söylemediğin sürece kimse sormuyor.",
+    "reminder" : "Bugün bir cümle de kendin için."
+  }, {
+    "id" : "iw2",
+    "archetypeId" : "inwardly",
+    "motto" : "Fark ettim, artık söylüyorum.",
+    "detail" : "Fark etmek yardım etmenin yarısı; diğer yarısı söylemek. İkincisini atladığında yükü tek başına taşımış oluyorsun.",
+    "reminder" : "Fark ettiğin şeyi bugün söyle."
+  }, {
+    "id" : "iw3",
+    "archetypeId" : "inwardly",
+    "motto" : "Yakınlık iki taraflı.",
+    "detail" : "Verdiğin ilgiyi geri istemeyi zorlama sanıyorsun. İstenmediği sürece gelmeyen şeye zorlama denmiyor, yakınlık deniyor.",
+    "reminder" : "Bugün birinden bir şey iste."
+  }, {
+    "id" : "iw4",
+    "archetypeId" : "inwardly",
+    "motto" : "İçeride kalırsa büyüyor.",
+    "detail" : "Söylenmeyen şey sende küçülmüyor, birikiyor. Söylemek onu çözmüyor ama büyümesini durduruyor.",
+    "reminder" : "Bugün birini içeriden çıkar."
+  }, {
+    "id" : "lf1",
+    "archetypeId" : "light_footed",
+    "motto" : "Taşımadan da gidilir, ama bunu değil.",
+    "detail" : "Yükü bırakabilmek senin en rahat özelliğin. Bedeli şu: bırakılmaması gereken şeyi de aynı kolaylıkla bırakıyorsun ve bunu aylar sonra fark ediyorsun.",
+    "reminder" : "Bugün bırakmayacağın şeyi seç."
+  }, {
+    "id" : "lf2",
+    "archetypeId" : "light_footed",
+    "motto" : "Sakinliğim bir cevap değil.",
+    "detail" : "Telaşlanmaman etrafındakileri rahatlatıyor. Ama bazen insanların ihtiyacı rahatlamak değil, ciddiye alındığını görmek.",
+    "reminder" : "Bugün birine \"ciddi bu\" de."
+  }, {
+    "id" : "lf3",
+    "archetypeId" : "light_footed",
+    "motto" : "Kolay geldi diye küçük değil.",
+    "detail" : "Zorlanmadan yaptığın şeyi kendi gözünde küçültüyorsun. Bir şeyin değeri, sana kaça mal olduğuyla ölçülmüyor.",
+    "reminder" : "Kolay yaptığın şeyi de say."
+  }, {
+    "id" : "lf4",
+    "archetypeId" : "light_footed",
+    "motto" : "Bugün de aynı yerden geçeyim.",
+    "detail" : "Her yerden rahat geçtiğin için hiçbir yerde iz bırakmıyorsun. Aynı yere ikinci kez uğramak, senin için tekrar değil birikim.",
+    "reminder" : "Dün nereye uğradıysan, bugün de."
+  }, {
+    "id" : "nw1",
+    "archetypeId" : "night_watch",
+    "motto" : "Tetikte olmak da bir güç, dinlenmek de.",
+    "detail" : "Önceden görmen defalarca işe yaradı, o yüzden bırakmıyorsun. Ama nöbet her gün tutulmuyor ve bunu kimse sana söylemiyor.",
+    "reminder" : "Bugün nöbet yok."
+  }, {
+    "id" : "nw2",
+    "archetypeId" : "night_watch",
+    "motto" : "Listenin tamamı bugünün işi değil.",
+    "detail" : "Ters gidebilecek her şeyi zaten düşündün. Hepsini bugün çözmeye çalışmak, hiçbirini çözmemekle aynı yere çıkıyor.",
+    "reminder" : "Bir madde. Bugünlük o kadar."
+  }, {
+    "id" : "nw3",
+    "archetypeId" : "night_watch",
+    "motto" : "Bir gün affedilir.",
+    "detail" : "Kaçırdığın gün değil, kaçırdıktan sonra kurduğun senaryo yoruyor. Zincir bir günü affediyor — sen genelde affetmiyorsun.",
+    "reminder" : "Bir gün bir şey değiştirmez."
+  }, {
+    "id" : "nw4",
+    "archetypeId" : "night_watch",
+    "motto" : "Hazırlık da bir iş, o da bitiyor.",
+    "detail" : "Hazırlanmak sende hiç bitmiyor çünkü her zaman bir ihtimal daha var. Bir yerde durmak, hazırlıksız kalmak değil.",
+    "reminder" : "Yeterince hazırsın."
+  }, {
+    "id" : "oc1",
+    "archetypeId" : "own_clock",
+    "motto" : "Kendi saatimde ama her gün.",
+    "detail" : "Saatini değiştirmene gerek yok, her gün olmasına var. Bedeli, ilhamın gelmediği günlerde de küçük bir şey yapmayı kabul etmek.",
+    "reminder" : "Bugün de kendi saatinde."
+  }, {
+    "id" : "oc2",
+    "archetypeId" : "own_clock",
+    "motto" : "Dalga geçtiğinde de kıyıdayım.",
+    "detail" : "İyi günde çok, kötü günde az — ama ikisinde de var. Bedeli, az olan günü bir başarısızlık saymamayı öğrenmek.",
+    "reminder" : "Az da olsa bugün de."
+  }, {
+    "id" : "oc3",
+    "archetypeId" : "own_clock",
+    "motto" : "Sistem değil, bugün.",
+    "detail" : "Sana kurulacak düzen yaramıyor; yarayan tek şey bugünün kendisi. Bedeli, yarını kimsenin — senin de — kestirememesi.",
+    "reminder" : "Sadece bugün. Yeter."
+  }, {
+    "id" : "oc4",
+    "archetypeId" : "own_clock",
+    "motto" : "Biriktirmeyi yeni öğreniyorum.",
+    "detail" : "Şimdiye kadar biriken bir şey olmadı ve bu bir kusur değil, bir alışkanlık boşluğu. Bedeli, ilk iki haftanın sıkıcı geçmesi.",
+    "reminder" : "Bir gün daha ekle."
+  }, {
+    "id" : "qb1",
+    "archetypeId" : "quiet_builder",
+    "motto" : "Acele etmeyen ama durmayan.",
+    "detail" : "Hızlanmak sana bir şey kazandırmıyor, durmak her şeyi kaybettiriyor. Bedeli, ilerlediğini uzun süre kimsenin — bazen senin bile — fark etmemesi.",
+    "reminder" : "Bugün de bir taş."
+  }, {
+    "id" : "qb2",
+    "archetypeId" : "quiet_builder",
+    "motto" : "İlk taşı ben biliyorum.",
+    "detail" : "Duvarı herkes görür, nereden başladığını sen bilirsin. Bunu bilmek yeterli olmalı; çoğu zaman olmuyor ve bu yorucu.",
+    "reminder" : "Nereden başladığını hatırla."
+  }, {
+    "id" : "qb3",
+    "archetypeId" : "quiet_builder",
+    "motto" : "Gösterebileceğim kadarı yeter.",
+    "detail" : "Bitmemiş bir şeyi göstermek sana yanlış geliyor. Ama hiç göstermezsen hakkın da teslim edilmiyor — bu ikisi arasında bir yer var.",
+    "reminder" : "Bugünlük bu kadarı görünsün."
+  }, {
+    "id" : "qb4",
+    "archetypeId" : "quiet_builder",
+    "motto" : "Sessizlik yavaşlık değil.",
+    "detail" : "Ses çıkarmadan çalışmak, az çalışmak sanılıyor. Doğrusunu bilmek senin işine yarar; başkasına anlatmak da bazen gerekiyor.",
+    "reminder" : "Sessiz ama duruyor."
+  }, {
+    "id" : "sp1",
+    "archetypeId" : "spark",
+    "motto" : "Bugün sadece bir tanesi.",
+    "detail" : "Fikirlerin kötü değil, fazla. Seçmek eleme değil vazgeçme olduğu için zor — ve vazgeçmediğin sürece hiçbiri ilerlemiyor.",
+    "reminder" : "Bir tanesi. Sadece bugün."
+  }, {
+    "id" : "sp2",
+    "archetypeId" : "spark",
+    "motto" : "Tutuşturmak kolay, taşımak marifet.",
+    "detail" : "Başlangıçta iyisin ve bunu biliyorsun. Asıl mesele heyecan bittikten sonra kalan kısım, ki orası sıkıcı olduğu için yürüyor.",
+    "reminder" : "Heyecan bitti, iş duruyor."
+  }, {
+    "id" : "sp3",
+    "archetypeId" : "spark",
+    "motto" : "Yaz ve bırak.",
+    "detail" : "Yeni fikir gelmesini engelleyemezsin, peşinden gitmeyi erteleyebilirsin. Bir yere yazılan fikir kaçmıyor; kovalanan fikir bugünü yiyor.",
+    "reminder" : "Yazdın mı? Yeter."
+  }, {
+    "id" : "sp4",
+    "archetypeId" : "spark",
+    "motto" : "Kaçıncı gün, kaç fikir değil.",
+    "detail" : "Sende ölçü hep üretilen sayıydı. Bu sefer ölçü aynı şeye kaçıncı kez döndüğün — daha az heyecanlı ama daha çok işe yarıyor.",
+    "reminder" : "Aynı şeye bir kez daha dön."
+  }, {
+    "id" : "sw1",
+    "archetypeId" : "still_water",
+    "motto" : "Sakinim, kayıtsız değil.",
+    "detail" : "Telaşa kapılmaman umursamamak sanılıyor. Aynı sakinlik ertelemeyi de rahatsız edici olmaktan çıkarıyor — asıl dikkat etmen gereken yer orası.",
+    "reminder" : "Sakin ol ama bugün yap."
+  }, {
+    "id" : "sw2",
+    "archetypeId" : "still_water",
+    "motto" : "Sakinliğin bir bedeli var.",
+    "detail" : "Çevrendekiler senin sakinliğinden faydalanıyor. Bunun sana neye mal olduğunu genelde sadece sen biliyorsun ve söylemiyorsun.",
+    "reminder" : "Bugün kendine de bak."
+  }, {
+    "id" : "sw3",
+    "archetypeId" : "still_water",
+    "motto" : "Kendimi biraz rahatsız edeyim.",
+    "detail" : "Kimseyi rahatsız etmeden yaşamayı beceriyorsun. Değişim tam olarak rahatsızlığın olduğu yerde oluyor.",
+    "reminder" : "Küçük bir rahatsızlık."
+  }, {
+    "id" : "sw4",
+    "archetypeId" : "still_water",
+    "motto" : "Durgun, ama duruyor.",
+    "detail" : "Dışarıdan hareketsiz görünmek durmakla karıştırılıyor. Aradaki farkı bilen tek kişi sensin; bugün onu doğru tarafta tut.",
+    "reminder" : "Duruyorsun."
+  }, {
+    "id" : "ts1",
+    "archetypeId" : "table_setter",
+    "motto" : "Onlardan önce bir de bana sor.",
+    "detail" : "Herkesin iyi hissetmesini ayarlarken sıra sana gelmiyor. Bu bir fedakârlık değil, alışkanlık — ve alışkanlıklar değişebiliyor.",
+    "reminder" : "Bugünkü dakika senin."
+  }, {
+    "id" : "ts2",
+    "archetypeId" : "table_setter",
+    "motto" : "Kendime verdiğim söz de sözdür.",
+    "detail" : "Başkasına verdiğin sözü tutuyorsun. Kendine verdiğini bozarken kimseden özür dilemediğin için bedava geliyor; gelmiyor.",
+    "reminder" : "Söz vermiştin."
+  }, {
+    "id" : "ts3",
+    "archetypeId" : "table_setter",
+    "motto" : "Masayı kuran da oturur.",
+    "detail" : "İnsanları bir araya getirmek senin işin oldu. Sofrada kendine yer ayırmak, o işi bırakmak anlamına gelmiyor.",
+    "reminder" : "Otur."
+  }, {
+    "id" : "ts4",
+    "archetypeId" : "table_setter",
+    "motto" : "Bunu kimseye anlatmak zorunda değilim.",
+    "detail" : "Yaptığın çoğu şeyin bir izleyicisi var. Bunun yok, ve olmaması onu değersiz yapmıyor — sadece sessiz yapıyor.",
+    "reminder" : "Kimse görmese de olur."
+  }, {
+    "id" : "tu1",
+    "archetypeId" : "table_upsetter",
+    "motto" : "Söylemesi kolaydı, kalması değil.",
+    "detail" : "Doğru cümleyi kurmak sende bir cesaret işi değil, bir refleks. Asıl iş ondan sonra başlıyor ve bedeli şu: söyleyip çıkarsan haklı olman da kimsenin işine yaramıyor.",
+    "reminder" : "Bugün söylediğinin yanında kal."
+  }, {
+    "id" : "tu2",
+    "archetypeId" : "table_upsetter",
+    "motto" : "Masayı devirdiysem toplarım.",
+    "detail" : "Kırdığın şeyi sen de görüyorsun, sadece kırmaya değer olduğunu düşünüyorsun. İkisi birden doğru olabilir; toplamayı da işin parçası say.",
+    "reminder" : "Bugün bir tanesini topla."
+  }, {
+    "id" : "tu3",
+    "archetypeId" : "table_upsetter",
+    "motto" : "Sesimi değil, sırayı ayarlıyorum.",
+    "detail" : "Söylediğin şeyin yanlış olduğu nadir; zamanlaması genelde. Aynı cümle beş dakika sonra kurulduğunda kimse savunmaya geçmiyor.",
+    "reminder" : "Aynı şeyi, beş dakika sonra."
+  }, {
+    "id" : "tu4",
+    "archetypeId" : "table_upsetter",
+    "motto" : "Katılmıyorum, ama buradayım.",
+    "detail" : "Karşı çıkmak seni odadan çıkarmak zorunda değil. Bunu söylemek zor geliyor çünkü kalmak, itiraz etmekten daha çok şey istiyor senden.",
+    "reminder" : "Katılma, ama kalmaya devam et."
+  }, {
+    "id" : "wb1",
+    "archetypeId" : "word_is_bond",
+    "motto" : "Söz verdiğim kadarı, o kadarı da tam.",
+    "detail" : "Verdiğin sözün tutulacağını herkes biliyor. Bedeli şu: ne kadar söz verdiğine kimse bakmıyor, senin de bakman gerekiyor.",
+    "reminder" : "Bugün ne kadarına söz verdin?"
+  }, {
+    "id" : "wb2",
+    "archetypeId" : "word_is_bond",
+    "motto" : "Hayır demek de bir söz.",
+    "detail" : "\"Yapamam\" cümlesini kurmadığın için insanlar sormaya devam ediyor. O cümle bir kırgınlık değil, senin güvenilirliğinin devamı.",
+    "reminder" : "Bugün bir tanesine hayır de."
+  }, {
+    "id" : "wb3",
+    "archetypeId" : "word_is_bond",
+    "motto" : "Sıraya ben de varım.",
+    "detail" : "Kendi işini herkesinki bittikten sonraya koyuyorsun ve o an genelde gelmiyor. Sıraya girmek bencillik değil, sıranın var olması demek.",
+    "reminder" : "Bugün sırayı kendinden başlat."
+  }, {
+    "id" : "wb4",
+    "archetypeId" : "word_is_bond",
+    "motto" : "Taşıyorum, ama görünsün.",
+    "detail" : "Yükü sessizce almak sana doğal geliyor. Kimse ağırlığını bilmediği için de azalmıyor — söylemek şikâyet değil, bilgi.",
+    "reminder" : "Bugün taşıdığın şeyi bir kişiye söyle."
+  } ],
+  "skeletons" : [ {
+    "day" : 1,
+    "title" : "Bir dakika",
+    "body" : "Bugün başlayan şey küçük olmak zorunda. Büyük başlayan her şey ikinci gün pazarlık konusu oluyor; küçük başlayan, sıkıcı olduğu için hayatta kalıyor.",
+    "action" : "Bir dakikanı alacak tek bir şey seç ve bugün onu yap."
+  }, {
+    "day" : 2,
+    "title" : "İkinci gün",
+    "body" : "İlk gün heyecanla olur. İkinci gün olmaz — çünkü ikinci günde heyecan yoktur, sadece yapılacak iş vardır. Zincirin gerçekte bugün başlıyor.",
+    "action" : "Dün ne yaptıysan bugün aynısını yap. Daha fazlasını değil."
+  }, {
+    "day" : 3,
+    "title" : "Aynı saat",
+    "body" : "Hatırlamak zorunda kaldığın şey unutulur. Aynı saate bağlanan şey hatırlanmaz, sadece olur. Saatin ne olduğu önemli değil, aynı olması önemli.",
+    "action" : "Bugünkü saati not et. Yarın da o saat."
+  }, {
+    "day" : 4,
+    "title" : "İlk direnç",
+    "body" : "Dördüncü gün civarında içinden \"bugün olmasa da olur\" geçer. Bu bir işaret değil, sadece yeniliğin bitmesi. Yenilik bittiğinde geriye kalan şeye alışkanlık deniyor.",
+    "action" : "Bugün canın istemese de yap. Kısa tut, ama yap."
+  }, {
+    "day" : 5,
+    "title" : "Kaçırdığın gün",
+    "body" : "Bir gün kaçırmak zinciri bitirmez; kaçırdıktan sonra \"nasılsa bozuldu\" demek bitirir. Bir gün boşluktur, iki gün karardır.",
+    "action" : "Kaçırdıysan bugün geri dön. Telafi etmeye çalışma, sadece devam et."
+  }, {
+    "day" : 6,
+    "title" : "Görünür yer",
+    "body" : "Akılda tutulan şey unutulur, gözün önündeki şey yapılır. İrade dediğimiz şeyin çoğu aslında yerleştirme meselesi.",
+    "action" : "Yapacağın şeyi göreceğin bir yere koy. Kitabı yastığa, şişeyi masaya."
+  }, {
+    "day" : 7,
+    "title" : "Bir hafta",
+    "body" : "Yedi gün, bir şeyin sende tuttuğunu anlamak için yeterli. Değişen şey sen değilsin; kararı her gün yeniden vermek zorunda kalmaman.",
+    "action" : "Bu hafta ne fark ettin? Tek cümleyle kendine söyle."
+  }, {
+    "day" : 8,
+    "title" : "Çevre",
+    "body" : "Aynı odada, aynı insanlarla, aynı saatte zor olan şey, ortam biraz değişince kolaylaşabiliyor. Zorlanıyorsan sen değil, koşullar ayarlanabilir.",
+    "action" : "Bugün aynı şeyi başka bir yerde ya da başka bir sırada yap."
+  }, {
+    "day" : 9,
+    "title" : "Bahane cümlesi",
+    "body" : "Herkesin bir cümlesi var: \"yorgunum\", \"bugün olmaz\", \"yarın telafi ederim\". Cümleyi tanımak onu etkisiz kılmıyor ama görünür kılıyor.",
+    "action" : "Kendi bahane cümleni yaz. Bir daha duyduğunda tanıyacaksın."
+  }, {
+    "day" : 10,
+    "title" : "Ölçmeyi bırak",
+    "body" : "Ne kadar ilerlediğini sürekli kontrol etmek, ilerlemeyi yavaşlatan şeylerden biri. Bugün sayacı unut; zaten sayıyor.",
+    "action" : "Bugün ne kadar yaptığını ölçme. Sadece yap."
+  }, {
+    "day" : 11,
+    "title" : "Yavaşlama",
+    "body" : "İkinci haftanın ortası, çoğu şeyin sessizce bırakıldığı yer. Sebebi başarısızlık değil, dikkatin başka bir şeye kayması.",
+    "action" : "Bugün süreyi yarıya indir ama atlama. Küçük olan devam eder."
+  }, {
+    "day" : 12,
+    "title" : "Anlat",
+    "body" : "Bir şeyi başkasına anlattığında iki şey oluyor: kendin için netleşiyor ve bırakması zorlaşıyor. İkincisi işe yarıyor.",
+    "action" : "Ne yaptığını bir kişiye söyle. Övünmek için değil, söylemiş olmak için."
+  }, {
+    "day" : 13,
+    "title" : "Neyi bırakacaksın",
+    "body" : "Yeni bir şey eklemek her zaman bir şeyin yerine geçer. Neyin yerine geçtiğini bilmiyorsan, geri gelecek olan da o.",
+    "action" : "Bu on üç günde neyi daha az yaptığını fark et."
+  }, {
+    "day" : 14,
+    "title" : "Bundan sonrası",
+    "body" : "On dört gün bir bitiş değil, ölçüm. Bundan sonra devam eden şey artık bir deneme değil, senin yaptığın bir şey.",
+    "action" : "Yarın da yapacaksan bugün karar ver. Vermezsen yarın karar veremezsin."
+  } ],
+  "fragments" : [ {
+    "archetypeId" : "as_is",
+    "index" : 1,
+    "text" : "Küçük başla ve kimseye anlatma. Bu, senin zaten yaptığın şey — bugün sadece bilerek yap."
+  }, {
+    "archetypeId" : "as_is",
+    "index" : 2,
+    "text" : "İkinci günde heyecan yok ve seni izleyen de yok. Senin motorun zaten dışarıdan gelmiyordu."
+  }, {
+    "archetypeId" : "as_is",
+    "index" : 3,
+    "text" : "Saati seç ve kimseye açıklama. Açıklamamak senin hakkın, ama saati seçmek şart."
+  }, {
+    "archetypeId" : "as_is",
+    "index" : 4,
+    "text" : "\"Bugün olmasa da olur\" sende sessizce gelir. Kimse itiraz etmeyecek; itiraz edecek tek kişi sensin."
+  }, {
+    "archetypeId" : "as_is",
+    "index" : 5,
+    "text" : "Bir gün kaçırdın ve kimse sormadı. Sormamaları, önemsiz olduğu anlamına gelmiyor."
+  }, {
+    "archetypeId" : "as_is",
+    "index" : 6,
+    "text" : "Görünür yere koy — kendin için. Senin hatırlatıcın başka kimse olmayacak."
+  }, {
+    "archetypeId" : "as_is",
+    "index" : 7,
+    "text" : "Bir hafta oldu ve bunu tek başına yaptın. Bu senin gücün; bugün bir kere de zayıf tarafına bak."
+  }, {
+    "archetypeId" : "as_is",
+    "index" : 8,
+    "text" : "Ortam değişince sen etkilenmezsin. Doğru — ama bu, ortamı hiç kullanmadığın anlamına da geliyor."
+  }, {
+    "archetypeId" : "as_is",
+    "index" : 9,
+    "text" : "Senin cümlen \"kimseye borcum yok\". Doğru. Kendine olan sözü de siliyor mu?"
+  }, {
+    "archetypeId" : "as_is",
+    "index" : 10,
+    "text" : "Ölçmeyi bırak. Sen zaten kimseye rapor vermiyorsun; bugün kendine de verme."
+  }, {
+    "archetypeId" : "as_is",
+    "index" : 11,
+    "text" : "İkinci haftada bırakırsan kimse fark etmez. Fark edilmemek, bırakmayı ucuzlatan şey."
+  }, {
+    "archetypeId" : "as_is",
+    "index" : 12,
+    "text" : "Anlatmak senin en zor günün. Bir kişi. Kapıyı bir aralık aç."
+  }, {
+    "archetypeId" : "as_is",
+    "index" : 13,
+    "text" : "Bıraktığın şey seni yormuyordu, o yüzden geri almak kolay gelecek. Alma."
+  }, {
+    "archetypeId" : "as_is",
+    "index" : 14,
+    "text" : "On dört gün kimseye söylemeden sürdürdün. Bundan sonrası, söylemenin bunu zayıflatmadığını görmek."
+  }, {
+    "archetypeId" : "compass",
+    "index" : 1,
+    "text" : "Küçük başla. Sen genelde büyük başlar ve tek başına taşırsın; bu sefer taşınacak bir şey olmasın."
+  }, {
+    "archetypeId" : "compass",
+    "index" : 2,
+    "text" : "İkinci günde heyecan yok, karar da yok. Senin motorun karar vermek; bugün karar gerektirmeyen bir şeyi sürdür."
+  }, {
+    "archetypeId" : "compass",
+    "index" : 3,
+    "text" : "Saati bir kere seç ve bir daha gözden geçirme. Optimize etme isteğin bugünkü tek engelin."
+  }, {
+    "archetypeId" : "compass",
+    "index" : 4,
+    "text" : "\"Bugün olmasa da olur\" sende \"daha önemli bir iş var\" diye çıkar. Daha önemli iş her zaman var."
+  }, {
+    "archetypeId" : "compass",
+    "index" : 5,
+    "text" : "Bir gün kaçırınca sen hemen telafi planı kurarsın. Plan kurma; sadece bugünü yap."
+  }, {
+    "archetypeId" : "compass",
+    "index" : 6,
+    "text" : "Görünür yere koy ve kimseye görev dağıtma. Bu, dağıtılamayacak tek iş."
+  }, {
+    "archetypeId" : "compass",
+    "index" : 7,
+    "text" : "Bir hafta oldu ve bunu kimseye danışmadan yaptın. Bir sonraki soru: birine danışsan ne değişirdi?"
+  }, {
+    "archetypeId" : "compass",
+    "index" : 8,
+    "text" : "Ortam değişince sen ortamı yönetmeye başlarsın. Bugün yönetme, sadece içinden geç."
+  }, {
+    "archetypeId" : "compass",
+    "index" : 9,
+    "text" : "Senin cümlen \"bu benim işim değil, delege ederim\". Bunu edemezsin."
+  }, {
+    "archetypeId" : "compass",
+    "index" : 10,
+    "text" : "Ölçmeyi bırak. Verim takibi senin doğal aletin ama on dört günün ölçüsü verim değil, süreklilik."
+  }, {
+    "archetypeId" : "compass",
+    "index" : 11,
+    "text" : "İkinci haftada bırakırsan sebebi ilgisizlik olmayacak; daha acil bir şeyin öne geçmesi olacak."
+  }, {
+    "archetypeId" : "compass",
+    "index" : 12,
+    "text" : "Anlat, ama karşındakine ne yapması gerektiğini söyleme. Bugün sadece söyle ve sus."
+  }, {
+    "archetypeId" : "compass",
+    "index" : 13,
+    "text" : "Yeni bir şey eklemek bir şeyin yerine geçer. Sende genelde başkasının işini üstlenmenin yerine geçmeli."
+  }, {
+    "archetypeId" : "compass",
+    "index" : 14,
+    "text" : "On dört gün tek başına yürüdün ve yürüyebildiğini zaten biliyordun. Bundan sonrası, yanında biriyle yürümenin daha yavaş olmadığını görmek."
+  }, {
+    "archetypeId" : "contrarian",
+    "index" : 1,
+    "text" : "Küçük başla. Küçük olması sana yavan gelecek ama bu, kimsenin sana dayatmadığı tek boyut."
+  }, {
+    "archetypeId" : "contrarian",
+    "index" : 2,
+    "text" : "İkinci günde heyecan yok ve itiraz edecek bir şey de yok. Bugün sadece yapma günü."
+  }, {
+    "archetypeId" : "contrarian",
+    "index" : 3,
+    "text" : "Saati sen seç. Sana verilen bir saat sende iki gün yaşar, senin seçtiğin saat on dört."
+  }, {
+    "archetypeId" : "contrarian",
+    "index" : 4,
+    "text" : "\"Bugün olmasa da olur\" sende \"bu saçma\" diye çıkar. Saçma olabilir; saçma bir şeyi sürdürmek haklı olmaktan zor."
+  }, {
+    "archetypeId" : "contrarian",
+    "index" : 5,
+    "text" : "Bir gün kaçırınca sistemi tümden reddetme isteği gelir. Reddetme; bir günü kaçırmak bir sistem hatası değil."
+  }, {
+    "archetypeId" : "contrarian",
+    "index" : 6,
+    "text" : "Görünür yere koy ve kimseye açıklama. Açıklamak zorunda hissetmediğin sürece sürdürmesi kolay."
+  }, {
+    "archetypeId" : "contrarian",
+    "index" : 7,
+    "text" : "Bir hafta oldu ve bunu kimse sana söyletmedi. Bu, senin kendi kurduğun ilk düzen olabilir."
+  }, {
+    "archetypeId" : "contrarian",
+    "index" : 8,
+    "text" : "Ortam değişince sen kuralları yeniden sorgularsın. Bugün sorgulama, taşı ve devam et."
+  }, {
+    "archetypeId" : "contrarian",
+    "index" : 9,
+    "text" : "Senin cümlen \"kimseye hesap vermiyorum\". Doğru — ve hesap vereceğin tek kişi sensin."
+  }, {
+    "archetypeId" : "contrarian",
+    "index" : 10,
+    "text" : "Ölçmeyi bırak. Ölçüm sana dışarıdan dayatılmış gibi geliyor zaten; bugün ondan da kurtul."
+  }, {
+    "archetypeId" : "contrarian",
+    "index" : 11,
+    "text" : "İkinci haftada bırakırsan sebebi ilgisizlik olmayacak; birinin bunu beklemesi olacak."
+  }, {
+    "archetypeId" : "contrarian",
+    "index" : 12,
+    "text" : "Anlat ama savunma. Neden yaptığını açıklamak zorunda değilsin; söylemek yeterli."
+  }, {
+    "archetypeId" : "contrarian",
+    "index" : 13,
+    "text" : "Bıraktığın şeyi geri almak bugün bir özgürlük gibi görünecek. Değil, alışkanlık."
+  }, {
+    "archetypeId" : "contrarian",
+    "index" : 14,
+    "text" : "On dört gün kendi kurduğun bir şeyi sürdürdün. Bundan sonrası, itiraz etmeden de bir şeyin sürebileceğini bilmek."
+  }, {
+    "archetypeId" : "deep_diver",
+    "index" : 1,
+    "text" : "Küçük başla, çünkü senin küçük başlangıcın bile derinleşiyor. Bugün bir dakikayı bir dakika olarak bırak."
+  }, {
+    "archetypeId" : "deep_diver",
+    "index" : 2,
+    "text" : "İkinci gün sığ ve tatsız geçecek. Sığ olması onu değersiz yapmıyor; her gün derin olamaz."
+  }, {
+    "archetypeId" : "deep_diver",
+    "index" : 3,
+    "text" : "Saati seç ve bitiş için de bir işaret koy. Senin sorunun girmek değil, çıkmak."
+  }, {
+    "archetypeId" : "deep_diver",
+    "index" : 4,
+    "text" : "\"Bugün olmasa da olur\" sende bir ağırlık gününde gelir. Ağırlığı taşırken de yapılabilecek kadar küçük seçmiştin, hatırla."
+  }, {
+    "archetypeId" : "deep_diver",
+    "index" : 5,
+    "text" : "Kaçırdığın günün anlamını çözmeye çalışacaksın. Anlamı yok; sadece kaçırdın."
+  }, {
+    "archetypeId" : "deep_diver",
+    "index" : 6,
+    "text" : "Görünür yere koy ama üstüne düşünme. Hatırlatıcıyı yorumlamak, hatırlatıcının işini bozuyor."
+  }, {
+    "archetypeId" : "deep_diver",
+    "index" : 7,
+    "text" : "Bir hafta oldu. Bunun sana ne hissettirdiğini bir cümleyle yaz ve orada bırak — bir sayfa değil, bir cümle."
+  }, {
+    "archetypeId" : "deep_diver",
+    "index" : 8,
+    "text" : "Yeni bir ortam sende yeni bir şey fark ettiriyor. Bugün fark ettiğini not et ama peşinden gitme."
+  }, {
+    "archetypeId" : "deep_diver",
+    "index" : 9,
+    "text" : "Senin cümlen \"bugün bunu taşıyamam\". Bazen doğru. Ama küçük olan şey taşınabilecek kadar küçüktü."
+  }, {
+    "archetypeId" : "deep_diver",
+    "index" : 10,
+    "text" : "Ölçmeyi bırak — ve ne hissettiğini de ölçme. Bugün sadece yap."
+  }, {
+    "archetypeId" : "deep_diver",
+    "index" : 11,
+    "text" : "İkinci haftanın ortasında derine inersen gün kaybolur. Bugün yüzeyde kal, bilerek."
+  }, {
+    "archetypeId" : "deep_diver",
+    "index" : 12,
+    "text" : "Anlatırken kısa tut. Bir sohbete dönüşürse iş anlatmak olmaktan çıkıyor."
+  }, {
+    "archetypeId" : "deep_diver",
+    "index" : 13,
+    "text" : "Bıraktığın şey muhtemelen anlamlıydı. Anlamlı olması, geri alman gerektiği anlamına gelmiyor."
+  }, {
+    "archetypeId" : "deep_diver",
+    "index" : 14,
+    "text" : "On dört gün derinliğini kaybetmeden sürdürdün. Bundan sonrası, çıkma anını da bir beceri saymak."
+  }, {
+    "archetypeId" : "feet_on_ground",
+    "index" : 1,
+    "text" : "Küçük başla ve somutla: nerede, ne zaman, ne kadar. Üçü belliyse sen zaten yaparsın."
+  }, {
+    "archetypeId" : "feet_on_ground",
+    "index" : 2,
+    "text" : "İkinci gün sıradan geçecek. Sıradan senin doğal alanın; bugün avantajlı olduğun gün."
+  }, {
+    "archetypeId" : "feet_on_ground",
+    "index" : 3,
+    "text" : "Saati bir eşyaya bağla, bir niyete değil. Kahve makinesi, kapı, çanta — elle tutulan bir şey."
+  }, {
+    "archetypeId" : "feet_on_ground",
+    "index" : 4,
+    "text" : "\"Bugün olmasa da olur\" sende \"gerek yok\" diye çıkar. Gerek olmayabilir; zincirin gereği bugün yapılması."
+  }, {
+    "archetypeId" : "feet_on_ground",
+    "index" : 5,
+    "text" : "Bir gün kaçırdın. Sebep arama, plan kurma — sadece bugün yap."
+  }, {
+    "archetypeId" : "feet_on_ground",
+    "index" : 6,
+    "text" : "Görünür yere koy. Bu senin en iyi çalışan yöntemin, çünkü gözünün önündeki şeyi yapıyorsun."
+  }, {
+    "archetypeId" : "feet_on_ground",
+    "index" : 7,
+    "text" : "Bir hafta oldu ve hiçbir şey soyutlaşmadı. Bu, çoğu insanın beceremediği şey."
+  }, {
+    "archetypeId" : "feet_on_ground",
+    "index" : 8,
+    "text" : "Ortam değişince senin düzenin bozulur, çünkü düzenin eşyaya bağlı. Bugün yeni ortamda yeni bir eşya seç."
+  }, {
+    "archetypeId" : "feet_on_ground",
+    "index" : 9,
+    "text" : "Senin cümlen \"böyle de oluyor\". Oluyor, evet — ve tam bu yüzden hiçbir şey değişmiyor."
+  }, {
+    "archetypeId" : "feet_on_ground",
+    "index" : 10,
+    "text" : "Ölçmeyi bırak ama işaretlemeyi bırakma. Sende işe yarayan tek soyut şey o kutu."
+  }, {
+    "archetypeId" : "feet_on_ground",
+    "index" : 11,
+    "text" : "İkinci haftada bırakırsan sebebi zorluk olmayacak; bir sonuç görmemek olacak. Sonuç bu hafta gelmiyor."
+  }, {
+    "archetypeId" : "feet_on_ground",
+    "index" : 12,
+    "text" : "Anlat, kısa tut. Uzun anlatınca sen de sıkılıyorsun."
+  }, {
+    "archetypeId" : "feet_on_ground",
+    "index" : 13,
+    "text" : "Bıraktığın şey pratik göründüğü için geri gelmek isteyecek. Bugün alma."
+  }, {
+    "archetypeId" : "feet_on_ground",
+    "index" : 14,
+    "text" : "On dört gün elindekiyle sürdürdün. Bundan sonrası, elindekinin değişmesine izin vermek."
+  }, {
+    "archetypeId" : "fine_worker",
+    "index" : 1,
+    "text" : "Küçük başla ve küçük kalmasına izin ver. Senin riskin yapmamak değil, yaptığını yeterli saymamak."
+  }, {
+    "archetypeId" : "fine_worker",
+    "index" : 2,
+    "text" : "İkinci gün heyecansız ve sıradan geçecek. Sıradan olması onu kötü yapmıyor; bu cümleyi bugün bir kere kabul et."
+  }, {
+    "archetypeId" : "fine_worker",
+    "index" : 3,
+    "text" : "Saati sabitle ve saatin içinde ne kadar iyi olduğuna bakma. Bugün ölçü süre, kalite değil."
+  }, {
+    "archetypeId" : "fine_worker",
+    "index" : 4,
+    "text" : "\"Bugün olmasa da olur\" sende \"bugün iyi olmaz, yarın düzgün yaparım\" diye çıkar. Yarın da düzgün olmayacak."
+  }, {
+    "archetypeId" : "fine_worker",
+    "index" : 5,
+    "text" : "Kaçırdığın gün seni asıl olarak zincirin artık kusursuz olmadığı için rahatsız ediyor. Kusurlu zincir, bitmiş zincirden iyidir."
+  }, {
+    "archetypeId" : "fine_worker",
+    "index" : 6,
+    "text" : "Görünür yere koy ve düzenini güzelleştirmeye çalışma. Güzelleştirme, senin en sevdiğin erteleme biçimi."
+  }, {
+    "archetypeId" : "fine_worker",
+    "index" : 7,
+    "text" : "Bir hafta oldu ve muhtemelen hiçbiri istediğin gibi olmadı. Yine de yedi gün oldu."
+  }, {
+    "archetypeId" : "fine_worker",
+    "index" : 8,
+    "text" : "Ortam değişince sen önce yeni ortamı düzenlemek istersin. Bugün düzenleme, sadece yap."
+  }, {
+    "archetypeId" : "fine_worker",
+    "index" : 9,
+    "text" : "Senin cümlen \"böyle yapmaktansa hiç yapmamak daha iyi\". Bu cümle bugüne kadar sana ne kazandırdı?"
+  }, {
+    "archetypeId" : "fine_worker",
+    "index" : 10,
+    "text" : "Ölçmeyi bırakmak sende özellikle zor, çünkü ölçmek senin kalite kontrolün. Bugün kontrolsüz bırak."
+  }, {
+    "archetypeId" : "fine_worker",
+    "index" : 11,
+    "text" : "İkinci haftada bırakırsan sebebi yorulmak olmayacak; standarda ulaşamamak olacak."
+  }, {
+    "archetypeId" : "fine_worker",
+    "index" : 12,
+    "text" : "Anlatırken \"ama tam istediğim gibi olmadı\" ekleme. O ek cümle, işi anlatmayı anlamsız kılıyor."
+  }, {
+    "archetypeId" : "fine_worker",
+    "index" : 13,
+    "text" : "Yeni bir şey eklemek bir şeyin yerine geçer. Sende genelde bir şeyi tekrar tekrar düzeltmenin yerine geçmeli."
+  }, {
+    "archetypeId" : "fine_worker",
+    "index" : 14,
+    "text" : "On dört gün, mükemmel olmayan bir şeyi sürdürdün. Bundan sonrası için asıl soru bu: bitmiş olan sende yeterli sayılabilecek mi?"
+  }, {
+    "archetypeId" : "full_glass",
+    "index" : 1,
+    "text" : "Küçük başla ve tek şey seç. Senin zorluğun yapmak değil, hangisini önce yapacağın."
+  }, {
+    "archetypeId" : "full_glass",
+    "index" : 2,
+    "text" : "İkinci günde her şey aynı anda gelecek. Bugün sadece birini al."
+  }, {
+    "archetypeId" : "full_glass",
+    "index" : 3,
+    "text" : "Saati seç, çünkü seçilmemiş saat sende bütün günü kaplıyor."
+  }, {
+    "archetypeId" : "full_glass",
+    "index" : 4,
+    "text" : "\"Bugün olmasa da olur\" sende taşma anında gelir. O an geçicidir; karar değil."
+  }, {
+    "archetypeId" : "full_glass",
+    "index" : 5,
+    "text" : "Bir gün kaçırdın ve bu sende büyük hissettirdi. Büyük değil; bir gün."
+  }, {
+    "archetypeId" : "full_glass",
+    "index" : 6,
+    "text" : "Görünür yere koy ama tek bir şey koy. Beş hatırlatıcı sende beş yük demek."
+  }, {
+    "archetypeId" : "full_glass",
+    "index" : 7,
+    "text" : "Bir hafta oldu ve taşmadan gittin. Bunu fark et; sen genelde yalnızca taştığın günleri sayıyorsun."
+  }, {
+    "archetypeId" : "full_glass",
+    "index" : 8,
+    "text" : "Ortam değişince sende her şey bir kat daha yüksek sesle gelir. Bugün sesi kısmayı değil, tek şeye bakmayı dene."
+  }, {
+    "archetypeId" : "full_glass",
+    "index" : 9,
+    "text" : "Senin cümlen \"şu an çok şey var\". Var, doğru. Ve seçtiğin şey bir dakikalıktı."
+  }, {
+    "archetypeId" : "full_glass",
+    "index" : 10,
+    "text" : "Ölçmeyi bırak. Ölçüm sende bir yük daha demek."
+  }, {
+    "archetypeId" : "full_glass",
+    "index" : 11,
+    "text" : "İkinci haftada bırakırsan sebebi ilgisizlik olmayacak; dolmak olacak. Bugün boşaltma günü değil, tek şey günü."
+  }, {
+    "archetypeId" : "full_glass",
+    "index" : 12,
+    "text" : "Anlat, ama tek cümleyle. Uzatınca hepsi geri geliyor."
+  }, {
+    "archetypeId" : "full_glass",
+    "index" : 13,
+    "text" : "Bıraktığın şey bugün hafif görünecek. Geri alma; hafif görünen şeyler sende çabuk ağırlaşıyor."
+  }, {
+    "archetypeId" : "full_glass",
+    "index" : 14,
+    "text" : "On dört gün taşmadan sürdürdün. Bundan sonrası, taşmamak için harcadığın enerjiyi işin kendisine ayırmak."
+  }, {
+    "archetypeId" : "in_its_place",
+    "index" : 1,
+    "text" : "Küçük başla. Yeni olan seni zorlamıyorsa sebebi küçük olması; bugün bu iyi bir şey."
+  }, {
+    "archetypeId" : "in_its_place",
+    "index" : 2,
+    "text" : "İkinci gün dünle aynı geçecek. Aynılık senin işine geliyor — çoğu insan için zor olan gün bu."
+  }, {
+    "archetypeId" : "in_its_place",
+    "index" : 3,
+    "text" : "Saati seç ve bir daha değiştirme. Sen zaten değiştirmezsin."
+  }, {
+    "archetypeId" : "in_its_place",
+    "index" : 4,
+    "text" : "\"Bugün olmasa da olur\" sende \"bugün düzen bozuldu\" diye çıkar. Düzen bozulduğunda da yapılabilir."
+  }, {
+    "archetypeId" : "in_its_place",
+    "index" : 5,
+    "text" : "Bir gün kaçırdın ve bu senin için düzenin kırılması demek. Kırılmadı; bir gün eksik kaldı."
+  }, {
+    "archetypeId" : "in_its_place",
+    "index" : 6,
+    "text" : "Görünür yere koy ve yerini bir daha değiştirme."
+  }, {
+    "archetypeId" : "in_its_place",
+    "index" : 7,
+    "text" : "Bir hafta oldu ve hiçbir şey sarsılmadı. Şimdi asıl soru: bu on dört günde neyin değişmesini istiyordun?"
+  }, {
+    "archetypeId" : "in_its_place",
+    "index" : 8,
+    "text" : "Ortam değişince sen zorlanırsın. Bugün eski yerinde yapmayı bırak, bir kere yeni yerde yap."
+  }, {
+    "archetypeId" : "in_its_place",
+    "index" : 9,
+    "text" : "Senin cümlen \"böyle iyi zaten\". Bazen doğru. On dört gün boyunca hep doğru olamaz."
+  }, {
+    "archetypeId" : "in_its_place",
+    "index" : 10,
+    "text" : "Ölçmeyi bırak. Ölçmek sende her şeyi eski hâline getirme isteği doğuruyor."
+  }, {
+    "archetypeId" : "in_its_place",
+    "index" : 11,
+    "text" : "İkinci haftada bırakırsan sebebi zorluk olmayacak; eskisinin daha rahat olması olacak."
+  }, {
+    "archetypeId" : "in_its_place",
+    "index" : 12,
+    "text" : "Anlat. Anlatmak seni değiştirmez ama söylediğin şey bir kere dışarı çıkar."
+  }, {
+    "archetypeId" : "in_its_place",
+    "index" : 13,
+    "text" : "Yeni bir şey eklemek bir şeyin yerine geçer, ve sende hiçbir şey yerinden oynamıyor. Bugün bir şeyi bilerek oynat."
+  }, {
+    "archetypeId" : "in_its_place",
+    "index" : 14,
+    "text" : "On dört gün aynı yerde durmadın. Bundan sonrası, değişmesi gerekeni de fark edebilmek."
+  }, {
+    "archetypeId" : "inwardly",
+    "index" : 1,
+    "text" : "Küçük başla ve bu kez kendin için. Sen genelde küçük şeyleri başkaları için yapıyorsun."
+  }, {
+    "archetypeId" : "inwardly",
+    "index" : 2,
+    "text" : "İkinci günde kimse senden bir şey beklemiyor. Bugünkü tek beklenti seninki."
+  }, {
+    "archetypeId" : "inwardly",
+    "index" : 3,
+    "text" : "Saati seç. Sen genelde başkalarının saatlerine göre yaşıyorsun; bu saat sana ait."
+  }, {
+    "archetypeId" : "inwardly",
+    "index" : 4,
+    "text" : "\"Bugün olmasa da olur\" sende sessizce ve suçluluk duymadan gelir. Duymuyorsun çünkü kimseyi üzmüyorsun — kendin hariç."
+  }, {
+    "archetypeId" : "inwardly",
+    "index" : 5,
+    "text" : "Bir gün kaçırdın ve kimseye söylemedin. Söylemeden de geri dönebilirsin, ama bugün dön."
+  }, {
+    "archetypeId" : "inwardly",
+    "index" : 6,
+    "text" : "Görünür yere koy. Senin içinde tuttuğun şeyler dışarı çıkmıyor, hatırlatıcılar da öyle."
+  }, {
+    "archetypeId" : "inwardly",
+    "index" : 7,
+    "text" : "Bir hafta boyunca kendin için bir şey taşıdın. Sen genelde başkasının yükünü taşıyorsun."
+  }, {
+    "archetypeId" : "inwardly",
+    "index" : 8,
+    "text" : "Ortam değişince sen önce herkesin nasıl olduğunu okursun. Bugün önce kendine bak."
+  }, {
+    "archetypeId" : "inwardly",
+    "index" : 9,
+    "text" : "Senin cümlen \"birinin canı sıkkındı\". Fark etmiştin, evet. Sıra sana geldiğinde kim fark edecek?"
+  }, {
+    "archetypeId" : "inwardly",
+    "index" : 10,
+    "text" : "Ölçmeyi bırak. Sen zaten içinden ölçüyorsun ve kimseye söylemiyorsun."
+  }, {
+    "archetypeId" : "inwardly",
+    "index" : 11,
+    "text" : "İkinci haftada bırakırsan bunu kimse bilmeyecek. Bilinmemek, senin en sık kullandığın bırakma yolu."
+  }, {
+    "archetypeId" : "inwardly",
+    "index" : 12,
+    "text" : "Anlat. Bugünün asıl işi bu: yardım tek yönlü akmasın diye bir kere ters yöne aç."
+  }, {
+    "archetypeId" : "inwardly",
+    "index" : 13,
+    "text" : "Bıraktığın şey muhtemelen birine ayırdığın zamandı. Onu geri alma."
+  }, {
+    "archetypeId" : "inwardly",
+    "index" : 14,
+    "text" : "On dört gün kendin için taşıdın. Bundan sonrası, fark ettiğini söylemeyi de öğrenmek."
+  }, {
+    "archetypeId" : "light_footed",
+    "index" : 1,
+    "text" : "Küçük başla. Zaten hiçbir şeyi büyütmüyorsun; bugün küçük olması senin lehine."
+  }, {
+    "archetypeId" : "light_footed",
+    "index" : 2,
+    "text" : "İkinci gün seni yormaz. Senin riskin yorulmak değil, önemsememek."
+  }, {
+    "archetypeId" : "light_footed",
+    "index" : 3,
+    "text" : "Saati seç ve ciddiye al. Sen her şeyi hafifletiyorsun; bu on dört gün hafifletilmeye gelmiyor."
+  }, {
+    "archetypeId" : "light_footed",
+    "index" : 4,
+    "text" : "\"Bugün olmasa da olur\" sende gülerek geçer. Gülerek geçen şeyler sende bir daha dönmüyor."
+  }, {
+    "archetypeId" : "light_footed",
+    "index" : 5,
+    "text" : "Bir gün kaçırmak sende iz bırakmaz. Sorun tam bu: iz bırakmayan şey düzeltilmiyor."
+  }, {
+    "archetypeId" : "light_footed",
+    "index" : 6,
+    "text" : "Görünür yere koy. Senin için hatırlatıcı bir uyarı değil, sadece bir dokunuş."
+  }, {
+    "archetypeId" : "light_footed",
+    "index" : 7,
+    "text" : "Bir hafta oldu ve hiç zorlanmadın. Bunu bir başarı say — sen genelde saymıyorsun."
+  }, {
+    "archetypeId" : "light_footed",
+    "index" : 8,
+    "text" : "Yeni bir ortam sende hiçbir şeyi değiştirmez. Bugün bunu avantaja çevir."
+  }, {
+    "archetypeId" : "light_footed",
+    "index" : 9,
+    "text" : "Senin cümlen \"olmasa da olur\". Bugün o cümleyi bir kere reddet."
+  }, {
+    "archetypeId" : "light_footed",
+    "index" : 10,
+    "text" : "Ölçmeyi bırak. Zaten ölçmüyorsun; bugün ölçmeden de ciddiye almayı dene."
+  }, {
+    "archetypeId" : "light_footed",
+    "index" : 11,
+    "text" : "İkinci haftada bırakırsan bunu bir kayıp saymayacaksın. Saymadığın kayıplar en çok biriktirdiklerin."
+  }, {
+    "archetypeId" : "light_footed",
+    "index" : 12,
+    "text" : "Anlat. Sen genelde anlatmaya değmez bulursun; bugün değer bul."
+  }, {
+    "archetypeId" : "light_footed",
+    "index" : 13,
+    "text" : "Bıraktığın şeyi geri almak sana kolay gelecek, çünkü hiçbiri ağır değil. Ağır olmaması onu önemsiz yapmıyor."
+  }, {
+    "archetypeId" : "light_footed",
+    "index" : 14,
+    "text" : "On dört gün önemsemeyi denedin. Bundan sonrası, neyin gerçekten büyük olduğunu zamanında fark etmek."
+  }, {
+    "archetypeId" : "night_watch",
+    "index" : 1,
+    "text" : "Küçük başlamak sana tedbirsiz geliyor. Değil: küçük olan şey, kötü bir günde de ayakta kalabilen tek şey."
+  }, {
+    "archetypeId" : "night_watch",
+    "index" : 2,
+    "text" : "İkinci günde heyecan yok ama senin zaten heyecanla değil, tetikle çalışıyorsun. Bugün tetikte olmadan da yapabildiğini gör."
+  }, {
+    "archetypeId" : "night_watch",
+    "index" : 3,
+    "text" : "Saati seç ve o saatten sonra kontrol etme. Senin için zor olan yapmak değil, yaptıktan sonra bırakmak."
+  }, {
+    "archetypeId" : "night_watch",
+    "index" : 4,
+    "text" : "\"Bugün olmasa da olur\" sende \"bugün iyi bir gün değil\" diye çıkar. Genelde haklısın. Bugün haklı olmana rağmen yap."
+  }, {
+    "archetypeId" : "night_watch",
+    "index" : 5,
+    "text" : "Bir gün kaçırdın diye sistemi baştan kurma. Kaçan gün bir uyarı sinyali değil, sadece bir gün."
+  }, {
+    "archetypeId" : "night_watch",
+    "index" : 6,
+    "text" : "Görünür yere koyman kolay; senin riskin ona fazla bakmak. Koy ve gün içinde bir kereden fazla kontrol etme."
+  }, {
+    "archetypeId" : "night_watch",
+    "index" : 7,
+    "text" : "Bir hafta oldu ve hiçbir şey ters gitmedi. Bunu da fark et — sen genelde yalnızca ters gidenleri sayıyorsun."
+  }, {
+    "archetypeId" : "night_watch",
+    "index" : 8,
+    "text" : "Yeni bir ortam sende önce risk taraması başlatır. Bugün taramayı atla, sadece yap."
+  }, {
+    "archetypeId" : "night_watch",
+    "index" : 9,
+    "text" : "Senin cümlen \"önce şunu halledeyim\". O şey her zaman var ve her zaman daha acil görünüyor."
+  }, {
+    "archetypeId" : "night_watch",
+    "index" : 10,
+    "text" : "Ölçmeyi bırakmak senin için en zor gün. Kontrol etmek sana güvenlik veriyor ama ilerleme vermiyor."
+  }, {
+    "archetypeId" : "night_watch",
+    "index" : 11,
+    "text" : "İkinci haftada yorgunluk gelir ve sen yorgunluğu bir tehlike işareti sanırsın. Değil; sadece yorgunluk."
+  }, {
+    "archetypeId" : "night_watch",
+    "index" : 12,
+    "text" : "Anlatmak, nöbeti bir süreliğine devretmek demek. Bugünün asıl görevi bu, cümle kurmak değil."
+  }, {
+    "archetypeId" : "night_watch",
+    "index" : 13,
+    "text" : "Bıraktığın şey büyük ihtimalle bir kontrol alışkanlığıydı. Onu geri alma; boşluk seni rahatsız etse bile."
+  }, {
+    "archetypeId" : "night_watch",
+    "index" : 14,
+    "text" : "On dört gün tetikte olmadan da gidebildiğini gösterdi. Bundan sonrası için soru şu: dinlenmeyi de listeye yazacak mısın?"
+  }, {
+    "archetypeId" : "own_clock",
+    "index" : 1,
+    "text" : "Küçük başla, çünkü senin sorunun büyük başlamak değil — ertesi gün hiç başlamamak."
+  }, {
+    "archetypeId" : "own_clock",
+    "index" : 2,
+    "text" : "İkinci gün, senin dalganın olmadığı ilk gün. Bugün dalgasız da yapabildiğini gör; bütün mesele bu."
+  }, {
+    "archetypeId" : "own_clock",
+    "index" : 3,
+    "text" : "Saate bağlamak sana yapay gelecek. Yapay; ama senin doğal ritmin geriye bir şey bırakmıyor."
+  }, {
+    "archetypeId" : "own_clock",
+    "index" : 4,
+    "text" : "\"Bugün olmasa da olur\" sende \"bugün gelmedi\" diye çıkar. Dalga gelmedi, doğru. Zincir yine de duruyor."
+  }, {
+    "archetypeId" : "own_clock",
+    "index" : 5,
+    "text" : "Bir gün kaçırınca sende \"nasılsa bozuldu\" hissi hızlı gelir. Bozulmadı; sadece bir gün."
+  }, {
+    "archetypeId" : "own_clock",
+    "index" : 6,
+    "text" : "Görünür yere koy. Sen aklında tuttuğunu dalga geçince unutuyorsun."
+  }, {
+    "archetypeId" : "own_clock",
+    "index" : 7,
+    "text" : "Bir hafta üst üste — senin için asıl yeni olan şey bu, işin kendisi değil."
+  }, {
+    "archetypeId" : "own_clock",
+    "index" : 8,
+    "text" : "Ortam değişince senin ilgin tazelenir ama süreklilik tazelenmez. Bugün yeni yerde eskisini yap."
+  }, {
+    "archetypeId" : "own_clock",
+    "index" : 9,
+    "text" : "Senin cümlen \"ilham gelince yaparım\". On dört gün ilham beklemek için fazla uzun."
+  }, {
+    "archetypeId" : "own_clock",
+    "index" : 10,
+    "text" : "Ölçmeyi bırak. Sen zaten ölçmüyorsun; bugünün zorluğu ölçmeden de devam etmek."
+  }, {
+    "archetypeId" : "own_clock",
+    "index" : 11,
+    "text" : "İkinci haftanın ortası, senin dalganın çoktan çekilmiş olduğu yer. Kıyıda kal."
+  }, {
+    "archetypeId" : "own_clock",
+    "index" : 12,
+    "text" : "Anlat, çünkü seni bekleyen kimse yok. Kimse beklemeyince hatırlatan da olmuyor."
+  }, {
+    "archetypeId" : "own_clock",
+    "index" : 13,
+    "text" : "Bıraktığın şey dalga geldiğinde çok cazip görünecek. Bugün alma."
+  }, {
+    "archetypeId" : "own_clock",
+    "index" : 14,
+    "text" : "On dört gün — biriken ilk şey. Bundan sonrası, biriktirmenin dalgadan daha çok şey bıraktığını görmek."
+  }, {
+    "archetypeId" : "quiet_builder",
+    "index" : 1,
+    "text" : "Sen zaten küçük başlıyorsun. Senin zorlandığın yer başlamak değil, başladığını birine söylemek."
+  }, {
+    "archetypeId" : "quiet_builder",
+    "index" : 2,
+    "text" : "Heyecan sende zaten yoktu; bugün kaybettiğin bir şey yok. Bu, ikinci günü kolay geçen az sayıdaki insandan biri olman demek."
+  }, {
+    "archetypeId" : "quiet_builder",
+    "index" : 3,
+    "text" : "Saati kendine sakla, ama bir yere yaz. Aklında tuttuğun şeyleri kimseye söylemediğin için doğrulayan da olmuyor."
+  }, {
+    "archetypeId" : "quiet_builder",
+    "index" : 4,
+    "text" : "İçinden \"bugün olmasa da olur\" geçtiğinde kimse fark etmeyecek. Zorluğun burası: seni durduran şey de sessiz."
+  }, {
+    "archetypeId" : "quiet_builder",
+    "index" : 5,
+    "text" : "Bir gün kaçırdığını yalnız sen bileceksin. O yüzden geri dönme kararını da yalnız sen vereceksin, ve bugün ver."
+  }, {
+    "archetypeId" : "quiet_builder",
+    "index" : 6,
+    "text" : "Görünür yere koymak sana ters geliyor, biliyorum. Öyleyse yalnız senin gördüğün bir yere koy — ama gördüğün bir yere."
+  }, {
+    "archetypeId" : "quiet_builder",
+    "index" : 7,
+    "text" : "Bir hafta oldu ve muhtemelen kimse bilmiyor. Bugün bir kişiye söyle; hakkın teslim edilmiyorsa sebebi çoğu zaman bu."
+  }, {
+    "archetypeId" : "quiet_builder",
+    "index" : 8,
+    "text" : "Ortamın değişmesi seni zorlamaz, sen zaten kendi köşendesin. Asıl soru şu: o köşede tıkandığında kim fark edecek?"
+  }, {
+    "archetypeId" : "quiet_builder",
+    "index" : 9,
+    "text" : "Senin cümlen \"henüz hazır değil\". Yarım şeyi göstermemek bir standart değil, bir erteleme biçimi."
+  }, {
+    "archetypeId" : "quiet_builder",
+    "index" : 10,
+    "text" : "Ölçmeyi bırakmak sende kolay; sen zaten ölçmüyorsun. Bugünün zorluğu tersi: yaptığını bir kere görünür kıl."
+  }, {
+    "archetypeId" : "quiet_builder",
+    "index" : 11,
+    "text" : "İkinci haftanın ortasında sessizce bırakırsan bunu kimse görmez. Görülmemek, bırakmayı ucuzlatıyor."
+  }, {
+    "archetypeId" : "quiet_builder",
+    "index" : 12,
+    "text" : "Anlatmak senin en zor günün. Övünmek değil bu; birinin bilmesi, tıkandığında sana sorulması demek."
+  }, {
+    "archetypeId" : "quiet_builder",
+    "index" : 13,
+    "text" : "Bıraktığın şeyin yeri boş kalırsa sende sessizce geri dolar. Bugün o boşluğa bilerek bir şey koy."
+  }, {
+    "archetypeId" : "quiet_builder",
+    "index" : 14,
+    "text" : "On dört gün boyunca kimse bakmadan yaptın. Bundan sonrası için tek soru: bunu görünür kılmadan ne kadar sürdürebilirsin?"
+  }, {
+    "archetypeId" : "spark",
+    "index" : 1,
+    "text" : "Küçük başlamak sana sıkıcı geliyor, biliyorum. Ama büyük başlayanı üçüncü gün bırakan da sensin."
+  }, {
+    "archetypeId" : "spark",
+    "index" : 2,
+    "text" : "İkinci gün heyecan bitiyor ve senin motorun heyecan. Bugün, motorun olmadan gidebildiğini görme günü."
+  }, {
+    "archetypeId" : "spark",
+    "index" : 3,
+    "text" : "Saate bağlamak seni kısıtlıyormuş gibi gelecek. Kısıtlamıyor; seçmeni gereksiz kılıyor, ki asıl yorulduğun şey seçmek."
+  }, {
+    "archetypeId" : "spark",
+    "index" : 4,
+    "text" : "\"Bugün olmasa da olur\" senin ağzında \"daha iyi bir fikrim var\" diye çıkar. İkisi aynı cümle."
+  }, {
+    "archetypeId" : "spark",
+    "index" : 5,
+    "text" : "Bir gün kaçırınca sende hemen yeni bir şey başlatma isteği doğar. Bugün yeni bir şey başlatma; eskisine dön."
+  }, {
+    "archetypeId" : "spark",
+    "index" : 6,
+    "text" : "Görünür yere koy, ama tek bir şey koy. Yan yana beş hatırlatıcı, hiçbirini hatırlatmıyor."
+  }, {
+    "archetypeId" : "spark",
+    "index" : 7,
+    "text" : "Bir hafta senin için uzun. Bugüne kadar bitirdiğin şeyleri düşün ve bu listeye bunu da eklemeyi seç."
+  }, {
+    "archetypeId" : "spark",
+    "index" : 8,
+    "text" : "Ortam değişince senin ilgin tazelenir. Bunu kullan: aynı şeyi başka bir yerde yap, yeni bir şeye başlama."
+  }, {
+    "archetypeId" : "spark",
+    "index" : 9,
+    "text" : "Senin cümlen \"bu artık ilgimi çekmiyor\". Doğru olabilir. Ama on dört günün amacı ilgi değil, tekrar."
+  }, {
+    "archetypeId" : "spark",
+    "index" : 10,
+    "text" : "Ölçmeyi bırak demek sana kolay geliyor. Zor olan şu: ölçmediğin şeyi de sürdürmek."
+  }, {
+    "archetypeId" : "spark",
+    "index" : 11,
+    "text" : "İkinci haftanın ortası, senin genelde çoktan başka bir şeye geçmiş olduğun yer. Bu sefer geçme."
+  }, {
+    "archetypeId" : "spark",
+    "index" : 12,
+    "text" : "Anlattığında iş bitmiş gibi hissediyorsun ve orada bırakıyorsun. Bugün anlat, ama bitirmeden."
+  }, {
+    "archetypeId" : "spark",
+    "index" : 13,
+    "text" : "Yeni bir şey eklemek sende hep bir şeyin yerine geçiyor ve genelde yarım kalanın. Bugün neyin yerine geçtiğini bilerek seç."
+  }, {
+    "archetypeId" : "spark",
+    "index" : 14,
+    "text" : "On dört gün — senin için asıl yeni olan şey bu. Bundan sonrası, bitirebildiğini bir kez daha kanıtlamak değil, gerek kalmaması."
+  }, {
+    "archetypeId" : "still_water",
+    "index" : 1,
+    "text" : "Küçük başla; sen zaten telaş etmiyorsun. Senin riskin panik değil, hiç başlamamak."
+  }, {
+    "archetypeId" : "still_water",
+    "index" : 2,
+    "text" : "İkinci günde heyecan yok — sende zaten hiç yoktu. O yüzden bugün seni taşıyacak şey karar, his değil."
+  }, {
+    "archetypeId" : "still_water",
+    "index" : 3,
+    "text" : "Saati net seç. \"Bir ara\" senin en pahalı cümlen; içinde hiçbir şey yok."
+  }, {
+    "archetypeId" : "still_water",
+    "index" : 4,
+    "text" : "\"Bugün olmasa da olur\" sende sakin ve makul bir sesle gelir. Sakin olması onu doğru yapmıyor."
+  }, {
+    "archetypeId" : "still_water",
+    "index" : 5,
+    "text" : "Bir gün kaçırmak seni rahatsız etmedi, biliyorum. Sorun da bu: rahatsız olmayınca geri dönmek için sebep kalmıyor."
+  }, {
+    "archetypeId" : "still_water",
+    "index" : 6,
+    "text" : "Görünür yere koy. Sen kendi kendine hatırlamayı beklersen o şey hep yarına kalıyor."
+  }, {
+    "archetypeId" : "still_water",
+    "index" : 7,
+    "text" : "Bir hafta oldu ve muhtemelen hiç zorlanmadın. Şimdi asıl soru: zorlanmadığın şeyi neden bırakmaya bu kadar yakınsın?"
+  }, {
+    "archetypeId" : "still_water",
+    "index" : 8,
+    "text" : "Ortam değişse de sen aynı kalırsın. Bu bir avantaj — bugün onu kullan, ortamı bahane etme."
+  }, {
+    "archetypeId" : "still_water",
+    "index" : 9,
+    "text" : "Senin cümlen \"acelesi yok\". Doğru, acelesi yok. Ama on dört günün de acelesi yoktu ve gün dokuz."
+  }, {
+    "archetypeId" : "still_water",
+    "index" : 10,
+    "text" : "Ölçmeyi bırakmak sana kolay. Bugünün zor kısmı, ölçmediğin şeyi yine de yapmak."
+  }, {
+    "archetypeId" : "still_water",
+    "index" : 11,
+    "text" : "İkinci haftada bırakırsan bunu kimse fark etmez, sen bile. Sessizce bırakılan şeyler senin en sık kaybettiklerin."
+  }, {
+    "archetypeId" : "still_water",
+    "index" : 12,
+    "text" : "Anlatmak sana gereksiz gelecek. Gereksiz değil: birinin bilmesi, senin sessizce bırakmanı zorlaştırıyor."
+  }, {
+    "archetypeId" : "still_water",
+    "index" : 13,
+    "text" : "Bıraktığın şeyi geri almak sana sorun çıkarmaz gibi gelecek. O \"sorun değil\" hissi, senin en pahalı hissin."
+  }, {
+    "archetypeId" : "still_water",
+    "index" : 14,
+    "text" : "On dört gün sarsılmadan gittin. Bundan sonrası için soru: bir şey ters gittiğinde bunu söyleyecek misin?"
+  }, {
+    "archetypeId" : "table_setter",
+    "index" : 1,
+    "text" : "Küçük başla ve bu küçük şeyi kimse için yapma. Senin zorluğun boyut değil, sahiplik."
+  }, {
+    "archetypeId" : "table_setter",
+    "index" : 2,
+    "text" : "İkinci günde heyecan yok ve etrafında da kimse yok. Sen genelde başkası için devam edersin; bugün kendin için et."
+  }, {
+    "archetypeId" : "table_setter",
+    "index" : 3,
+    "text" : "Saati seçerken kimsenin sana ihtiyaç duymadığı bir saati seç. Yoksa o saat başkasının olur."
+  }, {
+    "archetypeId" : "table_setter",
+    "index" : 4,
+    "text" : "\"Bugün olmasa da olur\" sende \"birine söz vermiştim\" diye çıkar. Söz gerçekti; sıra da senindi."
+  }, {
+    "archetypeId" : "table_setter",
+    "index" : 5,
+    "text" : "Bir gün kaçırdıysan sebebi muhtemelen başkasının bir işiydi. Suçlanacak kimse yok, ama bugün geri dön."
+  }, {
+    "archetypeId" : "table_setter",
+    "index" : 6,
+    "text" : "Görünür yere koy — başkalarının da göreceği bir yere. Sen kendi işini gizlediğinde herkes seni müsait sanıyor."
+  }, {
+    "archetypeId" : "table_setter",
+    "index" : 7,
+    "text" : "Bir hafta boyunca kendin için bir şey yaptın. Bu, senin için sandığından büyük bir şey."
+  }, {
+    "archetypeId" : "table_setter",
+    "index" : 8,
+    "text" : "Ortam değişince sen önce herkesin rahat olup olmadığına bakarsın. Bugün önce kendi işine bak."
+  }, {
+    "archetypeId" : "table_setter",
+    "index" : 9,
+    "text" : "Senin cümlen \"onlar daha çok ihtiyaç duyuyordu\". Bazen doğru. On dört gün boyunca hep doğru olamaz."
+  }, {
+    "archetypeId" : "table_setter",
+    "index" : 10,
+    "text" : "Ölçmeyi bırak, ama kaç kere kendini sıraya en sona koyduğunu bir kere say."
+  }, {
+    "archetypeId" : "table_setter",
+    "index" : 11,
+    "text" : "İkinci haftada bırakırsan sebebi yorgunluk olmayacak; birine yer açmak olacak."
+  }, {
+    "archetypeId" : "table_setter",
+    "index" : 12,
+    "text" : "Anlatmak senin için kolay, istemek zor. Bugün anlatırken bir de küçük bir şey iste."
+  }, {
+    "archetypeId" : "table_setter",
+    "index" : 13,
+    "text" : "Yeni bir şey eklemek bir şeyin yerine geçer. Sende genelde kendine ayırdığın zamanın yerine geçiyor — bu sefer tersini yap."
+  }, {
+    "archetypeId" : "table_setter",
+    "index" : 14,
+    "text" : "On dört gün kendin için bir şey sürdürdün. Bundan sonrası, bunu kimseden izin almadan sürdürebilmek."
+  }, {
+    "archetypeId" : "table_upsetter",
+    "index" : 1,
+    "text" : "Küçük başla. Senin gücün söylemek; bugünün işi söylemeden yapmak."
+  }, {
+    "archetypeId" : "table_upsetter",
+    "index" : 2,
+    "text" : "İkinci günde ortada söylenecek bir şey yok, sadece yapılacak bir şey var. Bu sana sıkıcı gelecek."
+  }, {
+    "archetypeId" : "table_upsetter",
+    "index" : 3,
+    "text" : "Saati seç ve o saatte kimseyle tartışma. Enerjini bugün işe ayır."
+  }, {
+    "archetypeId" : "table_upsetter",
+    "index" : 4,
+    "text" : "\"Bugün olmasa da olur\" sende bir tartışmanın ardından gelir. Haklı çıkmak yorucudur; zincir onu bilmiyor."
+  }, {
+    "archetypeId" : "table_upsetter",
+    "index" : 5,
+    "text" : "Kaçırdığın günü savunma. Açıklaman ikna edici olacak ve hiçbir işe yaramayacak."
+  }, {
+    "archetypeId" : "table_upsetter",
+    "index" : 6,
+    "text" : "Görünür yere koy. Sen söylediğin şeyi taşımayı unutuyorsun, söylemeyi değil."
+  }, {
+    "archetypeId" : "table_upsetter",
+    "index" : 7,
+    "text" : "Bir hafta boyunca kimseyle çatışmadan bir şey sürdürdün. Bu senin için nadir."
+  }, {
+    "archetypeId" : "table_upsetter",
+    "index" : 8,
+    "text" : "Ortam değişince senin söyleyecek yeni bir şeyin olur. Bugün söyleme, sadece yap."
+  }, {
+    "archetypeId" : "table_upsetter",
+    "index" : 9,
+    "text" : "Senin cümlen \"burada asıl sorun bu değil\". Genelde haklısın ve genelde bu, işi yapmamanın yolu."
+  }, {
+    "archetypeId" : "table_upsetter",
+    "index" : 10,
+    "text" : "Ölçmeyi bırak. Ölçüm sende bir tartışma malzemesine dönüşüyor."
+  }, {
+    "archetypeId" : "table_upsetter",
+    "index" : 11,
+    "text" : "İkinci haftada bırakırsan sebebi ilgisizlik değil, daha önemli bir mesele olacak. Her zaman olacak."
+  }, {
+    "archetypeId" : "table_upsetter",
+    "index" : 12,
+    "text" : "Anlat ama tartışmaya açma. Bugün sadece bir cümle söyle ve orada bırak."
+  }, {
+    "archetypeId" : "table_upsetter",
+    "index" : 13,
+    "text" : "Bıraktığın şey büyük ihtimalle bir itirazdı. Onu geri alma; sessizlik seni haksız yapmıyor."
+  }, {
+    "archetypeId" : "table_upsetter",
+    "index" : 14,
+    "text" : "On dört gün söyleyip kaldın. Bundan sonrası, kalmanın söylemekten daha çok şey değiştirdiğini görmek."
+  }, {
+    "archetypeId" : "word_is_bond",
+    "index" : 1,
+    "text" : "Küçük başla. Sen söz verdiğin şeyi yaparsın; o yüzden bugün kendine küçük bir söz ver."
+  }, {
+    "archetypeId" : "word_is_bond",
+    "index" : 2,
+    "text" : "İkinci günde kimse seni izlemiyor. Senin için asıl sınav bu: kimseye verilmemiş söz."
+  }, {
+    "archetypeId" : "word_is_bond",
+    "index" : 3,
+    "text" : "Saati seç ve o saati kimseye açtırma. Senin saatlerin genelde başkalarının işgalinde."
+  }, {
+    "archetypeId" : "word_is_bond",
+    "index" : 4,
+    "text" : "\"Bugün olmasa da olur\" sende \"başkasına söz vermiştim\" diye çıkar. O söz gerçek; bu da öyle."
+  }, {
+    "archetypeId" : "word_is_bond",
+    "index" : 5,
+    "text" : "Bir gün kaçırdın ve kendine verdiğin sözü ilk kez bozdun. Bunu bir başarısızlık değil, bir bilgi say."
+  }, {
+    "archetypeId" : "word_is_bond",
+    "index" : 6,
+    "text" : "Görünür yere koy. Sen listendeki şeyleri yaparsın; sorun listeye kendini yazmaman."
+  }, {
+    "archetypeId" : "word_is_bond",
+    "index" : 7,
+    "text" : "Bir hafta boyunca kendine verdiğin sözü tuttun. Bu, senin en az alıştığın söz türü."
+  }, {
+    "archetypeId" : "word_is_bond",
+    "index" : 8,
+    "text" : "Ortam değişince sana daha çok iş gelir, çünkü güvenilir olduğun bilinir. Bugün bir tanesine hayır de."
+  }, {
+    "archetypeId" : "word_is_bond",
+    "index" : 9,
+    "text" : "Senin cümlen \"önce şunu halledeyim, sonra\". Sonra hiç gelmiyor."
+  }, {
+    "archetypeId" : "word_is_bond",
+    "index" : 10,
+    "text" : "Ölçmeyi bırak. Sen zaten kendini ölçüyorsun ve genelde sert ölçüyorsun."
+  }, {
+    "archetypeId" : "word_is_bond",
+    "index" : 11,
+    "text" : "İkinci haftada bırakırsan sebebi tükenmek olacak. Tükenmeden önce hayır demeyi dene."
+  }, {
+    "archetypeId" : "word_is_bond",
+    "index" : 12,
+    "text" : "Anlat ve bir şey iste. İstemek senin en zor cümlen."
+  }, {
+    "archetypeId" : "word_is_bond",
+    "index" : 13,
+    "text" : "Yeni bir şey eklemek bir şeyin yerine geçer. Sende başkasının işinin yerine geçmeli, kendi dinlenmenin değil."
+  }, {
+    "archetypeId" : "word_is_bond",
+    "index" : 14,
+    "text" : "On dört gün kendine verdiğin sözü tuttun. Bundan sonrası, sıraya kendini de yazmayı alışkanlık yapmak."
+  } ],
+  "connectors" : [ {
+    "id" : "c1",
+    "text" : "Sende bunun karşılığı şu."
+  }, {
+    "id" : "c10",
+    "text" : "Ve sende bu, tanıdık bir yerden geliyor."
+  }, {
+    "id" : "c2",
+    "text" : "Senin için zor olan kısmı ise başka."
+  }, {
+    "id" : "c3",
+    "text" : "Bu, sana özellikle şöyle uğruyor."
+  }, {
+    "id" : "c4",
+    "text" : "Aynı şeyin sendeki hâli daha farklı."
+  }, {
+    "id" : "c5",
+    "text" : "Şunu da eklemek gerek, çünkü seni ilgilendiren tarafı bu."
+  }, {
+    "id" : "c6",
+    "text" : "Bunun sende nereye denk düştüğüne bak."
+  }, {
+    "id" : "c7",
+    "text" : "Sen bu cümleyi muhtemelen başka bir yerinden okuyorsun."
+  }, {
+    "id" : "c8",
+    "text" : "Senin durumunda asıl mesele burada."
+  }, {
+    "id" : "c9",
+    "text" : "Bunu senin için biraz daha açalım."
+  } ]
 }

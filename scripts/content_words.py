@@ -5,14 +5,25 @@ The rule this enforces is in content/README.md: guideline 1.4.1 treats a health
 claim as a health claim, and the line is drawn by which words were used rather
 than by what was meant. A reviewer reads screenshots, not intentions.
 
-Run it over content/ and over the copy that ships inside the app, because the
-guideline does not care which side of the network a sentence came from.
+The words the server sends are checked by the server: they come in through
+/admin/content, which refuses them, and GET /admin/content/objections re-reads
+every row for the ones that were written straight into the database. Give this
+script a base URL and it asks. Without one it checks only the copy that ships
+inside the app — which still needs checking, because the guideline does not
+care which side of the network a sentence came from.
+
+    scripts/content_words.py
+    MOTTO_ADMIN_TOKEN=… scripts/content_words.py https://mottostage.dafalabs.com
 """
 
 from __future__ import annotations
 
+import json
+import os
 import re
 import sys
+import urllib.error
+import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -31,13 +42,12 @@ FORBIDDEN = {
 }
 
 TARGETS = [
-    ROOT / "content",
     ROOT / "apps/motto/lib/features/chain/domain/turkish_reminder_copy.dart",
     ROOT / "apps/motto/lib/features/support/domain",
 ]
 
 # The rulebook has to be able to name the words it forbids.
-SKIP = {ROOT / "content/README.md", ROOT / "content/README.tr.md", Path(__file__)}
+SKIP = {Path(__file__)}
 
 # Saying "this is not a diagnosis" needs the word. Denying the claim is the
 # safest sentence on that screen, and dropping the word to satisfy a grep would
@@ -79,6 +89,9 @@ def main() -> int:
                         f"'{word}' — use: {instead}"
                     )
 
+    if len(sys.argv) > 1:
+        hits.extend(f"  {objection}" for objection in served(sys.argv[1]))
+
     if hits:
         print("copy uses words guideline 1.4.1 reads as health claims:\n")
         print("\n".join(hits))
@@ -86,6 +99,23 @@ def main() -> int:
 
     print(f"1.4.1 word check passed over {len(files())} files.")
     return 0
+
+
+def served(base: str) -> list[str]:
+    """What the server says about the words it holds."""
+    token = os.environ.get("MOTTO_ADMIN_TOKEN")
+    if not token:
+        sys.exit("MOTTO_ADMIN_TOKEN is not set")
+
+    request = urllib.request.Request(
+        base.rstrip("/") + "/admin/content/objections",
+        headers={"X-Admin-Token": token},
+    )
+    try:
+        with urllib.request.urlopen(request) as response:
+            return json.load(response)
+    except urllib.error.HTTPError as refused:
+        sys.exit(f"{refused.code} {refused.read().decode('utf-8', 'replace')}")
 
 
 if __name__ == "__main__":

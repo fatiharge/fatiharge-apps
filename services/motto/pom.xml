@@ -85,19 +85,6 @@
   <build>
     <!-- The words the product says live in one place and are read from there,
          rather than copied into this module where the copy would drift. -->
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-      </resource>
-      <resource>
-        <directory>../../content</directory>
-        <targetPath>content</targetPath>
-        <includes>
-          <include>*.yaml</include>
-        </includes>
-      </resource>
-    </resources>
-
     <plugins>
       <plugin>
         <groupId>${quarkus.platform.group-id}</groupId>

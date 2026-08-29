@@ -93,7 +93,7 @@ class ReportsTest {
     var report = reports.forResult(device, result.id());
 
     assertFalse(report.locked());
-    assertEquals(4, report.sections().size());
+    assertEquals(content.sections().size(), report.sections().size());
     assertNotNull(report.portrait());
     assertNotNull(report.limitation());
   }

@@ -4,6 +4,8 @@ import com.dafalabs.api.motto.admin.dto.ReportPieceWrite;
 import com.dafalabs.api.motto.admin.dto.TaskWrite;
 import com.dafalabs.api.motto.admin.dto.Unwritten;
 import com.dafalabs.api.motto.admin.dto.WriteSummary;
+import com.dafalabs.api.motto.content.store.ContentStore;
+import com.dafalabs.api.motto.content.write.WordGate;
 import com.dafalabs.api.motto.report.ReportPiece;
 import com.dafalabs.api.motto.report.ReportPieceRepository;
 import com.dafalabs.api.motto.task.Task;
@@ -28,10 +30,12 @@ public class ContentAdmin {
 
   private final TaskRepository tasks;
   private final ReportPieceRepository pieces;
+  private final ContentStore store;
 
-  ContentAdmin(TaskRepository tasks, ReportPieceRepository pieces) {
+  ContentAdmin(TaskRepository tasks, ReportPieceRepository pieces, ContentStore store) {
     this.tasks = tasks;
     this.pieces = pieces;
+    this.store = store;
   }
 
   @Transactional
@@ -74,6 +78,69 @@ public class ContentAdmin {
                           piece.placeholder())));
     }
     return new WriteSummary(incoming.size(), (int) pieces.unwritten());
+  }
+
+  /**
+   * Guideline 1.4.1, run backwards over everything already in the tables.
+   *
+   * <p>The gate on {@link com.dafalabs.api.motto.content.write.ContentWriter}
+   * only sees what comes through the API, and rows do get corrected at a psql
+   * prompt. This is how that half gets looked at.
+   */
+  @Transactional
+  public List<String> objections() {
+    List<String> found = new ArrayList<>();
+    store
+        .archetypes()
+        .forEach(
+            a ->
+                found.addAll(
+                    WordGate.objections(
+                        "archetype " + a.id(), a.name(), a.summary(), a.motto())));
+    store.activeItems().forEach(i -> found.addAll(WordGate.objections("item " + i.id(), i.text())));
+    store
+        .mottos()
+        .forEach(
+            m ->
+                found.addAll(
+                    WordGate.objections(
+                        "motto " + m.id(), m.motto(), m.detail(), m.reminder())));
+    store
+        .skeletons()
+        .forEach(
+            s ->
+                found.addAll(
+                    WordGate.objections("day " + s.day(), s.title(), s.body(), s.action())));
+    store
+        .fragments()
+        .forEach(
+            f ->
+                found.addAll(
+                    WordGate.objections(
+                        "fragment " + f.archetypeId() + "/" + f.ordinal(), f.text())));
+    store
+        .connectors()
+        .forEach(c -> found.addAll(WordGate.objections("connector " + c.id(), c.text())));
+    store
+        .support()
+        .forEach(
+            s ->
+                found.addAll(
+                    WordGate.objections(
+                        "support " + s.kind() + "/" + s.key(), s.heading(), s.body())));
+    for (Task task : tasks.listAll()) {
+      found.addAll(
+          WordGate.objections(
+              "task %s/%d/%d".formatted(task.archetypeId(), task.day(), task.ordinal()),
+              task.title(),
+              task.detail()));
+    }
+    for (ReportPiece piece : pieces.listAll()) {
+      found.addAll(
+          WordGate.objections(
+              "report %s/%s".formatted(piece.kind(), piece.archetypeId()), piece.text()));
+    }
+    return found;
   }
 
   /** What is still a stand-in — the writing job, as a list. */

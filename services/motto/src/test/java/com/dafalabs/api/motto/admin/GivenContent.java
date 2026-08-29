@@ -2,6 +2,8 @@ package com.dafalabs.api.motto.admin;
 
 import com.dafalabs.api.motto.admin.dto.ReportPieceWrite;
 import com.dafalabs.api.motto.admin.dto.TaskWrite;
+import com.dafalabs.api.motto.content.store.ContentStore;
+import com.dafalabs.api.motto.content.store.ReportSectionRow;
 import com.dafalabs.api.motto.scoring.Dimension;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;
@@ -10,10 +12,14 @@ import java.util.List;
 /**
  * The content tables, filled.
  *
- * <p>Content is pushed over /admin/content rather than seeded by a migration,
- * so a test database starts with none of it. Tests that need content write
- * their own — which is the honest arrangement anyway: a test passing on rows a
- * migration happened to insert is testing the migration.
+ * <p>Written over /admin/content, addressed by slot, so it overwrites whatever
+ * the seed left in the same places rather than testing around it. A test that
+ * asserted on seeded sentences would be a test that fails when somebody
+ * corrects a typo.
+ *
+ * <p>The sections come from the section table rather than a list here: that
+ * the report grows a sixth section without a code change is the property, and
+ * a constant typed here would hide it.
  */
 @ApplicationScoped
 public class GivenContent {
@@ -23,12 +29,16 @@ public class GivenContent {
   private static final int DAYS = 14;
   private static final int PER_DAY = 3;
   private static final List<String> BANDS = List.of("low", "mid", "high");
-  private static final List<Integer> SECTIONS = List.of(1, 2, 3, 4);
-
   private final ContentAdmin content;
+  private final ContentStore store;
 
-  GivenContent(ContentAdmin content) {
+  GivenContent(ContentAdmin content, ContentStore store) {
     this.content = content;
+    this.store = store;
+  }
+
+  public List<Integer> sections() {
+    return store.reportSections().stream().map(ReportSectionRow::section).toList();
   }
 
   /** Every slot the assembly can reach, for one archetype. */
@@ -54,7 +64,7 @@ public class GivenContent {
 
     List<ReportPieceWrite> pieces = new ArrayList<>();
     pieces.add(piece("limitation", null, null, null, null));
-    for (int section : SECTIONS) {
+    for (int section : sections()) {
       pieces.add(piece("skeleton", null, null, null, section));
       pieces.add(piece("fragment", archetype, null, null, section));
     }

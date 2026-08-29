@@ -1,14 +1,14 @@
 # content
 
-Ürünün sözleri. Kullanıcının okuduğu, düğme olmayan her şey burada duruyor ve
-`services/motto` içerik tablolarını bu dosyalardan besliyor — yani bir ifade
-değişikliği mağaza sürümü beklemiyor.
+Ürünün sözleri için kurallar. **Sözlerin kendisi burada değil** — hepsi
+`services/motto` veritabanında satır ve `PUT /admin/content/…` ile yazılıp
+düzeltiliyor. Bir ifade değişikliği bir istek; ne dağıtım bekliyor ne mağaza
+sürümü.
 
 > 🇬🇧 For English: [README.md](README.md)
 
-| Dosya | İçindekiler |
-|---|---|
-| `archetypes.yaml` | sekiz arketip: ad, tanım, motto |
+Tabloların listesi ve yeni bir arketibin nasıl eklendiği İngilizce dosyada.
+Buradaki kurallar ise hangi tabloda olursa olsun her cümle için geçerli.
 
 ## Ses
 

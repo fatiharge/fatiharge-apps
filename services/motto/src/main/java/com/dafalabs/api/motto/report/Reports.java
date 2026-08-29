@@ -1,11 +1,13 @@
 package com.dafalabs.api.motto.report;
 
 import com.dafalabs.api.core.error.CustomRuntimeException;
+import com.dafalabs.api.motto.content.store.ContentStore;
+import com.dafalabs.api.motto.content.store.ReportSectionRow;
 import com.dafalabs.api.motto.entitlement.Entitlements;
 import com.dafalabs.api.motto.report.dto.DeepReport;
 import com.dafalabs.api.motto.report.dto.DimensionReading;
-import com.dafalabs.api.motto.report.dto.ResultReport;
 import com.dafalabs.api.motto.report.dto.ReportSection;
+import com.dafalabs.api.motto.report.dto.ResultReport;
 import com.dafalabs.api.motto.result.Result;
 import com.dafalabs.api.motto.result.Results;
 import com.dafalabs.api.motto.scoring.Dimension;
@@ -38,32 +40,31 @@ public class Reports {
   /// short enough that it is not the report.
   static final int previewCharacters = 220;
 
-  /// Which dimension each section reads from. Fixed rather than chosen per
-  /// reader: a report whose sections move around is a report nobody can be
-  /// told how to read.
-  ///
-  /// All five, one each. Agreeableness was the one the four-section report
-  /// left out, which meant a dimension the inventory asks four questions
-  /// about, scores, and matches an archetype on never appeared in the document
-  /// people pay for. Section 2 is not a substitute: extraversion is how much
-  /// closeness someone wants, agreeableness is what they do when only one of
-  /// two people can be right.
-  private static final Map<Integer, Dimension> sectionDimension =
-      Map.of(
-          1, Dimension.CONSCIENTIOUSNESS,
-          2, Dimension.EXTRAVERSION,
-          3, Dimension.OPENNESS,
-          4, Dimension.NEUROTICISM,
-          5, Dimension.AGREEABLENESS);
-
   private final ReportPieceRepository pieces;
   private final Results results;
   private final Entitlements entitlements;
+  private final ContentStore content;
 
-  Reports(ReportPieceRepository pieces, Results results, Entitlements entitlements) {
+  Reports(
+      ReportPieceRepository pieces,
+      Results results,
+      Entitlements entitlements,
+      ContentStore content) {
     this.pieces = pieces;
     this.results = results;
     this.entitlements = entitlements;
+    this.content = content;
+  }
+
+  /// Which dimension each section reads from, from the table. Fixed per
+  /// reader — a report whose sections move around is one nobody can be told
+  /// how to read — but not fixed per release: a sixth section is a row.
+  private Map<Integer, Dimension> sectionDimension() {
+    Map<Integer, Dimension> bySection = new HashMap<>();
+    for (ReportSectionRow row : content.reportSections()) {
+      bySection.put(row.section(), Dimension.of(row.dimension()));
+    }
+    return bySection;
   }
 
   static String bandOf(double score) {
@@ -143,6 +144,7 @@ public class Reports {
 
   private List<ReportSection> assemble(Result result, String archetype) {
     Map<Dimension, Double> profile = result.profile();
+    Map<Integer, Dimension> sectionDimension = sectionDimension();
     Map<Integer, String> fragments = new HashMap<>();
     for (ReportPiece fragment : pieces.fragments(archetype)) {
       fragments.put(fragment.section(), fragment.text());

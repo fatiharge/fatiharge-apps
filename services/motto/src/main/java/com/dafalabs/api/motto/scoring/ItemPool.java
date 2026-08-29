@@ -1,59 +1,50 @@
 package com.dafalabs.api.motto.scoring;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import jakarta.annotation.PostConstruct;
+import com.dafalabs.api.motto.content.store.ContentStore;
+import com.dafalabs.api.motto.content.store.ItemRow;
 import jakarta.enterprise.context.ApplicationScoped;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/** The questions, read once from the file the writers edit. */
+/** The questions, read from the active version of the inventory. */
 @ApplicationScoped
 public class ItemPool {
 
-  private static final String RESOURCE = "content/items.yaml";
+  /// 1..points is what an answer may be. The scale is the instrument, not
+  /// copy: changing it changes every score ever recorded.
+  public static final int points = 5;
 
-  private final Map<String, Item> byId = new LinkedHashMap<>();
-  private int likertPoints;
+  private final ContentStore content;
 
-  @PostConstruct
-  void load() {
-    try (InputStream stream = Thread.currentThread().getContextClassLoader()
-        .getResourceAsStream(RESOURCE)) {
-      if (stream == null) {
-        throw new IllegalStateException(RESOURCE + " is not on the classpath");
-      }
-      JsonNode root = new YAMLMapper().readTree(stream);
-      likertPoints = root.path("likert").asInt(5);
-
-      for (JsonNode node : root.withArray("items")) {
-        Item item =
-            new Item(
-                node.get("id").asText(),
-                Dimension.of(node.get("dimension").asText()),
-                node.path("reverse").asBoolean(false),
-                node.get("tr").asText());
-        byId.put(item.id(), item);
-      }
-    } catch (IOException unreadable) {
-      throw new IllegalStateException("could not read " + RESOURCE, unreadable);
-    }
+  ItemPool(ContentStore content) {
+    this.content = content;
   }
 
   public List<Item> all() {
-    return List.copyOf(byId.values());
+    return List.copyOf(byId().values());
   }
 
   public Item byId(String id) {
-    return byId.get(id);
+    return byId().get(id);
   }
 
-  /** 1..likertPoints is what an answer may be. */
+  /** Which generation of the inventory produced a result taken now. */
+  public int version() {
+    return content.activeItemVersion();
+  }
+
   public int likertPoints() {
-    return likertPoints;
+    return points;
+  }
+
+  private Map<String, Item> byId() {
+    Map<String, Item> items = new LinkedHashMap<>();
+    for (ItemRow row : content.activeItems()) {
+      items.put(
+          row.id(),
+          new Item(row.id(), Dimension.of(row.dimension()), row.reverse(), row.text()));
+    }
+    return items;
   }
 }
