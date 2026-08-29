@@ -3,12 +3,16 @@ package com.dafalabs.api.motto.scoring;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.dafalabs.api.motto.content.ContentCatalog;
 import com.dafalabs.api.motto.content.dto.ContentBundle;
+import com.dafalabs.api.motto.entitlement.Entitlements;
 import com.dafalabs.api.motto.report.Reports;
+import com.dafalabs.api.motto.report.dto.DeepReport;
 import com.dafalabs.api.motto.report.dto.DimensionReading;
+import com.dafalabs.api.motto.report.dto.ReportSection;
 import com.dafalabs.api.motto.report.dto.ResultReport;
 import com.dafalabs.api.motto.result.Result;
 import com.dafalabs.api.motto.result.Results;
@@ -42,6 +46,7 @@ class ThreeProfilesTest {
   @Inject Results results;
   @Inject Reports reports;
   @Inject TaskRepository tasks;
+  @Inject Entitlements entitlements;
 
   /// 5 is "agree", 1 is "disagree". Reverse-keyed items are marked in the
   /// table, so these read as the person would answer them, not as points.
@@ -89,7 +94,11 @@ class ThreeProfilesTest {
     ProfileVector profile = scoring.score(answers);
     String id = rules.match(profile);
     Archetype archetype = archetypes.byId(id);
-    ResultReport report = reportFor(id, profile);
+    UUID device = UUID.randomUUID();
+    long resultId = resultFor(device, id, profile);
+    ResultReport report = reports.readingFor(device, resultId);
+    DeepReport locked = reports.forResult(device, resultId);
+    DeepReport deep = unlocked(device, resultId);
     ContentBundle bundle = content.bundle();
 
     StringBuilder out = new StringBuilder();
@@ -107,6 +116,16 @@ class ThreeProfilesTest {
     }
     out.append("    güçlü yan: %s\n".formatted(report.strength()));
     out.append("    bedeli: %s\n".formatted(report.cost()));
+
+    out.append("    kilitli önizleme: %s\n".formatted(locked.preview()));
+    for (ReportSection section : deep.sections()) {
+      out.append(
+          "    derin %d · %s || %s || %s\n"
+              .formatted(section.section(), section.opening(), section.reading(), section.fragment()));
+    }
+    out.append("    portre: %s\n".formatted(deep.portrait()));
+    out.append("    kıyas: %s\n".formatted(deep.comparison()));
+    out.append("    sınırlar: %s\n".formatted(deep.limitation()));
 
     bundle.mottos().stream()
         .filter(motto -> motto.archetypeId().equals(id))
@@ -142,6 +161,22 @@ class ThreeProfilesTest {
     }
     assertEquals(
         14, bundle.fragments().stream().filter(f -> f.archetypeId().equals(id)).count());
+
+    // The lock has to hold before paying and let go after, and the preview has
+    // to be short enough that it is not the report.
+    assertTrue(locked.locked());
+    assertTrue(locked.sections().isEmpty());
+    assertTrue(locked.preview().length() <= Reports.previewCharacters + 1);
+    assertFalse(deep.locked());
+    assertEquals(5, deep.sections().size());
+    for (ReportSection section : deep.sections()) {
+      assertFalse(section.opening().isBlank(), id + " section " + section.section());
+      assertFalse(section.reading().isBlank(), id + " section " + section.section());
+      assertFalse(section.fragment().isBlank(), id + " section " + section.section());
+    }
+    assertNotNull(deep.portrait());
+    assertNotNull(deep.comparison());
+    assertNotNull(deep.limitation());
     assertFalse(bundle.mottos().stream().noneMatch(m -> m.archetypeId().equals(id)));
     // Fourteen days of three things to do, or the chain has nothing in it.
     assertEquals(42, tasks.forArchetype(id).size(), id + " is missing days");
@@ -167,10 +202,17 @@ class ThreeProfilesTest {
   }
 
   @Transactional
-  ResultReport reportFor(String id, ProfileVector profile) {
-    UUID device = UUID.randomUUID();
+  long resultFor(UUID device, String id, ProfileVector profile) {
     Result result = results.record(device, id, profile);
-    return reports.readingFor(device, result.id());
+    return result.id();
+  }
+
+  /// Paying is the only difference between the two calls above and this one,
+  /// so running both is what proves the lock is a lock and not a label.
+  @Transactional
+  DeepReport unlocked(UUID device, long resultId) {
+    entitlements.grantPremium(device);
+    return reports.forResult(device, resultId);
   }
 
   private static Map<String, Integer> answers(Object... pairs) {
