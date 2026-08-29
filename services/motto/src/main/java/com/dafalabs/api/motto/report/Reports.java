@@ -38,7 +38,7 @@ public class Reports {
 
   /// What someone sees before paying. Enough to know what they would get,
   /// short enough that it is not the report.
-  static final int previewCharacters = 220;
+  public static final int previewCharacters = 220;
 
   private final ReportPieceRepository pieces;
   private final Results results;
