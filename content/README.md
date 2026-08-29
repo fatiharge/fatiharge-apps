@@ -105,6 +105,9 @@ the ones that were typed straight into the database at a psql prompt, and
 app. The guideline does not care which side of the network a sentence came
 from.
 
+`GET /admin/content/bundle` shows what a phone would be sent, which is the
+only way to read a deployment's words without a phone.
+
 There is one exception, written down in the gate: the method screen says the
 result is **not** a diagnosis, and denying the claim needs the word.
 
