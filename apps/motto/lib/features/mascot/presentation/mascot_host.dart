@@ -130,7 +130,7 @@ class _MascotHostState extends State<MascotHost>
 
   void _startIdleClock() {
     _idle?.cancel();
-    _idle = Timer.periodic(const Duration(seconds: 5), (_) {
+    _idle = Timer.periodic(MascotRules.idleTick, (_) {
       final mascot = _controller;
       if (mascot == null) return;
       // A mascot nobody can see is not being ignored. Without this the offer
