@@ -74,7 +74,9 @@ class PlaysTest {
     CustomRuntimeException refused =
         assertThrows(CustomRuntimeException.class, () -> plays.spend(device, TODAY));
     assertEquals(409, refused.status());
-    assertEquals("no_turns_left", refused.code());
+    // Named for which of the two it is: this device marked its day but has not
+    // finished the three things, so there is still one to earn today.
+    assertEquals("no_turns_yet", refused.code());
   }
 
   @Test
@@ -95,4 +97,23 @@ class PlaysTest {
 
     assertEquals(0, plays.on(UUID.randomUUID(), TODAY).remaining());
   }
+
+  @Test
+  @DisplayName("a day with nothing left to earn says so, and differently")
+  void nothingLeftToEarnIsItsOwnRefusal() {
+    plays.grant(device, TODAY, CreditReason.MARKED_DAY);
+    plays.grant(device, TODAY, CreditReason.TASKS_DONE);
+    for (int i = 0; i < 4; i++) {
+      plays.spend(device, TODAY);
+    }
+
+    CustomRuntimeException refused =
+        assertThrows(CustomRuntimeException.class, () -> plays.spend(device, TODAY));
+
+    // "Go and finish the day" and "come back tomorrow" ask for opposite
+    // things. The app used to work out which from two flags, and got it wrong
+    // whenever the day was still unmarked.
+    assertEquals("no_turns_today", refused.code());
+  }
 }
+

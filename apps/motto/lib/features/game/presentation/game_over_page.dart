@@ -5,7 +5,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/features/game/application/turns_repository.dart';
-import 'package:motto/features/game/presentation/no_turns_sheet.dart';
+import 'package:motto/infrastructure/api/outcome.dart';
+import 'package:motto/infrastructure/api/trouble_bus.dart';
 import 'package:motto/route/app_router.gr.dart';
 
 /// The score, and where it sits.
@@ -99,30 +100,14 @@ class GameOverPage extends StatelessWidget {
 
   Future<void> _again(BuildContext context) async {
     final router = context.router;
-    final turns = getIt<TurnsRepository>();
 
-    try {
-      if (!await turns.spend()) {
-        if (!context.mounted) return;
-        final left = await turns.today();
-        if (!context.mounted) return;
-        // Both halves, not just the tasks: a day whose three things are done
-        // but whose mark is still outstanding has a turn waiting in it.
-        await NoTurnsSheet.show(
-          context,
-          nothingLeftToEarn:
-              (left?.dayMarked ?? false) && (left?.tasksDone ?? false),
-        );
-        return;
-      }
-    } on Object {
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Oyunu şu an açamıyorum.')),
-      );
-      return;
+    switch (await getIt<TurnsRepository>().spend()) {
+      case Ok():
+        await router.replace(GameRoute());
+      case Failed(:final trouble):
+        // What running out means, and where its button goes, is a row
+        // somebody edited rather than a branch shipped in a release.
+        getIt<TroubleBus>().unhandled(trouble);
     }
-
-    await router.replace(GameRoute());
   }
 }
