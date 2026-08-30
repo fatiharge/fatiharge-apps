@@ -28,6 +28,7 @@ import 'package:motto/features/content/application/content_store.dart' as _i432;
 import 'package:motto/features/daily/application/daily_cubit.dart' as _i1068;
 import 'package:motto/features/daily/application/daily_widget.dart' as _i113;
 import 'package:motto/features/game/application/game_store.dart' as _i164;
+import 'package:motto/features/game/application/turns_repository.dart' as _i819;
 import 'package:motto/features/mascot/application/mascot_store.dart' as _i756;
 import 'package:motto/features/onboarding/application/onboarding_store.dart'
     as _i624;
@@ -156,6 +157,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i66.ScoreResourceApi>(
       () => apiClients.scores(gh<_i66.ApiClient>()),
     );
+    gh.lazySingleton<_i66.PlayResourceApi>(
+      () => apiClients.turns(gh<_i66.ApiClient>()),
+    );
     gh.lazySingleton<_i66.SupportResourceApi>(
       () => apiClients.support(gh<_i66.ApiClient>()),
     );
@@ -174,6 +178,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i708.SupportCopyCubit>(
       () => _i708.SupportCopyCubit(gh<_i66.SupportResourceApi>()),
+    );
+    gh.lazySingleton<_i819.TurnsRepository>(
+      () => _i819.TurnsRepository(gh<_i66.PlayResourceApi>()),
     );
     gh.lazySingleton<_i761.ChainRepository>(
       () => _i761.ChainRepository(

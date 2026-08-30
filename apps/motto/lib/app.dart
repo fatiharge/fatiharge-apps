@@ -38,7 +38,7 @@ class _MottoAppState extends State<MottoApp> {
       // anywhere, and one that resets when a tab changes is one nobody
       // believes in.
       builder: (context, child) => MascotHost(
-        onGameOffered: () => openGame(router),
+        onGameOffered: openGame,
         child: child ?? const SizedBox(),
       ),
     );

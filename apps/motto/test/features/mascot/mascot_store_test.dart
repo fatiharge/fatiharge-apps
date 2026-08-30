@@ -30,7 +30,12 @@ void main() {
   test('the game it offers is closed to it', () {
     // It cannot offer what is already open. Left on, a tap meant for the
     // falling piece landed on the cat and opened a second game over the first.
-    for (final route in ['GameRulesRoute', 'GameRoute', 'GameOverRoute']) {
+    for (final route in [
+      'GameRulesRoute',
+      'GameRoute',
+      'GameOverRoute',
+      'DayDoneRoute',
+    ]) {
       store.onRoute(route);
       expect(store.onScreen.value, isFalse, reason: route);
     }

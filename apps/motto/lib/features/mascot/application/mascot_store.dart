@@ -37,6 +37,9 @@ class MascotStore {
     'GameRulesRoute',
     'GameRoute',
     'GameOverRoute',
+    // The day's own celebration, which has its own confetti and a card the
+    // cat was sitting on top of.
+    'DayDoneRoute',
   };
 
   /// Set from the router. Separate from [visible] because one is a preference

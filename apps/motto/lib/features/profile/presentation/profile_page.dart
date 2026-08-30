@@ -79,14 +79,14 @@ class _ProfileView extends StatelessWidget {
                 ),
                 // Always here, unlike the mascot's offer: somebody who turned
                 // the mascot off had no way in at all.
-                ListTile(
+                const ListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Oyun'),
-                  subtitle: const Text(
+                  title: Text('Oyun'),
+                  subtitle: Text(
                     'Haftanın ilk 10 skoru bir derin rapor kazanır.',
                   ),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => openGame(context.router),
+                  trailing: Icon(Icons.chevron_right),
+                  onTap: openGame,
                 ),
                 ListTile(
                   contentPadding: EdgeInsets.zero,

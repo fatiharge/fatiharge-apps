@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,6 +9,7 @@ import 'package:motto/features/chain/presentation/widgets/chain_strip.dart';
 import 'package:motto/features/tasks/application/task_cubit.dart';
 import 'package:motto/features/tasks/presentation/widgets/day_closing.dart';
 import 'package:motto/features/tasks/presentation/widgets/task_card.dart';
+import 'package:motto/route/app_router.gr.dart';
 
 /// Where the day gets done.
 ///
@@ -19,31 +22,39 @@ class DailyTasksPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // No back arrow: this is a tab, and there is nowhere behind it.
-      appBar: AppBar(
-        title: const Text('Görevler'),
-        automaticallyImplyLeading: false,
-      ),
-      body: SafeArea(
-        child: BlocBuilder<TaskCubit, TaskState>(
-          builder: (context, state) => ListView(
-            padding: const EdgeInsets.fromLTRB(24, 8, 24, 110),
-            children: [
-              // Drawn from the cache, so the run stays whatever the network
-              // did. Losing the day count because the task list failed took a
-              // working chain off the screen.
-              const _Run(),
-              BlocBuilder<ChainCubit, ChainState>(
-                builder: (context, chain) => Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _Middle(state: state, started: chain.chain.started),
-                    DayClosing(state: chain),
-                  ],
+    // Pushed from here rather than from the cubit: where finishing the day
+    // leads is a decision about the app, and a cubit that knows it cannot be
+    // tested without a router in the tree.
+    return BlocListener<TaskCubit, TaskState>(
+      listenWhen: (was, now) => !was.justFinished && now.justFinished,
+      listener: (context, _) =>
+          unawaited(context.router.push(const DayDoneRoute())),
+      child: Scaffold(
+        // No back arrow: this is a tab, and there is nowhere behind it.
+        appBar: AppBar(
+          title: const Text('Görevler'),
+          automaticallyImplyLeading: false,
+        ),
+        body: SafeArea(
+          child: BlocBuilder<TaskCubit, TaskState>(
+            builder: (context, state) => ListView(
+              padding: const EdgeInsets.fromLTRB(24, 8, 24, 110),
+              children: [
+                // Drawn from the cache, so the run stays whatever the network
+                // did. Losing the day count because the task list failed took a
+                // working chain off the screen.
+                const _Run(),
+                BlocBuilder<ChainCubit, ChainState>(
+                  builder: (context, chain) => Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _Middle(state: state, started: chain.chain.started),
+                      DayClosing(state: chain),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
