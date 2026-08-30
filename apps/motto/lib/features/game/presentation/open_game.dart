@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/features/game/application/game_store.dart';
 import 'package:motto/features/game/application/turns_repository.dart';
 import 'package:motto/features/game/presentation/no_turns_sheet.dart';
+import 'package:motto/features/support/presentation/widgets/trouble_sheet.dart';
 import 'package:motto/route/app_router.dart';
 import 'package:motto/route/app_router.gr.dart';
 
@@ -22,8 +22,10 @@ Future<void> openGame() async {
   bool? paid;
   try {
     paid = await turns.spend();
-  } on Object {
-    _say('Oyunu şu an açamıyorum.', router);
+  } on Object catch (failure) {
+    final context = router.navigatorKey.currentContext;
+    if (context == null || !context.mounted) return;
+    await showTroubleSheet(context, failure: failure, retry: openGame);
     return;
   }
 
@@ -46,12 +48,4 @@ Future<void> openGame() async {
   await router.push(
     getIt<GameStore>().rulesSeen ? GameRoute() : GameRulesRoute(),
   );
-}
-
-/// Said rather than swallowed: a button that does nothing is the failure this
-/// screen was fixed for once already.
-void _say(String what, AppRouter router) {
-  final context = router.navigatorKey.currentContext;
-  if (context == null || !context.mounted) return;
-  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(what)));
 }

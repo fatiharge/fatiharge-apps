@@ -5,6 +5,7 @@ import 'package:motto/features/chain/application/chain_cubit.dart';
 import 'package:motto/features/chain/application/chain_state.dart';
 import 'package:motto/features/chain/application/chain_store.dart';
 import 'package:motto/features/mascot/presentation/mascot_host.dart';
+import 'package:motto/features/support/presentation/widgets/trouble_sheet.dart';
 import 'package:motto/features/tasks/application/task_cubit.dart';
 import 'package:motto/route/app_router.gr.dart';
 
@@ -100,13 +101,39 @@ class DayClosing extends StatelessWidget {
     );
     if (picked == null) return;
 
-    await cubit.start(hour: picked.hour);
+    try {
+      await cubit.start(hour: picked.hour);
+    } on Object catch (failure) {
+      // Starting is the one chain action with no offline path — there is no
+      // chain yet to queue a day against. Failing silently left somebody
+      // pressing the button and watching nothing happen.
+      if (!context.mounted) return;
+      await showTroubleSheet(
+        context,
+        failure: failure,
+        retry: () => _askHourThenStart(context),
+      );
+    }
   }
 
   Future<void> _mark(BuildContext context) async {
     final mascot = MascotHost.of(context);
     final tasks = context.read<TaskCubit>();
-    await context.read<ChainCubit>().markToday();
+
+    try {
+      await context.read<ChainCubit>().markToday();
+    } on Object catch (failure) {
+      // A day marked offline is queued rather than lost, so this only fires
+      // when something else went wrong — and then it has to be said.
+      if (!context.mounted) return;
+      await showTroubleSheet(
+        context,
+        failure: failure,
+        retry: () => _mark(context),
+      );
+      return;
+    }
+
     mascot?.celebrate();
     // The day moves with the chain, so marking it is what makes tomorrow's
     // tasks tomorrow's.
