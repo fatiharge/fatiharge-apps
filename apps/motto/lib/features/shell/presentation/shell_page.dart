@@ -7,6 +7,7 @@ import 'package:motto/config/injectable.dart';
 import 'package:motto/config/reported.dart';
 import 'package:motto/features/chain/application/chain_cubit.dart';
 import 'package:motto/features/daily/application/daily_cubit.dart';
+import 'package:motto/features/days/application/days_cubit.dart';
 import 'package:motto/features/game/application/turns_cubit.dart';
 import 'package:motto/features/profile/application/profile_cubit.dart';
 import 'package:motto/features/shell/presentation/widgets/floating_nav_bar.dart';
@@ -40,6 +41,7 @@ class ShellPage extends StatelessWidget {
       BlocProvider(create: (_) => getIt<ChainCubit>()..unawaitedLoad()),
       BlocProvider(create: (_) => getIt<TaskCubit>()..unawaitedLoad()),
       BlocProvider(create: (_) => getIt<TurnsCubit>()..unawaitedLoad()),
+      BlocProvider(create: (_) => getIt<DaysCubit>()..unawaitedLoad()),
     ],
     child: const _ShellView(),
   );
@@ -97,6 +99,11 @@ class _ShellViewState extends State<_ShellView> with ReloadsOnReturn {
       filled: Icons.check_circle,
       label: 'Görevler',
     ),
+    NavItem(
+      icon: Icons.calendar_month_outlined,
+      filled: Icons.calendar_month,
+      label: 'Günler',
+    ),
     NavItem(icon: Icons.person_outline, filled: Icons.person, label: 'Profil'),
   ];
 
@@ -110,12 +117,18 @@ class _ShellViewState extends State<_ShellView> with ReloadsOnReturn {
     context.read<ChainCubit>().unawaitedLoad();
     context.read<TaskCubit>().unawaitedLoad();
     context.read<TurnsCubit>().unawaitedLoad();
+    context.read<DaysCubit>().unawaitedLoad();
   }
 
   @override
   Widget build(BuildContext context) {
     return AutoTabsScaffold(
-      routes: const [TodayRoute(), DailyTasksRoute(), ProfileRoute()],
+      routes: const [
+        TodayRoute(),
+        DailyTasksRoute(),
+        DaysRoute(),
+        ProfileRoute(),
+      ],
       // Floating over the content rather than sitting under it, so the bar
       // reads as something on top of the page instead of a wall at the bottom.
       extendBody: true,
