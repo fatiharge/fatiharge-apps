@@ -253,4 +253,20 @@ class SecondLanguageTest {
         .statusCode(200)
         .header("Vary", "Accept-Language");
   }
+
+  @Test
+  @TestSecurity(user = DEVICE)
+  @JwtSecurity(claims = @Claim(key = "sub", value = DEVICE))
+  @DisplayName("and it says so on the 304 too, which is where a cache reads it")
+  void saysItVariesOnTheNotModified() {
+    // A 304 updates the headers a cache already holds. Without Vary here, the
+    // hole the 200 closed opens again on the next conditional request.
+    given()
+        .header("If-None-Match", "\"" + catalog.bundle("tr").version() + "\"")
+        .when()
+        .get("/v1/content")
+        .then()
+        .statusCode(304)
+        .header("Vary", "Accept-Language");
+  }
 }

@@ -40,10 +40,12 @@ public class SupportResource {
     SupportCopy copy = catalog.copy(ContentLocale.from(acceptLanguage));
     EntityTag tag = new EntityTag(copy.version());
 
+    // Vary on both answers, or a proxy hands the Turkish copy to the next
+    // English phone — a 304 updates the stored headers, so leaving it off
+    // there is the same hole one round trip later.
     if (matches(ifNoneMatch, copy.version())) {
-      return Response.notModified(tag).build();
+      return Response.notModified(tag).header("Vary", "Accept-Language").build();
     }
-    // Vary, or a proxy hands the Turkish copy to the next English phone.
     return Response.ok(copy).tag(tag).header("Vary", "Accept-Language").build();
   }
 
