@@ -56,6 +56,22 @@ void main() {
       expect(find.text('Yapıldı'), findsOneWidget);
     });
 
+    testWidgets('holds the button back until the chain starts', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(home: TaskDetailPage(task: task(), day: 1)),
+      );
+
+      // Without a chain there is nothing to record against, and a button that
+      // pops without recording reads as though the tap counted.
+      expect(find.text('Yaptım'), findsNothing);
+      expect(
+        find.text('Zincirini başlattığında işaretlenmeye açılıyor.'),
+        findsOneWidget,
+      );
+    });
+
     testWidgets('ticking it off reports back', (tester) async {
       var ticked = false;
       await tester.pumpWidget(
@@ -209,6 +225,32 @@ void main() {
 
       // And the button that closes the day sits under them, not over them.
       expect(find.text('Zincirini başlat'), findsOneWidget);
+    });
+
+    testWidgets('before the chain starts the boxes do not take a tick', (
+      tester,
+    ) async {
+      await tester.pumpWidget(hosted());
+      await tester.pumpAndSettle();
+
+      // Ticking here used to record the work against no chain at all: the
+      // screen said three of three done and the run said it had not started.
+      final box = tester.widget<Checkbox>(find.byType(Checkbox).first);
+      expect(box.onChanged, isNull);
+      expect(
+        find.textContaining('Zincirini başlattığında'),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('the button says it is about to ask for an hour', (
+      tester,
+    ) async {
+      await tester.pumpWidget(hosted());
+      await tester.pumpAndSettle();
+
+      // A button that opens a clock nobody expected is a button people cancel.
+      expect(find.text('Hatırlatma saatini soracağım.'), findsOneWidget);
     });
 
     testWidgets('a day that cannot be fetched says so, and is reported', (

@@ -7,10 +7,20 @@ import 'package:motto/route/app_router.gr.dart';
 
 /// One of the day's three things.
 class TaskCard extends StatelessWidget {
-  const TaskCard({required this.task, required this.day, super.key});
+  const TaskCard({
+    required this.task,
+    required this.day,
+    this.countable = true,
+    super.key,
+  });
 
   final api.DailyTask task;
   final int day;
+
+  /// False before the chain starts. The task is still readable — it says what
+  /// today asks for — but ticking it would record work against a chain that
+  /// does not exist, and the day would come back empty.
+  final bool countable;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +38,7 @@ class TaskCard extends StatelessWidget {
         contentPadding: const EdgeInsets.fromLTRB(8, 8, 16, 8),
         leading: Checkbox(
           value: task.done,
-          onChanged: (_) => cubit.complete(task),
+          onChanged: countable ? (_) => cubit.complete(task) : null,
         ),
         title: Text(task.title, style: text.titleSmall),
         subtitle: Padding(
@@ -44,7 +54,7 @@ class TaskCard extends StatelessWidget {
           TaskDetailRoute(
             task: task,
             day: day,
-            onDone: () => cubit.complete(task),
+            onDone: countable ? () => cubit.complete(task) : null,
           ),
         ),
       ),

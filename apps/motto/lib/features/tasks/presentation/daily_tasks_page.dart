@@ -34,9 +34,14 @@ class DailyTasksPage extends StatelessWidget {
               // did. Losing the day count because the task list failed took a
               // working chain off the screen.
               const _Run(),
-              _Middle(state: state),
               BlocBuilder<ChainCubit, ChainState>(
-                builder: (context, chain) => DayClosing(state: chain),
+                builder: (context, chain) => Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _Middle(state: state, started: chain.chain.started),
+                    DayClosing(state: chain),
+                  ],
+                ),
               ),
             ],
           ),
@@ -67,9 +72,12 @@ class _Run extends StatelessWidget {
 /// Whatever the task list has to say — the three things, or why they are not
 /// there. It fails on its own and should look like it.
 class _Middle extends StatelessWidget {
-  const _Middle({required this.state});
+  const _Middle({required this.state, required this.started});
 
   final TaskState state;
+
+  /// Whether there is a chain for the day's work to belong to.
+  final bool started;
 
   @override
   Widget build(BuildContext context) {
@@ -114,8 +122,17 @@ class _Middle extends StatelessWidget {
               letterSpacing: 1.5,
             ),
           ),
+          if (!started) ...[
+            const SizedBox(height: 8),
+            Text(
+              'Bunlar bugünün üç şeyi. Zincirini başlattığında '
+              'işaretlenmeye açılıyorlar.',
+              style: text.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
+            ),
+          ],
           const SizedBox(height: 16),
-          for (final task in state.tasks) TaskCard(task: task, day: state.day),
+          for (final task in state.tasks)
+            TaskCard(task: task, day: state.day, countable: started),
           const SizedBox(height: 20),
         ],
       ),

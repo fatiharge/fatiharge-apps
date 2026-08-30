@@ -44,6 +44,15 @@ class TaskDetailPage extends StatelessWidget {
                     Text('Yapıldı', style: text.titleMedium),
                   ],
                 )
+              else if (onDone == null)
+                // The chain has not started. Without this the button is still
+                // here and still pops, so the tap looks like it counted.
+                Text(
+                  'Zincirini başlattığında işaretlenmeye açılıyor.',
+                  style: text.bodyMedium?.copyWith(
+                    color: scheme.onSurfaceVariant,
+                  ),
+                )
               else
                 FilledButton(
                   onPressed: () async {
