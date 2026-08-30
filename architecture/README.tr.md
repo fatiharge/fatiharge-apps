@@ -10,3 +10,4 @@ Fatiharge Flutter monorepo için tasarım dokümanları. Şu sırayla oku:
 4. **[testing.tr.md](testing.tr.md)** — neyi nerede test ederiz, araçlar ve nasıl çalıştırılır.
 5. **[dependency-injection.tr.md](dependency-injection.tr.md)** — adapter'ları port'lara `get_it` + `injectable` ile bağlama.
 6. **[backend.tr.md](backend.tr.md)** — workspace'in yanındaki servisler: modüller, OpenAPI sözleşmesi, ortamlar ve CI.
+7. **[app-layers.tr.md](app-layers.tr.md)** — tek bir uygulamanın içi: store, repository ve cubit ayrımı, bir isteğin dönüş şekli, kelimelerin yaşadığı yer.
