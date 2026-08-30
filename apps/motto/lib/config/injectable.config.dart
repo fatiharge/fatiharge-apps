@@ -27,6 +27,7 @@ import 'package:motto/features/content/application/content_repository.dart'
 import 'package:motto/features/content/application/content_store.dart' as _i432;
 import 'package:motto/features/daily/application/daily_cubit.dart' as _i1068;
 import 'package:motto/features/daily/application/daily_widget.dart' as _i113;
+import 'package:motto/features/days/application/days_cubit.dart' as _i898;
 import 'package:motto/features/game/application/game_store.dart' as _i164;
 import 'package:motto/features/game/application/turns_cubit.dart' as _i471;
 import 'package:motto/features/game/application/turns_repository.dart' as _i819;
@@ -251,6 +252,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i761.ChainRepository>(),
         gh<_i190.Analytics>(),
         gh<_i113.DailyWidget>(),
+      ),
+    );
+    gh.factory<_i898.DaysCubit>(
+      () => _i898.DaysCubit(
+        gh<_i66.ChainResourceApi>(),
+        gh<_i876.ContentRepository>(),
+        gh<_i1019.LastArchetype>(),
       ),
     );
     return this;
