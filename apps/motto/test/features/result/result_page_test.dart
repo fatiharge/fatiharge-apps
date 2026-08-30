@@ -125,4 +125,42 @@ void main() {
     expect(offered, isFalse);
     expect(find.text('Sessiz İnşacı'), findsOneWidget);
   });
+
+  testWidgets('there is a way back out of it', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: MottoTheme.dark,
+        home: Builder(
+          builder: (context) => Scaffold(
+            body: Center(
+              child: ElevatedButton(
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => ResultPage(
+                      archetype: archetype,
+                      resultId: 1,
+                      offerCard: (_, _) async {},
+                    ),
+                  ),
+                ),
+                child: const Text('nereden geldiysem'),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('nereden geldiysem'));
+    await tester.pumpAndSettle();
+    expect(find.text('Sessiz İnşacı'), findsOneWidget);
+
+    await tester.tap(find.byType(BackButton));
+    await tester.pumpAndSettle();
+
+    // Four screens open this one, and the funnel puts the shell under it, so
+    // behind it is always somewhere to be. Until now nothing said so: the page
+    // had no bar at all and the only way out was the system gesture.
+    expect(find.text('nereden geldiysem'), findsOneWidget);
+  });
 }

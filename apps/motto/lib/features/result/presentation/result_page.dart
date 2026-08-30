@@ -72,9 +72,15 @@ class _ResultPageState extends State<ResultPage> {
     final archetype = widget.archetype;
 
     return Scaffold(
+      // Every way in sits on top of the shell — the funnel replaces the stack
+      // with it on purpose — so there is always somewhere behind and the arrow
+      // is never a dead end. An arrow rather than a button that always jumps
+      // home: somebody reading an old result came from the archive and wants
+      // to be put back in it, not on today.
+      appBar: AppBar(title: const Text('Sonucun')),
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(24, 32, 24, 40),
+          padding: const EdgeInsets.fromLTRB(24, 8, 24, 40),
           children: [
             Text(
               'SENİN ARKETİPİN',
