@@ -177,4 +177,46 @@ void main() {
       );
     });
   });
+
+  group('the motto a run is under', () {
+    test('is the one that was chosen for it', () {
+      final mine = archetypes.first;
+      final content = DailyAssembler.assemble(
+        pack: pack,
+        archetypeId: mine,
+        daysMarked: 1,
+        mottoId: '${mine}_3',
+      );
+
+      // The screen at the end of a period offers the other three and the
+      // server records the answer. Ignoring it let somebody choose a motto and
+      // then be shown a different one for fourteen days.
+      expect(content!.motto.id, '${mine}_3');
+    });
+
+    test('is the first when nothing has been chosen', () {
+      final mine = archetypes.first;
+      final content = DailyAssembler.assemble(
+        pack: pack,
+        archetypeId: mine,
+        daysMarked: 1,
+      );
+
+      expect(content!.motto.id, '${mine}_1');
+    });
+
+    test('falls back rather than emptying the day', () {
+      final mine = archetypes.first;
+      final content = DailyAssembler.assemble(
+        pack: pack,
+        archetypeId: mine,
+        daysMarked: 1,
+        mottoId: 'emekli_oldu',
+      );
+
+      // A motto that was taken out of the package is not a reason to have no
+      // day at all.
+      expect(content!.motto.id, '${mine}_1');
+    });
+  });
 }
