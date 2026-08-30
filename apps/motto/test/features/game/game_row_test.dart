@@ -16,16 +16,32 @@ void main() {
       // The game is not what somebody opens this app to do, and a permanent
       // invitation under the day's three things is a second thing asking to
       // be done.
-      expect(GameRow.forChain(_chain(), today), isNull);
+      expect(GameRow.forDay(_chain(), today, any: true), isNull);
     });
 
     test('is there once it is', () {
-      expect(GameRow.forChain(_chain(marked: {today}), today), isNotNull);
+      expect(
+        GameRow.forDay(_chain(marked: {today}), today, any: true),
+        isNotNull,
+      );
     });
 
     test('does not follow yesterday into today', () {
       expect(
-        GameRow.forChain(_chain(marked: {DateTime(2026, 8, 29)}), today),
+        GameRow.forDay(
+          _chain(marked: {DateTime(2026, 8, 29)}),
+          today,
+          any: true,
+        ),
+        isNull,
+      );
+    });
+
+    test('is not there when there is no turn to spend', () {
+      // A card that answers a tap with "you have none" is worse than a card
+      // that was not there.
+      expect(
+        GameRow.forDay(_chain(marked: {today}), today, any: false),
         isNull,
       );
     });
@@ -34,7 +50,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: GameRow.forChain(_chain(marked: {today}), today),
+            body: GameRow.forDay(_chain(marked: {today}), today, any: true),
           ),
         ),
       );

@@ -28,6 +28,7 @@ import 'package:motto/features/content/application/content_store.dart' as _i432;
 import 'package:motto/features/daily/application/daily_cubit.dart' as _i1068;
 import 'package:motto/features/daily/application/daily_widget.dart' as _i113;
 import 'package:motto/features/game/application/game_store.dart' as _i164;
+import 'package:motto/features/game/application/turns_cubit.dart' as _i471;
 import 'package:motto/features/game/application/turns_repository.dart' as _i819;
 import 'package:motto/features/mascot/application/mascot_store.dart' as _i756;
 import 'package:motto/features/onboarding/application/onboarding_store.dart'
@@ -181,6 +182,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i819.TurnsRepository>(
       () => _i819.TurnsRepository(gh<_i66.PlayResourceApi>()),
+    );
+    gh.factory<_i471.TurnsCubit>(
+      () => _i471.TurnsCubit(gh<_i819.TurnsRepository>()),
     );
     gh.lazySingleton<_i761.ChainRepository>(
       () => _i761.ChainRepository(
