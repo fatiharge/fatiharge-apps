@@ -20,7 +20,7 @@ FLOORS = {
     # them is not yet worth a test. This rises as screens land — it is a
     # ratchet, and leaving it at the default would only teach us to skip the
     # helper that makes the number honest.
-    "motto": 55.0,
+    "motto": 58.0,
     "wallet": 85.0,
     "bootstrap_kit": 95.0,
     "utility_kit": 95.0,
