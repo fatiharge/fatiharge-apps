@@ -27,6 +27,13 @@ class TroubleBus {
     }
   }
 
+  /// A screen saying it has nothing to do with this one.
+  ///
+  /// Named refusals never arrive on their own: the screen that asked is the
+  /// only thing that knows whether the code means something to it, and a bus
+  /// that carried them all would answer over the top of that.
+  void unhandled(Trouble trouble) => _troubles.add(trouble);
+
   @disposeMethod
   void close() => unawaited(_troubles.close());
 }

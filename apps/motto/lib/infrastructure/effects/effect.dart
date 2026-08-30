@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:meta/meta.dart';
 
 /// What the app does about a named refusal.
@@ -35,6 +37,31 @@ sealed class Effect {
         return name == null ? null : RunNamed(name);
       default:
         return null;
+    }
+  }
+
+  /// Reads a whole definition — the list the catalogue stores against one
+  /// code. Null when any part of it is not understood, because half a
+  /// definition strands somebody between two steps.
+  static List<Effect>? listFrom(Object? raw) {
+    final decoded = raw is String ? _decode(raw) : raw;
+    if (decoded is! List) return null;
+
+    final effects = <Effect>[];
+    for (final each in decoded) {
+      if (each is! Map<String, dynamic>) return null;
+      final effect = Effect.fromJson(each);
+      if (effect == null) return null;
+      effects.add(effect);
+    }
+    return effects;
+  }
+
+  static Object? _decode(String raw) {
+    try {
+      return jsonDecode(raw);
+    } on FormatException {
+      return null;
     }
   }
 

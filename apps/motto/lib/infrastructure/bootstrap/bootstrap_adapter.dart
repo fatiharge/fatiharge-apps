@@ -12,6 +12,7 @@ import 'package:motto/features/support/application/archetype_restore.dart';
 import 'package:motto/features/support/application/last_archetype.dart';
 import 'package:motto/infrastructure/analytics/analytics.dart';
 import 'package:motto/infrastructure/analytics/motto_event.dart';
+import 'package:motto/infrastructure/effects/effect_repository.dart';
 import 'package:motto/infrastructure/session/device_session.dart';
 import 'package:motto/route/app_router.dart';
 import 'package:motto/route/app_router.gr.dart';
@@ -47,6 +48,14 @@ class BootstrapAdapter implements BootstrapPort {
       'content',
       () => getIt<ContentRepository>().refresh(),
       retries: 2,
+    ),
+    // Skipped when it fails, unlike content: an app with no definitions still
+    // works. Every refusal reads as a code nobody wrote for, and that case has
+    // an answer already.
+    BootstrapJob(
+      'effects',
+      () => getIt<EffectRepository>().refresh(),
+      errorPolicy: BootstrapErrorPolicy.skip,
     ),
     // Last: it needs the token, and this is where anything collected while
     // offline gets a chance to leave.

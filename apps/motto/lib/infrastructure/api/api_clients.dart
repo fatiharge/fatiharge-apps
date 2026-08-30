@@ -4,6 +4,8 @@ import 'package:injectable/injectable.dart';
 import 'package:motto/config/env.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/infrastructure/api/renewing_client.dart';
+import 'package:motto/infrastructure/effects/effect_host.dart';
+import 'package:motto/infrastructure/effects/motto_effect_host.dart';
 import 'package:motto/infrastructure/session/device_session.dart';
 import 'package:motto/infrastructure/session/token_store.dart';
 
@@ -83,6 +85,15 @@ abstract class ApiClients {
   @lazySingleton
   motto.PlayResourceApi turns(motto.ApiClient client) =>
       motto.PlayResourceApi(client);
+
+  @lazySingleton
+  motto.EffectResourceApi effects(motto.ApiClient client) =>
+      motto.EffectResourceApi(client);
+
+  /// What this app is willing to be asked for. Named here rather than inside
+  /// the engine: the engine is the same everywhere, the permits never are.
+  @lazySingleton
+  EffectPermits permits() => MottoEffectHost.permits;
 
   @lazySingleton
   motto.SupportResourceApi support(motto.ApiClient client) =>

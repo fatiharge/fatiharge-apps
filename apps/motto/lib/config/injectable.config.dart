@@ -54,6 +54,13 @@ import 'package:motto/infrastructure/analytics/analytics.dart' as _i190;
 import 'package:motto/infrastructure/analytics/event_queue.dart' as _i98;
 import 'package:motto/infrastructure/api/api_clients.dart' as _i366;
 import 'package:motto/infrastructure/api/trouble_bus.dart' as _i328;
+import 'package:motto/infrastructure/effects/effect_catalogue.dart' as _i781;
+import 'package:motto/infrastructure/effects/effect_host.dart' as _i774;
+import 'package:motto/infrastructure/effects/effect_repository.dart' as _i316;
+import 'package:motto/infrastructure/effects/effect_store.dart' as _i480;
+import 'package:motto/infrastructure/effects/effects.dart' as _i574;
+import 'package:motto/infrastructure/effects/motto_effect_host.dart' as _i1006;
+import 'package:motto/infrastructure/effects/refresh_requests.dart' as _i388;
 import 'package:motto/infrastructure/identity/device_identity.dart' as _i37;
 import 'package:motto/infrastructure/identity/device_identity_impl.dart'
     as _i917;
@@ -83,13 +90,19 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i113.DailyWidget>(() => const _i113.DailyWidget());
     gh.lazySingleton<_i111.CardExporter>(() => const _i111.CardExporter());
     gh.lazySingleton<_i818.ApiClient>(() => apiClients.authClient());
+    gh.lazySingleton<_i774.EffectPermits>(() => apiClients.permits());
     gh.lazySingleton<_i328.TroubleBus>(
       () => _i328.TroubleBus(),
+      dispose: (i) => i.close(),
+    );
+    gh.lazySingleton<_i388.RefreshRequests>(
+      () => _i388.RefreshRequests(),
       dispose: (i) => i.close(),
     );
     gh.lazySingleton<_i759.TokenStore>(
       () => _i759.TokenStore(gh<_i558.FlutterSecureStorage>()),
     );
+    gh.lazySingleton<_i774.EffectHost>(() => _i1006.MottoEffectHost());
     gh.lazySingleton<_i625.ChainStore>(
       () => _i625.ChainStore(gh<_i460.SharedPreferences>()),
     );
@@ -113,6 +126,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i98.EventQueue>(
       () => _i98.EventQueue(gh<_i460.SharedPreferences>()),
+    );
+    gh.lazySingleton<_i480.EffectStore>(
+      () => _i480.EffectStore(gh<_i460.SharedPreferences>()),
     );
     gh.lazySingleton<_i632.ReminderScheduler>(
       () => _i573.LocalReminderScheduler(),
@@ -164,6 +180,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i66.PlayResourceApi>(
       () => apiClients.turns(gh<_i66.ApiClient>()),
+    );
+    gh.lazySingleton<_i66.EffectResourceApi>(
+      () => apiClients.effects(gh<_i66.ApiClient>()),
     );
     gh.lazySingleton<_i66.SupportResourceApi>(
       () => apiClients.support(gh<_i66.ApiClient>()),
@@ -225,6 +244,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i190.Analytics>(),
       ),
     );
+    gh.lazySingleton<_i781.EffectCatalogue>(
+      () => _i316.EffectRepository(
+        gh<_i66.EffectResourceApi>(),
+        gh<_i480.EffectStore>(),
+      ),
+    );
     gh.lazySingleton<_i876.ContentRepository>(
       () => _i876.ContentRepository(
         gh<_i66.ContentResourceApi>(),
@@ -248,6 +273,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i66.FeedbackResourceApi>(),
         gh<_i922.SupportContext>(),
         gh<_i190.Analytics>(),
+      ),
+    );
+    gh.lazySingleton<_i574.Effects>(
+      () => _i574.Effects(
+        gh<_i781.EffectCatalogue>(),
+        gh<_i774.EffectHost>(),
+        gh<_i774.EffectPermits>(),
       ),
     );
     gh.factory<_i1068.DailyCubit>(
