@@ -54,12 +54,12 @@ Future<void> showTroubleSheet(
                 const SizedBox(height: 4),
                 TextButton(
                   onPressed: () => Navigator.of(sheet).pop(),
-                  child: const Text('Kapat'),
+                  child: Text('common.close'.tr()),
                 ),
               ] else
                 FilledButton(
                   onPressed: () => Navigator.of(sheet).pop(),
-                  child: const Text('Tamam'),
+                  child: Text('common.ok'.tr()),
                 ),
             ],
           ),

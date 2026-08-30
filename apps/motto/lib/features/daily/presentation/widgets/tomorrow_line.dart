@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 /// What is waiting, named.
@@ -21,7 +22,7 @@ class TomorrowLine extends StatelessWidget {
         Row(
           children: [
             Text(
-              'YARIN',
+              'daily.tomorrow'.tr(),
               style: text.labelSmall?.copyWith(
                 color: scheme.onSurfaceVariant,
                 letterSpacing: 1.5,

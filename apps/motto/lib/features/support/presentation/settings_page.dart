@@ -80,7 +80,7 @@ class _SettingsView extends StatelessWidget {
               ValueListenableBuilder<bool>(
                 valueListenable: getIt<MascotStore>().visible,
                 builder: (context, visible, _) => SwitchListTile(
-                  title: const Text('Maskot'),
+                  title: Text('settings.mascot'.tr()),
                   subtitle: Text(
                     visible
                         ? 'settings.mascotOn'.tr()

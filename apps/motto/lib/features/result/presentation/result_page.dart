@@ -78,7 +78,7 @@ class _ResultPageState extends State<ResultPage> {
       // is never a dead end. An arrow rather than a button that always jumps
       // home: somebody reading an old result came from the archive and wants
       // to be put back in it, not on today.
-      appBar: AppBar(title: const Text('Sonucun')),
+      appBar: AppBar(title: Text('result.yours'.tr())),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(24, 8, 24, 40),
@@ -117,7 +117,7 @@ class _ResultPageState extends State<ResultPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'MOTTON',
+                    'motto.label'.tr(),
                     style: text.labelSmall?.copyWith(
                       color: scheme.onPrimaryContainer.withValues(alpha: 0.7),
                       letterSpacing: 1.5,
@@ -146,7 +146,7 @@ class _ResultPageState extends State<ResultPage> {
             OutlinedButton(
               onPressed: () =>
                   context.router.push(ReportRoute(resultId: widget.resultId)),
-              child: const Text('Rapor'),
+              child: Text('report.title'.tr()),
             ),
             const SizedBox(height: 12),
             OutlinedButton(

@@ -29,7 +29,7 @@ class GameOverPage extends StatelessWidget {
     final entries = board?.entries ?? const <api.LeaderboardEntry>[];
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Skor')),
+      appBar: AppBar(title: Text('gameOver.title'.tr())),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 40),
@@ -93,7 +93,7 @@ class GameOverPage extends StatelessWidget {
             const SizedBox(height: 8),
             TextButton(
               onPressed: () => context.router.maybePop(),
-              child: const Text('Bitir'),
+              child: Text('gameOver.finish'.tr()),
             ),
           ],
         ),

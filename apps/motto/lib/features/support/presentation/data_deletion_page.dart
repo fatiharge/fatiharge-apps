@@ -78,18 +78,18 @@ class _DataDeletionViewState extends State<_DataDeletionView> {
               padding: const EdgeInsets.fromLTRB(24, 16, 24, 40),
               children: [
                 if (_done) ...[
-                  Text('Silindi.', style: text.titleMedium),
+                  Text('deletion.done'.tr(), style: text.titleMedium),
                   const SizedBox(height: 12),
                   Text(copy.counterReason, style: text.bodyMedium),
                 ] else ...[
-                  Text('Silinecekler', style: text.titleMedium),
+                  Text('deletion.goes'.tr(), style: text.titleMedium),
                   const SizedBox(height: 8),
                   for (final item in copy.goes)
                     Text('• $item', style: text.bodyMedium),
                   const SizedBox(height: 8),
                   Text(copy.answersNote, style: text.bodyMedium),
                   const SizedBox(height: 24),
-                  Text('Kalacaklar', style: text.titleMedium),
+                  Text('deletion.stays'.tr(), style: text.titleMedium),
                   const SizedBox(height: 8),
                   for (final item in copy.stays)
                     Text('• $item', style: text.bodyMedium),

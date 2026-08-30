@@ -10,7 +10,8 @@ import 'package:flutter_test/flutter_test.dart';
 /// the kind of thing nobody notices until it is in the store, and it is exactly
 /// what a test can see for free.
 Map<String, String> flatten(String path) {
-  final decoded = jsonDecode(File(path).readAsStringSync()) as Map<String, dynamic>;
+  final decoded =
+      jsonDecode(File(path).readAsStringSync()) as Map<String, dynamic>;
   final flat = <String, String>{};
 
   void walk(String prefix, Map<String, dynamic> node) {
@@ -80,8 +81,50 @@ void main() {
     }
   });
 
+  test('nothing user-facing is still written into the code', () {
+    // Turkish letters were not enough to catch this: "MOTTON", "YARIN" and
+    // "Profil" all shipped in an English build because they are spelled with
+    // ASCII. What separates a sentence from a key is the shape of the string,
+    // so that is what this looks at.
+    final key = RegExp(r'^[a-z][A-Za-z0-9]*(\.[A-Za-z0-9_]+)+$');
+    final spoken = RegExp(
+      r'(?:Text\(|title: |label: |tooltip: |hintText: |labelText: |helperText: '
+      "|said: )'([^'\n]{2,})'",
+    );
+    final left = <String>[];
+
+    for (final file in Directory('lib').listSync(recursive: true)) {
+      if (file is! File || !file.path.endsWith('.dart')) continue;
+      if (file.path.endsWith('.g.dart') || file.path.endsWith('.gr.dart')) {
+        continue;
+      }
+      if (file.path.endsWith('injectable.config.dart')) continue;
+
+      for (final match in spoken.allMatches(file.readAsStringSync())) {
+        final value = match.group(1)!;
+        if (key.hasMatch(value)) continue;
+        // Built at runtime, drawn from a value, or not a word at all.
+        if (value.contains(r'$')) {
+          continue;
+        }
+        if (!RegExp('[A-Za-zÇĞİÖŞÜçğıöşü]').hasMatch(value)) {
+          continue;
+        }
+        // The product's own name is the same in every language.
+        if (value == 'Motto') {
+          continue;
+        }
+        left.add('${file.path}: $value');
+      }
+    }
+
+    expect(left, isEmpty);
+  });
+
   test('every key the app asks for exists', () {
-    final asked = RegExp(r"'([a-z][a-zA-Z0-9_]*(?:\.[a-zA-Z0-9_]+)+)'\s*\.(?:tr|plural)\(");
+    final asked = RegExp(
+      r"'([a-z][a-zA-Z0-9_]*(?:\.[a-zA-Z0-9_]+)+)'\s*\.(?:tr|plural)\(",
+    );
     final missing = <String>[];
 
     for (final file in Directory('lib').listSync(recursive: true)) {

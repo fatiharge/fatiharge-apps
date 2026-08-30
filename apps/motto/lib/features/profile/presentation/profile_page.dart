@@ -28,7 +28,7 @@ class _ProfileView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profil'),
+        title: Text('tabs.profile'.tr()),
         actions: const [SettingsButton()],
       ),
       body: SafeArea(
@@ -87,7 +87,7 @@ class _ProfileView extends StatelessWidget {
                   ),
                 ListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Arketipler'),
+                  title: Text('gallery.title'.tr()),
                   subtitle: Text(
                     state.premium ? 'profile.gallery'.tr() : 'Premium',
                   ),

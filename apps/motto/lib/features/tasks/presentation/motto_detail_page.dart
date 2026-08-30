@@ -33,7 +33,7 @@ class _MottoDetailView extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Mottonun')),
+      appBar: AppBar(title: Text('motto.yours'.tr())),
       body: SafeArea(
         child: BlocBuilder<DailyCubit, DailyState>(
           builder: (context, state) {

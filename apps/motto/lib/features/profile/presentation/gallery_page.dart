@@ -37,7 +37,7 @@ class _GalleryView extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Arketipler')),
+      appBar: AppBar(title: Text('gallery.title'.tr())),
       body: SafeArea(
         child: BlocBuilder<ProfileCubit, ProfileState>(
           builder: (context, state) {

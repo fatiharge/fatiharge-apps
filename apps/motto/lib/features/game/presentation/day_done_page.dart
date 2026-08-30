@@ -51,7 +51,7 @@ class _DayDonePageState extends State<DayDonePage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const Spacer(),
-                  Text('Tebrikler', style: text.displaySmall),
+                  Text('dayDone.title'.tr(), style: text.displaySmall),
                   const SizedBox(height: 12),
                   Text(
                     'dayDone.allDone'.tr(),
@@ -92,14 +92,14 @@ class _DayDonePageState extends State<DayDonePage> {
                     ),
                   ),
                   const Spacer(),
-                  const FilledButton(
+                  FilledButton(
                     onPressed: openGame,
-                    child: Text('Oyna'),
+                    child: Text('dayDone.play'.tr()),
                   ),
                   const SizedBox(height: 8),
                   TextButton(
                     onPressed: () => context.router.maybePop(),
-                    child: const Text('Sonra'),
+                    child: Text('dayDone.later'.tr()),
                   ),
                 ],
               ),

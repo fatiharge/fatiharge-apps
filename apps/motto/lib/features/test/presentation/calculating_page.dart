@@ -144,7 +144,7 @@ class _FailedState extends State<_Failed> {
             const SizedBox(height: 8),
             TextButton(
               onPressed: () => context.router.maybePop(),
-              child: const Text('Beklerim'),
+              child: Text('calculating.iWillWait'.tr()),
             ),
           ] else
             FilledButton(

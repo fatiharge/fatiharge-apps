@@ -17,7 +17,9 @@
     "profile": "Profile"
   },
   "common": {
-    "retry": "Try again"
+    "retry": "Try again",
+    "close": "Close",
+    "ok": "OK"
   },
   "days": {
     "title": "Days",
@@ -65,10 +67,11 @@
     "skipOffer": "You have one skip. Use it and you carry on without waiting.",
     "back": "Go back",
     "waiting": "One moment…",
-    "useSkip": "Use my skip ({left})"
+    "useSkip": "Use my skip ({left})",
+    "iWillWait": "I'll wait"
   },
   "result": {
-    "yours": "YOUR ARCHETYPE",
+    "yours": "Your result",
     "share": "Share the card",
     "deepReport": "Deep report",
     "notMe": "This is not me"
@@ -128,7 +131,8 @@
     "count": {
       "one": "{} archetype",
       "other": "{} archetypes"
-    }
+    },
+    "title": "Archetypes"
   },
   "periodDone": {
     "done": "Fourteen days are done.",
@@ -166,7 +170,8 @@
       "one": "{} day",
       "other": "{} days"
     },
-    "chainWaiting": "The chain is waiting"
+    "chainWaiting": "The chain is waiting",
+    "tomorrow": "TOMORROW"
   },
   "tasks": {
     "title": "Tasks",
@@ -181,7 +186,9 @@
   "motto": {
     "meaning": "WHAT IT MEANS",
     "daily": "YOU WILL HEAR THIS EVERY DAY",
-    "periodReport": "Period report"
+    "periodReport": "Period report",
+    "label": "YOUR MOTTO",
+    "yours": "Your motto"
   },
   "periodReport": {
     "title": "Period report",
@@ -210,13 +217,18 @@
   "dayDone": {
     "allDone": "All three of today's things are done. The chain grew by a day.",
     "threeTurns": "+3 GAME TURNS",
-    "threeTurnsWhy": "Finishing all three earns you three turns."
+    "threeTurnsWhy": "Finishing all three earns you three turns.",
+    "title": "Well done",
+    "play": "Play",
+    "later": "Later"
   },
   "gameOver": {
     "scoreFailed": "Your score could not be sent. Try again when your connection is back.",
     "thisWeek": "This week",
     "playAgain": "Play again",
-    "topWin": "The top {ranks} each win a deep report."
+    "topWin": "The top {ranks} each win a deep report.",
+    "title": "Score",
+    "finish": "Finish"
   },
   "gameRules": {
     "title": "How to play",
@@ -253,7 +265,8 @@
     "languages": {
       "tr": "Türkçe",
       "en": "English"
-    }
+    },
+    "mascot": "Mascot"
   },
   "privacy": {
     "title": "Privacy and permissions",
@@ -261,7 +274,8 @@
     "permissions": "Permissions",
     "notificationsOn": "Notifications are on.",
     "notificationsOff": "Notifications are off. The chain still works; you mark the day yourself.",
-    "deleteData": "Delete my data"
+    "deleteData": "Delete my data",
+    "data": "Data"
   },
   "faq": {
     "title": "Frequently asked",
@@ -294,7 +308,10 @@
     "title": "Delete my data",
     "failed": "It could not be deleted. Check your connection and try again.",
     "copyFailed": "The text could not be loaded. Check your connection and try again.",
-    "deleting": "Deleting…"
+    "deleting": "Deleting…",
+    "done": "Deleted.",
+    "goes": "What goes",
+    "stays": "What stays"
   },
   "rejection": {
     "opposite": "The opposite, really",

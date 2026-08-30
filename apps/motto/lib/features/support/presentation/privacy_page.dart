@@ -38,7 +38,7 @@ class _PrivacyView extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 40),
           children: [
-            Text('Veriler', style: text.titleMedium),
+            Text('privacy.data'.tr(), style: text.titleMedium),
             const SizedBox(height: 12),
             BlocBuilder<SupportCopyCubit, SupportCopyState>(
               builder: (context, copy) {

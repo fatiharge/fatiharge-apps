@@ -17,7 +17,9 @@
     "profile": "Profil"
   },
   "common": {
-    "retry": "Tekrar dene"
+    "retry": "Tekrar dene",
+    "close": "Kapat",
+    "ok": "Tamam"
   },
   "days": {
     "title": "Günler",
@@ -65,10 +67,11 @@
     "skipOffer": "Bir atlama hakkın var. Kullanırsan beklemeden devam edersin.",
     "back": "Geri dön",
     "waiting": "Bekle…",
-    "useSkip": "Atlama hakkımı kullan ({left})"
+    "useSkip": "Atlama hakkımı kullan ({left})",
+    "iWillWait": "Beklerim"
   },
   "result": {
-    "yours": "SENİN ARKETİPİN",
+    "yours": "Sonucun",
     "share": "Kartı paylaş",
     "deepReport": "Derin rapor",
     "notMe": "Bana uymadı"
@@ -126,7 +129,8 @@
     "unlock": "Kilidi aç",
     "count": {
       "other": "{} arketip"
-    }
+    },
+    "title": "Arketipler"
   },
   "periodDone": {
     "done": "On dört gün bitti.",
@@ -162,7 +166,8 @@
     "streakDays": {
       "other": "{} gün"
     },
-    "chainWaiting": "Zincir bekliyor"
+    "chainWaiting": "Zincir bekliyor",
+    "tomorrow": "YARIN"
   },
   "tasks": {
     "title": "Görevler",
@@ -177,7 +182,9 @@
   "motto": {
     "meaning": "NE DEMEK",
     "daily": "HER GÜN ŞUNU DUYACAKSIN",
-    "periodReport": "Dönem raporu"
+    "periodReport": "Dönem raporu",
+    "label": "MOTTON",
+    "yours": "Mottonun"
   },
   "periodReport": {
     "title": "Dönem raporu",
@@ -206,13 +213,18 @@
   "dayDone": {
     "allDone": "Bugünün üç şeyi de bitti. Zincir bir gün daha uzadı.",
     "threeTurns": "+3 OYUN HAKKI",
-    "threeTurnsWhy": "Günün üçünü de bitirmek üç hak kazandırıyor."
+    "threeTurnsWhy": "Günün üçünü de bitirmek üç hak kazandırıyor.",
+    "title": "Tebrikler",
+    "play": "Oyna",
+    "later": "Sonra"
   },
   "gameOver": {
     "scoreFailed": "Skor gönderilemedi. Bağlantın gelince tekrar dene.",
     "thisWeek": "Bu hafta",
     "playAgain": "Tekrar oyna",
-    "topWin": "İlk {ranks} bir derin rapor kazanıyor."
+    "topWin": "İlk {ranks} bir derin rapor kazanıyor.",
+    "title": "Skor",
+    "finish": "Bitir"
   },
   "gameRules": {
     "title": "Nasıl oynanır",
@@ -249,7 +261,8 @@
     "languages": {
       "tr": "Türkçe",
       "en": "English"
-    }
+    },
+    "mascot": "Maskot"
   },
   "privacy": {
     "title": "Gizlilik ve izinler",
@@ -257,7 +270,8 @@
     "permissions": "İzinler",
     "notificationsOn": "Bildirimler açık.",
     "notificationsOff": "Bildirimler kapalı. Zincir yine de işliyor; günü kendin işaretlersin.",
-    "deleteData": "Verilerimi sil"
+    "deleteData": "Verilerimi sil",
+    "data": "Veriler"
   },
   "faq": {
     "title": "Sık sorulanlar",
@@ -290,7 +304,10 @@
     "title": "Verilerimi sil",
     "failed": "Silinemedi. Bağlantını kontrol edip tekrar dene.",
     "copyFailed": "Metin yüklenemedi. Bağlantını kontrol edip tekrar dene.",
-    "deleting": "Siliniyor…"
+    "deleting": "Siliniyor…",
+    "done": "Silindi.",
+    "goes": "Silinecekler",
+    "stays": "Kalacaklar"
   },
   "rejection": {
     "opposite": "Tam tersi gibi",

@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:motto/route/app_router.gr.dart';
 
@@ -30,7 +31,7 @@ class MottoBlock extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'MOTTON',
+              'motto.label'.tr(),
               style: text.labelSmall?.copyWith(
                 color: scheme.onPrimaryContainer.withValues(alpha: 0.7),
                 letterSpacing: 1.5,
