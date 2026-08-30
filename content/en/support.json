@@ -1,0 +1,212 @@
+[
+  {
+    "kind": "privacy",
+    "key": "privacy_1",
+    "heading": null,
+    "body": "You are not asked for a name, an email address or a phone number. There is no account.",
+    "ordinal": 1
+  },
+  {
+    "kind": "privacy",
+    "key": "privacy_2",
+    "heading": null,
+    "body": "The identifier we keep knows the phone, not you.",
+    "ordinal": 2
+  },
+  {
+    "kind": "privacy",
+    "key": "privacy_3",
+    "heading": null,
+    "body": "Your answers are scored and the result is returned; the answers are not kept.",
+    "ordinal": 3
+  },
+  {
+    "kind": "privacy",
+    "key": "privacy_4",
+    "heading": null,
+    "body": "Your archetype, your chain and the tasks you ticked stay attached to that identifier.",
+    "ordinal": 4
+  },
+  {
+    "kind": "privacy",
+    "key": "privacy_5",
+    "heading": null,
+    "body": "Your reminder time and any half-finished inventory are on your phone only.",
+    "ordinal": 5
+  },
+  {
+    "kind": "privacy",
+    "key": "privacy_6",
+    "heading": null,
+    "body": "Measurement is on our own server: no third-party tools, no advertising identifier.",
+    "ordinal": 6
+  },
+  {
+    "kind": "privacy",
+    "key": "privacy_7",
+    "heading": null,
+    "body": "The card you share carries only your archetype's name and its motto.",
+    "ordinal": 7
+  },
+  {
+    "kind": "deletion",
+    "key": "goes_1",
+    "heading": "goes",
+    "body": "Your archetype and the mottos you were given",
+    "ordinal": 1
+  },
+  {
+    "kind": "deletion",
+    "key": "goes_2",
+    "heading": "goes",
+    "body": "Your chain and the days you marked",
+    "ordinal": 2
+  },
+  {
+    "kind": "deletion",
+    "key": "goes_3",
+    "heading": "goes",
+    "body": "The tasks you did",
+    "ordinal": 3
+  },
+  {
+    "kind": "deletion",
+    "key": "stays_1",
+    "heading": "stays",
+    "body": "Your device identifier",
+    "ordinal": 4
+  },
+  {
+    "kind": "deletion",
+    "key": "stays_2",
+    "heading": "stays",
+    "body": "How many goes you have used",
+    "ordinal": 5
+  },
+  {
+    "kind": "deletion",
+    "key": "counter_reason_1",
+    "heading": "counter_reason",
+    "body": "The counter for your goes is kept to prevent abuse: deleting and reinstalling does not earn you more. That counter knows how many times you have used it, not who you are.",
+    "ordinal": 6
+  },
+  {
+    "kind": "deletion",
+    "key": "answers_note_1",
+    "heading": "answers_note",
+    "body": "Your inventory answers are not kept in any case; they are scored and forgotten.",
+    "ordinal": 7
+  },
+  {
+    "kind": "faq",
+    "key": "data_on_device",
+    "heading": "Where is my data kept?",
+    "body": "Your archetype, your chain and your tasks are on the server, under an identifier tied to your phone — not to your name. Your inventory answers are not kept: they are scored and forgotten.",
+    "ordinal": 1
+  },
+  {
+    "kind": "faq",
+    "key": "no_account",
+    "heading": "Why is there no account?",
+    "body": "Because there does not need to be. Starting without one is the only way to use this without being made to hand over an email address. What that costs is in the next item.",
+    "ordinal": 2
+  },
+  {
+    "kind": "faq",
+    "key": "lost_data",
+    "heading": "What happens if I change phones?",
+    "body": "Your chain goes. The records are tied to your phone and, with no account, there is nowhere to carry them to a new one — that is the cost of working without accounts.",
+    "ordinal": 3
+  },
+  {
+    "kind": "faq",
+    "key": "why_wait",
+    "heading": "Why can I not fill in a new inventory straight away?",
+    "body": "Personality does not change in two days. An inventory answered back to back measures your mood rather than your answer. The wait is there so the result means something.",
+    "ordinal": 4
+  },
+  {
+    "kind": "faq",
+    "key": "accuracy",
+    "heading": "How accurate is the result?",
+    "body": "A short form gives a coarse resolution. An archetype is an editorial reading of a five-dimensional profile, not a scientific category. The method page sets out the limits one by one.",
+    "ordinal": 5
+  },
+  {
+    "kind": "faq",
+    "key": "not_me",
+    "heading": "The archetype does not fit me. What should I do?",
+    "body": "Use the \"this is not me\" link on the result screen. Which archetype gets rejected, and how often, is the only signal we have for correcting the matching table.",
+    "ordinal": 6
+  },
+  {
+    "kind": "faq",
+    "key": "chain_broken",
+    "heading": "My chain broke. Can I get it back?",
+    "body": "You have one make-up a month, and it closes a single missed day. If two days got away it will not close them — if it did, the chain would mean nothing.",
+    "ordinal": 7
+  },
+  {
+    "kind": "faq",
+    "key": "offline",
+    "heading": "Does it work without a connection?",
+    "body": "Marking the day works, and it is sent when the connection comes back. The daily text and the tasks come from the server, so those need one.",
+    "ordinal": 8
+  },
+  {
+    "kind": "faq",
+    "key": "notifications_off",
+    "heading": "I did not allow notifications. Does the chain still work?",
+    "body": "It does. You simply get no reminder; you mark the day yourself. iOS asks once, and after that it can only be turned on from the system settings.",
+    "ordinal": 9
+  },
+  {
+    "kind": "faq",
+    "key": "reminder_time",
+    "heading": "Can I change the reminder time?",
+    "body": "From the settings screen. At most one reminder arrives a day, and none at all between 22:00 and 08:00.",
+    "ordinal": 10
+  },
+  {
+    "kind": "faq",
+    "key": "too_many",
+    "heading": "Why do I sometimes get no notifications at all?",
+    "body": "If you leave three in a row unopened, the frequency drops by itself. The answer to an ignored reminder is not a fourth one.",
+    "ordinal": 11
+  },
+  {
+    "kind": "faq",
+    "key": "delete_data",
+    "heading": "Can I have my data deleted?",
+    "body": "Settings → Privacy → Delete my data. Your archetype, your chain and your tasks are deleted. Your device identifier and how many goes you have used stay, so that deleting and reinstalling does not earn you more.",
+    "ordinal": 12
+  },
+  {
+    "kind": "faq",
+    "key": "cost",
+    "heading": "Does it cost anything?",
+    "body": "The inventory, the result, the card, the chain and the daily tasks are free. The deep report and the archetype gallery are premium.",
+    "ordinal": 13
+  },
+  {
+    "kind": "faq",
+    "key": "game",
+    "heading": "What is the game for?",
+    "body": "For fun, and the week's top ten scores each win a deep report.",
+    "ordinal": 14
+  },
+  {
+    "kind": "faq",
+    "key": "share_card",
+    "heading": "What shows on the card I share?",
+    "body": "Your archetype's name and its motto. Your answers, your scores and your device identifier are not on it.",
+    "ordinal": 15
+  },
+  {
+    "kind": "faq",
+    "key": "contact",
+    "heading": "How do I get in touch?",
+    "body": "Settings → Feedback. You do not have to leave an email address; without one we will read it but cannot write back.",
+    "ordinal": 16
+  }
+]

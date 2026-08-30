@@ -8,13 +8,20 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import com.dafalabs.api.motto.admin.GivenContent;
 import com.dafalabs.api.motto.content.dto.ContentBundle;
+import com.dafalabs.api.motto.content.store.ContentStore;
+import com.dafalabs.api.motto.content.store.RuleRow;
+import com.dafalabs.api.motto.content.write.ArchetypeWrite;
+import com.dafalabs.api.motto.content.write.ContentWriter;
+import com.dafalabs.api.motto.scoring.ArchetypeCatalog;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.security.TestSecurity;
 import io.quarkus.test.security.jwt.Claim;
 import io.quarkus.test.security.jwt.JwtSecurity;
 import com.dafalabs.api.motto.scoring.Dimension;
 import jakarta.inject.Inject;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,6 +42,9 @@ class SecondLanguageTest {
   private static final String DEVICE = "33333333-3333-3333-3333-333333333333";
 
   @Inject ContentCatalog catalog;
+  @Inject ArchetypeCatalog catalogue;
+  @Inject ContentWriter writer;
+  @Inject ContentStore store;
   @Inject GivenContent given;
 
   @BeforeEach
@@ -185,6 +195,50 @@ class SecondLanguageTest {
         .statusCode(200)
         .extract()
         .path("id");
+  }
+
+  @Test
+  @DisplayName("a translation cannot move where an archetype sits")
+  void aTranslationDoesNotTouchTheRules() {
+    String before = rulesAsText();
+
+    // The same ids, with the points deliberately wrong and every archetype on
+    // top of every other. Taken as rules, this would be refused by the
+    // reachability gate; taken as a translation, it is only sentences.
+    List<ArchetypeWrite> shoved = new ArrayList<>();
+    int ordinal = 1;
+    for (String id : GivenContent.ARCHETYPES.keySet()) {
+      shoved.add(
+          new ArchetypeWrite(
+              id,
+              "Archetype " + id,
+              "Someone who is %s. The cost is that this line was written for a test."
+                  .formatted(id),
+              "%s motto in English".formatted(id),
+              ordinal++,
+              List.of("openness"),
+              Map.of(
+                  "openness", 0.5,
+                  "conscientiousness", 0.5,
+                  "extraversion", 0.5,
+                  "agreeableness", 0.5,
+                  "neuroticism", 0.5)));
+    }
+    writer.archetypes(GivenContent.ENGLISH, shoved);
+
+    // The words changed; where anybody lands did not.
+    assertEquals(before, rulesAsText());
+    assertEquals(
+        "Archetype " + GivenContent.ARCHETYPE,
+        catalogue.all(GivenContent.ENGLISH).get(GivenContent.ARCHETYPE).name());
+  }
+
+  private String rulesAsText() {
+    return store.rules().stream()
+        .sorted(java.util.Comparator.comparing(RuleRow::archetypeId))
+        .map(row -> "%s %s %s".formatted(row.archetypeId(), row.defining(), row.target()))
+        .toList()
+        .toString();
   }
 
   @Test

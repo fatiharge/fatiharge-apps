@@ -1,6 +1,7 @@
 package com.dafalabs.api.motto.content.write;
 
 import com.dafalabs.api.core.error.CustomRuntimeException;
+import com.dafalabs.api.motto.content.ContentLocale;
 import com.dafalabs.api.motto.content.store.ContentStore;
 import com.dafalabs.api.motto.scoring.ArchetypeRules;
 import com.dafalabs.api.motto.scoring.Dimension;
@@ -43,11 +44,21 @@ public class ContentWriter {
     this.json = json;
   }
 
+  /**
+   * The archetypes: the words in one language, and the rules behind them.
+   *
+   * <p>A translation writes only the words. The five-dimensional point and the
+   * defining axes are the instrument — one table for all languages — and a
+   * translator who could move them could change who gets which archetype by
+   * correcting a sentence. So the rules are written from the fallback and from
+   * nowhere else, and the reachability gate runs only when they moved.
+   */
   @Transactional
   public int archetypes(String locale, List<ArchetypeWrite> incoming) {
+    boolean rules = ContentLocale.fallback.equals(locale);
+
     for (ArchetypeWrite a : incoming) {
       gate(locale, "archetype " + a.id(), a.name(), a.summary(), a.motto());
-      Map<Dimension, Double> target = targetOf(a);
 
       revise(
           locale,
@@ -70,6 +81,11 @@ public class ContentWriter {
               "summary", a.summary(),
               "motto", a.motto(),
               "ordinal", a.ordinal()));
+      if (!rules) {
+        continue;
+      }
+
+      Map<Dimension, Double> target = targetOf(a);
       run(
           locale,
           """
@@ -90,10 +106,12 @@ public class ContentWriter {
               "n", target.get(Dimension.NEUROTICISM)));
     }
 
-    // The rules just written are rows, not managed objects; anything the
-    // session already holds would answer the reachability check from before.
-    entities.clear();
-    everyArchetypeStillReachable();
+    if (rules) {
+      // The rules just written are rows, not managed objects; anything the
+      // session already holds would answer the reachability check from before.
+      entities.clear();
+      everyArchetypeStillReachable();
+    }
     return incoming.size();
   }
 
@@ -197,7 +215,10 @@ public class ContentWriter {
               "ordinal", item.ordinal()));
     }
 
-    if (set.activate()) {
+    // Which generation is live is the instrument, the same way the archetype
+    // rules are: pushing a translation must not be able to switch the app to a
+    // different set of questions.
+    if (set.activate() && ContentLocale.fallback.equals(locale)) {
       // One active set, enforced by a partial unique index, so the old one has
       // to stand down in the same statement pair as the new one stands up.
       run(locale, "UPDATE item_sets SET active = false WHERE active", Map.of());
