@@ -46,13 +46,18 @@ class DeviceSession {
     );
 
     final token = response?.token;
-    if (token != null && token.isNotEmpty) {
-      await _tokens.save(
-        token,
-        expiresAt: DateTime.now().add(
-          Duration(seconds: response!.expiresInSeconds),
-        ),
-      );
+    if (token == null || token.isEmpty) {
+      // Said rather than shrugged off. The retry after a 401 asks for this and
+      // then sends the request again; a registration that quietly kept the old
+      // token turned one 401 into two and looked like the server was down.
+      throw StateError('the register call answered without a token');
     }
+
+    await _tokens.save(
+      token,
+      expiresAt: DateTime.now().add(
+        Duration(seconds: response!.expiresInSeconds),
+      ),
+    );
   }
 }

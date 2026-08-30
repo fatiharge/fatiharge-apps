@@ -32,7 +32,23 @@ class _ProfileView extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             }
             if (state.status == ProfileStatus.failed) {
-              return const Center(child: Text('Profil yüklenemedi.'));
+              // The other two tabs already offer this. Without it, a token
+              // that died while the phone was in a pocket left this screen a
+              // dead end: nothing to press, and nothing that would ask again
+              // short of killing the app.
+              return Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text('Profil yüklenemedi.'),
+                    const SizedBox(height: 12),
+                    FilledButton(
+                      onPressed: () => context.read<ProfileCubit>().load(),
+                      child: const Text('Tekrar dene'),
+                    ),
+                  ],
+                ),
+              );
             }
 
             final current = state.current;

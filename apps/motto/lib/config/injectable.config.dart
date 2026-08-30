@@ -79,6 +79,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i76.AndroidId>(() => storageModule.androidId);
     gh.lazySingleton<_i113.DailyWidget>(() => const _i113.DailyWidget());
     gh.lazySingleton<_i111.CardExporter>(() => const _i111.CardExporter());
+    gh.lazySingleton<_i818.ApiClient>(() => apiClients.authClient());
     gh.lazySingleton<_i759.TokenStore>(
       () => _i759.TokenStore(gh<_i558.FlutterSecureStorage>()),
     );
@@ -114,9 +115,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i558.FlutterSecureStorage>(),
         gh<_i76.AndroidId>(),
       ),
-    );
-    gh.lazySingleton<_i818.ApiClient>(
-      () => apiClients.authClient(gh<_i759.TokenStore>()),
     );
     gh.lazySingleton<_i66.ApiClient>(
       () => apiClients.mottoClient(gh<_i759.TokenStore>()),

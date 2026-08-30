@@ -1,12 +1,16 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motto/config/injectable.dart';
+import 'package:motto/config/reported.dart';
 import 'package:motto/features/chain/application/chain_cubit.dart';
 import 'package:motto/features/daily/application/daily_cubit.dart';
 import 'package:motto/features/profile/application/profile_cubit.dart';
 import 'package:motto/features/shell/presentation/widgets/floating_nav_bar.dart';
 import 'package:motto/features/tasks/application/task_cubit.dart';
+import 'package:motto/infrastructure/session/device_session.dart';
 import 'package:motto/route/app_router.gr.dart';
 import 'package:motto/route/reloads_on_return.dart';
 
@@ -47,6 +51,43 @@ class _ShellView extends StatefulWidget {
 }
 
 class _ShellViewState extends State<_ShellView> with ReloadsOnReturn {
+  /// The token lasts an hour and nothing checked it on the way back in. A
+  /// phone picked up after lunch asked with a dead token, and the two tabs
+  /// that need the server came back empty — the chain, the three things and
+  /// the profile all at once, which reads as the app being broken.
+  late final AppLifecycleListener _lifecycle = AppLifecycleListener(
+    onResume: () => unawaited(_cameBack()),
+  );
+
+  Future<void> _cameBack() async {
+    // Renewed before anything is asked rather than after a 401: the recovery
+    // works, but three tabs failing and silently retrying is a second of
+    // empty screens nobody should have to see.
+    //
+    // Best effort, and the reload happens either way. A phone that came back
+    // with no signal cannot renew anything, and swallowing the reload would
+    // leave the screens on yesterday with no way to ask again — each of them
+    // has its own retry and its own sentence for this.
+    try {
+      await getIt<DeviceSession>().ensure();
+    } on Object catch (failure, trace) {
+      reported('session', failure, trace);
+    }
+    if (mounted) reload();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _lifecycle.hashCode;
+  }
+
+  @override
+  void dispose() {
+    _lifecycle.dispose();
+    super.dispose();
+  }
+
   static const _items = [
     NavItem(icon: Icons.today_outlined, filled: Icons.today, label: 'Bugün'),
     NavItem(

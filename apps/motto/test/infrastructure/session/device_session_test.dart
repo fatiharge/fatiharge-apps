@@ -94,4 +94,16 @@ void main() {
 
     verify(() => devices.registerDevice(any())).called(1);
   });
+
+  test('a registration that answers without a token is a failure', () async {
+    when(
+      () => devices.registerDevice(any()),
+    ).thenAnswer((_) async => null);
+
+    // The retry after a 401 asks for this and then sends the request again.
+    // Keeping the dead token quietly turned one 401 into two, which reads as
+    // the server being down rather than the session being over.
+    await expectLater(session.register(), throwsA(isA<StateError>()));
+    verifyNever(() => tokens.save(any(), expiresAt: any(named: 'expiresAt')));
+  });
 }
