@@ -9,6 +9,8 @@ import 'package:motto/features/chain/application/chain_repository.dart';
 import 'package:motto/features/chain/application/chain_store.dart';
 import 'package:motto/features/chain/application/reminder_scheduler.dart';
 import 'package:motto/features/chain/domain/chain.dart';
+import 'package:motto/features/game/application/turns_cubit.dart';
+import 'package:motto/features/game/application/turns_repository.dart';
 import 'package:motto/features/tasks/application/task_cubit.dart';
 import 'package:motto/features/tasks/presentation/daily_tasks_page.dart';
 import 'package:motto/features/tasks/presentation/period_report_page.dart';
@@ -24,6 +26,8 @@ class _MockChains extends Mock implements ChainRepository {}
 class _MockScheduler extends Mock implements ReminderScheduler {}
 
 class _MockEvents extends Mock implements api.EventResourceApi {}
+
+class _MockTurns extends Mock implements api.PlayResourceApi {}
 
 api.DailyTask task({bool done = false}) => api.DailyTask(
   id: 1,
@@ -193,6 +197,21 @@ void main() {
           Analytics(EventQueue(preferences), events),
         ),
       );
+
+      // The turn card reads this: no turn, no card.
+      final turns = _MockTurns();
+      when(() => turns.gameTurns(today: any(named: 'today'))).thenAnswer(
+        (_) async => api.PlayCredits(
+          remaining: 0,
+          earned: 0,
+          spent: 0,
+          dayMarked: false,
+          tasksDone: false,
+        ),
+      );
+      getIt.registerFactory<TurnsCubit>(
+        () => TurnsCubit(TurnsRepository(turns)),
+      );
     });
 
     tearDown(getIt.reset);
@@ -204,6 +223,7 @@ void main() {
       providers: [
         BlocProvider(create: (_) => getIt<TaskCubit>()..unawaitedLoad()),
         BlocProvider(create: (_) => getIt<ChainCubit>()..unawaitedLoad()),
+        BlocProvider(create: (_) => getIt<TurnsCubit>()..unawaitedLoad()),
       ],
       child: const MaterialApp(home: DailyTasksPage()),
     );

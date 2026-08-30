@@ -15,9 +15,13 @@ import 'package:motto/features/game/presentation/open_game.dart';
 class GameRow extends StatelessWidget {
   const GameRow._();
 
-  /// Null until today is marked.
-  static Widget? forChain(ChainState chain, DateTime now) =>
-      chain.markedToday(now) ? const GameRow._() : null;
+  /// Null until today is marked, and null again once the turns are gone.
+  ///
+  /// A card that answers a tap with "you have none" is worse than a card that
+  /// was not there: the reward is supposed to be the thing waiting for you,
+  /// not a door that opens onto a refusal.
+  static Widget? forDay(ChainState chain, DateTime now, {required bool any}) =>
+      chain.markedToday(now) && any ? const GameRow._() : null;
 
   @override
   Widget build(BuildContext context) {

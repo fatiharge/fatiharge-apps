@@ -7,6 +7,7 @@ import 'package:motto/config/injectable.dart';
 import 'package:motto/config/reported.dart';
 import 'package:motto/features/chain/application/chain_cubit.dart';
 import 'package:motto/features/daily/application/daily_cubit.dart';
+import 'package:motto/features/game/application/turns_cubit.dart';
 import 'package:motto/features/profile/application/profile_cubit.dart';
 import 'package:motto/features/shell/presentation/widgets/floating_nav_bar.dart';
 import 'package:motto/features/tasks/application/task_cubit.dart';
@@ -38,6 +39,7 @@ class ShellPage extends StatelessWidget {
       BlocProvider(create: (_) => getIt<ProfileCubit>()..unawaitedLoad()),
       BlocProvider(create: (_) => getIt<ChainCubit>()..unawaitedLoad()),
       BlocProvider(create: (_) => getIt<TaskCubit>()..unawaitedLoad()),
+      BlocProvider(create: (_) => getIt<TurnsCubit>()..unawaitedLoad()),
     ],
     child: const _ShellView(),
   );
@@ -107,6 +109,7 @@ class _ShellViewState extends State<_ShellView> with ReloadsOnReturn {
     context.read<ProfileCubit>().unawaitedLoad();
     context.read<ChainCubit>().unawaitedLoad();
     context.read<TaskCubit>().unawaitedLoad();
+    context.read<TurnsCubit>().unawaitedLoad();
   }
 
   @override

@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:motto/features/game/application/turns_cubit.dart';
 import 'package:motto/features/game/presentation/open_game.dart';
 import 'package:motto/features/profile/application/profile_cubit.dart';
 import 'package:motto/route/app_router.gr.dart';
@@ -21,7 +22,6 @@ class _ProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
-    final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Profil')),
@@ -56,36 +56,16 @@ class _ProfileView extends StatelessWidget {
             return ListView(
               padding: const EdgeInsets.fromLTRB(24, 16, 24, 110),
               children: [
-                if (current == null)
+                // The archetype is the first thing Bugün says, in the card
+                // and in the row under it. Saying it twice made this screen
+                // look like a copy of that one rather than a place of its own.
+                if (current == null) ...[
                   Text(
                     'Henüz bir envanter doldurmadın.',
                     style: text.bodyLarge,
-                  )
-                else ...[
-                  Text(
-                    'ŞU ANKİ ARKETİPİN',
-                    style: text.labelSmall?.copyWith(
-                      color: scheme.onSurfaceVariant,
-                      letterSpacing: 1.5,
-                    ),
                   ),
-                  const SizedBox(height: 8),
-                  Text(current.archetype.name, style: text.headlineSmall),
-                  const SizedBox(height: 12),
-                  Text(current.archetype.summary, style: text.bodyLarge),
                   const SizedBox(height: 24),
-                  FilledButton(
-                    onPressed: () => context.router.push(
-                      ResultRoute(
-                        archetype: current.archetype,
-                        resultId: current.id,
-                      ),
-                    ),
-                    child: const Text('Sonucunu gör'),
-                  ),
                 ],
-                const SizedBox(height: 32),
-                const Divider(),
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   title: const Text('Geçmiş sonuçların'),
@@ -93,17 +73,19 @@ class _ProfileView extends StatelessWidget {
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => context.router.push(const ArchiveRoute()),
                 ),
-                // Always here, unlike the mascot's offer: somebody who turned
-                // the mascot off had no way in at all.
-                const ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text('Oyun'),
-                  subtitle: Text(
-                    'Haftanın ilk 10 skoru bir derin rapor kazanır.',
+                // Here whenever there is a turn to spend, which is the only
+                // state in which it leads anywhere. Somebody who switched the
+                // mascot off has no other way in.
+                if (context.watch<TurnsCubit>().state.any)
+                  const ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text('Oyun'),
+                    subtitle: Text(
+                      'Haftanın ilk 10 skoru bir derin rapor kazanır.',
+                    ),
+                    trailing: Icon(Icons.chevron_right),
+                    onTap: openGame,
                   ),
-                  trailing: Icon(Icons.chevron_right),
-                  onTap: openGame,
-                ),
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   title: const Text('Ayarlar'),
