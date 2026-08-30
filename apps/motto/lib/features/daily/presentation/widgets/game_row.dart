@@ -1,0 +1,69 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:flutter/material.dart';
+import 'package:motto/features/chain/application/chain_state.dart';
+import 'package:motto/features/game/presentation/open_game.dart';
+
+/// The way into the game, offered once the day is marked.
+///
+/// Earned rather than always there: the game is not what somebody opens this
+/// app to do, and a permanent invitation next to the day's three things is a
+/// second thing asking to be done. Shown on a schedule rather than at random,
+/// because a card somebody sees once and cannot find again is a card they
+/// read as a bug.
+///
+/// The mascot still offers it. This is the door for the people who switched
+/// the mascot off, and for everybody who never sat still long enough to be
+/// asked — which, until it was fixed, was everybody.
+class GameRow extends StatelessWidget {
+  const GameRow._();
+
+  /// Null until today is marked.
+  static Widget? forChain(ChainState chain, DateTime now) =>
+      chain.markedToday(now) ? const GameRow._() : null;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    final scheme = Theme.of(context).colorScheme;
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(14),
+      onTap: () => openGame(context.router),
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(18, 16, 12, 16),
+        decoration: BoxDecoration(
+          border: Border.all(color: scheme.outlineVariant),
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'BUGÜNÜ İŞARETLEDİN',
+                    style: text.labelSmall?.copyWith(
+                      color: scheme.onSurfaceVariant,
+                      letterSpacing: 1.5,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text('Bir tur at', style: text.titleMedium),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Haftanın ilk 10 skoru bir derin rapor kazanıyor.',
+                    style: text.bodySmall?.copyWith(
+                      color: scheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right, color: scheme.onSurfaceVariant),
+          ],
+        ),
+      ),
+    );
+  }
+}

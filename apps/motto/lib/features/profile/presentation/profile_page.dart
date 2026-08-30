@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:motto/features/game/presentation/open_game.dart';
 import 'package:motto/features/profile/application/profile_cubit.dart';
 import 'package:motto/route/app_router.gr.dart';
 
@@ -75,6 +76,17 @@ class _ProfileView extends StatelessWidget {
                   subtitle: Text('${state.results.length} kayıt'),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => context.router.push(const ArchiveRoute()),
+                ),
+                // Always here, unlike the mascot's offer: somebody who turned
+                // the mascot off had no way in at all.
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Oyun'),
+                  subtitle: const Text(
+                    'Haftanın ilk 10 skoru bir derin rapor kazanır.',
+                  ),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => openGame(context.router),
                 ),
                 ListTile(
                   contentPadding: EdgeInsets.zero,

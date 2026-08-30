@@ -7,6 +7,7 @@ import 'package:motto/features/daily/application/daily_cubit.dart';
 import 'package:motto/features/daily/application/daily_state.dart';
 import 'package:motto/features/daily/presentation/widgets/archetype_row.dart';
 import 'package:motto/features/daily/presentation/widgets/day_block.dart';
+import 'package:motto/features/daily/presentation/widgets/game_row.dart';
 import 'package:motto/features/daily/presentation/widgets/period_done_banner.dart';
 import 'package:motto/features/profile/application/profile_cubit.dart';
 
@@ -50,6 +51,17 @@ class TodayPage extends StatelessWidget {
                             );
                     },
                   ),
+            ),
+            BlocBuilder<ChainCubit, ChainState>(
+              builder: (context, chain) {
+                final row = GameRow.forChain(chain, DateTime.now());
+                return row == null
+                    ? const SizedBox.shrink()
+                    : Padding(
+                        padding: const EdgeInsets.only(top: 28),
+                        child: row,
+                      );
+              },
             ),
           ],
         ),

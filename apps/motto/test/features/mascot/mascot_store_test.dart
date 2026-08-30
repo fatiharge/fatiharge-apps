@@ -27,6 +27,15 @@ void main() {
     expect(store.onScreen.value, isTrue);
   });
 
+  test('the game it offers is closed to it', () {
+    // It cannot offer what is already open. Left on, a tap meant for the
+    // falling piece landed on the cat and opened a second game over the first.
+    for (final route in ['GameRulesRoute', 'GameRoute', 'GameOverRoute']) {
+      store.onRoute(route);
+      expect(store.onScreen.value, isFalse, reason: route);
+    }
+  });
+
   test('a sheet over a closed route does not hand it back', () {
     store.onRoute('ResultRoute');
     // Sheets and dialogs do not change `current`, so nothing to release.

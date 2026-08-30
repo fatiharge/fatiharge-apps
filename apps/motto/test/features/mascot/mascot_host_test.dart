@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:motto/config/app_ready.dart';
 import 'package:motto/config/injectable.dart';
+import 'package:motto/features/mascot/application/mascot_controller.dart';
 import 'package:motto/features/mascot/application/mascot_store.dart';
 import 'package:motto/features/mascot/presentation/mascot.dart';
 import 'package:motto/features/mascot/presentation/mascot_host.dart';
@@ -21,6 +22,50 @@ Widget hosted() => MaterialApp(
   ),
 );
 
+/// Stands in for rive's controller, which cannot exist here.
+class _FakeMascot implements MascotController {
+  int pokes = 0;
+  bool offered = false;
+
+  @override
+  double annoyance = 0;
+
+  @override
+  void poke() => pokes++;
+
+  @override
+  void offerGame() => offered = true;
+
+  @override
+  void drag({required bool held, double x = 0, double y = 0}) {}
+
+  @override
+  void attention() {}
+
+  @override
+  void flee() {}
+
+  @override
+  void celebrate() {}
+}
+
+/// The host with a controller and a clock, which is the only way to reach the
+/// tap path: the renderer never loads here.
+Widget played({
+  required MascotController mascot,
+  required DateTime Function() clock,
+  VoidCallback? onGameOffered,
+}) => MaterialApp(
+  home: const Scaffold(body: Center(child: Text('a screen'))),
+  builder: (context, child) => MascotHost(
+    loadFile: (_) => Future<RiveFile>.error(StateError('no renderer')),
+    controller: mascot,
+    clock: clock,
+    onGameOffered: onGameOffered,
+    child: child ?? const SizedBox(),
+  ),
+);
+
 void main() {
   setUp(() async {
     SharedPreferences.setMockInitialValues({});
@@ -33,6 +78,101 @@ void main() {
   tearDown(() async {
     appReady.value = false;
     await getIt.reset();
+  });
+
+  group('the way into the game', () {
+    testWidgets('a tap on the offer opens it', (tester) async {
+      var now = DateTime(2026, 8, 30, 12);
+      var opened = false;
+      final mascot = _FakeMascot();
+
+      await tester.pumpWidget(
+        played(
+          mascot: mascot,
+          clock: () => now,
+          onGameOffered: () => opened = true,
+        ),
+      );
+      await tester.pump();
+      // The renderer is not here; the fake controller stands in for it.
+      tester.takeException();
+
+      // Bored long enough for the offer to go up.
+      now = now.add(const Duration(seconds: 20));
+      await tester.pump(const Duration(seconds: 5));
+      expect(mascot.offered, isTrue);
+
+      await tester.tap(find.byType(Mascot), warnIfMissed: false);
+      await tester.pump();
+
+      // The tap is a whole gesture: the drag recognizer loses the arena and
+      // cancels first. Counting that cancel as somebody holding the mascot
+      // cleared the offer before the tap arrived, and the game could not be
+      // opened at all.
+      expect(opened, isTrue);
+      expect(mascot.pokes, 0);
+    });
+
+    testWidgets('nothing is offered while it is off the screen', (
+      tester,
+    ) async {
+      var now = DateTime(2026, 8, 30, 12);
+      var opened = false;
+      final mascot = _FakeMascot();
+
+      await tester.pumpWidget(
+        played(
+          mascot: mascot,
+          clock: () => now,
+          onGameOffered: () => opened = true,
+        ),
+      );
+      await tester.pump();
+      tester.takeException();
+
+      await getIt<MascotStore>().setVisible(value: false);
+      await tester.pump();
+
+      now = now.add(const Duration(seconds: 20));
+      await tester.pump(const Duration(seconds: 5));
+
+      // Being covered is not being ignored. An offer armed behind something
+      // else turns the first tap after it comes back into a game nobody asked
+      // for — and on the game's own screen, into a second game.
+      expect(mascot.offered, isFalse);
+
+      await getIt<MascotStore>().setVisible(value: true);
+      await tester.pump();
+      // It mounted again, so it tried to load the file it cannot load again.
+      tester.takeException();
+
+      await tester.tap(find.byType(Mascot), warnIfMissed: false);
+      await tester.pump();
+
+      expect(opened, isFalse);
+    });
+
+    testWidgets('a tap before the offer is only a poke', (tester) async {
+      final now = DateTime(2026, 8, 30, 12);
+      var opened = false;
+      final mascot = _FakeMascot();
+
+      await tester.pumpWidget(
+        played(
+          mascot: mascot,
+          clock: () => now,
+          onGameOffered: () => opened = true,
+        ),
+      );
+      await tester.pump();
+      tester.takeException();
+
+      await tester.tap(find.byType(Mascot), warnIfMissed: false);
+      await tester.pump();
+
+      expect(opened, isFalse);
+      expect(mascot.pokes, 1);
+    });
   });
 
   testWidgets('switching it off takes it off the screen', (tester) async {

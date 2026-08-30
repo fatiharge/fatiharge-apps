@@ -41,6 +41,14 @@ void main() {
     expect(attention.offering, isFalse);
   });
 
+  test('a tap opens the game whether or not a tick has run', () {
+    wait(MascotRules.idleBeforeOffer + const Duration(seconds: 1));
+
+    // No nudge() first. The rule is ten seconds of being left alone, and a
+    // timer having run in between is not something anybody did.
+    expect(attention.tapAccepts(), isTrue);
+  });
+
   test('a tap before the offer is only a poke', () {
     expect(attention.tapAccepts(), isFalse);
   });
