@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motto/features/days/application/days_cubit.dart';
 import 'package:motto/features/days/presentation/widgets/day_sheet.dart';
 import 'package:motto/features/days/presentation/widgets/period_grid.dart';
+import 'package:motto/features/support/presentation/widgets/could_not_load.dart';
 import 'package:motto/features/support/presentation/widgets/settings_button.dart';
 
 /// Every day that was marked, and the words each one carried.
@@ -31,7 +32,10 @@ class DaysPage extends StatelessWidget {
             DaysStatus.loading => const Center(
               child: CircularProgressIndicator(),
             ),
-            DaysStatus.failed => _Failed(),
+            DaysStatus.failed => CouldNotLoad(
+              said: 'Günlerin yüklenemedi.',
+              retry: context.read<DaysCubit>().load,
+            ),
             DaysStatus.ready when state.empty => const _Nothing(),
             DaysStatus.ready => _Runs(state: state),
           },
@@ -98,25 +102,6 @@ class _Nothing extends StatelessWidget {
           textAlign: TextAlign.center,
           style: text.bodyLarge?.copyWith(color: scheme.onSurfaceVariant),
         ),
-      ),
-    );
-  }
-}
-
-class _Failed extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text('Günlerin yüklenemedi.'),
-          const SizedBox(height: 12),
-          FilledButton(
-            onPressed: () => context.read<DaysCubit>().load(),
-            child: const Text('Tekrar dene'),
-          ),
-        ],
       ),
     );
   }

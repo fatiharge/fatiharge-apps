@@ -6,6 +6,7 @@ import 'package:motto/features/daily/application/daily_state.dart';
 import 'package:motto/features/daily/presentation/widgets/motto_block.dart';
 import 'package:motto/features/daily/presentation/widgets/tomorrow_line.dart';
 import 'package:motto/features/daily/presentation/widgets/yesterday_line.dart';
+import 'package:motto/features/support/presentation/widgets/could_not_load.dart';
 import 'package:motto/route/app_router.gr.dart';
 
 /// The motto and what today says about it — or why neither is there yet.
@@ -59,25 +60,12 @@ class _Unavailable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 32),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            status == DailyStatus.noContent
-                ? 'Günlük içerik bu cihaza hiç inmedi. Bağlantını kontrol '
-                      'edip tekrar dene.'
-                : 'Bugünün metni açılamadı. Tekrar dene.',
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-          const SizedBox(height: 16),
-          OutlinedButton(
-            onPressed: context.read<DailyCubit>().unawaitedLoad,
-            child: const Text('Tekrar dene'),
-          ),
-        ],
-      ),
+    return CouldNotLoad.inline(
+      said: status == DailyStatus.noContent
+          ? 'Günlük içerik bu cihaza hiç inmedi. Bağlantını kontrol edip '
+                'tekrar dene.'
+          : 'Bugünün metni açılamadı. Tekrar dene.',
+      retry: context.read<DailyCubit>().unawaitedLoad,
     );
   }
 }
