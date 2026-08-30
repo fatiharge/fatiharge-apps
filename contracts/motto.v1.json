@@ -132,6 +132,18 @@
           }
         }
       },
+      "CodeEffects" : {
+        "type" : "object",
+        "required" : [ "code", "definition" ],
+        "properties" : {
+          "code" : {
+            "type" : "string"
+          },
+          "definition" : {
+            "type" : "string"
+          }
+        }
+      },
       "Connector" : {
         "type" : "object",
         "required" : [ "id", "text" ],
@@ -333,6 +345,21 @@
           },
           "text" : {
             "type" : "string"
+          }
+        }
+      },
+      "EffectCatalogue" : {
+        "type" : "object",
+        "required" : [ "version", "codes" ],
+        "properties" : {
+          "version" : {
+            "type" : "string"
+          },
+          "codes" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/CodeEffects"
+            }
           }
         }
       },
@@ -1080,6 +1107,44 @@
           }
         },
         "tags" : [ "Content Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
+    "/v1/effects" : {
+      "get" : {
+        "summary" : "What each refusal leads to",
+        "operationId" : "errorEffects",
+        "parameters" : [ {
+          "name" : "If-None-Match",
+          "in" : "header",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/EffectCatalogue"
+                }
+              }
+            }
+          },
+          "304" : {
+            "description" : "The version you hold is current"
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "tags" : [ "Effect Resource" ],
         "security" : [ {
           "SecurityScheme" : [ ]
         } ]

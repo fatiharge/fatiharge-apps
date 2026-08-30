@@ -10,6 +10,7 @@ doc/ChainHistory.md
 doc/ChainPeriod.md
 doc/ChainResourceApi.md
 doc/ChainState.md
+doc/CodeEffects.md
 doc/Connector.md
 doc/ContentBundle.md
 doc/ContentResourceApi.md
@@ -20,6 +21,8 @@ doc/DeepReport.md
 doc/DeletionCopy.md
 doc/DeletionResponse.md
 doc/DimensionReading.md
+doc/EffectCatalogue.md
+doc/EffectResourceApi.md
 doc/EntitlementResourceApi.md
 doc/EntitlementResponse.md
 doc/EventBatch.md
@@ -61,6 +64,7 @@ git_push.sh
 lib/api.dart
 lib/api/chain_resource_api.dart
 lib/api/content_resource_api.dart
+lib/api/effect_resource_api.dart
 lib/api/entitlement_resource_api.dart
 lib/api/event_resource_api.dart
 lib/api/feedback_resource_api.dart
@@ -86,6 +90,7 @@ lib/model/archetype_response.dart
 lib/model/chain_history.dart
 lib/model/chain_period.dart
 lib/model/chain_state.dart
+lib/model/code_effects.dart
 lib/model/connector.dart
 lib/model/content_bundle.dart
 lib/model/daily_skeleton.dart
@@ -95,6 +100,7 @@ lib/model/deep_report.dart
 lib/model/deletion_copy.dart
 lib/model/deletion_response.dart
 lib/model/dimension_reading.dart
+lib/model/effect_catalogue.dart
 lib/model/entitlement_response.dart
 lib/model/event_batch.dart
 lib/model/event_batch_response.dart
@@ -129,6 +135,7 @@ test/chain_history_test.dart
 test/chain_period_test.dart
 test/chain_resource_api_test.dart
 test/chain_state_test.dart
+test/code_effects_test.dart
 test/connector_test.dart
 test/content_bundle_test.dart
 test/content_resource_api_test.dart
@@ -139,6 +146,8 @@ test/deep_report_test.dart
 test/deletion_copy_test.dart
 test/deletion_response_test.dart
 test/dimension_reading_test.dart
+test/effect_catalogue_test.dart
+test/effect_resource_api_test.dart
 test/entitlement_resource_api_test.dart
 test/entitlement_response_test.dart
 test/event_batch_response_test.dart

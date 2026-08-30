@@ -1,9 +1,9 @@
 package com.dafalabs.api.motto.admin;
 
+import com.dafalabs.api.core.error.CustomRuntimeException;
 import com.dafalabs.api.motto.admin.dto.ReportPieceWrite;
 import com.dafalabs.api.motto.admin.dto.TaskWrite;
 import com.dafalabs.api.motto.admin.dto.Unwritten;
-import com.dafalabs.api.core.error.CustomRuntimeException;
 import com.dafalabs.api.motto.admin.dto.Wiped;
 import com.dafalabs.api.motto.admin.dto.WriteSummary;
 import com.dafalabs.api.motto.content.ContentCatalog;
@@ -17,13 +17,15 @@ import com.dafalabs.api.motto.content.write.MottoWrite;
 import com.dafalabs.api.motto.content.write.SectionWrite;
 import com.dafalabs.api.motto.content.write.SkeletonWrite;
 import com.dafalabs.api.motto.content.write.SupportWrite;
+import com.dafalabs.api.motto.effects.Effects;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import java.util.List;
 
@@ -48,13 +50,32 @@ public class ContentAdminResource {
   private final ContentWriter writer;
   private final ContentCatalog catalog;
   private final DeviceReset reset;
+  private final Effects effects;
 
   ContentAdminResource(
-      ContentAdmin content, ContentWriter writer, ContentCatalog catalog, DeviceReset reset) {
+      ContentAdmin content,
+      ContentWriter writer,
+      ContentCatalog catalog,
+      DeviceReset reset,
+      Effects effects) {
     this.content = content;
     this.writer = writer;
     this.catalog = catalog;
     this.reset = reset;
+    this.effects = effects;
+  }
+
+  /**
+   * What a refusal leads to, written rather than deployed.
+   *
+   * <p>The definition is read before it is stored: one the app cannot use is
+   * invisible on a phone -- the code just reads as unknown -- and whoever wrote
+   * it would never find out.
+   */
+  @PUT
+  @Path("/effects/{code}")
+  public void writeEffects(@PathParam("code") String code, String definition) {
+    effects.write(code, "tr", definition);
   }
 
   /**
