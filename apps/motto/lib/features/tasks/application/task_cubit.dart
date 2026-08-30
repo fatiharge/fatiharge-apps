@@ -4,7 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meta/meta.dart';
 import 'package:motto/config/reported.dart';
-import 'package:motto/features/chain/domain/chain.dart';
+import 'package:motto/features/tasks/application/task_repository.dart';
 
 enum TaskStatus { loading, ready, failed }
 
@@ -45,7 +45,7 @@ class TaskState {
 class TaskCubit extends Cubit<TaskState> {
   TaskCubit(this._tasks) : super(const TaskState());
 
-  final api.TaskResourceApi _tasks;
+  final TaskRepository _tasks;
 
   @visibleForTesting
   DateTime Function() now = DateTime.now;
@@ -53,18 +53,28 @@ class TaskCubit extends Cubit<TaskState> {
   void unawaitedLoad() => unawaited(load());
 
   Future<void> load() async {
+    // The cache first so the three things are on the screen before the request
+    // comes back, and so they are still there when it never does.
+    if (_tasks.cached case final held?) {
+      emit(
+        TaskState(status: TaskStatus.ready, day: held.day, tasks: held.tasks),
+      );
+    }
+
     try {
-      final today = await _tasks.dailyTasks(today: isoDay(now()));
+      final today = await _tasks.load(now());
       emit(
         TaskState(
           status: TaskStatus.ready,
-          day: today?.day ?? 1,
-          tasks: today?.tasks ?? const [],
+          day: today.day,
+          tasks: today.tasks,
         ),
       );
     } on Object catch (failure, trace) {
       reported('tasks', failure, trace);
-      emit(state.copyWith(status: TaskStatus.failed));
+      // Only when there was nothing to show. A phone holding yesterday's three
+      // things is better off showing them than showing that it failed.
+      if (state.tasks.isEmpty) emit(state.copyWith(status: TaskStatus.failed));
     }
   }
 
@@ -99,14 +109,14 @@ class TaskCubit extends Cubit<TaskState> {
     );
 
     try {
-      await _tasks.completeTask(task.id, today: isoDay(now()));
+      await _tasks.complete(task, now());
       return true;
     } on Object catch (failure, trace) {
       reported('tasks', failure, trace);
-      // The box unticks itself and nothing says why. Somebody who ticked it,
-      // looked away and looked back reads that as the app losing their work.
-      await load();
-      return false;
+      // The tick is queued rather than rolled back — a thing somebody did on a
+      // plane is not a thing they did for nothing — so the box stays where
+      // they put it and the day still counts once the queue drains.
+      return true;
     }
   }
 }
