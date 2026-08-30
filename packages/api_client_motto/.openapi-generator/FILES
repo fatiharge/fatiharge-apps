@@ -6,6 +6,8 @@ analysis_options.yaml
 doc/AnswerSubmission.md
 doc/ArchetypeContent.md
 doc/ArchetypeResponse.md
+doc/ChainHistory.md
+doc/ChainPeriod.md
 doc/ChainResourceApi.md
 doc/ChainState.md
 doc/Connector.md
@@ -81,6 +83,8 @@ lib/auth/oauth.dart
 lib/model/answer_submission.dart
 lib/model/archetype_content.dart
 lib/model/archetype_response.dart
+lib/model/chain_history.dart
+lib/model/chain_period.dart
 lib/model/chain_state.dart
 lib/model/connector.dart
 lib/model/content_bundle.dart
@@ -121,6 +125,8 @@ pubspec.yaml
 test/answer_submission_test.dart
 test/archetype_content_test.dart
 test/archetype_response_test.dart
+test/chain_history_test.dart
+test/chain_period_test.dart
 test/chain_resource_api_test.dart
 test/chain_state_test.dart
 test/connector_test.dart

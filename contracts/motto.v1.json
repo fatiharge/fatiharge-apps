@@ -57,6 +57,37 @@
           }
         }
       },
+      "ChainHistory" : {
+        "type" : "object",
+        "required" : [ "periods" ],
+        "properties" : {
+          "periods" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ChainPeriod"
+            }
+          }
+        }
+      },
+      "ChainPeriod" : {
+        "type" : "object",
+        "required" : [ "period", "current", "days" ],
+        "properties" : {
+          "period" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "current" : {
+            "type" : "boolean"
+          },
+          "days" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/MarkedDay"
+            }
+          }
+        }
+      },
       "ChainState" : {
         "type" : "object",
         "required" : [ "started", "markedDays", "streak", "markedToday", "broken", "canFreeze", "period", "periodDone" ],
@@ -898,6 +929,34 @@
           },
           "400" : {
             "description" : "Bad Request"
+          }
+        },
+        "tags" : [ "Chain Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
+    "/v1/chain/history" : {
+      "get" : {
+        "summary" : "Every run and its days",
+        "operationId" : "chainHistory",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ChainHistory"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
           }
         },
         "tags" : [ "Chain Resource" ],

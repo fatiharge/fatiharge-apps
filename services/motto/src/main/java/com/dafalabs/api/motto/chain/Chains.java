@@ -2,6 +2,8 @@ package com.dafalabs.api.motto.chain;
 
 import com.dafalabs.api.core.error.CustomRuntimeException;
 import com.dafalabs.api.motto.chain.dto.ChainState;
+import com.dafalabs.api.motto.chain.dto.ChainHistory;
+import com.dafalabs.api.motto.chain.dto.ChainPeriod;
 import com.dafalabs.api.motto.chain.dto.MarkedDay;
 import com.dafalabs.api.motto.game.CreditReason;
 import com.dafalabs.api.motto.game.Plays;
@@ -10,8 +12,12 @@ import jakarta.transaction.Transactional;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -157,6 +163,34 @@ public class Chains {
   public void deleteForDevice(UUID deviceId) {
     days.delete("deviceId", deviceId);
     chains.delete("deviceId", deviceId);
+  }
+
+  /**
+   * Every run, oldest first, with its days in date order.
+   *
+   * <p>Read from the days rather than from the chain row: the chain only
+   * remembers the run it is on, and a finished run's days are the only record
+   * that it happened.
+   */
+  @Transactional
+  public ChainHistory history(UUID deviceId) {
+    Chain chain = chains.findById(deviceId);
+    int now = chain == null ? 0 : chain.period();
+
+    Map<Short, List<MarkedDay>> byPeriod = new TreeMap<>();
+    for (ChainDay day : days.forDevice(deviceId)) {
+      byPeriod
+          .computeIfAbsent(day.period(), key -> new ArrayList<>())
+          .add(new MarkedDay(day.day(), day.madeUp()));
+    }
+
+    List<ChainPeriod> periods = new ArrayList<>();
+    for (Map.Entry<Short, List<MarkedDay>> run : byPeriod.entrySet()) {
+      List<MarkedDay> ordered =
+          run.getValue().stream().sorted(Comparator.comparing(MarkedDay::day)).toList();
+      periods.add(new ChainPeriod(run.getKey(), run.getKey() == now, ordered));
+    }
+    return new ChainHistory(periods);
   }
 
   private Set<LocalDate> markedDays(UUID deviceId) {

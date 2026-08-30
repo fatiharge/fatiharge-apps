@@ -1,6 +1,7 @@
 package com.dafalabs.api.motto.chain;
 
 import com.dafalabs.api.core.auth.AuthenticatedDevice;
+import com.dafalabs.api.motto.chain.dto.ChainHistory;
 import com.dafalabs.api.motto.chain.dto.ChainState;
 import com.dafalabs.api.motto.chain.dto.MarkDayRequest;
 import com.dafalabs.api.motto.chain.dto.NextPeriodRequest;
@@ -39,6 +40,13 @@ public class ChainResource {
   @Operation(operationId = "currentChain", summary = "The chain as it stands")
   public ChainState current(@QueryParam("today") String today) {
     return chains.state(current.id(), LocalDates.parse(today));
+  }
+
+  @GET
+  @Path("/history")
+  @Operation(operationId = "chainHistory", summary = "Every run and its days")
+  public ChainHistory history() {
+    return chains.history(current.id());
   }
 
   @POST
