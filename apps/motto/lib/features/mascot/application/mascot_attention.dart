@@ -54,10 +54,15 @@ class MascotAttention {
     return MascotNudge.none;
   }
 
-  /// Whether this tap accepts the offer. A tap on top of an offer is not a
-  /// poke, and a poke is not an acceptance.
+  /// Whether this tap opens the game.
+  ///
+  /// Read off the clock rather than off [offering], which the tick has to set
+  /// first. Ten seconds of being left alone is the whole rule; whether a timer
+  /// happened to run in between is not something anybody did, and hanging the
+  /// answer on it made the game late by up to a tick — or, when something else
+  /// cleared the flag, unreachable.
   bool tapAccepts() {
-    final accepted = _offering;
+    final accepted = alone > MascotRules.idleBeforeOffer;
     touched();
     return accepted;
   }

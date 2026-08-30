@@ -59,19 +59,19 @@ class MascotRules {
   }
 
   /// Untouched for this long and it does something to be noticed.
-  static const idleBeforeAttention = Duration(seconds: 2);
+  static const idleBeforeAttention = Duration(seconds: 3);
 
-  /// And this long before it offers the game.
+  /// Untouched for this long and a tap opens the game.
   ///
-  /// Seven seconds, down from ten and before that seventy-five. Seventy-five
-  /// is longer than anybody sits still on a screen they have already read, so
-  /// the offer arrived after they had gone. The two are still far enough
-  /// apart to read as one character getting bored rather than twitching.
-  static const idleBeforeOffer = Duration(seconds: 7);
+  /// Ten seconds, not the seventy-five it used to be: seventy-five is longer
+  /// than anybody sits still on a screen they have already read, so the game
+  /// was unreachable rather than hidden. It is measured against the clock at
+  /// the moment of the tap, so nothing has to have happened in between.
+  static const idleBeforeOffer = Duration(seconds: 10);
 
-  /// How often the idle rules are asked. It sets how late the offer can be:
-  /// the wait is [idleBeforeOffer] plus up to one tick, so a five-second tick
-  /// on a ten-second rule meant fifteen seconds of sitting still.
+  /// How often the idle animations are asked for. It no longer decides
+  /// anything: the tap reads the clock itself, so a slow tick can make the
+  /// question mark late but never the game.
   static const idleTick = Duration(seconds: 2);
 
   static double decayed(double annoyance, Duration since) {
