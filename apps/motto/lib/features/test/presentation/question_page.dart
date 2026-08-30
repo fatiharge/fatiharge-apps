@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motto/config/injectable.dart';
+import 'package:motto/features/support/presentation/widgets/could_not_load.dart';
 import 'package:motto/features/test/application/test_cubit.dart';
 import 'package:motto/features/test/application/test_effect.dart';
 import 'package:motto/features/test/application/test_state.dart';
@@ -140,21 +141,6 @@ class _Failed extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Sorular yüklenemedi.',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 16),
-            FilledButton(onPressed: onRetry, child: const Text('Tekrar dene')),
-          ],
-        ),
-      ),
-    );
+    return CouldNotLoad(said: 'Sorular yüklenemedi.', retry: onRetry);
   }
 }

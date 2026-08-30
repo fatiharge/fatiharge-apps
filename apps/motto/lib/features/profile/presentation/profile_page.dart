@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motto/features/game/application/turns_cubit.dart';
 import 'package:motto/features/game/presentation/open_game.dart';
 import 'package:motto/features/profile/application/profile_cubit.dart';
+import 'package:motto/features/support/presentation/widgets/could_not_load.dart';
 import 'package:motto/features/support/presentation/widgets/settings_button.dart';
 import 'package:motto/route/app_router.gr.dart';
 
@@ -40,18 +41,9 @@ class _ProfileView extends StatelessWidget {
               // that died while the phone was in a pocket left this screen a
               // dead end: nothing to press, and nothing that would ask again
               // short of killing the app.
-              return Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text('Profil yüklenemedi.'),
-                    const SizedBox(height: 12),
-                    FilledButton(
-                      onPressed: () => context.read<ProfileCubit>().load(),
-                      child: const Text('Tekrar dene'),
-                    ),
-                  ],
-                ),
+              return CouldNotLoad(
+                said: 'Profil yüklenemedi.',
+                retry: context.read<ProfileCubit>().load,
               );
             }
 

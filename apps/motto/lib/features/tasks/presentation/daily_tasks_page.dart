@@ -8,6 +8,7 @@ import 'package:motto/features/chain/application/chain_state.dart';
 import 'package:motto/features/chain/presentation/widgets/chain_strip.dart';
 import 'package:motto/features/game/application/turns_cubit.dart';
 import 'package:motto/features/game/presentation/widgets/game_row.dart';
+import 'package:motto/features/support/presentation/widgets/could_not_load.dart';
 import 'package:motto/features/support/presentation/widgets/settings_button.dart';
 import 'package:motto/features/tasks/application/task_cubit.dart';
 import 'package:motto/features/tasks/presentation/widgets/day_closing.dart';
@@ -118,23 +119,11 @@ class _Middle extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: 48),
         child: Center(child: CircularProgressIndicator()),
       ),
-      TaskStatus.failed => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 32),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Bugünün görevleri alınamadı. Bağlantını kontrol edip tekrar '
-              'dene.',
-              style: text.bodyLarge,
-            ),
-            const SizedBox(height: 16),
-            OutlinedButton(
-              onPressed: context.read<TaskCubit>().unawaitedLoad,
-              child: const Text('Tekrar dene'),
-            ),
-          ],
-        ),
+      TaskStatus.failed => CouldNotLoad.inline(
+        said:
+            'Bugünün görevleri alınamadı. Bağlantını kontrol edip tekrar '
+            'dene.',
+        retry: context.read<TaskCubit>().unawaitedLoad,
       ),
       _ when state.tasks.isEmpty => Padding(
         padding: const EdgeInsets.symmetric(vertical: 32),
