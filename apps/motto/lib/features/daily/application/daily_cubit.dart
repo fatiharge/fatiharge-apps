@@ -89,6 +89,7 @@ class DailyCubit extends Cubit<DailyState> {
       pack: pack,
       archetypeId: _archetype.id,
       daysMarked: chain.markedDays.length,
+      mottoId: chain.mottoId,
     );
 
     if (content == null) {
@@ -112,6 +113,7 @@ class DailyCubit extends Cubit<DailyState> {
       pack: pack,
       archetypeId: _archetype.id,
       daysMarked: DailyAssembler.tomorrowFrom(chain.markedDays.length),
+      mottoId: chain.mottoId,
     );
 
     emit(

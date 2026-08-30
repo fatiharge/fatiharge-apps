@@ -27,13 +27,14 @@ abstract final class DailyAssembler {
     required ContentPack pack,
     required String? archetypeId,
     required int daysMarked,
+    String? mottoId,
   }) {
     if (archetypeId == null) return null;
 
     final fragments = pack.fragmentsFor(archetypeId);
     if (fragments.isEmpty || pack.connectors.isEmpty) return null;
 
-    final motto = _mottoFor(pack, archetypeId);
+    final motto = _mottoFor(pack, archetypeId, mottoId);
     if (motto == null) return null;
 
     final day = dayIndex(daysMarked);
@@ -57,15 +58,27 @@ abstract final class DailyAssembler {
     );
   }
 
-  /// The archetype's first motto.
+  /// The one this run is under, and the archetype's first when it is the
+  /// first run.
   ///
-  /// First, not chosen: the pool of four exists so that a second period can
-  /// start on a different one, and nothing chooses yet. Until it does, three
-  /// of every four written mottos are unreachable.
-  static PackMotto? _mottoFor(ContentPack pack, String archetypeId) {
+  /// The screen at the end of a period has offered the other three for a while
+  /// and the server has been recording the answer. This did not read it, so
+  /// the app let somebody choose a motto, kept the choice, and then went on
+  /// showing them a different one — and three of every four written mottos
+  /// stayed unreachable.
+  static PackMotto? _mottoFor(
+    ContentPack pack,
+    String archetypeId,
+    String? chosen,
+  ) {
+    PackMotto? first;
     for (final motto in pack.mottos) {
-      if (motto.archetypeId == archetypeId) return motto;
+      if (motto.archetypeId != archetypeId) continue;
+      if (motto.id == chosen) return motto;
+      first ??= motto;
     }
-    return null;
+    // A choice the package no longer has falls back rather than emptying the
+    // screen: a motto that was retired is not a reason to have no day.
+    return first;
   }
 }
