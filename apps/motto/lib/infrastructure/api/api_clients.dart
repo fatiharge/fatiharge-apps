@@ -15,12 +15,12 @@ import 'package:motto/infrastructure/session/token_store.dart';
 /// one would keep sending it until the app restarted.
 @module
 abstract class ApiClients {
+  /// No bearer on this one. Registration is the call that exists to replace a
+  /// dead token, and it is the only thing this client is used for — carrying
+  /// the dead token to it is how a device with an expired token gets refused
+  /// the one request that would fix it.
   @lazySingleton
-  auth.ApiClient authClient(TokenStore tokens) => auth.ApiClient(
-    basePath: Env.authBaseUrl,
-    authentication: auth.HttpBearerAuth()
-      ..accessToken = (() => tokens.current ?? ''),
-  );
+  auth.ApiClient authClient() => auth.ApiClient(basePath: Env.authBaseUrl);
 
   @lazySingleton
   motto.ApiClient mottoClient(TokenStore tokens) => RenewingApiClient(
