@@ -71,6 +71,7 @@ import 'package:motto/features/result/presentation/widgets/share_card.dart';
 import 'package:motto/features/shell/presentation/shell_page.dart';
 import 'package:motto/features/shell/presentation/widgets/floating_nav_bar.dart';
 import 'package:motto/features/startup/presentation/startup_page.dart';
+import 'package:motto/features/support/application/archetype_restore.dart';
 import 'package:motto/features/support/application/data_deletion.dart';
 import 'package:motto/features/support/application/feedback_cubit.dart';
 import 'package:motto/features/support/application/last_archetype.dart';
