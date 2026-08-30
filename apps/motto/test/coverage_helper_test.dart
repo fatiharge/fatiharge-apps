@@ -98,6 +98,8 @@ import 'package:motto/features/support/presentation/widgets/rejection_sheet.dart
 import 'package:motto/features/support/presentation/widgets/settings_button.dart';
 import 'package:motto/features/support/presentation/widgets/trouble_sheet.dart';
 import 'package:motto/features/tasks/application/task_cubit.dart';
+import 'package:motto/features/tasks/application/task_repository.dart';
+import 'package:motto/features/tasks/application/task_store.dart';
 import 'package:motto/features/tasks/presentation/daily_tasks_page.dart';
 import 'package:motto/features/tasks/presentation/motto_detail_page.dart';
 import 'package:motto/features/tasks/presentation/period_report_page.dart';

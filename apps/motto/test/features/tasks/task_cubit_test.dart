@@ -2,6 +2,9 @@ import 'package:api_client_motto/api.dart' as api;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:motto/features/tasks/application/task_cubit.dart';
+import 'package:motto/features/tasks/application/task_repository.dart';
+import 'package:motto/features/tasks/application/task_store.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class _MockTasks extends Mock implements api.TaskResourceApi {}
 
@@ -19,7 +22,8 @@ void main() {
 
   setUpAll(() => registerFallbackValue('2026-03-03'));
 
-  setUp(() {
+  setUp(() async {
+    SharedPreferences.setMockInitialValues({});
     tasks = _MockTasks();
     when(() => tasks.dailyTasks(today: any(named: 'today'))).thenAnswer(
       (_) async => api.DailyTasks(day: 3, tasks: [task(1), task(2), task(3)]),
@@ -27,7 +31,9 @@ void main() {
     when(
       () => tasks.completeTask(any(), today: any(named: 'today')),
     ).thenAnswer((_) async => null);
-    cubit = TaskCubit(tasks)..now = () => DateTime(2026, 3, 3, 10);
+    cubit = TaskCubit(
+      TaskRepository(tasks, TaskStore(await SharedPreferences.getInstance())),
+    )..now = () => DateTime(2026, 3, 3, 10);
   });
 
   test('a day asks for three things', () async {
@@ -75,7 +81,7 @@ void main() {
     verifyNever(() => tasks.completeTask(any(), today: any(named: 'today')));
   });
 
-  test('a refused tick is taken back rather than left showing', () async {
+  test('a tick the server never heard stays where it was put', () async {
     await cubit.load();
     when(
       () => tasks.completeTask(any(), today: any(named: 'today')),
@@ -83,9 +89,45 @@ void main() {
 
     await cubit.complete(cubit.state.tasks.first);
 
-    // Reloaded from the server, which never heard about it.
-    expect(cubit.state.tasks.first.done, isFalse);
+    // It used to untick itself. Somebody who ticked it on a plane, looked away
+    // and looked back read that as the app losing their work — and the day
+    // they had actually done did not count.
+    expect(cubit.state.tasks.first.done, isTrue);
   });
+
+  test('and is sent the next time the server can be reached', () async {
+    await cubit.load();
+    when(
+      () => tasks.completeTask(any(), today: any(named: 'today')),
+    ).thenThrow(Exception('offline'));
+    await cubit.complete(cubit.state.tasks.first);
+
+    when(
+      () => tasks.completeTask(any(), today: any(named: 'today')),
+    ).thenAnswer((_) async => null);
+    await cubit.load();
+
+    // The chain has drained its queue this way since it moved to the server.
+    verify(() => tasks.completeTask(1, today: any(named: 'today'))).called(2);
+  });
+
+  test(
+    'a day already on the phone is drawn before the server answers',
+    () async {
+      await cubit.load();
+      when(
+        () => tasks.dailyTasks(today: any(named: 'today')),
+      ).thenThrow(Exception('offline'));
+
+      await cubit.load();
+
+      // Bugün works on a plane because the package is on the phone. Görevler is
+      // the tab somebody opens the app to use, and it was the one that went
+      // blank.
+      expect(cubit.state.status, TaskStatus.ready);
+      expect(cubit.state.tasks, hasLength(3));
+    },
+  );
 
   test('a day that cannot be fetched says so', () async {
     when(

@@ -12,6 +12,8 @@ import 'package:motto/features/chain/domain/chain.dart';
 import 'package:motto/features/game/application/turns_cubit.dart';
 import 'package:motto/features/game/application/turns_repository.dart';
 import 'package:motto/features/tasks/application/task_cubit.dart';
+import 'package:motto/features/tasks/application/task_repository.dart';
+import 'package:motto/features/tasks/application/task_store.dart';
 import 'package:motto/features/tasks/presentation/daily_tasks_page.dart';
 import 'package:motto/features/tasks/presentation/period_report_page.dart';
 import 'package:motto/features/tasks/presentation/task_detail_page.dart';
@@ -177,7 +179,11 @@ void main() {
       when(
         () => tasks.completeTask(any(), today: any(named: 'today')),
       ).thenAnswer((_) async => null);
-      getIt.registerFactory<TaskCubit>(() => TaskCubit(tasks));
+      SharedPreferences.setMockInitialValues({});
+      final store = TaskStore(await SharedPreferences.getInstance());
+      getIt.registerFactory<TaskCubit>(
+        () => TaskCubit(TaskRepository(tasks, store)),
+      );
 
       // The run sits above the three things now, so the screen needs one.
       SharedPreferences.setMockInitialValues({});

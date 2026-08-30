@@ -48,6 +48,8 @@ import 'package:motto/features/support/application/support_context.dart'
 import 'package:motto/features/support/application/support_copy_cubit.dart'
     as _i708;
 import 'package:motto/features/tasks/application/task_cubit.dart' as _i249;
+import 'package:motto/features/tasks/application/task_repository.dart' as _i414;
+import 'package:motto/features/tasks/application/task_store.dart' as _i257;
 import 'package:motto/features/test/application/test_cubit.dart' as _i89;
 import 'package:motto/features/test/application/test_draft.dart' as _i547;
 import 'package:motto/infrastructure/analytics/analytics.dart' as _i190;
@@ -120,6 +122,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i1019.LastArchetype>(
       () => _i1019.LastArchetype(gh<_i460.SharedPreferences>()),
+    );
+    gh.lazySingleton<_i257.TaskStore>(
+      () => _i257.TaskStore(gh<_i460.SharedPreferences>()),
     );
     gh.lazySingleton<_i547.TestDraft>(
       () => _i547.TestDraft(gh<_i460.SharedPreferences>()),
@@ -200,6 +205,15 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i66.EntitlementResourceApi>(),
       ),
     );
+    gh.lazySingleton<_i414.TaskRepository>(
+      () => _i414.TaskRepository(
+        gh<_i66.TaskResourceApi>(),
+        gh<_i257.TaskStore>(),
+      ),
+    );
+    gh.factory<_i249.TaskCubit>(
+      () => _i249.TaskCubit(gh<_i414.TaskRepository>()),
+    );
     gh.factory<_i708.SupportCopyCubit>(
       () => _i708.SupportCopyCubit(gh<_i66.SupportResourceApi>()),
     );
@@ -232,9 +246,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i190.Analytics>(),
         gh<_i1019.LastArchetype>(),
       ),
-    );
-    gh.factory<_i249.TaskCubit>(
-      () => _i249.TaskCubit(gh<_i66.TaskResourceApi>()),
     );
     gh.factory<_i41.ChainCubit>(
       () => _i41.ChainCubit(
