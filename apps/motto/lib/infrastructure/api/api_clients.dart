@@ -81,6 +81,10 @@ abstract class ApiClients {
       motto.ScoreResourceApi(client);
 
   @lazySingleton
+  motto.PlayResourceApi turns(motto.ApiClient client) =>
+      motto.PlayResourceApi(client);
+
+  @lazySingleton
   motto.SupportResourceApi support(motto.ApiClient client) =>
       motto.SupportResourceApi(client);
 }

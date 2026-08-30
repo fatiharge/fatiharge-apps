@@ -1,4 +1,3 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:motto/features/chain/application/chain_state.dart';
 import 'package:motto/features/game/presentation/open_game.dart';
@@ -28,7 +27,7 @@ class GameRow extends StatelessWidget {
 
     return InkWell(
       borderRadius: BorderRadius.circular(14),
-      onTap: () => openGame(context.router),
+      onTap: openGame,
       child: Container(
         padding: const EdgeInsets.fromLTRB(18, 16, 12, 16),
         decoration: BoxDecoration(

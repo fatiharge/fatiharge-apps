@@ -59,6 +59,7 @@ dependencies:
   # a state machine the file drives itself, rather than frames Dart has to push.
   rive: ^0.13.20
   meta: any
+  confetti: ^0.8.0
 
 dev_dependencies:
   flutter_test:
