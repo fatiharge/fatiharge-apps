@@ -1,5 +1,6 @@
 package com.dafalabs.api.motto.task;
 
+import com.dafalabs.api.motto.content.ContentLocale;
 import com.dafalabs.api.core.auth.AuthenticatedDevice;
 import com.dafalabs.api.motto.chain.Chains;
 import com.dafalabs.api.motto.chain.LocalDates;
@@ -8,6 +9,7 @@ import com.dafalabs.api.motto.task.dto.PeriodReport;
 import io.quarkus.security.Authenticated;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -17,6 +19,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.time.LocalDate;
 import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 
 /**
  * The day's three tasks, and what fourteen of them came to.
@@ -43,9 +46,12 @@ public class TaskResource {
 
   @GET
   @Operation(operationId = "dailyTasks", summary = "The three things today asks for")
-  public DailyTasks today(@QueryParam("today") String today) {
+  public DailyTasks today(
+      @QueryParam("today") String today,
+      @Parameter(hidden = true) @HeaderParam("Accept-Language") String acceptLanguage) {
     LocalDate day = LocalDates.parse(today);
-    return tasks.forToday(current.id(), chains.state(current.id(), day));
+    return tasks.forToday(
+        current.id(), chains.state(current.id(), day), ContentLocale.from(acceptLanguage));
   }
 
   @POST

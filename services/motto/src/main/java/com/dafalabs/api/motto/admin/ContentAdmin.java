@@ -4,6 +4,7 @@ import com.dafalabs.api.motto.admin.dto.ReportPieceWrite;
 import com.dafalabs.api.motto.admin.dto.TaskWrite;
 import com.dafalabs.api.motto.admin.dto.Unwritten;
 import com.dafalabs.api.motto.admin.dto.WriteSummary;
+import com.dafalabs.api.motto.content.ContentLocale;
 import com.dafalabs.api.motto.content.store.ContentStore;
 import com.dafalabs.api.motto.content.write.WordGate;
 import com.dafalabs.api.motto.report.ReportPiece;
@@ -39,15 +40,16 @@ public class ContentAdmin {
   }
 
   @Transactional
-  public WriteSummary writeTasks(List<TaskWrite> incoming) {
+  public WriteSummary writeTasks(String locale, List<TaskWrite> incoming) {
     for (TaskWrite task : incoming) {
       tasks
-          .inSlot(task.day(), task.archetypeId(), task.ordinal())
+          .inSlot(locale, task.day(), task.archetypeId(), task.ordinal())
           .ifPresentOrElse(
               existing -> existing.rewrite(task.title(), task.detail(), task.placeholder()),
               () ->
                   tasks.persist(
                       Task.of(
+                          locale,
                           task.day(),
                           task.archetypeId(),
                           task.ordinal(),
@@ -55,14 +57,15 @@ public class ContentAdmin {
                           task.detail(),
                           task.placeholder())));
     }
-    return new WriteSummary(incoming.size(), (int) tasks.unwritten());
+    return new WriteSummary(incoming.size(), (int) tasks.unwritten(locale));
   }
 
   @Transactional
-  public WriteSummary writeReportPieces(List<ReportPieceWrite> incoming) {
+  public WriteSummary writeReportPieces(String locale, List<ReportPieceWrite> incoming) {
     for (ReportPieceWrite piece : incoming) {
       pieces
           .inSlot(
+              locale,
               piece.kind(),
               piece.archetypeId(),
               piece.dimension(),
@@ -75,6 +78,7 @@ public class ContentAdmin {
               () ->
                   pieces.persist(
                       ReportPiece.of(
+                          locale,
                           piece.kind(),
                           piece.archetypeId(),
                           piece.dimension(),
@@ -85,7 +89,7 @@ public class ContentAdmin {
                           piece.text(),
                           piece.placeholder())));
     }
-    return new WriteSummary(incoming.size(), (int) pieces.unwritten());
+    return new WriteSummary(incoming.size(), (int) pieces.unwritten(locale));
   }
 
   /**
@@ -96,56 +100,62 @@ public class ContentAdmin {
    * prompt. This is how that half gets looked at.
    */
   @Transactional
-  public List<String> objections() {
+  public List<String> objections(String locale) {
     List<String> found = new ArrayList<>();
     store
-        .archetypes()
+        .archetypes(locale)
         .forEach(
             a ->
                 found.addAll(
                     WordGate.objections(
+                        locale,
                         "archetype " + a.id(), a.name(), a.summary(), a.motto())));
-    store.activeItems().forEach(i -> found.addAll(WordGate.objections("item " + i.id(), i.text())));
+    store.activeItems(locale).forEach(i -> found.addAll(WordGate.objections(locale, "item " + i.id(), i.text())));
     store
-        .mottos()
+        .mottos(locale)
         .forEach(
             m ->
                 found.addAll(
                     WordGate.objections(
+                        locale,
                         "motto " + m.id(), m.motto(), m.detail(), m.reminder())));
     store
-        .skeletons()
+        .skeletons(locale)
         .forEach(
             s ->
                 found.addAll(
-                    WordGate.objections("day " + s.day(), s.title(), s.body(), s.action())));
+                    WordGate.objections(locale, "day " + s.day(), s.title(), s.body(), s.action())));
     store
-        .fragments()
+        .fragments(locale)
         .forEach(
             f ->
                 found.addAll(
                     WordGate.objections(
+                        locale,
                         "fragment " + f.archetypeId() + "/" + f.ordinal(), f.text())));
     store
-        .connectors()
-        .forEach(c -> found.addAll(WordGate.objections("connector " + c.id(), c.text())));
+        .connectors(locale)
+        .forEach(c -> found.addAll(WordGate.objections(locale, "connector " + c.id(), c.text())));
     store
-        .support()
+        .support(locale)
         .forEach(
             s ->
                 found.addAll(
                     WordGate.objections(
+                        locale,
                         "support " + s.kind() + "/" + s.key(), s.heading(), s.body())));
-    for (Task task : tasks.listAll()) {
+    for (Task task : tasks.listAll(locale)) {
       found.addAll(
           WordGate.objections(
+              locale,
               "task %s/%d/%d".formatted(task.archetypeId(), task.day(), task.ordinal()),
               task.title(),
               task.detail()));
     }
-    for (ReportPiece piece : pieces.listAll()) {
+    for (ReportPiece piece : pieces.listAll(locale)) {
       found.addAll(
           WordGate.objections(
+              locale,
               "report %s/%s".formatted(piece.kind(), piece.archetypeId()), piece.text()));
     }
     return found;
@@ -153,12 +163,12 @@ public class ContentAdmin {
 
   /** What is still a stand-in — the writing job, as a list. */
   @Transactional
-  public Unwritten unwritten() {
+  public Unwritten unwritten(String locale) {
     List<String> slots = new ArrayList<>();
-    for (Task task : tasks.list("placeholder")) {
+    for (Task task : tasks.list("locale = ?1 and placeholder", locale)) {
       slots.add("task %d/%s/%d".formatted(task.day(), task.archetypeId(), task.ordinal()));
     }
-    for (ReportPiece piece : pieces.allUnwritten()) {
+    for (ReportPiece piece : pieces.allUnwritten(locale)) {
       slots.add(
           "report %s/%s/%s/%s/%s"
               .formatted(
@@ -168,6 +178,6 @@ public class ContentAdmin {
                   piece.band(),
                   piece.section()));
     }
-    return new Unwritten((int) tasks.unwritten(), (int) pieces.unwritten(), slots);
+    return new Unwritten((int) tasks.unwritten(locale), (int) pieces.unwritten(locale), slots);
   }
 }

@@ -1,6 +1,7 @@
 package com.dafalabs.api.motto.report;
 
 import com.dafalabs.api.core.error.CustomRuntimeException;
+import com.dafalabs.api.motto.content.ContentLocale;
 import com.dafalabs.api.motto.content.store.ContentStore;
 import com.dafalabs.api.motto.content.store.ReportSectionRow;
 import com.dafalabs.api.motto.entitlement.Entitlements;
@@ -64,7 +65,10 @@ public class Reports {
 
   private Map<Integer, Axes> sectionAxes() {
     Map<Integer, Axes> bySection = new HashMap<>();
-    for (ReportSectionRow row : content.reportSections()) {
+    // Structure rather than words: which axes a section reads is the same
+    // report in every language, so this one read stays at the fallback and
+    // a translator has one less table to keep in step.
+    for (ReportSectionRow row : content.reportSections(ContentLocale.fallback)) {
       bySection.put(
           row.section(),
           new Axes(
@@ -90,7 +94,7 @@ public class Reports {
    * attached, which is not what the deep report is.
    */
   @Transactional
-  public ResultReport readingFor(UUID deviceId, long resultId) {
+  public ResultReport readingFor(UUID deviceId, long resultId, String locale) {
     Result result = mine(deviceId, resultId);
     String archetype = result.archetypeId();
     Map<Dimension, Double> profile = result.profile();
@@ -104,16 +108,16 @@ public class Reports {
               dimension.name(),
               band,
               score,
-              pieces.reading(dimension.name(), band).map(ReportPiece::text).orElse("")));
+              pieces.reading(locale, dimension.name(), band).map(ReportPiece::text).orElse("")));
     }
 
     return new ResultReport(
         result.id(),
         archetype,
-        pieces.one("overview", archetype).map(ReportPiece::text).orElse(""),
+        pieces.one(locale, "overview", archetype).map(ReportPiece::text).orElse(""),
         readings,
-        pieces.one("strength", archetype).map(ReportPiece::text).orElse(""),
-        pieces.one("cost", archetype).map(ReportPiece::text).orElse(""));
+        pieces.one(locale, "strength", archetype).map(ReportPiece::text).orElse(""),
+        pieces.one(locale, "cost", archetype).map(ReportPiece::text).orElse(""));
   }
 
   private Result mine(UUID deviceId, long resultId) {
@@ -125,11 +129,11 @@ public class Reports {
   }
 
   @Transactional
-  public DeepReport forResult(UUID deviceId, long resultId) {
+  public DeepReport forResult(UUID deviceId, long resultId, String locale) {
     Result result = mine(deviceId, resultId);
 
     String archetype = result.archetypeId();
-    List<ReportSection> sections = assemble(result, archetype);
+    List<ReportSection> sections = assemble(result, archetype, locale);
     String preview = previewOf(sections);
 
     if (!entitlements.stateOf(deviceId).premium()) {
@@ -144,21 +148,21 @@ public class Reports {
         false,
         preview,
         sections,
-        pieces.one("portrait", archetype).map(ReportPiece::text).orElse(null),
-        pieces.one("comparison", archetype).map(ReportPiece::text).orElse(null),
-        pieces.limitation().map(ReportPiece::text).orElse(null));
+        pieces.one(locale, "portrait", archetype).map(ReportPiece::text).orElse(null),
+        pieces.one(locale, "comparison", archetype).map(ReportPiece::text).orElse(null),
+        pieces.limitation(locale).map(ReportPiece::text).orElse(null));
   }
 
-  private List<ReportSection> assemble(Result result, String archetype) {
+  private List<ReportSection> assemble(Result result, String archetype, String locale) {
     Map<Dimension, Double> profile = result.profile();
     Map<Integer, Axes> sectionAxes = sectionAxes();
     Map<Integer, String> fragments = new HashMap<>();
-    for (ReportPiece fragment : pieces.fragments(archetype)) {
+    for (ReportPiece fragment : pieces.fragments(locale, archetype)) {
       fragments.put(fragment.section(), fragment.text());
     }
 
     List<ReportSection> sections = new ArrayList<>();
-    for (ReportPiece skeleton : pieces.skeletons()) {
+    for (ReportPiece skeleton : pieces.skeletons(locale)) {
       int number = skeleton.section();
       Axes axes = sectionAxes.getOrDefault(number, new Axes(Dimension.OPENNESS, null));
       String band = bandOf(profile.getOrDefault(axes.first(), 0.5));
@@ -171,6 +175,7 @@ public class Reports {
               skeleton.text(),
               pieces
                   .dimension(
+                      locale,
                       axes.first().name(),
                       band,
                       axes.second() == null ? null : axes.second().name(),

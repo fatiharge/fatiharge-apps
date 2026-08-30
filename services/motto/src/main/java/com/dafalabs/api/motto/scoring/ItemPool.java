@@ -1,5 +1,6 @@
 package com.dafalabs.api.motto.scoring;
 
+import com.dafalabs.api.motto.content.ContentLocale;
 import com.dafalabs.api.motto.content.store.ContentStore;
 import com.dafalabs.api.motto.content.store.ItemRow;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -21,12 +22,22 @@ public class ItemPool {
     this.content = content;
   }
 
-  public List<Item> all() {
-    return List.copyOf(byId().values());
+  /** The questions as they will be read, in the reader's language. */
+  public List<Item> all(String locale) {
+    String asked = ContentLocale.named(locale);
+    Map<String, Item> mine = read(asked);
+    return List.copyOf((mine.isEmpty() ? read(ContentLocale.fallback) : mine).values());
   }
 
+  /**
+   * The item a score is computed against.
+   *
+   * <p>Always the fallback, deliberately. The dimension and the reverse flag
+   * are the instrument; reading them from whichever language the phone happens
+   * to be in would mean a translator could change who gets which archetype.
+   */
   public Item byId(String id) {
-    return byId().get(id);
+    return read(ContentLocale.fallback).get(id);
   }
 
   /** Which generation of the inventory produced a result taken now. */
@@ -38,9 +49,9 @@ public class ItemPool {
     return points;
   }
 
-  private Map<String, Item> byId() {
+  private Map<String, Item> read(String locale) {
     Map<String, Item> items = new LinkedHashMap<>();
-    for (ItemRow row : content.activeItems()) {
+    for (ItemRow row : content.activeItems(locale)) {
       items.put(
           row.id(),
           new Item(row.id(), Dimension.of(row.dimension()), row.reverse(), row.text()));

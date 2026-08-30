@@ -6,6 +6,7 @@ import com.dafalabs.api.motto.admin.dto.TaskWrite;
 import com.dafalabs.api.motto.admin.dto.Unwritten;
 import com.dafalabs.api.motto.admin.dto.Wiped;
 import com.dafalabs.api.motto.admin.dto.WriteSummary;
+import com.dafalabs.api.motto.content.ContentLocale;
 import com.dafalabs.api.motto.content.ContentCatalog;
 import com.dafalabs.api.motto.content.dto.ContentBundle;
 import com.dafalabs.api.motto.content.write.ArchetypeWrite;
@@ -74,8 +75,11 @@ public class ContentAdminResource {
    */
   @PUT
   @Path("/effects/{code}")
-  public void writeEffects(@PathParam("code") String code, String definition) {
-    effects.write(code, "tr", definition);
+  public void writeEffects(
+      @PathParam("code") String code,
+      @QueryParam("locale") String locale,
+      String definition) {
+    effects.write(code, ContentLocale.named(locale), definition);
   }
 
   /**
@@ -87,50 +91,56 @@ public class ContentAdminResource {
    */
   @PUT
   @Path("/archetypes")
-  public WriteSummary archetypes(List<ArchetypeWrite> archetypes) {
-    return written(writer.archetypes(archetypes));
+  public WriteSummary archetypes(
+      @QueryParam("locale") String locale, List<ArchetypeWrite> archetypes) {
+    return written(writer.archetypes(ContentLocale.named(locale), archetypes));
   }
 
   @PUT
   @Path("/items")
-  public WriteSummary items(ItemSetWrite set) {
-    return written(writer.items(set));
+  public WriteSummary items(@QueryParam("locale") String locale, ItemSetWrite set) {
+    return written(writer.items(ContentLocale.named(locale), set));
   }
 
   @PUT
   @Path("/mottos")
-  public WriteSummary mottos(List<MottoWrite> mottos) {
-    return written(writer.mottos(mottos));
+  public WriteSummary mottos(@QueryParam("locale") String locale, List<MottoWrite> mottos) {
+    return written(writer.mottos(ContentLocale.named(locale), mottos));
   }
 
   @PUT
   @Path("/skeletons")
-  public WriteSummary skeletons(List<SkeletonWrite> skeletons) {
-    return written(writer.skeletons(skeletons));
+  public WriteSummary skeletons(
+      @QueryParam("locale") String locale, List<SkeletonWrite> skeletons) {
+    return written(writer.skeletons(ContentLocale.named(locale), skeletons));
   }
 
   @PUT
   @Path("/fragments")
-  public WriteSummary fragments(List<FragmentWrite> fragments) {
-    return written(writer.fragments(fragments));
+  public WriteSummary fragments(
+      @QueryParam("locale") String locale, List<FragmentWrite> fragments) {
+    return written(writer.fragments(ContentLocale.named(locale), fragments));
   }
 
   @PUT
   @Path("/connectors")
-  public WriteSummary connectors(List<ConnectorWrite> connectors) {
-    return written(writer.connectors(connectors));
+  public WriteSummary connectors(
+      @QueryParam("locale") String locale, List<ConnectorWrite> connectors) {
+    return written(writer.connectors(ContentLocale.named(locale), connectors));
   }
 
   @PUT
   @Path("/report-sections")
-  public WriteSummary sections(List<SectionWrite> sections) {
-    return written(writer.sections(sections));
+  public WriteSummary sections(
+      @QueryParam("locale") String locale, List<SectionWrite> sections) {
+    return written(writer.sections(ContentLocale.named(locale), sections));
   }
 
   @PUT
   @Path("/support")
-  public WriteSummary support(List<SupportWrite> support) {
-    return written(writer.support(support));
+  public WriteSummary support(
+      @QueryParam("locale") String locale, List<SupportWrite> support) {
+    return written(writer.support(ContentLocale.named(locale), support));
   }
 
   /// These tables have no unwritten count: a row exists or it does not, and
@@ -141,20 +151,21 @@ public class ContentAdminResource {
 
   @PUT
   @Path("/tasks")
-  public WriteSummary tasks(List<TaskWrite> tasks) {
-    return content.writeTasks(tasks);
+  public WriteSummary tasks(@QueryParam("locale") String locale, List<TaskWrite> tasks) {
+    return content.writeTasks(ContentLocale.named(locale), tasks);
   }
 
   @PUT
   @Path("/report-pieces")
-  public WriteSummary reportPieces(List<ReportPieceWrite> pieces) {
-    return content.writeReportPieces(pieces);
+  public WriteSummary reportPieces(
+      @QueryParam("locale") String locale, List<ReportPieceWrite> pieces) {
+    return content.writeReportPieces(ContentLocale.named(locale), pieces);
   }
 
   @GET
   @Path("/unwritten")
-  public Unwritten unwritten() {
-    return content.unwritten();
+  public Unwritten unwritten(@QueryParam("locale") String locale) {
+    return content.unwritten(ContentLocale.named(locale));
   }
 
   /**
@@ -165,15 +176,15 @@ public class ContentAdminResource {
    */
   @GET
   @Path("/bundle")
-  public ContentBundle bundle() {
-    return catalog.bundle();
+  public ContentBundle bundle(@QueryParam("locale") String locale) {
+    return catalog.bundle(ContentLocale.named(locale));
   }
 
   /** Every sentence in the tables that guideline 1.4.1 would object to. */
   @GET
   @Path("/objections")
-  public List<String> objections() {
-    return content.objections();
+  public List<String> objections(@QueryParam("locale") String locale) {
+    return content.objections(ContentLocale.named(locale));
   }
 
   /**

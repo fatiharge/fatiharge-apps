@@ -15,6 +15,10 @@ public class ReportPiece {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  /// See {@link com.dafalabs.api.motto.task.Task#locale()}.
+  @Column(nullable = false)
+  private String locale;
+
   @Column(nullable = false)
   private String kind;
 
@@ -46,6 +50,7 @@ public class ReportPiece {
 
   /** Written by the content push, and by nothing else. */
   public static ReportPiece of(
+      String locale,
       String kind,
       String archetypeId,
       String dimension,
@@ -53,11 +58,12 @@ public class ReportPiece {
       Integer section,
       String text,
       boolean placeholder) {
-    return of(kind, archetypeId, dimension, band, null, null, section, text, placeholder);
+    return of(locale, kind, archetypeId, dimension, band, null, null, section, text, placeholder);
   }
 
   /** Written by the content push, and by nothing else. */
   public static ReportPiece of(
+      String locale,
       String kind,
       String archetypeId,
       String dimension,
@@ -68,6 +74,7 @@ public class ReportPiece {
       String text,
       boolean placeholder) {
     ReportPiece piece = new ReportPiece();
+    piece.locale = locale;
     piece.kind = kind;
     piece.archetypeId = archetypeId;
     piece.dimension = dimension;
@@ -82,6 +89,10 @@ public class ReportPiece {
   public void rewrite(String text, boolean placeholder) {
     this.text = text;
     this.placeholder = placeholder;
+  }
+
+  public String locale() {
+    return locale;
   }
 
   public String kind() {

@@ -9,8 +9,9 @@ import java.util.Optional;
 @ApplicationScoped
 public class ReportPieceRepository implements PanacheRepository<ReportPiece> {
 
-  public Optional<ReportPiece> one(String kind, String archetypeId) {
-    return find("kind = ?1 and archetypeId = ?2", kind, archetypeId).firstResultOptional();
+  public Optional<ReportPiece> one(String locale, String kind, String archetypeId) {
+    return find("locale = ?1 and kind = ?2 and archetypeId = ?3", locale, kind, archetypeId)
+        .firstResultOptional();
   }
 
   /**
@@ -19,11 +20,17 @@ public class ReportPieceRepository implements PanacheRepository<ReportPiece> {
    * null-safe rather than equality.
    */
   public Optional<ReportPiece> inSlot(
-      String kind, String archetypeId, String dimension, String band, Integer section) {
-    return inSlot(kind, archetypeId, dimension, band, null, null, section);
+      String locale,
+      String kind,
+      String archetypeId,
+      String dimension,
+      String band,
+      Integer section) {
+    return inSlot(locale, kind, archetypeId, dimension, band, null, null, section);
   }
 
   public Optional<ReportPiece> inSlot(
+      String locale,
       String kind,
       String archetypeId,
       String dimension,
@@ -33,14 +40,16 @@ public class ReportPieceRepository implements PanacheRepository<ReportPiece> {
       Integer section) {
     return find(
             """
-            kind = ?1
-              and archetypeId is not distinct from ?2
-              and dimension is not distinct from ?3
-              and band is not distinct from ?4
-              and dimension2 is not distinct from ?5
-              and band2 is not distinct from ?6
-              and section is not distinct from ?7
+            locale = ?1
+              and kind = ?2
+              and archetypeId is not distinct from ?3
+              and dimension is not distinct from ?4
+              and band is not distinct from ?5
+              and dimension2 is not distinct from ?6
+              and band2 is not distinct from ?7
+              and section is not distinct from ?8
             """,
+            locale,
             kind,
             archetypeId,
             dimension,
@@ -51,16 +60,24 @@ public class ReportPieceRepository implements PanacheRepository<ReportPiece> {
         .firstResultOptional();
   }
 
-  public long unwritten() {
-    return count("placeholder");
+  public long unwritten(String locale) {
+    return count("locale = ?1 and placeholder", locale);
   }
 
-  public List<ReportPiece> allUnwritten() {
-    return list("placeholder");
+  public List<ReportPiece> allUnwritten(String locale) {
+    return list("locale = ?1 and placeholder", locale);
   }
 
-  public Optional<ReportPiece> reading(String dimension, String band) {
-    return find("kind = 'reading' and dimension = ?1 and band = ?2", dimension, band)
+  public List<ReportPiece> listAll(String locale) {
+    return list("locale = ?1", locale);
+  }
+
+  public Optional<ReportPiece> reading(String locale, String dimension, String band) {
+    return find(
+            "locale = ?1 and kind = 'reading' and dimension = ?2 and band = ?3",
+            locale,
+            dimension,
+            band)
         .firstResultOptional();
   }
 
@@ -73,14 +90,15 @@ public class ReportPieceRepository implements PanacheRepository<ReportPiece> {
    * section readable rather than blank.
    */
   public Optional<ReportPiece> dimension(
-      String dimension, String band, String dimension2, String band2) {
+      String locale, String dimension, String band, String dimension2, String band2) {
     if (dimension2 != null) {
       Optional<ReportPiece> paired =
           find(
                   """
-                  kind = 'dimension' and dimension = ?1 and band = ?2
-                    and dimension2 = ?3 and band2 = ?4
+                  locale = ?1 and kind = 'dimension' and dimension = ?2 and band = ?3
+                    and dimension2 = ?4 and band2 = ?5
                   """,
+                  locale,
                   dimension,
                   band,
                   dimension2,
@@ -91,21 +109,29 @@ public class ReportPieceRepository implements PanacheRepository<ReportPiece> {
       }
     }
     return find(
-            "kind = 'dimension' and dimension = ?1 and band = ?2 and dimension2 is null",
+            """
+            locale = ?1 and kind = 'dimension' and dimension = ?2 and band = ?3
+              and dimension2 is null
+            """,
+            locale,
             dimension,
             band)
         .firstResultOptional();
   }
 
-  public List<ReportPiece> skeletons() {
-    return list("kind = 'skeleton'", Sort.by("section"));
+  public List<ReportPiece> skeletons(String locale) {
+    return list("locale = ?1 and kind = 'skeleton'", Sort.by("section"), locale);
   }
 
-  public List<ReportPiece> fragments(String archetypeId) {
-    return list("kind = 'fragment' and archetypeId = ?1", Sort.by("section"), archetypeId);
+  public List<ReportPiece> fragments(String locale, String archetypeId) {
+    return list(
+        "locale = ?1 and kind = 'fragment' and archetypeId = ?2",
+        Sort.by("section"),
+        locale,
+        archetypeId);
   }
 
-  public Optional<ReportPiece> limitation() {
-    return find("kind = 'limitation'").firstResultOptional();
+  public Optional<ReportPiece> limitation(String locale) {
+    return find("locale = ?1 and kind = 'limitation'", locale).firstResultOptional();
   }
 }

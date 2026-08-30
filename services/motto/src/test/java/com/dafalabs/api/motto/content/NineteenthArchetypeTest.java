@@ -65,7 +65,7 @@ class NineteenthArchetypeTest {
   /// the second one is a no-op rather than a conflict.
   @BeforeEach
   void given() {
-    writer.archetypes(List.of(archetype()));
+    writer.archetypes("tr", List.of(archetype()));
   }
 
   @Test
@@ -77,8 +77,8 @@ class NineteenthArchetypeTest {
     for (int day = 1; day <= 14; day++) {
       fragments.add(new FragmentWrite(id, day, "Gün %d: kendi saatinde.".formatted(day)));
     }
-    writer.fragments(fragments);
-    writer.mottos(
+    writer.fragments("tr", fragments);
+    writer.mottos("tr", 
         List.of(
             new MottoWrite(
                 id + "_1",
@@ -97,7 +97,7 @@ class NineteenthArchetypeTest {
     assertEquals(id, rules.match(new ProfileVector(profile)));
 
     // Reading: the package a phone downloads carries it, with its days.
-    var bundle = catalog.bundle();
+    var bundle = catalog.bundle("tr");
     assertTrue(bundle.archetypes().stream().anyMatch(a -> a.id().equals(id)));
     assertEquals(14, bundle.fragments().stream().filter(f -> f.archetypeId().equals(id)).count());
     assertTrue(bundle.mottos().stream().anyMatch(m -> m.archetypeId().equals(id)));
@@ -116,7 +116,7 @@ class NineteenthArchetypeTest {
         assertThrows(
             CustomRuntimeException.class,
             () ->
-                writer.archetypes(
+                writer.archetypes("tr", 
                     List.of(
                         new ArchetypeWrite(
                             "night_shift_twin",
@@ -137,7 +137,7 @@ class NineteenthArchetypeTest {
         assertThrows(
             CustomRuntimeException.class,
             () ->
-                writer.archetypes(
+                writer.archetypes("tr", 
                     List.of(
                         new ArchetypeWrite(
                             "clinician",

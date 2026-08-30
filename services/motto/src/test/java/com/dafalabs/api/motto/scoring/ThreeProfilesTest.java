@@ -101,13 +101,13 @@ class ThreeProfilesTest {
   private String walk(String who, Map<String, Integer> answers) {
     ProfileVector profile = scoring.score(answers);
     String id = rules.match(profile);
-    Archetype archetype = archetypes.byId(id);
+    Archetype archetype = archetypes.byId(id, "tr");
     UUID device = UUID.randomUUID();
     long resultId = resultFor(device, id, profile);
-    ResultReport report = reports.readingFor(device, resultId);
-    DeepReport locked = reports.forResult(device, resultId);
+    ResultReport report = reports.readingFor(device, resultId, "tr");
+    DeepReport locked = reports.forResult(device, resultId, "tr");
     DeepReport deep = unlocked(device, resultId);
-    ContentBundle bundle = content.bundle();
+    ContentBundle bundle = content.bundle("tr");
 
     StringBuilder out = new StringBuilder();
     out.append("\n=== %s → %s (%s)\n".formatted(who, archetype.name(), id));
@@ -152,7 +152,7 @@ class ThreeProfilesTest {
                             fragment(bundle, id, day.day()))));
 
     for (int day = 1; day <= 3; day++) {
-      for (var task : tasks.forDay(day, id)) {
+      for (var task : tasks.forDay("tr", day, id)) {
         out.append("    görev %d.%d %s — %s\n".formatted(day, task.ordinal(), task.title(), task.detail()));
       }
     }
@@ -187,7 +187,7 @@ class ThreeProfilesTest {
     assertNotNull(deep.limitation());
     assertFalse(bundle.mottos().stream().noneMatch(m -> m.archetypeId().equals(id)));
     // Fourteen days of three things to do, or the chain has nothing in it.
-    assertEquals(42, tasks.forArchetype(id).size(), id + " is missing days");
+    assertEquals(42, tasks.forArchetype("tr", id).size(), id + " is missing days");
 
     return id;
   }
@@ -220,7 +220,7 @@ class ThreeProfilesTest {
   @Transactional
   DeepReport unlocked(UUID device, long resultId) {
     entitlements.grantPremium(device);
-    return reports.forResult(device, resultId);
+    return reports.forResult(device, resultId, "tr");
   }
 
   private static Map<String, Integer> answers(Object... pairs) {

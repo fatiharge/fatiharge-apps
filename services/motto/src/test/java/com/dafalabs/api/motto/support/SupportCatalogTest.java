@@ -28,7 +28,7 @@ class SupportCatalogTest {
   @Test
   @DisplayName("the copy carries everything the support screens show")
   void carriesEveryPiece() {
-    var copy = catalog.copy();
+    var copy = catalog.copy("tr");
 
     assertFalse(copy.privacy().isEmpty());
     assertFalse(copy.faq().isEmpty());
@@ -40,31 +40,31 @@ class SupportCatalogTest {
   @Test
   @DisplayName("the questions people actually ask are all answered")
   void theHardQuestionsAreAnswered() {
-    List<String> ids = catalog.copy().faq().stream().map(FaqEntry::id).toList();
+    List<String> ids = catalog.copy("tr").faq().stream().map(FaqEntry::id).toList();
 
     // Below twelve the complaints this exists to absorb start arriving as
     // store reviews instead.
-    assertTrue(catalog.copy().faq().size() >= 12);
+    assertTrue(catalog.copy("tr").faq().size() >= 12);
     assertTrue(ids.containsAll(List.of("lost_data", "delete_data", "not_me", "chain_broken")));
   }
 
   @Test
   @DisplayName("ids are unique, or a link would be ambiguous")
   void idsAreUnique() {
-    var ids = catalog.copy().faq().stream().map(FaqEntry::id).collect(Collectors.toSet());
+    var ids = catalog.copy("tr").faq().stream().map(FaqEntry::id).collect(Collectors.toSet());
 
-    assertEquals(catalog.copy().faq().size(), ids.size());
+    assertEquals(catalog.copy("tr").faq().size(), ids.size());
   }
 
   @Test
   @DisplayName("the version is derived, so nobody has to remember to bump it")
   void versionIsDerived() {
-    assertEquals(12, catalog.copy().version().length());
+    assertEquals(12, catalog.copy("tr").version().length());
   }
 
   @Test
   @DisplayName("the policy URL is the one the store listing gets")
   void carriesThePolicyUrl() {
-    assertTrue(catalog.copy().privacyPolicyUrl().startsWith("https://"));
+    assertTrue(catalog.copy("tr").privacyPolicyUrl().startsWith("https://"));
   }
 }

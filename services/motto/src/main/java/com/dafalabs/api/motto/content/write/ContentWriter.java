@@ -44,18 +44,20 @@ public class ContentWriter {
   }
 
   @Transactional
-  public int archetypes(List<ArchetypeWrite> incoming) {
+  public int archetypes(String locale, List<ArchetypeWrite> incoming) {
     for (ArchetypeWrite a : incoming) {
-      gate("archetype " + a.id(), a.name(), a.summary(), a.motto());
+      gate(locale, "archetype " + a.id(), a.name(), a.summary(), a.motto());
       Map<Dimension, Double> target = targetOf(a);
 
       revise(
+          locale,
           "archetype",
           a.id(),
           "(SELECT to_jsonb(x) FROM archetypes x WHERE x.id = :id AND x.locale = :locale)",
           Map.of("id", a.id()),
           a);
       run(
+          locale,
           """
           INSERT INTO archetypes (id, locale, name, summary, motto, ordinal)
           VALUES (:id, :locale, :name, :summary, :motto, :ordinal)
@@ -69,6 +71,7 @@ public class ContentWriter {
               "motto", a.motto(),
               "ordinal", a.ordinal()));
       run(
+          locale,
           """
           INSERT INTO archetype_rules (archetype_id, defining, openness, conscientiousness,
                                        extraversion, agreeableness, neuroticism)
@@ -155,18 +158,20 @@ public class ContentWriter {
   }
 
   @Transactional
-  public int items(ItemSetWrite set) {
+  public int items(String locale, ItemSetWrite set) {
     for (ItemWrite item : set.items()) {
-      gate("item " + item.id(), item.text());
+      gate(locale, "item " + item.id(), item.text());
       Dimension.of(item.dimension());
     }
 
     run(
+        locale,
         "INSERT INTO item_sets (version) VALUES (:v) ON CONFLICT (version) DO NOTHING",
         Map.of("v", set.version()));
 
     for (ItemWrite item : set.items()) {
       revise(
+          locale,
           "item",
           set.version() + "/" + item.id(),
           """
@@ -176,6 +181,7 @@ public class ContentWriter {
           Map.of("id", item.id(), "v", set.version()),
           item);
       run(
+          locale,
           """
           INSERT INTO items (id, version, locale, dimension, reverse, text, ordinal)
           VALUES (:id, :v, :locale, :dimension, :reverse, :text, :ordinal)
@@ -194,23 +200,25 @@ public class ContentWriter {
     if (set.activate()) {
       // One active set, enforced by a partial unique index, so the old one has
       // to stand down in the same statement pair as the new one stands up.
-      run("UPDATE item_sets SET active = false WHERE active", Map.of());
-      run("UPDATE item_sets SET active = true WHERE version = :v", Map.of("v", set.version()));
+      run(locale, "UPDATE item_sets SET active = false WHERE active", Map.of());
+      run(locale, "UPDATE item_sets SET active = true WHERE version = :v", Map.of("v", set.version()));
     }
     return set.items().size();
   }
 
   @Transactional
-  public int mottos(List<MottoWrite> incoming) {
+  public int mottos(String locale, List<MottoWrite> incoming) {
     for (MottoWrite m : incoming) {
-      gate("motto " + m.id(), m.motto(), m.detail(), m.reminder());
+      gate(locale, "motto " + m.id(), m.motto(), m.detail(), m.reminder());
       revise(
+          locale,
           "motto",
           m.id(),
           "(SELECT to_jsonb(x) FROM mottos x WHERE x.id = :id AND x.locale = :locale)",
           Map.of("id", m.id()),
           m);
       run(
+          locale,
           """
           INSERT INTO mottos (id, locale, archetype_id, motto, detail, reminder, ordinal)
           VALUES (:id, :locale, :archetype, :motto, :detail, :reminder, :ordinal)
@@ -230,16 +238,18 @@ public class ContentWriter {
   }
 
   @Transactional
-  public int skeletons(List<SkeletonWrite> incoming) {
+  public int skeletons(String locale, List<SkeletonWrite> incoming) {
     for (SkeletonWrite s : incoming) {
-      gate("day " + s.day(), s.title(), s.body(), s.action());
+      gate(locale, "day " + s.day(), s.title(), s.body(), s.action());
       revise(
+          locale,
           "skeleton",
           String.valueOf(s.day()),
           "(SELECT to_jsonb(x) FROM day_skeletons x WHERE x.day = :day AND x.locale = :locale)",
           Map.of("day", s.day()),
           s);
       run(
+          locale,
           """
           INSERT INTO day_skeletons (day, locale, title, body, action)
           VALUES (:day, :locale, :title, :body, :action)
@@ -256,10 +266,11 @@ public class ContentWriter {
   }
 
   @Transactional
-  public int fragments(List<FragmentWrite> incoming) {
+  public int fragments(String locale, List<FragmentWrite> incoming) {
     for (FragmentWrite f : incoming) {
-      gate("fragment " + f.archetypeId() + "/" + f.ordinal(), f.text());
+      gate(locale, "fragment " + f.archetypeId() + "/" + f.ordinal(), f.text());
       revise(
+          locale,
           "fragment",
           f.archetypeId() + "/" + f.ordinal(),
           """
@@ -269,6 +280,7 @@ public class ContentWriter {
           Map.of("archetype", f.archetypeId(), "ordinal", f.ordinal()),
           f);
       run(
+          locale,
           """
           INSERT INTO fragments (archetype_id, ordinal, locale, text)
           VALUES (:archetype, :ordinal, :locale, :text)
@@ -280,16 +292,18 @@ public class ContentWriter {
   }
 
   @Transactional
-  public int connectors(List<ConnectorWrite> incoming) {
+  public int connectors(String locale, List<ConnectorWrite> incoming) {
     for (ConnectorWrite c : incoming) {
-      gate("connector " + c.id(), c.text());
+      gate(locale, "connector " + c.id(), c.text());
       revise(
+          locale,
           "connector",
           c.id(),
           "(SELECT to_jsonb(x) FROM connectors x WHERE x.id = :id AND x.locale = :locale)",
           Map.of("id", c.id()),
           c);
       run(
+          locale,
           """
           INSERT INTO connectors (id, locale, text) VALUES (:id, :locale, :text)
           ON CONFLICT (id, locale) DO UPDATE SET text = :text
@@ -300,13 +314,14 @@ public class ContentWriter {
   }
 
   @Transactional
-  public int sections(List<SectionWrite> incoming) {
+  public int sections(String locale, List<SectionWrite> incoming) {
     for (SectionWrite s : incoming) {
       Dimension.of(s.dimension());
       if (s.dimension2() != null) {
         Dimension.of(s.dimension2());
       }
       revise(
+          locale,
           "section",
           String.valueOf(s.section()),
           """
@@ -325,7 +340,7 @@ public class ContentWriter {
                     SET dimension = :dimension, dimension_2 = :second
                   """)
               .setParameter("section", s.section())
-              .setParameter("locale", ContentStore.locale)
+              .setParameter("locale", locale)
               .setParameter("dimension", s.dimension().toUpperCase(java.util.Locale.ROOT))
               // Spelled out rather than run through the helper: a section that
               // reads one axis has no second, and Map.of has no null.
@@ -340,10 +355,11 @@ public class ContentWriter {
   }
 
   @Transactional
-  public int support(List<SupportWrite> incoming) {
+  public int support(String locale, List<SupportWrite> incoming) {
     for (SupportWrite s : incoming) {
-      gate("support " + s.kind() + "/" + s.key(), s.heading(), s.body());
+      gate(locale, "support " + s.kind() + "/" + s.key(), s.heading(), s.body());
       revise(
+          locale,
           "support",
           s.kind() + "/" + s.key(),
           """
@@ -363,7 +379,7 @@ public class ContentWriter {
                   """)
               .setParameter("kind", s.kind())
               .setParameter("key", s.key())
-              .setParameter("locale", ContentStore.locale)
+              .setParameter("locale", locale)
               // Spelled out rather than run through the helper below: a
               // privacy line has no heading, and Map.of has no null.
               .setParameter("heading", s.heading())
@@ -374,8 +390,8 @@ public class ContentWriter {
     return incoming.size();
   }
 
-  private void gate(String where, String... texts) {
-    List<String> objections = WordGate.objections(where, texts);
+  private void gate(String locale, String where, String... texts) {
+    List<String> objections = WordGate.objections(locale, where, texts);
     if (!objections.isEmpty()) {
       throw new CustomRuntimeException(400, "forbidden_words", String.join("; ", objections));
     }
@@ -403,7 +419,12 @@ public class ContentWriter {
   }
 
   private void revise(
-      String entity, String key, String snapshot, Map<String, Object> binds, Object now) {
+      String locale,
+      String entity,
+      String key,
+      String snapshot,
+      Map<String, Object> binds,
+      Object now) {
     Query query =
         entities.createNativeQuery(
             """
@@ -415,18 +436,18 @@ public class ContentWriter {
     query
         .setParameter("entity", entity)
         .setParameter("key", key)
-        .setParameter("locale", ContentStore.locale)
+        .setParameter("locale", locale)
         .setParameter("now", asJson(now))
         .executeUpdate();
   }
 
-  private void run(String sql, Map<String, Object> binds) {
+  private void run(String locale, String sql, Map<String, Object> binds) {
     Query query = entities.createNativeQuery(sql);
     binds.forEach(query::setParameter);
     // Named on the statement or not bound at all: Hibernate rejects a
     // parameter the SQL never mentions.
     if (sql.contains(":locale")) {
-      query.setParameter("locale", ContentStore.locale);
+      query.setParameter("locale", locale);
     }
     query.executeUpdate();
   }

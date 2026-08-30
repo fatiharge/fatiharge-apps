@@ -1,5 +1,6 @@
 package com.dafalabs.api.motto.effects;
 
+import com.dafalabs.api.motto.content.ContentLocale;
 import com.dafalabs.api.motto.effects.dto.EffectCatalogue;
 import io.quarkus.security.Authenticated;
 import jakarta.ws.rs.GET;
@@ -10,6 +11,7 @@ import jakarta.ws.rs.core.EntityTag;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
@@ -26,9 +28,6 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 @Authenticated
 public class EffectResource {
 
-  /// One language for now, the way the rest of the content is.
-  private static final String LOCALE = "tr";
-
   private final Effects effects;
 
   EffectResource(Effects effects) {
@@ -43,8 +42,10 @@ public class EffectResource {
       responseCode = "200",
       content = @Content(schema = @Schema(implementation = EffectCatalogue.class)))
   @APIResponse(responseCode = "304", description = "The version you hold is current")
-  public Response catalogue(@HeaderParam("If-None-Match") String ifNoneMatch) {
-    EffectCatalogue catalogue = effects.catalogue(LOCALE);
+  public Response catalogue(
+      @HeaderParam("If-None-Match") String ifNoneMatch,
+      @Parameter(hidden = true) @HeaderParam("Accept-Language") String acceptLanguage) {
+    EffectCatalogue catalogue = effects.catalogue(ContentLocale.from(acceptLanguage));
     EntityTag tag = new EntityTag(catalogue.version());
 
     // The definitions change when somebody edits a sentence and not otherwise,
@@ -52,7 +53,8 @@ public class EffectResource {
     if (matches(ifNoneMatch, catalogue.version())) {
       return Response.notModified(tag).build();
     }
-    return Response.ok(catalogue).tag(tag).build();
+    // Vary, or a proxy hands the Turkish sentences to the next English phone.
+    return Response.ok(catalogue).tag(tag).header("Vary", "Accept-Language").build();
   }
 
   /// The header arrives quoted, and proxies weaken it. Comparing raw strings

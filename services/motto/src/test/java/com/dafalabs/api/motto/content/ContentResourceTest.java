@@ -39,9 +39,9 @@ class ContentResourceTest {
         .then()
         .statusCode(200)
         .header("ETag", notNullValue())
-        .body("version", equalTo(catalog.bundle().version()))
+        .body("version", equalTo(catalog.bundle("tr").version()))
         .body("skeletons", hasSize(14))
-        .body("fragments", hasSize(catalog.bundle().fragments().size()));
+        .body("fragments", hasSize(catalog.bundle("tr").fragments().size()));
   }
 
   @Test
@@ -52,7 +52,7 @@ class ContentResourceTest {
     // This package is most of what the app downloads and it changes when
     // somebody edits a sentence — which is rarely.
     given()
-        .header("If-None-Match", "\"" + catalog.bundle().version() + "\"")
+        .header("If-None-Match", "\"" + catalog.bundle("tr").version() + "\"")
         .when()
         .get("/v1/content")
         .then()
@@ -67,7 +67,7 @@ class ContentResourceTest {
     // Some clients and every proxy weaken the tag. Comparing the raw string
     // would answer 200 to a client that is already current, every time.
     given()
-        .header("If-None-Match", "W/\"" + catalog.bundle().version() + "\"")
+        .header("If-None-Match", "W/\"" + catalog.bundle("tr").version() + "\"")
         .when()
         .get("/v1/content")
         .then()
@@ -85,7 +85,7 @@ class ContentResourceTest {
         .get("/v1/content")
         .then()
         .statusCode(200)
-        .body("version", equalTo(catalog.bundle().version()));
+        .body("version", equalTo(catalog.bundle("tr").version()));
   }
 
   @Test

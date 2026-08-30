@@ -1,5 +1,6 @@
 package com.dafalabs.api.motto.scoring;
 
+import com.dafalabs.api.motto.content.ContentLocale;
 import com.dafalabs.api.motto.content.store.ArchetypeRow;
 import com.dafalabs.api.motto.content.store.ContentStore;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -23,8 +24,8 @@ public class ArchetypeCatalog {
     this.content = content;
   }
 
-  public Archetype byId(String id) {
-    Archetype archetype = all().get(id);
+  public Archetype byId(String id, String locale) {
+    Archetype archetype = all(locale).get(id);
     if (archetype == null) {
       // The rules and the words are separate tables, and this is what it looks
       // like when they stop agreeing.
@@ -33,19 +34,28 @@ public class ArchetypeCatalog {
     return archetype;
   }
 
-  public Map<String, Archetype> all() {
+  /**
+   * @param locale what the reader asked for; a language nobody has written the
+   *     archetypes in yet reads them in the fallback rather than not at all
+   */
+  public Map<String, Archetype> all(String locale) {
+    Map<String, Archetype> mine = read(ContentLocale.named(locale));
+    return mine.isEmpty() ? read(ContentLocale.fallback) : mine;
+  }
+
+  private Map<String, Archetype> read(String locale) {
     Map<String, Archetype> byId = new LinkedHashMap<>();
-    for (ArchetypeRow row : content.archetypes()) {
+    for (ArchetypeRow row : content.archetypes(locale)) {
       byId.put(row.id(), new Archetype(row.id(), row.name(), row.summary(), row.motto()));
     }
     return byId;
   }
 
-  public List<Archetype> inOrder() {
-    return List.copyOf(all().values());
+  public List<Archetype> inOrder(String locale) {
+    return List.copyOf(all(locale).values());
   }
 
-  public int size() {
-    return content.archetypes().size();
+  public int size(String locale) {
+    return content.archetypes(locale).size();
   }
 }

@@ -1,6 +1,7 @@
 package com.dafalabs.api.motto.result;
 
 import com.dafalabs.api.core.auth.AuthenticatedDevice;
+import com.dafalabs.api.motto.content.ContentLocale;
 import com.dafalabs.api.motto.result.dto.ProfileScores;
 import com.dafalabs.api.motto.result.dto.ResultHistory;
 import com.dafalabs.api.motto.result.dto.ResultSummary;
@@ -10,12 +11,14 @@ import com.dafalabs.api.motto.scoring.Dimension;
 import com.dafalabs.api.motto.scoring.dto.ArchetypeResponse;
 import io.quarkus.security.Authenticated;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 
 /** Everything this device has been told about itself. */
 @Path("/v1/me/results")
@@ -35,14 +38,15 @@ public class ResultResource {
 
   @GET
   @Operation(operationId = "resultHistory", summary = "Past results, newest first")
-  public ResultHistory history() {
+  public ResultHistory history(@Parameter(hidden = true) @HeaderParam("Accept-Language") String acceptLanguage) {
+    String locale = ContentLocale.from(acceptLanguage);
     List<ResultSummary> summaries =
-        results.forDevice(current.id()).stream().map(this::summarise).toList();
+        results.forDevice(current.id()).stream().map(result -> summarise(result, locale)).toList();
     return new ResultHistory(summaries);
   }
 
-  private ResultSummary summarise(Result result) {
-    Archetype archetype = catalog.byId(result.archetypeId());
+  private ResultSummary summarise(Result result, String locale) {
+    Archetype archetype = catalog.byId(result.archetypeId(), locale);
     Map<Dimension, Double> profile = result.profile();
 
     return new ResultSummary(
