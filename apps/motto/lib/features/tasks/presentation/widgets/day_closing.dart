@@ -22,9 +22,24 @@ class DayClosing extends StatelessWidget {
     final now = DateTime.now();
 
     if (!state.chain.started) {
-      return FilledButton(
-        onPressed: () => _askHourThenStart(context),
-        child: const Text('Zincirini başlat'),
+      final text = Theme.of(context).textTheme;
+      final scheme = Theme.of(context).colorScheme;
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          FilledButton(
+            onPressed: () => _askHourThenStart(context),
+            child: const Text('Zincirini başlat'),
+          ),
+          const SizedBox(height: 8),
+          // Said before the tap rather than after: a button that opens a
+          // clock nobody expected is a button people cancel.
+          Text(
+            'Hatırlatma saatini soracağım.',
+            textAlign: TextAlign.center,
+            style: text.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+          ),
+        ],
       );
     }
 
@@ -81,6 +96,7 @@ class DayClosing extends StatelessWidget {
     final picked = await showTimePicker(
       context: context,
       initialTime: const TimeOfDay(hour: ChainStore.defaultHour, minute: 0),
+      helpText: 'Hatırlatma saati',
     );
     if (picked == null) return;
 
