@@ -30,6 +30,8 @@ public class DeviceReset {
   /// foreign keys decide this order, not taste.
   private static final List<String> DEVICE_TABLES =
       List.of(
+          "game_plays",
+          "game_credits",
           "score_rewards",
           "scores",
           "task_completions",
