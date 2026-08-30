@@ -1,8 +1,8 @@
 import 'package:motto/config/injectable.dart';
 import 'package:motto/features/game/application/game_store.dart';
 import 'package:motto/features/game/application/turns_repository.dart';
-import 'package:motto/features/game/presentation/no_turns_sheet.dart';
-import 'package:motto/features/support/presentation/widgets/trouble_sheet.dart';
+import 'package:motto/infrastructure/api/outcome.dart';
+import 'package:motto/infrastructure/api/trouble_bus.dart';
 import 'package:motto/route/app_router.dart';
 import 'package:motto/route/app_router.gr.dart';
 
@@ -17,35 +17,19 @@ import 'package:motto/route/app_router.gr.dart';
 /// paid side of the door and neither has to ask again.
 Future<void> openGame() async {
   final router = getIt<AppRouter>();
-  final turns = getIt<TurnsRepository>();
 
-  bool? paid;
-  try {
-    paid = await turns.spend();
-  } on Object catch (failure) {
-    final context = router.navigatorKey.currentContext;
-    if (context == null || !context.mounted) return;
-    await showTroubleSheet(context, failure: failure, retry: openGame);
-    return;
+  switch (await getIt<TurnsRepository>().spend()) {
+    case Ok():
+      // The rules come first, and only once: three lives is short enough that
+      // learning the game by losing it teaches that it is not worth playing.
+      await router.push(
+        getIt<GameStore>().rulesSeen ? GameRoute() : GameRulesRoute(),
+      );
+    case Failed(:final trouble):
+      // Nothing here decides what a refusal means. Running out of turns says
+      // one of two things depending on the day, and which sentence that is —
+      // and where its button goes — is a row somebody edited, not a branch
+      // shipped in a release.
+      getIt<TroubleBus>().unhandled(trouble);
   }
-
-  if (!paid) {
-    final left = await turns.today();
-    final context = router.navigatorKey.currentContext;
-    if (context == null || !context.mounted) return;
-    // Both halves of the day, not just the tasks: a day whose three things
-    // are done but whose mark is outstanding still has a turn waiting in it.
-    await NoTurnsSheet.show(
-      context,
-      nothingLeftToEarn:
-          (left?.dayMarked ?? false) && (left?.tasksDone ?? false),
-    );
-    return;
-  }
-
-  // The rules come first, and only once: three lives is short enough that
-  // learning the game by losing it teaches that it is not worth playing.
-  await router.push(
-    getIt<GameStore>().rulesSeen ? GameRoute() : GameRulesRoute(),
-  );
 }

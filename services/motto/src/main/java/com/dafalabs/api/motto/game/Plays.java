@@ -62,8 +62,17 @@ public class Plays {
    */
   @Transactional
   public PlayCredits spend(UUID deviceId, LocalDate day) {
-    if (on(deviceId, day).remaining() <= 0) {
-      throw new CustomRuntimeException(409, "no_turns_left", "There is no turn to spend.");
+    PlayCredits now = on(deviceId, day);
+    if (now.remaining() <= 0) {
+      // Two refusals, not one. "Go and finish the day" and "come back
+      // tomorrow" ask for opposite things, and the server is the only side
+      // that knows which is true — the app was reading two flags to guess at
+      // what this line already knows.
+      boolean nothingLeftToEarn = now.dayMarked() && now.tasksDone();
+      throw new CustomRuntimeException(
+          409,
+          nothingLeftToEarn ? "no_turns_today" : "no_turns_yet",
+          "There is no turn to spend.");
     }
     plays.persist(Play.of(deviceId, day));
     return on(deviceId, day);
