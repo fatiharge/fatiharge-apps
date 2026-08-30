@@ -133,6 +133,13 @@ class _MascotHostState extends State<MascotHost>
     _idle = Timer.periodic(const Duration(seconds: 5), (_) {
       final mascot = _controller;
       if (mascot == null) return;
+      // A mascot nobody can see is not being ignored. Without this the offer
+      // arms itself behind whatever is covering it, and the first tap after it
+      // comes back opens the game instead of poking.
+      if (!getIt<MascotStore>().onScreen.value) {
+        _attention.touched();
+        return;
+      }
       switch (_attention.nudge()) {
         case MascotNudge.offer:
           mascot.offerGame();

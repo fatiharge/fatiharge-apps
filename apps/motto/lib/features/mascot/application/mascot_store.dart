@@ -30,6 +30,13 @@ class MascotStore {
     'CalculatingRoute',
     'ResultRoute',
     'ShareCardRoute',
+    // The game the mascot offers. It cannot offer what is already open, and a
+    // cat sitting in the play area both covers the falling piece and eats the
+    // taps meant for it — one of which opened a second game on top of the
+    // first.
+    'GameRulesRoute',
+    'GameRoute',
+    'GameOverRoute',
   };
 
   /// Set from the router. Separate from [visible] because one is a preference

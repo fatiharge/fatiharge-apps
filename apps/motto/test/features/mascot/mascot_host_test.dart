@@ -113,6 +113,45 @@ void main() {
       expect(mascot.pokes, 0);
     });
 
+    testWidgets('nothing is offered while it is off the screen', (
+      tester,
+    ) async {
+      var now = DateTime(2026, 8, 30, 12);
+      var opened = false;
+      final mascot = _FakeMascot();
+
+      await tester.pumpWidget(
+        played(
+          mascot: mascot,
+          clock: () => now,
+          onGameOffered: () => opened = true,
+        ),
+      );
+      await tester.pump();
+      tester.takeException();
+
+      await getIt<MascotStore>().setVisible(value: false);
+      await tester.pump();
+
+      now = now.add(const Duration(seconds: 20));
+      await tester.pump(const Duration(seconds: 5));
+
+      // Being covered is not being ignored. An offer armed behind something
+      // else turns the first tap after it comes back into a game nobody asked
+      // for — and on the game's own screen, into a second game.
+      expect(mascot.offered, isFalse);
+
+      await getIt<MascotStore>().setVisible(value: true);
+      await tester.pump();
+      // It mounted again, so it tried to load the file it cannot load again.
+      tester.takeException();
+
+      await tester.tap(find.byType(Mascot), warnIfMissed: false);
+      await tester.pump();
+
+      expect(opened, isFalse);
+    });
+
     testWidgets('a tap before the offer is only a poke', (tester) async {
       final now = DateTime(2026, 8, 30, 12);
       var opened = false;
