@@ -97,5 +97,16 @@ void main() {
 
       expect(last.id, isNull);
     });
+
+    test('a server it cannot reach changes nothing', () async {
+      await build(stored: {'last_archetype': 'night_watch'});
+      when(() => results.resultHistory()).thenThrow(Exception('offline'));
+
+      await restore.ensure();
+
+      // Everything this app does offline lives behind the bootstrap. Throwing
+      // here left a phone with the whole day cached unable to open at all.
+      expect(last.id, 'night_watch');
+    });
   });
 }

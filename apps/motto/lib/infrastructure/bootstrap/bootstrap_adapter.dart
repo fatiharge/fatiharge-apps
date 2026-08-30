@@ -31,15 +31,15 @@ class BootstrapAdapter implements BootstrapPort {
       // better than a splash that will not move.
       errorPolicy: BootstrapErrorPolicy.skip,
     ),
-    // Not skipped, for the same reason content is not: the door below is
-    // chosen from a value a reinstall wipes, and skipping this one would ask
-    // somebody with a running chain to fill the inventory again. A phone with
-    // no network cannot get past `content` either, so this adds no failure
-    // anyone can reach.
+    // The door below is chosen from a value a reinstall wipes, so this runs
+    // before it. It cannot fail the launch: a phone with everything cached
+    // still opens, because everything this app does offline lives behind this
+    // point and a reachable server is not a thing anybody can promise.
     BootstrapJob(
       'archetype',
       () => getIt<ArchetypeRestore>().ensure(),
       retries: 2,
+      errorPolicy: BootstrapErrorPolicy.skip,
     ),
     // Not skipped: nothing ships inside the app, so a phone that has never
     // had a package has nothing to show and should say so rather than open on

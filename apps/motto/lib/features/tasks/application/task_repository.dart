@@ -1,5 +1,6 @@
 import 'package:api_client_motto/api.dart' as api;
 import 'package:injectable/injectable.dart';
+import 'package:motto/config/reported.dart';
 import 'package:motto/features/chain/domain/chain.dart';
 import 'package:motto/features/tasks/application/task_store.dart';
 
@@ -44,14 +45,26 @@ class TaskRepository {
     }
   }
 
-  /// Replays what was ticked offline. Anything the server refuses is dropped:
-  /// a tick it will not take today it will not take tomorrow either.
+  /// Replays what was ticked offline.
+  ///
+  /// A tick the server refuses is dropped — one it will not take today it will
+  /// not take tomorrow — but never quietly: that is somebody's work, and a
+  /// queue that empties itself without a word is how it disappears.
+  ///
+  /// A server that fell over is not a refusal. Those are kept for next time.
   Future<void> flushPending(DateTime today) async {
     for (final id in _store.pendingTicks()) {
       try {
         await _tasks.completeTask(id, today: isoDay(today));
         await _store.clearTick(id);
-      } on api.ApiException {
+      } on api.ApiException catch (refused, trace) {
+        // Only a refusal of this tick is a reason to drop it. A dead session
+        // and a fallen-over server are neither, and treating them as one lost
+        // a tick made on a plane the moment the wifi came back: the first
+        // request out of the door answered 401 while the token was being
+        // renewed, and the queue threw the work away.
+        if (_ours(refused.code)) return;
+        reported('tasks', refused, trace);
         await _store.clearTick(id);
       } on Object {
         return;
@@ -77,4 +90,8 @@ class TaskRepository {
           task,
     ]);
   }
+
+  /// Not this tick's fault: the session, or us.
+  static bool _ours(int status) =>
+      status == 401 || status == 403 || status >= 500;
 }
