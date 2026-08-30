@@ -26,25 +26,38 @@ class MascotRouteObserver extends NavigatorObserver {
   MascotStore? get _store =>
       getIt.isRegistered<MascotStore>() ? getIt<MascotStore>() : null;
 
-  @override
-  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) => _later();
+  /// Dialogs and sheets, which the router does not know about: they are
+  /// pushed on the navigator without becoming the current page.
+  int _modals = 0;
 
   @override
-  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) => _later();
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    if (route is PopupRoute) _modals++;
+    _later();
+  }
+
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    if (route is PopupRoute && _modals > 0) _modals--;
+    _later();
+  }
 
   @override
   void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) =>
       _later();
 
   @override
-  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) =>
-      _later();
+  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    if (route is PopupRoute && _modals > 0) _modals--;
+    _later();
+  }
 
   /// After the frame, because the observer runs while the stack is still
   /// moving and the router has not caught up yet.
   void _later() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!getIt.isRegistered<AppRouter>()) return;
+      _store?.onModals(_modals);
       _store?.onRoute(getIt<AppRouter>().current.name);
     });
   }
