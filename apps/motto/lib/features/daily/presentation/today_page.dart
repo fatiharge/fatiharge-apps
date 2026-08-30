@@ -9,6 +9,7 @@ import 'package:motto/features/daily/presentation/widgets/archetype_row.dart';
 import 'package:motto/features/daily/presentation/widgets/day_block.dart';
 import 'package:motto/features/daily/presentation/widgets/period_done_banner.dart';
 import 'package:motto/features/profile/application/profile_cubit.dart';
+import 'package:motto/features/support/presentation/widgets/settings_button.dart';
 
 /// What somebody has, and what today says about it.
 ///
@@ -21,7 +22,11 @@ class TodayPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Bugün')),
+      appBar: AppBar(
+        title: const Text('Bugün'),
+        automaticallyImplyLeading: false,
+        actions: const [SettingsButton()],
+      ),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 110),

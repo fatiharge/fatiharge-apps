@@ -95,6 +95,7 @@ import 'package:motto/features/support/presentation/method_page.dart';
 import 'package:motto/features/support/presentation/privacy_page.dart';
 import 'package:motto/features/support/presentation/settings_page.dart';
 import 'package:motto/features/support/presentation/widgets/rejection_sheet.dart';
+import 'package:motto/features/support/presentation/widgets/settings_button.dart';
 import 'package:motto/features/support/presentation/widgets/trouble_sheet.dart';
 import 'package:motto/features/tasks/application/task_cubit.dart';
 import 'package:motto/features/tasks/presentation/daily_tasks_page.dart';
