@@ -44,22 +44,33 @@ class MascotStore {
   /// change what somebody chose in settings.
   final ValueNotifier<bool> allowedHere = ValueNotifier(true);
 
+  /// True while a dialog or a sheet is open over the screen. Floating above
+  /// prose is the point; floating above a clock face hides the numbers being
+  /// picked, and there is nothing to drag it out of the way with.
+  final ValueNotifier<bool> underModal = ValueNotifier(false);
+
   /// Whether it should be on screen right now.
   ValueNotifier<bool> get onScreen => _onScreen;
 
   late final ValueNotifier<bool> _onScreen = _combined();
 
   ValueNotifier<bool> _combined() {
-    final result = ValueNotifier(visible.value && allowedHere.value);
-    void update() => result.value = visible.value && allowedHere.value;
+    bool now() => visible.value && allowedHere.value && !underModal.value;
+    final result = ValueNotifier(now());
+    void update() => result.value = now();
     visible.addListener(update);
     allowedHere.addListener(update);
+    underModal.addListener(update);
     return result;
   }
 
   /// Called whenever the router moves.
   void onRoute(String? name) =>
       allowedHere.value = name == null || !closedTo.contains(name);
+
+  /// How many dialogs and sheets are open. Counted rather than flagged: one
+  /// closing over another still leaves something on top.
+  void onModals(int open) => underModal.value = open > 0;
 
   Future<void> setVisible({required bool value}) async {
     visible.value = value;

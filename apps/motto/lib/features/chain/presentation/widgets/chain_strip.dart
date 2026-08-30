@@ -33,9 +33,10 @@ class ChainStrip extends StatelessWidget {
     final started = chain.startedOn;
     final start = started == null ? null : dayOf(started);
     final now = dayOf(today);
-    final standing = start == null
-        ? 0
-        : (now.difference(start).inDays + 1).clamp(0, days);
+    // What the boxes below show, and nothing else. This used to be which day
+    // of the fourteen you were on, which is a different number: somebody on
+    // day five having marked two read "5 / 14" over two filled boxes.
+    final standing = chain.markedDays.length.clamp(0, days);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

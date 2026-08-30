@@ -33,6 +33,8 @@ import 'package:motto/features/onboarding/application/onboarding_store.dart'
     as _i624;
 import 'package:motto/features/profile/application/profile_cubit.dart' as _i315;
 import 'package:motto/features/result/application/card_exporter.dart' as _i111;
+import 'package:motto/features/support/application/archetype_restore.dart'
+    as _i950;
 import 'package:motto/features/support/application/data_deletion.dart' as _i729;
 import 'package:motto/features/support/application/feedback_cubit.dart'
     as _i875;
@@ -212,6 +214,12 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i876.ContentRepository(
         gh<_i66.ContentResourceApi>(),
         gh<_i432.ContentStore>(),
+      ),
+    );
+    gh.lazySingleton<_i950.ArchetypeRestore>(
+      () => _i950.ArchetypeRestore(
+        gh<_i66.ResultResourceApi>(),
+        gh<_i1019.LastArchetype>(),
       ),
     );
     gh.lazySingleton<_i729.DataDeletion>(
