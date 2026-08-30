@@ -22,13 +22,28 @@ class ArchetypeRestore {
   final api.ResultResourceApi _results;
   final LastArchetype _last;
 
-  /// Nothing to ask on any launch but the first one after a reinstall.
+  /// Puts the phone and the server back in agreement, in whichever direction
+  /// they have drifted.
+  ///
+  /// Filling was the case that brought this here — a reinstall wipes the
+  /// preference while the server still holds the result. The other direction
+  /// is rarer and worse: the phone claiming an archetype the server has no
+  /// record of. Bugün draws that claim from the package and looks fine, while
+  /// Görevler asks the server and comes back with nothing, so the app says
+  /// "there is nothing for today" to somebody it just called a Gece Nöbetçisi.
   Future<void> ensure() async {
-    if (_last.id != null) return;
-
     final history = await _results.resultHistory();
     final results = history?.results ?? const <api.ResultSummary>[];
-    if (results.isEmpty) return;
+
+    if (results.isEmpty) {
+      // Only ever reached when the server answered. A call that failed throws
+      // out of here and the bootstrap retries; nothing is forgotten because a
+      // train went into a tunnel.
+      await _last.forget();
+      return;
+    }
+
+    if (_last.id != null) return;
 
     // The server sorts by `claimedAt` descending, so the newest is first.
     // Someone who took the test twice is who they were told they are last.
