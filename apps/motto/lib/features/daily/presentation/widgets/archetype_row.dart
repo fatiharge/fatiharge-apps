@@ -1,5 +1,6 @@
 import 'package:api_client_motto/api.dart' as api;
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:motto/features/daily/application/daily_state.dart';
 import 'package:motto/features/daily/domain/content_pack.dart';
@@ -57,7 +58,7 @@ class ArchetypeRow extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'ARKETİPİN',
+                    'daily.yours'.tr(),
                     style: text.labelSmall?.copyWith(
                       color: scheme.onSurfaceVariant,
                       letterSpacing: 1.5,
@@ -67,7 +68,7 @@ class ArchetypeRow extends StatelessWidget {
                   Text(archetype.name, style: text.titleMedium),
                   const SizedBox(height: 4),
                   Text(
-                    'Raporun ve derin raporun burada.',
+                    'daily.reports'.tr(),
                     style: text.bodySmall?.copyWith(
                       color: scheme.onSurfaceVariant,
                     ),

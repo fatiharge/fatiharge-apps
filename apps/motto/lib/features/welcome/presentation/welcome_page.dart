@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:motto/route/app_router.gr.dart';
 
@@ -34,7 +35,7 @@ class WelcomePage extends StatelessWidget {
               Text('Motto', style: text.displaySmall),
               const SizedBox(height: 12),
               Text(
-                'Kısa bir envanter, sana ait bir motto.',
+                'welcome.line'.tr(),
                 style: text.bodyLarge?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
@@ -42,7 +43,7 @@ class WelcomePage extends StatelessWidget {
               const Spacer(),
               FilledButton(
                 onPressed: () => context.router.push(const QuestionRoute()),
-                child: const Text('Başla'),
+                child: Text('welcome.start'.tr()),
               ),
             ],
           ),

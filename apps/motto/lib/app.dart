@@ -21,6 +21,12 @@ class _MottoAppState extends State<MottoApp> {
   Widget build(BuildContext context) {
     final router = widget.router;
     return MaterialApp.router(
+      // Keyed on the language so that changing it rebuilds everything below.
+      // `.tr()` reads the words without a context, which is what lets a cubit
+      // and a notification use it — and also means no widget is subscribed to
+      // the locale. Without this key, half a screen changes language and the
+      // half that was not rebuilt for some other reason does not.
+      key: ValueKey(context.locale.languageCode),
       title: 'Motto',
       debugShowCheckedModeBanner: false,
       theme: MottoTheme.light,

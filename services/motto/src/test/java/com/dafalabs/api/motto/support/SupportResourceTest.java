@@ -38,7 +38,7 @@ class SupportResourceTest {
         .get("/v1/support")
         .then()
         .statusCode(200)
-        .body("version", equalTo(catalog.copy().version()))
+        .body("version", equalTo(catalog.copy("tr").version()))
         .body("faq.size()", Matchers.greaterThan(11))
         .body("privacy.size()", greaterThan(0));
   }
@@ -49,7 +49,7 @@ class SupportResourceTest {
   @DisplayName("a client that is up to date gets nothing back")
   void answers304() {
     given()
-        .header("If-None-Match", "\"" + catalog.copy().version() + "\"")
+        .header("If-None-Match", "\"" + catalog.copy("tr").version() + "\"")
         .when()
         .get("/v1/support")
         .then()

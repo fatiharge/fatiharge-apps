@@ -28,8 +28,11 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
-# Stems, not whole words: Turkish suffixes would otherwise walk straight past
-# every one of these ("analizi", "değerlendirmen", "teşhisi").
+# One table per language, and both are checked over the same files: the
+# translation files hold two languages side by side, and a Turkish stem list
+# has nothing to say about the word "diagnosis". Stems rather than whole words —
+# Turkish suffixes ("analizi", "teşhisi") and English endings ("diagnosing")
+# would otherwise both walk straight past.
 FORBIDDEN = {
     "değerlendirme": "envanter temelli öneri",
     "analiz": "eğilim, örüntü",
@@ -39,10 +42,16 @@ FORBIDDEN = {
     "test sonuc": "envanter temelli öneri",
     "tedavi": "sana iyi gelebilecek alışkanlık",
     "terapi": "sana iyi gelebilecek alışkanlık",
+    "diagnos": "tendency, pattern",
+    "personality test": "personality inventory",
+    "test result": "inventory-based suggestion",
+    "treatment": "a habit that may suit you",
+    "therapy": "a habit that may suit you",
 }
 
 TARGETS = [
-    ROOT / "apps/motto/lib/features/chain/domain/turkish_reminder_copy.dart",
+    ROOT / "apps/motto/assets/translations",
+    ROOT / "apps/motto/lib/features/chain/domain/reminder_words.dart",
     ROOT / "apps/motto/lib/features/support/domain",
 ]
 
@@ -56,6 +65,8 @@ SKIP = {Path(__file__)}
 ALLOWED = (
     "bir teşhis, bir yetenek ölçümü",
     "hiçbir cümle bir teşhis değil",
+    "not a diagnosis",
+    "no sentence here is a diagnosis",
 )
 
 
@@ -90,7 +101,13 @@ def main() -> int:
                     )
 
     if len(sys.argv) > 1:
-        hits.extend(f"  {objection}" for objection in served(sys.argv[1]))
+        # Every language the server holds, not only the one it falls back to:
+        # a sentence written in English is read by a reviewer in English.
+        for locale in ("tr", "en"):
+            hits.extend(
+                f"  [{locale}] {objection}"
+                for objection in served(sys.argv[1], locale)
+            )
 
     if hits:
         print("copy uses words guideline 1.4.1 reads as health claims:\n")
@@ -101,14 +118,14 @@ def main() -> int:
     return 0
 
 
-def served(base: str) -> list[str]:
-    """What the server says about the words it holds."""
+def served(base: str, locale: str) -> list[str]:
+    """What the server says about the words it holds, in one language."""
     token = os.environ.get("MOTTO_ADMIN_TOKEN")
     if not token:
         sys.exit("MOTTO_ADMIN_TOKEN is not set")
 
     request = urllib.request.Request(
-        base.rstrip("/") + "/admin/content/objections",
+        base.rstrip("/") + f"/admin/content/objections?locale={locale}",
         headers={"X-Admin-Token": token},
     )
     try:

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:motto/features/daily/domain/content_pack.dart';
 import 'package:motto/features/daily/domain/daily_assembler.dart';
@@ -33,7 +34,7 @@ Future<void> showDaySheet(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
             child: Text(
-              'O günün metni elimde yok.',
+              'days.missing'.tr(),
               style: text.bodyLarge?.copyWith(color: scheme.onSurfaceVariant),
             ),
           ),
@@ -49,7 +50,7 @@ Future<void> showDaySheet(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${content.day}. GÜN',
+                  'daily.dayLabel'.tr(namedArgs: {'day': '${content.day}'}),
                   style: text.labelSmall?.copyWith(
                     color: scheme.onSurfaceVariant,
                     letterSpacing: 1.5,

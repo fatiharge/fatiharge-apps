@@ -10,6 +10,7 @@ import jakarta.ws.rs.core.EntityTag;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
@@ -31,6 +32,7 @@ public class ContentResource {
 
   /**
    * @param ifNoneMatch the version the client already holds
+   * @param acceptLanguage the language the phone is set to
    */
   // Declared because the method returns `Response` for the 304, and the schema
   // would otherwise come out empty and generate a client returning a Map.
@@ -40,15 +42,18 @@ public class ContentResource {
       responseCode = "200",
       content = @Content(schema = @Schema(implementation = ContentBundle.class)))
   @APIResponse(responseCode = "304", description = "The version you hold is current")
-  public Response bundle(@HeaderParam("If-None-Match") String ifNoneMatch) {
-    ContentBundle bundle = catalog.bundle();
+  public Response bundle(
+      @HeaderParam("If-None-Match") String ifNoneMatch,
+      @Parameter(hidden = true) @HeaderParam("Accept-Language") String acceptLanguage) {
+    ContentBundle bundle = catalog.bundle(ContentLocale.from(acceptLanguage));
     EntityTag tag = new EntityTag(bundle.version());
 
     if (matches(ifNoneMatch, bundle.version())) {
       return Response.notModified(tag).build();
     }
 
-    return Response.ok(bundle).tag(tag).build();
+    // Vary, or a proxy hands the Turkish package to the next English phone.
+    return Response.ok(bundle).tag(tag).header("Vary", "Accept-Language").build();
   }
 
   /// The header arrives quoted, and proxies weaken it. Comparing raw strings

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:api_client_motto/api.dart' as api;
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/theme/motto_loading.dart';
@@ -27,15 +28,21 @@ class _ReportPageState extends State<ReportPage> {
 
   /// Named for the reader, not for the literature. "Nevrotiklik" is accurate
   /// and reads like a diagnosis.
-  static const _labels = {
-    'OPENNESS': 'Deneyime açıklık',
-    'CONSCIENTIOUSNESS': 'Düzen ve süreklilik',
-    'EXTRAVERSION': 'Dışa dönüklük',
-    'AGREEABLENESS': 'Uyum',
-    'NEUROTICISM': 'Duygusal iniş çıkış',
+  /// Read rather than held: a const map is filled once, and once is before
+  /// the language is known.
+  static Map<String, String> get _labels => {
+    'OPENNESS': 'report.openness'.tr(),
+    'CONSCIENTIOUSNESS': 'report.conscientiousness'.tr(),
+    'EXTRAVERSION': 'report.extraversion'.tr(),
+    'AGREEABLENESS': 'report.agreeableness'.tr(),
+    'NEUROTICISM': 'report.neuroticism'.tr(),
   };
 
-  static const _bands = {'low': 'düşük', 'mid': 'orta', 'high': 'yüksek'};
+  static Map<String, String> get _bands => {
+    'low': 'report.low'.tr(),
+    'mid': 'report.mid'.tr(),
+    'high': 'report.high'.tr(),
+  };
 
   @override
   void initState() {
@@ -59,10 +66,10 @@ class _ReportPageState extends State<ReportPage> {
     final report = _report;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Rapor')),
+      appBar: AppBar(title: Text('report.title'.tr())),
       body: SafeArea(
         child: switch ((report, _failed)) {
-          (null, true) => const Center(child: Text('Rapor alınamadı.')),
+          (null, true) => Center(child: Text('report.failed'.tr())),
           (null, _) => const MottoLoading(),
           (final api.ResultReport ready, _) => _read(context, ready),
         },
@@ -80,7 +87,7 @@ class _ReportPageState extends State<ReportPage> {
         Text(report.overview, style: text.bodyLarge),
         const SizedBox(height: 32),
         Text(
-          'BEŞ EKSEN',
+          'report.axes'.tr(),
           style: text.labelMedium?.copyWith(letterSpacing: 1.2),
         ),
         const SizedBox(height: 16),
@@ -95,7 +102,7 @@ class _ReportPageState extends State<ReportPage> {
         ],
         const SizedBox(height: 8),
         _Block(
-          title: 'Bu sana ne veriyor',
+          title: 'report.gives'.tr(),
           body: report.strength,
           colour: scheme.primaryContainer,
           onColour: scheme.onPrimaryContainer,
@@ -104,7 +111,7 @@ class _ReportPageState extends State<ReportPage> {
         // The cost sits in the free report rather than behind the paywall: a
         // profile that only flatters is the thing nobody comes back to.
         _Block(
-          title: 'Neye mal oluyor',
+          title: 'report.costs'.tr(),
           body: report.cost,
           colour: scheme.surfaceContainerHighest,
           onColour: scheme.onSurface,

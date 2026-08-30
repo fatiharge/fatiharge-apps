@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 /// What this is built on, in the open. Never behind a paywall: a claim you
@@ -18,20 +19,15 @@ class BasisSection extends StatelessWidget {
       child: ExpansionTile(
         tilePadding: EdgeInsets.zero,
         childrenPadding: const EdgeInsets.only(bottom: 8),
-        title: Text('Bu neye dayanıyor?', style: text.titleMedium),
+        title: Text('basis.title'.tr(), style: text.titleMedium),
         children: [
           Text(
-            'Sorular, kamuya açık IPIP madde havuzundan Türkçeye '
-            'uyarlanmıştır. Cevapların beş eğilim ekseninde bir profil '
-            'oluşturur; arketip, o profilin en yakın düştüğü tanıma verilen '
-            'addır.',
+            'basis.body'.tr(),
             style: text.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
           ),
           const SizedBox(height: 16),
           Text(
-            'Sınırlılıklar: kısa form düşük çözünürlüklüdür, kendi kendini '
-            'bildirme yanlılığı taşır ve arketip sınırları keskin değildir. '
-            'Arketip adı bilimsel bir kategori değil, editöryal bir yorumdur.',
+            'basis.limits'.tr(),
             style: text.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
           ),
         ],

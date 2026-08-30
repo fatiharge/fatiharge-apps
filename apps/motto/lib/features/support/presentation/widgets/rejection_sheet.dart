@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/features/support/application/feedback_cubit.dart';
@@ -7,10 +8,13 @@ import 'package:motto/features/support/application/feedback_cubit.dart';
 /// Which archetype gets rejected, and in which direction, is the only
 /// correction signal the mapping table has — and asking someone who just said
 /// "this is not me" to write an essay returns nothing at all.
-const rejectionReasons = [
-  'Tam tersi gibi',
-  'Yakın ama tam değil',
-  'Hiç tanımadım',
+///
+/// Read rather than held: a `const` list is built once, and once is before
+/// anybody has said which language they read in.
+List<String> get rejectionReasons => [
+  'rejection.opposite'.tr(),
+  'rejection.close'.tr(),
+  'rejection.nothing'.tr(),
 ];
 
 Future<void> showRejectionSheet(BuildContext context) => showModalBottomSheet(
@@ -37,7 +41,7 @@ Future<void> showRejectionSheet(BuildContext context) => showModalBottomSheet(
               unawaited(getIt<FeedbackCubit>().rejectArchetype(reason));
               Navigator.of(sheetContext).pop();
               ScaffoldMessenger.of(sheetContext).showSnackBar(
-                const SnackBar(content: Text('Not aldık, teşekkürler.')),
+                SnackBar(content: Text('rejection.thanks'.tr())),
               );
             },
           ),

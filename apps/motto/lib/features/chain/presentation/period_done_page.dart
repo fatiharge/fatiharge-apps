@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motto/config/injectable.dart';
@@ -45,26 +46,24 @@ class _PeriodDoneView extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(24, 8, 24, 40),
           children: [
-            Text('On dört gün bitti.', style: text.headlineMedium),
+            Text('periodDone.done'.tr(), style: text.headlineMedium),
             const SizedBox(height: 12),
             Text(
-              'Bir dönem tamamlandı. Devam etmeden önce raporunu oku — '
-              'yaptığın şey orada sayılı.',
+              'periodDone.body'.tr(),
               style: text.bodyLarge?.copyWith(color: scheme.onSurfaceVariant),
             ),
             const SizedBox(height: 24),
             FilledButton(
               onPressed: () => context.router.push(const PeriodReportRoute()),
-              child: const Text('Dönem raporunu oku'),
+              child: Text('periodDone.readReport'.tr()),
             ),
             const SizedBox(height: 40),
             Divider(color: scheme.outlineVariant, height: 1),
             const SizedBox(height: 28),
-            Text('Sırada ne var', style: text.titleMedium),
+            Text('periodDone.next'.tr(), style: text.titleMedium),
             const SizedBox(height: 8),
             Text(
-              'Arketipin değişmedi. Değişen, önümüzdeki on dört günü hangi '
-              'cümlenin taşıyacağı.',
+              'periodDone.nextBody'.tr(),
               style: text.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
             ),
             const SizedBox(height: 20),
@@ -124,7 +123,7 @@ class _MottoChoice extends StatelessWidget {
             children: [
               if (current) ...[
                 Text(
-                  'ŞU ANKİ',
+                  'periodDone.current'.tr(),
                   style: text.labelSmall?.copyWith(
                     color: scheme.primary,
                     letterSpacing: 1.4,

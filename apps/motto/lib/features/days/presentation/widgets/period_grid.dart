@@ -1,4 +1,5 @@
 import 'package:api_client_motto/api.dart' as api;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:motto/features/daily/domain/daily_assembler.dart';
 
@@ -32,7 +33,7 @@ class PeriodGrid extends StatelessWidget {
         Row(
           children: [
             Text(
-              '${period.period}. DÖNEM',
+              'days.periodLabel'.tr(namedArgs: {'period': '${period.period}'}),
               style: text.labelSmall?.copyWith(
                 color: scheme.onSurfaceVariant,
                 letterSpacing: 1.5,
@@ -41,8 +42,18 @@ class PeriodGrid extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               period.current
-                  ? '${days.length} / ${DailyAssembler.cycleDays} · sürüyor'
-                  : '${days.length} / ${DailyAssembler.cycleDays}',
+                  ? 'days.periodRunning'.tr(
+                      namedArgs: {
+                        'done': '${days.length}',
+                        'of': '${DailyAssembler.cycleDays}',
+                      },
+                    )
+                  : 'periodReport.outOf'.tr(
+                      namedArgs: {
+                        'done': '${days.length}',
+                        'of': '${DailyAssembler.cycleDays}',
+                      },
+                    ),
               style: text.labelSmall?.copyWith(color: scheme.onSurfaceVariant),
             ),
           ],

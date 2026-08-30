@@ -27,11 +27,50 @@ what is left is the rulebook.
 | `support_texts` | the FAQ, the privacy summary and the deletion copy |
 | `content_revisions` | who changed which words, and what they said before |
 
+Every one of those tables carries a `locale`, and every row is one language's
+sentence. `archetype_rules` does not — see [A second language](#a-second-language).
+
 A day someone reads is `skeleton.body` + a connector + a fragment. Fourteen
 bodies and one fragment per archetype per day is two hundred and fifty-two
 days of text — which only works while the connectors are written by hand. The
 moment they become a template, every day reads like the same sentence with a
 different ending, and that is what a horoscope is.
+
+## A second language
+
+Every worded table is keyed by `(…, locale)`, and every read names the language
+it wants — the app sends `Accept-Language` on each request. Turkish is the
+fallback, and it is what anything unrecognised gets. A language nobody has
+written yet is answered in Turkish **whole**: half a package in one language
+and half in another is a day whose title and body disagree, and there is no
+screen that survives that.
+
+What is *not* keyed by locale is deliberate. Where an archetype sits in five
+dimensions, and which generation of the inventory is live, are the instrument.
+The writer takes them from the fallback language and ignores them from any
+other, so pushing a translation can never change who gets which archetype.
+
+### The exception to "the words are not here"
+
+`content/<locale>/` holds one file per endpoint for a language being brought
+up — `content/en/` is English. This is the one place the words sit in the
+repository, and it is a **submission**, not the source:
+
+- it exists so a translation can be read in a pull request before it is pushed,
+  which is the only review a language ever gets;
+- once it is pushed, the tables are authoritative. Corrections go through the
+  API like every other wording change, and they do **not** come back here.
+
+`scripts/push_content.py` sends it:
+
+```bash
+MOTTO_ADMIN_TOKEN=… scripts/push_content.py https://mottostage.dafalabs.com en --dry-run
+MOTTO_ADMIN_TOKEN=… scripts/push_content.py https://mottostage.dafalabs.com en
+```
+
+A file that is not in the directory is a part that is not pushed, which is how
+a language lands in pieces. `EnglishPayloadTest` runs the same writer over the
+committed files, so a payload the server would refuse fails locally instead.
 
 ## Adding an archetype
 

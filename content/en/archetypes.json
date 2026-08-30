@@ -1,0 +1,164 @@
+[
+  {
+    "id": "quiet_builder",
+    "name": "The Quiet Builder",
+    "summary": "You add to things without making a noise; nobody sees the first stone and everybody sees the wall. The cost: because you are not visible, most of the time the credit does not reach you either.",
+    "motto": "Never in a hurry, never stopped.",
+    "ordinal": 1,
+    "defining": [],
+    "target": {}
+  },
+  {
+    "id": "spark",
+    "name": "The Spark",
+    "summary": "You start a great many things, and the trouble is not that you lose interest — it is that all of them really are good ideas. The hard part is not catching light, it is picking one.",
+    "motto": "Just one of them today.",
+    "ordinal": 2,
+    "defining": [],
+    "target": {}
+  },
+  {
+    "id": "night_watch",
+    "name": "The Night Watch",
+    "summary": "By the time you notice, nothing has happened yet. Having already thought it through while everyone else is at ease is tiring, and it has paid off more than once.",
+    "motto": "Being alert is a strength; so is resting.",
+    "ordinal": 3,
+    "defining": [],
+    "target": {}
+  },
+  {
+    "id": "table_setter",
+    "name": "The Table Setter",
+    "summary": "You are the one who brings people together, and nobody even asks you to. You care so much that everyone feels welcome that by the time it is your turn there is no seat left.",
+    "motto": "Ask me too, before you ask them.",
+    "ordinal": 4,
+    "defining": [],
+    "target": {}
+  },
+  {
+    "id": "fine_worker",
+    "name": "The Fine Worker",
+    "summary": "\"That will do\" is a sentence that does not work on you; you see the difference even where nobody else can. What makes finishing hard is not laziness, it is your standard.",
+    "motto": "Not perfect. Finished.",
+    "ordinal": 5,
+    "defining": [],
+    "target": {}
+  },
+  {
+    "id": "compass",
+    "name": "The Compass",
+    "summary": "When nobody decides, you decide, and you are usually right. The cost: because you do not wait for everyone to agree, you sometimes walk alone.",
+    "motto": "Deciding is a weight too. I carry it.",
+    "ordinal": 6,
+    "defining": [],
+    "target": {}
+  },
+  {
+    "id": "still_water",
+    "name": "Still Water",
+    "summary": "You stay calm while everyone else panics, and that calms them down as well. But you mind so little that the thing genuinely worth minding gets left late.",
+    "motto": "Calm, not indifferent.",
+    "ordinal": 7,
+    "defining": [],
+    "target": {}
+  },
+  {
+    "id": "deep_diver",
+    "name": "The Deep Diver",
+    "summary": "You live everything one layer deeper, the good and the bad alike. Staying on the surface would be easier, and then you would not be you.",
+    "motto": "Not staying down. Diving and surfacing.",
+    "ordinal": 8,
+    "defining": [],
+    "target": {}
+  },
+  {
+    "id": "own_clock",
+    "name": "On Your Own Clock",
+    "summary": "You work in waves rather than to a system; when it comes, it comes completely. The cost: nothing accumulates, and nobody can plan around you — yourself included.",
+    "motto": "On my own clock, but every day.",
+    "ordinal": 9,
+    "defining": [],
+    "target": {}
+  },
+  {
+    "id": "contrarian",
+    "name": "The Contrarian",
+    "summary": "You do not pretend to fall in line and you do not pretend to agree, so what people hear from you is the real thing. The cost: you are spending today the goodwill you will need later.",
+    "motto": "Objecting is easy. Staying is not.",
+    "ordinal": 10,
+    "defining": [],
+    "target": {}
+  },
+  {
+    "id": "feet_on_ground",
+    "name": "Feet on the Ground",
+    "summary": "You deal with today's work and solve it with what is to hand; you need neither a theory nor a plan. The cost: nothing changes, because change wants either curiosity or a plan, and you carry neither.",
+    "motto": "With what I have today.",
+    "ordinal": 11,
+    "defining": [],
+    "target": {}
+  },
+  {
+    "id": "as_is",
+    "name": "As You Are",
+    "summary": "You do not work at closeness and you do not work at smoothing things over; whoever knows you knows exactly you. The cost: after a while nobody asks, and you only notice that when you need something.",
+    "motto": "Open to few, and to them completely.",
+    "ordinal": 12,
+    "defining": [],
+    "target": {}
+  },
+  {
+    "id": "table_upsetter",
+    "name": "The Table Upsetter",
+    "summary": "You say the thing nobody in the room is saying, and it usually needed saying. The cost: after you say it you have to stay, and staying is far harder than saying.",
+    "motto": "Saying it was easy. Staying is not.",
+    "ordinal": 13,
+    "defining": [],
+    "target": {}
+  },
+  {
+    "id": "light_footed",
+    "name": "Light-Footed",
+    "summary": "Neither a crowd nor a setback wears you out; you pass through both just as easily. The cost: because you make nothing big, you are late to notice the thing that genuinely is.",
+    "motto": "You can travel light — but not from this.",
+    "ordinal": 14,
+    "defining": [],
+    "target": {}
+  },
+  {
+    "id": "full_glass",
+    "name": "A Full Glass",
+    "summary": "You feel everything at once and completely, so the hard part is not what to do but what to do first. The cost: the energy you spend on not spilling is energy the work itself never gets.",
+    "motto": "Pour off a mouthful, then carry it.",
+    "ordinal": 15,
+    "defining": [],
+    "target": {}
+  },
+  {
+    "id": "word_is_bond",
+    "name": "Your Word Is Bond",
+    "summary": "What you say happens, and people know it before you say it. The cost: because nobody ever hears \"I can't\" from you, they keep asking — and your own work comes last.",
+    "motto": "Only what I promised, and all of it.",
+    "ordinal": 16,
+    "defining": [],
+    "target": {}
+  },
+  {
+    "id": "in_its_place",
+    "name": "In Its Place",
+    "summary": "You choose what has been tried because it has been tried, and that makes you unshakeable; the people around you plan knowing it. The cost: the thing that ought to change stays put too, because you take that for settled as well.",
+    "motto": "Check the settled thing as well.",
+    "ordinal": 17,
+    "defining": [],
+    "target": {}
+  },
+  {
+    "id": "inwardly",
+    "name": "Inwardly",
+    "summary": "You carry a great deal without telling anyone; if someone is out of sorts you have noticed already. The cost: because you never say that you noticed, the help only ever runs one way, and the day you need some, nobody thinks of you.",
+    "motto": "I can say it too.",
+    "ordinal": 18,
+    "defining": [],
+    "target": {}
+  }
+]

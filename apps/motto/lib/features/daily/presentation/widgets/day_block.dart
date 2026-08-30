@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motto/features/daily/application/daily_cubit.dart';
@@ -36,17 +37,16 @@ class _NoResult extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Önce envanteri doldur', style: text.headlineSmall),
+        Text('daily.inventoryFirst'.tr(), style: text.headlineSmall),
         const SizedBox(height: 12),
         Text(
-          'Günlük içerik arketibine göre kuruluyor. Ondan önce sana '
-          'söylenecek kişisel bir şey yok.',
+          'daily.inventoryBody'.tr(),
           style: text.bodyLarge,
         ),
         const SizedBox(height: 20),
         FilledButton(
           onPressed: () => context.router.push(const QuestionRoute()),
-          child: const Text('Başla'),
+          child: Text('daily.start'.tr()),
         ),
       ],
     );
@@ -62,9 +62,8 @@ class _Unavailable extends StatelessWidget {
   Widget build(BuildContext context) {
     return CouldNotLoad.inline(
       said: status == DailyStatus.noContent
-          ? 'Günlük içerik bu cihaza hiç inmedi. Bağlantını kontrol edip '
-                'tekrar dene.'
-          : 'Bugünün metni açılamadı. Tekrar dene.',
+          ? 'daily.neverDownloaded'.tr()
+          : 'daily.failed'.tr(),
       retry: context.read<DailyCubit>().unawaitedLoad,
     );
   }
@@ -103,7 +102,7 @@ class _Ready extends StatelessWidget {
           const SizedBox(height: 14),
         ],
         Text(
-          '${content.day}. GÜN',
+          'daily.dayLabel'.tr(namedArgs: {'day': '${content.day}'}),
           style: text.labelSmall?.copyWith(
             color: scheme.onSurfaceVariant,
             letterSpacing: 1.5,

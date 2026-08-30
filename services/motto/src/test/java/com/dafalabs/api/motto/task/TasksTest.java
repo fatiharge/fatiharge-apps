@@ -76,7 +76,7 @@ class TasksTest {
     chains.start(device, TODAY);
     chains.mark(device, TODAY, TODAY);
 
-    assertTrue(tasks.forToday(device, chains.state(device, TODAY)).tasks().isEmpty());
+    assertTrue(tasks.forToday(device, chains.state(device, TODAY), "tr").tasks().isEmpty());
   }
 
   @Test
@@ -86,11 +86,41 @@ class TasksTest {
     chains.start(device, TODAY);
     chains.mark(device, TODAY, TODAY);
 
-    var today = tasks.forToday(device, chains.state(device, TODAY));
+    var today = tasks.forToday(device, chains.state(device, TODAY), "tr");
 
     assertEquals(1, today.day());
     assertEquals(3, today.tasks().size());
     assertEquals(1, today.tasks().get(0).ordinal());
+  }
+
+  @Test
+  @DisplayName("a day nobody has translated is offered in the language that exists")
+  void untranslatedDaysFallBack() {
+    givenAResult();
+    content.forgetEnglish();
+    chains.start(device, TODAY);
+    chains.mark(device, TODAY, TODAY);
+
+    // Three things in the wrong language beat an empty screen on a day
+    // somebody came back for.
+    var today = tasks.forToday(device, chains.state(device, TODAY), "en");
+
+    assertEquals(3, today.tasks().size());
+    assertTrue(today.tasks().get(0).title().startsWith("gün "));
+  }
+
+  @Test
+  @DisplayName("and one that has been translated is offered in English")
+  void translatedDaysAreEnglish() {
+    givenAResult();
+    content.tasksInEnglishFor(GivenContent.ARCHETYPE);
+    chains.start(device, TODAY);
+    chains.mark(device, TODAY, TODAY);
+
+    var today = tasks.forToday(device, chains.state(device, TODAY), "en");
+
+    assertEquals(3, today.tasks().size());
+    assertTrue(today.tasks().get(0).title().startsWith("day "));
   }
 
   @Test
@@ -99,13 +129,13 @@ class TasksTest {
     givenAResult();
     chains.start(device, TODAY);
     chains.mark(device, TODAY, TODAY);
-    var first = tasks.forToday(device, chains.state(device, TODAY)).tasks().get(0);
+    var first = tasks.forToday(device, chains.state(device, TODAY), "tr").tasks().get(0);
     assertFalse(first.done());
 
     tasks.complete(device, first.id(), TODAY);
     tasks.complete(device, first.id(), TODAY);
 
-    var after = tasks.forToday(device, chains.state(device, TODAY));
+    var after = tasks.forToday(device, chains.state(device, TODAY), "tr");
     assertTrue(after.tasks().get(0).done());
     assertEquals(1, tasks.report(device, chains.state(device, TODAY)).tasksDone());
   }

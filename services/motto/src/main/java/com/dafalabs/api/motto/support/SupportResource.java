@@ -2,6 +2,7 @@ package com.dafalabs.api.motto.support;
 
 import com.dafalabs.api.motto.support.dto.SupportCopy;
 import io.quarkus.security.Authenticated;
+import com.dafalabs.api.motto.content.ContentLocale;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.Path;
@@ -10,6 +11,7 @@ import jakarta.ws.rs.core.EntityTag;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
@@ -32,14 +34,17 @@ public class SupportResource {
       responseCode = "200",
       content = @Content(schema = @Schema(implementation = SupportCopy.class)))
   @APIResponse(responseCode = "304", description = "The version you hold is current")
-  public Response copy(@HeaderParam("If-None-Match") String ifNoneMatch) {
-    SupportCopy copy = catalog.copy();
+  public Response copy(
+      @HeaderParam("If-None-Match") String ifNoneMatch,
+      @Parameter(hidden = true) @HeaderParam("Accept-Language") String acceptLanguage) {
+    SupportCopy copy = catalog.copy(ContentLocale.from(acceptLanguage));
     EntityTag tag = new EntityTag(copy.version());
 
     if (matches(ifNoneMatch, copy.version())) {
       return Response.notModified(tag).build();
     }
-    return Response.ok(copy).tag(tag).build();
+    // Vary, or a proxy hands the Turkish copy to the next English phone.
+    return Response.ok(copy).tag(tag).header("Vary", "Accept-Language").build();
   }
 
   /// Quoted on the wire, and weakened by proxies.

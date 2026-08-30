@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:motto/features/chain/application/chain_state.dart';
 import 'package:motto/features/game/presentation/open_game.dart';
@@ -44,17 +45,17 @@ class GameRow extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'BUGÜNÜ İŞARETLEDİN',
+                    'gameRow.markedToday'.tr(),
                     style: text.labelSmall?.copyWith(
                       color: scheme.onSurfaceVariant,
                       letterSpacing: 1.5,
                     ),
                   ),
                   const SizedBox(height: 6),
-                  Text('Bir tur at', style: text.titleMedium),
+                  Text('gameRow.play'.tr(), style: text.titleMedium),
                   const SizedBox(height: 4),
                   Text(
-                    'Haftanın ilk 10 skoru bir derin rapor kazanıyor.',
+                    'gameRow.reward'.tr(),
                     style: text.bodySmall?.copyWith(
                       color: scheme.onSurfaceVariant,
                     ),

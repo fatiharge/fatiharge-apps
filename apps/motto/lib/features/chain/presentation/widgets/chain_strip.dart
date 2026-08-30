@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:motto/features/chain/domain/chain.dart';
 import 'package:motto/features/daily/domain/daily_assembler.dart';
@@ -46,7 +47,7 @@ class ChainStrip extends StatelessWidget {
           textBaseline: TextBaseline.alphabetic,
           children: [
             Text(
-              'ZİNCİR',
+              'chain.title'.tr(),
               style: text.labelMedium?.copyWith(
                 letterSpacing: 1.3,
                 color: scheme.onSurfaceVariant,
@@ -60,7 +61,7 @@ class ChainStrip extends StatelessWidget {
               ),
             ),
             Text(
-              ' / $days',
+              'chain.ofDays'.tr(namedArgs: {'days': '$days'}),
               style: text.bodyMedium?.copyWith(
                 color: scheme.onSurfaceVariant,
                 fontFeatures: const [FontFeature.tabularFigures()],
@@ -110,9 +111,11 @@ class ChainStrip extends StatelessWidget {
   }
 
   String _caption(int standing) {
-    if (chain.startedOn == null) return 'Henüz başlamadı.';
-    if (streak == 0) return 'Bugün işaretlenmedi.';
-    return streak == standing ? 'Hiç kaçırmadın.' : '$streak gün üst üste.';
+    if (chain.startedOn == null) return 'chain.notStarted'.tr();
+    if (streak == 0) return 'chain.notMarked'.tr();
+    return streak == standing
+        ? 'chain.perfect'.tr()
+        : 'chain.inARow'.plural(streak);
   }
 }
 

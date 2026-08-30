@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:api_client_motto/api.dart' as api;
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/features/game/application/turns_repository.dart';
@@ -28,7 +29,7 @@ class GameOverPage extends StatelessWidget {
     final entries = board?.entries ?? const <api.LeaderboardEntry>[];
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Skor')),
+      appBar: AppBar(title: Text('gameOver.title'.tr())),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 40),
@@ -44,11 +45,11 @@ class GameOverPage extends StatelessWidget {
             const SizedBox(height: 32),
             if (board == null)
               Text(
-                'Skor gönderilemedi. Bağlantın gelince tekrar dene.',
+                'gameOver.scoreFailed'.tr(),
                 style: text.bodyMedium?.copyWith(color: scheme.error),
               )
             else ...[
-              Text('Bu hafta', style: text.titleMedium),
+              Text('gameOver.thisWeek'.tr(), style: text.titleMedium),
               const SizedBox(height: 8),
               for (final entry in entries)
                 Padding(
@@ -73,7 +74,9 @@ class GameOverPage extends StatelessWidget {
                 ),
               const SizedBox(height: 16),
               Text(
-                'İlk ${board!.rewardedRanks} bir derin rapor kazanıyor.',
+                'gameOver.topWin'.tr(
+                  namedArgs: {'ranks': '${board!.rewardedRanks}'},
+                ),
                 style: text.bodyMedium?.copyWith(
                   color: scheme.onSurfaceVariant,
                 ),
@@ -85,12 +88,12 @@ class GameOverPage extends StatelessWidget {
               // paying for it would make the first turn the only one anybody
               // ever spends.
               onPressed: () => unawaited(_again(context)),
-              child: const Text('Tekrar oyna'),
+              child: Text('gameOver.playAgain'.tr()),
             ),
             const SizedBox(height: 8),
             TextButton(
               onPressed: () => context.router.maybePop(),
-              child: const Text('Bitir'),
+              child: Text('gameOver.finish'.tr()),
             ),
           ],
         ),

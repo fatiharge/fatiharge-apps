@@ -2,6 +2,7 @@ package com.dafalabs.api.motto.task;
 
 import com.dafalabs.api.core.error.CustomRuntimeException;
 import com.dafalabs.api.motto.chain.dto.ChainState;
+import com.dafalabs.api.motto.content.ContentLocale;
 import com.dafalabs.api.motto.game.CreditReason;
 import com.dafalabs.api.motto.game.Plays;
 import com.dafalabs.api.motto.result.Results;
@@ -54,8 +55,12 @@ public class Tasks {
     return position % periodDays + 1;
   }
 
+  /**
+   * @param locale what the reader asked for; a day nobody has translated yet
+   *     is offered in the fallback rather than as an empty list
+   */
   @Transactional
-  public DailyTasks forToday(UUID deviceId, ChainState chain) {
+  public DailyTasks forToday(UUID deviceId, ChainState chain, String locale) {
     int day = dayIndex(chain.markedDays().size());
 
     String archetype = archetypeOf(deviceId);
@@ -67,7 +72,7 @@ public class Tasks {
     Set<Long> done = doneIds(deviceId);
     return new DailyTasks(
         day,
-        tasks.forDay(day, archetype).stream()
+        written(locale, day, archetype).stream()
             .map(
                 task ->
                     new DailyTask(
@@ -77,6 +82,15 @@ public class Tasks {
                         task.detail(),
                         done.contains(task.id())))
             .toList());
+  }
+
+  /// The three rows for this day, in the best language they exist in. Falling
+  /// back a day at a time rather than all or nothing: tasks are translated day
+  /// by day, and a reader on day nine should not lose the eight that are done.
+  private List<Task> written(String locale, int day, String archetype) {
+    String asked = ContentLocale.named(locale);
+    List<Task> mine = tasks.forDay(asked, day, archetype);
+    return mine.isEmpty() ? tasks.forDay(ContentLocale.fallback, day, archetype) : mine;
   }
 
   @Transactional

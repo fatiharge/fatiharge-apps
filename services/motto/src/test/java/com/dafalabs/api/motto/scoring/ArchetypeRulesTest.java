@@ -43,7 +43,7 @@ class ArchetypeRulesTest {
   @Test
   @DisplayName("the words and the rules cover the same set")
   void tableAndTextAgree() {
-    assertEquals(rules.size(), catalog.size());
+    assertEquals(rules.size(), catalog.size("tr"));
   }
 
   @Test
@@ -57,6 +57,6 @@ class ArchetypeRulesTest {
     String match = rules.match(new ProfileVector(middle));
 
     assertNotNull(match);
-    assertNotNull(catalog.byId(match));
+    assertNotNull(catalog.byId(match, "tr"));
   }
 }

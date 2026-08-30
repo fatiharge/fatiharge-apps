@@ -66,6 +66,7 @@ import 'package:motto/infrastructure/effects/refresh_requests.dart' as _i388;
 import 'package:motto/infrastructure/identity/device_identity.dart' as _i37;
 import 'package:motto/infrastructure/identity/device_identity_impl.dart'
     as _i917;
+import 'package:motto/infrastructure/language/app_language.dart' as _i773;
 import 'package:motto/infrastructure/notifications/local_reminder_scheduler.dart'
     as _i573;
 import 'package:motto/infrastructure/session/device_session.dart' as _i503;
@@ -134,6 +135,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i480.EffectStore>(
       () => _i480.EffectStore(gh<_i460.SharedPreferences>()),
+    );
+    gh.lazySingleton<_i773.AppLanguage>(
+      () => _i773.AppLanguage(gh<_i460.SharedPreferences>()),
     );
     gh.lazySingleton<_i632.ReminderScheduler>(
       () => _i573.LocalReminderScheduler(),

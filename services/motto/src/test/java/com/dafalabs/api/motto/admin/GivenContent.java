@@ -16,6 +16,8 @@ import com.dafalabs.api.motto.content.write.SkeletonWrite;
 import com.dafalabs.api.motto.content.write.SupportWrite;
 import com.dafalabs.api.motto.scoring.Dimension;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -52,6 +54,8 @@ public class GivenContent {
     ARCHETYPES.put("t_middle", new double[] {0.5, 0.5, 0.5, 0.5, 0.5});
   }
 
+  public static final String ENGLISH = "en";
+
   private static final int DAYS = 14;
   private static final int PER_DAY = 3;
   private static final int MOTTOS = 4;
@@ -60,16 +64,19 @@ public class GivenContent {
   private final ContentAdmin content;
   private final ContentWriter writer;
   private final ContentStore store;
+  private final EntityManager entities;
 
-  GivenContent(ContentAdmin content, ContentWriter writer, ContentStore store) {
+  GivenContent(
+      ContentAdmin content, ContentWriter writer, ContentStore store, EntityManager entities) {
     this.content = content;
     this.writer = writer;
     this.store = store;
+    this.entities = entities;
   }
 
   /** Which dimension the report's first section reads from. */
   public Dimension firstSectionDimension() {
-    return store.reportSections().stream()
+    return store.reportSections("tr").stream()
         .min(java.util.Comparator.comparingInt(ReportSectionRow::section))
         .map(row -> Dimension.of(row.dimension()))
         .orElseThrow();
@@ -77,14 +84,14 @@ public class GivenContent {
 
   /** The second axis the report's first section crosses. */
   public Dimension secondSectionDimension() {
-    return store.reportSections().stream()
+    return store.reportSections("tr").stream()
         .min(java.util.Comparator.comparingInt(ReportSectionRow::section))
         .map(row -> Dimension.of(row.dimension2()))
         .orElseThrow();
   }
 
   public List<Integer> sections() {
-    return store.reportSections().stream().map(ReportSectionRow::section).toList();
+    return store.reportSections("tr").stream().map(ReportSectionRow::section).toList();
   }
 
   /** Everything: the words, the instrument, the days and the report. */
@@ -99,6 +106,105 @@ public class GivenContent {
     }
   }
 
+  /**
+   * The same product, written a second time in English.
+   *
+   * <p>Only the tables a reader actually reads: the point is to prove that a
+   * request in English is answered in English and that one in a language
+   * nobody has written falls back, not to have two of everything.
+   */
+  public void alsoInEnglish() {
+    List<ArchetypeWrite> archetypes = new ArrayList<>();
+    List<MottoWrite> mottos = new ArrayList<>();
+    List<FragmentWrite> fragments = new ArrayList<>();
+    int ordinal = 1;
+    for (var entry : ARCHETYPES.entrySet()) {
+      String id = entry.getKey();
+      archetypes.add(
+          new ArchetypeWrite(
+              id,
+              "Archetype " + id,
+              "Someone who is %s. The cost is that this line was written for a test."
+                  .formatted(id),
+              "%s motto in English".formatted(id),
+              ordinal++,
+              List.of("openness", "conscientiousness"),
+              target(entry.getValue())));
+      for (int index = 1; index <= MOTTOS; index++) {
+        mottos.add(
+            new MottoWrite(
+                "%s_%d".formatted(id, index),
+                id,
+                "%s motto %d in English".formatted(id, index),
+                "what %s motto %d means".formatted(id, index),
+                "%s motto %d reminder".formatted(id, index),
+                index));
+      }
+      for (int day = 1; day <= DAYS; day++) {
+        fragments.add(
+            new FragmentWrite(id, day, "%s · day %d fragment.".formatted(id, day)));
+      }
+    }
+    writer.archetypes(ENGLISH, archetypes);
+    writer.mottos(ENGLISH, mottos);
+    writer.fragments(ENGLISH, fragments);
+
+    List<SkeletonWrite> skeletons = new ArrayList<>();
+    for (int day = 1; day <= DAYS; day++) {
+      skeletons.add(
+          new SkeletonWrite(
+              day,
+              "Day %d".formatted(day),
+              "Day %d body.".formatted(day),
+              "Day %d action.".formatted(day)));
+    }
+    writer.skeletons(ENGLISH, skeletons);
+
+    List<ConnectorWrite> connectors = new ArrayList<>();
+    for (int index = 1; index <= 5; index++) {
+      connectors.add(new ConnectorWrite("c" + index, "connector " + index));
+    }
+    writer.connectors(ENGLISH, connectors);
+  }
+
+  /**
+   * Every English row, gone.
+   *
+   * <p>The test database is shared across the whole run, so "nobody has
+   * written this language yet" is not a state a test can assume — one class
+   * writing English leaves it written for every class after it. This is how a
+   * test asks for that state rather than hoping for it.
+   */
+  @Transactional
+  public void forgetEnglish() {
+    for (String table :
+        List.of(
+            "archetypes", "mottos", "fragments", "day_skeletons", "connectors", "items",
+            "support_texts", "tasks", "report_pieces", "content_revisions")) {
+      entities.createNativeQuery("DELETE FROM " + table + " WHERE locale = :locale")
+          .setParameter("locale", ENGLISH)
+          .executeUpdate();
+    }
+  }
+
+  /** The three things a day asks for, in English, for one archetype. */
+  public void tasksInEnglishFor(String archetype) {
+    List<TaskWrite> tasks = new ArrayList<>();
+    for (int day = 1; day <= DAYS; day++) {
+      for (int ordinal = 1; ordinal <= PER_DAY; ordinal++) {
+        tasks.add(
+            new TaskWrite(
+                day,
+                archetype,
+                ordinal,
+                "day %d · %d".formatted(day, ordinal),
+                "day %d · %d detail".formatted(day, ordinal),
+                false));
+      }
+    }
+    content.writeTasks(ENGLISH, tasks);
+  }
+
   /// Before the archetypes, because the report pieces are written per section
   /// and there is nothing to write against until the sections exist.
   private void sectionsFirst() {
@@ -109,7 +215,7 @@ public class GivenContent {
       // lookup rather than only the single-axis fallback.
       sections.add(new SectionWrite(i + 1, all[i].name(), all[(i + 1) % all.length].name()));
     }
-    writer.sections(sections);
+    writer.sections("tr", sections);
   }
 
   private void archetypes() {
@@ -147,9 +253,9 @@ public class GivenContent {
       }
     }
 
-    writer.archetypes(archetypes);
-    writer.mottos(mottos);
-    writer.fragments(fragments);
+    writer.archetypes("tr", archetypes);
+    writer.mottos("tr", mottos);
+    writer.fragments("tr", fragments);
   }
 
   private static Map<String, Double> target(double[] point) {
@@ -178,7 +284,7 @@ public class GivenContent {
                 ordinal++));
       }
     }
-    writer.items(new ItemSetWrite(1, true, items));
+    writer.items("tr", new ItemSetWrite(1, true, items));
   }
 
   private void days() {
@@ -189,13 +295,13 @@ public class GivenContent {
               day, "Gün %d".formatted(day), "Gün %d gövdesi.".formatted(day),
               "Gün %d eylemi.".formatted(day)));
     }
-    writer.skeletons(skeletons);
+    writer.skeletons("tr", skeletons);
 
     List<ConnectorWrite> connectors = new ArrayList<>();
     for (int index = 1; index <= 5; index++) {
       connectors.add(new ConnectorWrite("c" + index, "bağlaç " + index));
     }
-    writer.connectors(connectors);
+    writer.connectors("tr", connectors);
   }
 
   /// Twelve questions is the floor the support test enforces, so the fixture
@@ -222,7 +328,7 @@ public class GivenContent {
         new SupportWrite("deletion", "counter_reason_1", "counter_reason", "Sayaç kalıyor.", 3));
     support.add(
         new SupportWrite("deletion", "answers_note_1", "answers_note", "Cevaplar saklanmıyor.", 4));
-    writer.support(support);
+    writer.support("tr", support);
   }
 
   /** The days and the report, for one archetype. */
@@ -240,7 +346,7 @@ public class GivenContent {
                 false));
       }
     }
-    content.writeTasks(tasks);
+    content.writeTasks("tr", tasks);
 
     List<ReportPieceWrite> pieces = new ArrayList<>();
     pieces.add(piece("limitation", null, null, null, null));
@@ -266,7 +372,7 @@ public class GivenContent {
     for (String kind : List.of("overview", "strength", "cost", "portrait", "comparison")) {
       pieces.add(piece(kind, archetype, null, null, null));
     }
-    content.writeReportPieces(pieces);
+    content.writeReportPieces("tr", pieces);
   }
 
   private static ReportPieceWrite piece(

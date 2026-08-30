@@ -1,10 +1,12 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/features/chain/application/chain_cubit.dart';
 import 'package:motto/features/chain/application/chain_state.dart';
 import 'package:motto/features/mascot/application/mascot_store.dart';
+import 'package:motto/infrastructure/language/app_language.dart';
 import 'package:motto/route/app_router.gr.dart';
 
 /// With no account this screen and the ones it links to are the only channel
@@ -23,23 +25,54 @@ class SettingsPage extends StatelessWidget {
   }
 }
 
+/// The language, changed here and nowhere else.
+///
+/// It moves both halves at once: `easy_localization` for the words that ship
+/// with the app, and the header every request carries for the words that come
+/// down from the server. Changing one and not the other is a screen whose
+/// title and paragraph disagree.
+Future<void> _pickLanguage(BuildContext context) async {
+  final chosen = await showModalBottomSheet<String>(
+    context: context,
+    builder: (sheet) => SafeArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (final tag in AppLanguage.supported)
+            ListTile(
+              title: Text('settings.languages.$tag'.tr()),
+              trailing: context.locale.languageCode == tag
+                  ? const Icon(Icons.check)
+                  : null,
+              onTap: () => Navigator.of(sheet).pop(tag),
+            ),
+        ],
+      ),
+    ),
+  );
+  if (chosen == null || !context.mounted) return;
+
+  await getIt<AppLanguage>().choose(chosen);
+  if (context.mounted) await context.setLocale(Locale(chosen));
+}
+
 class _SettingsView extends StatelessWidget {
   const _SettingsView();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Ayarlar')),
+      appBar: AppBar(title: Text('settings.title'.tr())),
       body: SafeArea(
         child: BlocBuilder<ChainCubit, ChainState>(
           builder: (context, state) => ListView(
             children: [
               ListTile(
-                title: const Text('Hatırlatma saati'),
+                title: Text('settings.reminderHour'.tr()),
                 subtitle: Text(
                   state.chain.started
                       ? '${state.hour.toString().padLeft(2, '0')}:00'
-                      : 'Zincir başlayınca sorulur',
+                      : 'settings.askedLater'.tr(),
                 ),
                 enabled: state.chain.started,
                 onTap: () => _pickHour(context, state.hour),
@@ -47,9 +80,11 @@ class _SettingsView extends StatelessWidget {
               ValueListenableBuilder<bool>(
                 valueListenable: getIt<MascotStore>().visible,
                 builder: (context, visible, _) => SwitchListTile(
-                  title: const Text('Maskot'),
+                  title: Text('settings.mascot'.tr()),
                   subtitle: Text(
-                    visible ? 'Ekranda dolaşıyor' : 'Kapalı',
+                    visible
+                        ? 'settings.mascotOn'.tr()
+                        : 'settings.mascotOff'.tr(),
                   ),
                   value: visible,
                   onChanged: (value) =>
@@ -58,19 +93,26 @@ class _SettingsView extends StatelessWidget {
               ),
               const Divider(height: 1),
               ListTile(
-                title: const Text('Gizlilik ve izinler'),
+                title: Text('settings.language'.tr()),
+                subtitle: Text('settings.languageName'.tr()),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => _pickLanguage(context),
+              ),
+              const Divider(height: 1),
+              ListTile(
+                title: Text('settings.privacy'.tr()),
                 onTap: () => context.router.push(const PrivacyRoute()),
               ),
               ListTile(
-                title: const Text('Sık sorulanlar'),
+                title: Text('settings.faq'.tr()),
                 onTap: () => context.router.push(FaqRoute()),
               ),
               ListTile(
-                title: const Text('Yöntem'),
+                title: Text('settings.method'.tr()),
                 onTap: () => context.router.push(const MethodRoute()),
               ),
               ListTile(
-                title: const Text('Geri bildirim'),
+                title: Text('settings.feedback'.tr()),
                 onTap: () => context.router.push(const FeedbackRoute()),
               ),
             ],

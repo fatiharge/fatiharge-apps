@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motto/config/injectable.dart';
@@ -32,19 +33,19 @@ class _PrivacyView extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Gizlilik ve izinler')),
+      appBar: AppBar(title: Text('privacy.title'.tr())),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 40),
           children: [
-            Text('Veriler', style: text.titleMedium),
+            Text('privacy.data'.tr(), style: text.titleMedium),
             const SizedBox(height: 12),
             BlocBuilder<SupportCopyCubit, SupportCopyState>(
               builder: (context, copy) {
                 if (copy.copy == null) {
                   return Text(
                     copy.status == SupportCopyStatus.failed
-                        ? 'Metin yüklenemedi.'
+                        ? 'privacy.failed'.tr()
                         : '…',
                     style: text.bodyMedium,
                   );
@@ -67,14 +68,13 @@ class _PrivacyView extends StatelessWidget {
               },
             ),
             const SizedBox(height: 24),
-            Text('İzinler', style: text.titleMedium),
+            Text('privacy.permissions'.tr(), style: text.titleMedium),
             const SizedBox(height: 12),
             BlocBuilder<ChainCubit, ChainState>(
               builder: (context, state) => Text(
                 state.remindersAllowed
-                    ? 'Bildirimler açık.'
-                    : 'Bildirimler kapalı. Zincir yine de işliyor; günü kendin '
-                          'işaretlersin.',
+                    ? 'privacy.notificationsOn'.tr()
+                    : 'privacy.notificationsOff'.tr(),
                 style: text.bodyMedium?.copyWith(
                   color: scheme.onSurfaceVariant,
                 ),
@@ -83,7 +83,7 @@ class _PrivacyView extends StatelessWidget {
             const SizedBox(height: 32),
             OutlinedButton(
               onPressed: () => context.router.push(const DataDeletionRoute()),
-              child: const Text('Verilerimi sil'),
+              child: Text('privacy.deleteData'.tr()),
             ),
           ],
         ),

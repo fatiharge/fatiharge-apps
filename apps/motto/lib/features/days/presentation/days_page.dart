@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motto/features/days/application/days_cubit.dart';
@@ -22,7 +23,7 @@ class DaysPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Günler'),
+        title: Text('days.title'.tr()),
         automaticallyImplyLeading: false,
         actions: const [SettingsButton()],
       ),
@@ -33,7 +34,7 @@ class DaysPage extends StatelessWidget {
               child: CircularProgressIndicator(),
             ),
             DaysStatus.failed => CouldNotLoad(
-              said: 'Günlerin yüklenemedi.',
+              said: 'days.failed'.tr(),
               retry: context.read<DaysCubit>().load,
             ),
             DaysStatus.ready when state.empty => const _Nothing(),
@@ -97,8 +98,7 @@ class _Nothing extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(32),
         child: Text(
-          'Buraya işaretlediğin günler geliyor. İlkini işaretlediğinde '
-          'burada olacak.',
+          'days.empty'.tr(),
           textAlign: TextAlign.center,
           style: text.bodyLarge?.copyWith(color: scheme.onSurfaceVariant),
         ),

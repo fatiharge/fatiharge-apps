@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 /// What happened before today, in one line.
@@ -24,7 +25,7 @@ class YesterdayLine extends StatelessWidget {
         ),
         const SizedBox(width: 6),
         Text(
-          kept ? 'Dün işaretledin.' : 'Dün kaçtı.',
+          kept ? 'daily.yesterdayMarked'.tr() : 'daily.yesterdayMissed'.tr(),
           style: text.bodyMedium?.copyWith(color: colour),
         ),
       ],

@@ -51,6 +51,26 @@ Bir profil vektörünün hangi arketibe düşeceğine karar veren eşikler. Onla
 skorlama verisi ve servisle birlikte duruyor — bir cümleyi düzeltmek asla kimin
 hangi sonucu aldığını değiştirebilmesin diye.
 
+## İkinci dil
+
+Sözlü her tablonun anahtarında `locale` var ve her okuma hangi dili istediğini
+söylüyor; uygulama her isteğe `Accept-Language` koyuyor. Türkçe geri düşülen
+dil, tanınmayan her şeyin cevabı da o. Henüz yazılmamış bir dil Türkçeyle
+**bütün olarak** cevaplanıyor: paketin yarısı bir dilde yarısı ötekindeyse
+başlığıyla gövdesi anlaşmayan bir gün çıkıyor ve bunu kaldıran ekran yok.
+
+`locale` taşımayan tablolar bilinçli. Bir arketibin beş boyuttaki yeri ve
+envanterin hangi kuşağının canlı olduğu ölçüm aletidir; yazıcı bunları yalnız
+geri düşülen dilden alıyor, başka dilden gelirse yok sayıyor. Yani bir çeviri
+kimin hangi arketibi aldığını değiştiremiyor.
+
+`content/<dil>/` bir dili ayağa kaldırırken uç başına bir dosya tutuyor —
+`content/en/` İngilizce. Sözlerin depoda durduğu tek yer burası ve bu bir
+**başvuru**, kaynak değil: bir çevirinin pull request'te okunabilmesi için var,
+çünkü bir dilin gördüğü tek inceleme o. Yazıldıktan sonra kaynak tablolardır;
+düzeltmeler diğer her ifade değişikliği gibi API'den geçer ve buraya geri
+dönmez. Gönderen betik `scripts/push_content.py`.
+
 ## Bir parça için "bitti"
 
 Yazıldı · ertesi gün bir kez daha okundu · yukarıdaki 1.4.1 tablosundan geçti ·

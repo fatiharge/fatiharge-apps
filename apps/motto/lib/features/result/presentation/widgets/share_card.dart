@@ -1,4 +1,5 @@
 import 'package:api_client_motto/api.dart' as api;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:motto/theme/motto_palette.dart';
 
@@ -93,7 +94,7 @@ class _Eyebrow extends StatelessWidget {
   Widget build(BuildContext context) {
     // "Kişilik envanteri", never "test sonucun" — guideline 1.4.1.
     return Text(
-      'KİŞİLİK ENVANTERİ',
+      'shareCard.label'.tr(),
       style: TextStyle(
         color: MottoPalette.darkInk.withValues(alpha: 0.45),
         fontSize: unit * 3,

@@ -76,7 +76,7 @@ class ReportsTest {
   void lockedCarriesOnlyThePreview() {
     var result = givenAResult(0.9);
 
-    var report = reports.forResult(device, result.id());
+    var report = reports.forResult(device, result.id(), "tr");
 
     // A locked report that ships its own body is one somebody reads in the
     // network tab.
@@ -93,7 +93,7 @@ class ReportsTest {
     var result = givenAResult(0.9);
     entitlements.grantPremium(device);
 
-    var report = reports.forResult(device, result.id());
+    var report = reports.forResult(device, result.id(), "tr");
 
     assertFalse(report.locked());
     assertEquals(content.sections().size(), report.sections().size());
@@ -108,8 +108,8 @@ class ReportsTest {
     var high = givenAResult(0.9);
     entitlements.grantPremium(device);
 
-    var first = reports.forResult(device, low.id()).sections().get(0);
-    var second = reports.forResult(device, high.id()).sections().get(0);
+    var first = reports.forResult(device, low.id(), "tr").sections().get(0);
+    var second = reports.forResult(device, high.id(), "tr").sections().get(0);
 
     // The difference is the thing being paid for.
     assertEquals(first.opening(), second.opening());
@@ -132,8 +132,8 @@ class ReportsTest {
     var loose = givenAProfile(Map.of(first, 0.9, second, 0.1));
     entitlements.grantPremium(device);
 
-    var one = reports.forResult(device, braced.id()).sections().get(0);
-    var other = reports.forResult(device, loose.id()).sections().get(0);
+    var one = reports.forResult(device, braced.id(), "tr").sections().get(0);
+    var other = reports.forResult(device, loose.id(), "tr").sections().get(0);
 
     assertEquals(one.opening(), other.opening());
     assertEquals(one.fragment(), other.fragment());
@@ -158,7 +158,7 @@ class ReportsTest {
     var refused =
         assertThrows(
             CustomRuntimeException.class,
-            () -> reports.forResult(UUID.randomUUID(), result.id()));
+            () -> reports.forResult(UUID.randomUUID(), result.id(), "tr"));
 
     assertEquals("no_such_result", refused.code());
   }
@@ -167,7 +167,7 @@ class ReportsTest {
   @DisplayName("the free report reads every dimension, and is never locked")
   void theFreeReportIsWhole() {
     Result result = givenAResult(0.9);
-    ResultReport report = reports.readingFor(device, result.id());
+    ResultReport report = reports.readingFor(device, result.id(), "tr");
 
     assertEquals(Dimension.values().length, report.readings().size());
     assertFalse(report.overview().isBlank());
@@ -184,8 +184,8 @@ class ReportsTest {
     Result low = givenAResult(0.1);
     Result high = givenAResult(0.9);
 
-    assertEquals("low", bandFor(reports.readingFor(device, low.id())));
-    assertEquals("high", bandFor(reports.readingFor(device, high.id())));
+    assertEquals("low", bandFor(reports.readingFor(device, low.id(), "tr")));
+    assertEquals("high", bandFor(reports.readingFor(device, high.id(), "tr")));
   }
 
   private String bandFor(ResultReport report) {
@@ -202,6 +202,6 @@ class ReportsTest {
   void theFreeReportIsScopedToTheDevice() {
     Result result = givenAResult(0.5);
     assertThrows(
-        CustomRuntimeException.class, () -> reports.readingFor(UUID.randomUUID(), result.id()));
+        CustomRuntimeException.class, () -> reports.readingFor(UUID.randomUUID(), result.id(), "tr"));
   }
 }

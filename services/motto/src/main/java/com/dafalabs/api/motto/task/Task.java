@@ -15,6 +15,11 @@ public class Task {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  /// The language these words are in. A row is a sentence, and a sentence
+  /// belongs to one language; the day and the slot repeat across all of them.
+  @Column(nullable = false)
+  private String locale;
+
   @Column(nullable = false)
   private int day;
 
@@ -42,8 +47,15 @@ public class Task {
 
   /** Written by the content push, and by nothing else. */
   public static Task of(
-      int day, String archetypeId, int ordinal, String title, String detail, boolean placeholder) {
+      String locale,
+      int day,
+      String archetypeId,
+      int ordinal,
+      String title,
+      String detail,
+      boolean placeholder) {
     Task task = new Task();
+    task.locale = locale;
     task.day = day;
     task.archetypeId = archetypeId;
     task.ordinal = ordinal;
@@ -60,6 +72,10 @@ public class Task {
 
   public Long id() {
     return id;
+  }
+
+  public String locale() {
+    return locale;
   }
 
   public int day() {

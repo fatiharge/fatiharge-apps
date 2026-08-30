@@ -8,6 +8,7 @@ import 'package:motto/infrastructure/effects/effect_catalogue.dart';
 import 'package:motto/infrastructure/effects/effect_host.dart';
 import 'package:motto/infrastructure/effects/effect_repository.dart';
 import 'package:motto/infrastructure/effects/motto_effect_host.dart';
+import 'package:motto/infrastructure/language/app_language.dart';
 import 'package:motto/infrastructure/session/device_session.dart';
 import 'package:motto/infrastructure/session/token_store.dart';
 
@@ -34,6 +35,7 @@ abstract class ApiClients {
     // Resolved when it is needed rather than now: the session is built from
     // the auth client, and asking for it here would be a circle.
     renew: () => getIt<DeviceSession>().register(),
+    language: () => getIt<AppLanguage>().tag,
   );
 
   @lazySingleton

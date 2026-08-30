@@ -16,9 +16,8 @@ import java.util.List;
 @ApplicationScoped
 public class ContentStore {
 
-  /// The only language so far. On every table from the start, because adding
-  /// the column later is a migration of all of them.
-  public static final String locale = "tr";
+  /// Asked for rather than assumed. The column was on every table from the
+  /// start for this day; what was missing was anybody passing a value into it.
 
   private final EntityManager entities;
 
@@ -27,9 +26,8 @@ public class ContentStore {
   }
 
   @Transactional
-  public List<ArchetypeRow> archetypes() {
-    return query(
-        "select a from ArchetypeRow a where a.locale = :l order by a.ordinal", ArchetypeRow.class);
+  public List<ArchetypeRow> archetypes(String locale) {
+    return query("select a from ArchetypeRow a where a.locale = :l order by a.ordinal", ArchetypeRow.class, locale);
   }
 
   @Transactional
@@ -40,7 +38,7 @@ public class ContentStore {
   }
 
   @Transactional
-  public List<ItemRow> activeItems() {
+  public List<ItemRow> activeItems(String locale) {
     return entities
         .createQuery(
             """
@@ -62,43 +60,36 @@ public class ContentStore {
   }
 
   @Transactional
-  public List<MottoRow> mottos() {
-    return query(
-        "select m from MottoRow m where m.locale = :l order by m.archetypeId, m.ordinal",
-        MottoRow.class);
+  public List<MottoRow> mottos(String locale) {
+    return query("select m from MottoRow m where m.locale = :l order by m.archetypeId, m.ordinal", MottoRow.class, locale);
   }
 
   @Transactional
-  public List<SkeletonRow> skeletons() {
-    return query("select s from SkeletonRow s where s.locale = :l order by s.day", SkeletonRow.class);
+  public List<SkeletonRow> skeletons(String locale) {
+    return query("select s from SkeletonRow s where s.locale = :l order by s.day", SkeletonRow.class, locale);
   }
 
   @Transactional
-  public List<FragmentRow> fragments() {
-    return query(
-        "select f from FragmentRow f where f.locale = :l order by f.archetypeId, f.ordinal",
-        FragmentRow.class);
+  public List<FragmentRow> fragments(String locale) {
+    return query("select f from FragmentRow f where f.locale = :l order by f.archetypeId, f.ordinal", FragmentRow.class, locale);
   }
 
   @Transactional
-  public List<ConnectorRow> connectors() {
-    return query("select c from ConnectorRow c where c.locale = :l order by c.id", ConnectorRow.class);
+  public List<ConnectorRow> connectors(String locale) {
+    return query("select c from ConnectorRow c where c.locale = :l order by c.id", ConnectorRow.class, locale);
   }
 
   @Transactional
-  public List<ReportSectionRow> reportSections() {
-    return query(
-        "select r from ReportSectionRow r where r.locale = :l order by r.section",
-        ReportSectionRow.class);
+  public List<ReportSectionRow> reportSections(String locale) {
+    return query("select r from ReportSectionRow r where r.locale = :l order by r.section", ReportSectionRow.class, locale);
   }
 
   @Transactional
-  public List<SupportRow> support() {
-    return query(
-        "select s from SupportRow s where s.locale = :l order by s.kind, s.ordinal", SupportRow.class);
+  public List<SupportRow> support(String locale) {
+    return query("select s from SupportRow s where s.locale = :l order by s.kind, s.ordinal", SupportRow.class, locale);
   }
 
-  private <T> List<T> query(String jpql, Class<T> type) {
+  private <T> List<T> query(String jpql, Class<T> type, String locale) {
     return entities.createQuery(jpql, type).setParameter("l", locale).getResultList();
   }
 }

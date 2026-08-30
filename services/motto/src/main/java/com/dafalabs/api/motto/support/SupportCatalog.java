@@ -1,6 +1,7 @@
 package com.dafalabs.api.motto.support;
 
 import com.dafalabs.api.motto.content.ContentVersion;
+import com.dafalabs.api.motto.content.ContentLocale;
 import com.dafalabs.api.motto.content.store.ContentStore;
 import com.dafalabs.api.motto.content.store.SupportRow;
 import com.dafalabs.api.motto.support.dto.DeletionCopy;
@@ -42,8 +43,16 @@ public class SupportCatalog {
     this.privacyPolicyUrl = privacyPolicyUrl;
   }
 
-  public SupportCopy copy() {
-    List<SupportRow> rows = content.support();
+  /**
+   * @param locale what the reader asked for; support nobody has translated yet
+   *     is answered in the fallback, because a blank privacy screen is worse
+   *     than one in the wrong language
+   */
+  public SupportCopy copy(String locale) {
+    String asked = ContentLocale.named(locale);
+    List<SupportRow> mine = content.support(asked);
+    String spoken = mine.isEmpty() ? ContentLocale.fallback : asked;
+    List<SupportRow> rows = mine.isEmpty() ? content.support(spoken) : mine;
 
     List<String> privacyLines = new ArrayList<>();
     List<String> goes = new ArrayList<>();
@@ -69,15 +78,17 @@ public class SupportCatalog {
     }
 
     return new SupportCopy(
-        version(rows),
+        version(spoken, rows),
         privacyLines,
         new DeletionCopy(goes, stays, counterReason, answersNote),
         faqEntries,
         privacyPolicyUrl);
   }
 
-  private static String version(List<SupportRow> rows) {
-    ContentVersion version = new ContentVersion();
+  /// The language is in the hash, so a phone that changes language is never
+  /// answered with a 304 holding the old one.
+  private static String version(String locale, List<SupportRow> rows) {
+    ContentVersion version = new ContentVersion().of(locale);
     for (SupportRow row : rows) {
       version.of(row.kind(), row.key(), row.heading(), row.body());
     }

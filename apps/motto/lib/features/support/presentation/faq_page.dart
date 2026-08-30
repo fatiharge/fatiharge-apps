@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motto/config/injectable.dart';
@@ -30,7 +31,7 @@ class _FaqView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Sık sorulanlar')),
+      appBar: AppBar(title: Text('faq.title'.tr())),
       body: SafeArea(
         child: BlocBuilder<SupportCopyCubit, SupportCopyState>(
           builder: (context, state) {
@@ -38,11 +39,11 @@ class _FaqView extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             }
             if (state.copy == null) {
-              return const Center(
+              return Center(
                 child: Padding(
-                  padding: EdgeInsets.all(24),
+                  padding: const EdgeInsets.all(24),
                   child: Text(
-                    'Sorular yüklenemedi. Bağlantını kontrol edip tekrar dene.',
+                    'faq.failed'.tr(),
                   ),
                 ),
               );

@@ -1,5 +1,6 @@
 import 'package:api_client_motto/api.dart' as api;
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/features/result/application/card_exporter.dart';
@@ -91,7 +92,11 @@ class _ShareCardPageState extends State<ShareCardPage> {
               FilledButton.icon(
                 onPressed: _sharing ? null : _share,
                 icon: const Icon(Icons.ios_share),
-                label: Text(_sharing ? 'Hazırlanıyor…' : 'Paylaş'),
+                label: Text(
+                  _sharing
+                      ? 'shareCard.preparing'.tr()
+                      : 'shareCard.share'.tr(),
+                ),
               ),
             ],
           ),

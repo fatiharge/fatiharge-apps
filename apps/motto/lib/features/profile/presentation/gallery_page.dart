@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motto/config/injectable.dart';
@@ -36,7 +37,7 @@ class _GalleryView extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Arketipler')),
+      appBar: AppBar(title: Text('gallery.title'.tr())),
       body: SafeArea(
         child: BlocBuilder<ProfileCubit, ProfileState>(
           builder: (context, state) {
@@ -48,13 +49,13 @@ class _GalleryView extends StatelessWidget {
                   children: [
                     BlocBuilder<DailyCubit, DailyState>(
                       builder: (context, daily) => Text(
-                        '${daily.archetypes.length} arketip',
+                        'gallery.count'.plural(daily.archetypes.length),
                         style: text.headlineSmall,
                       ),
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      'Hepsini okumak premium. Kendi arketibin her zaman açık.',
+                      'gallery.locked'.tr(),
                       style: text.bodyLarge?.copyWith(
                         color: scheme.onSurfaceVariant,
                       ),
@@ -64,11 +65,11 @@ class _GalleryView extends StatelessWidget {
                     FilledButton(
                       onPressed: () =>
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Satın alma yakında.'),
+                            SnackBar(
+                              content: Text('gallery.soon'.tr()),
                             ),
                           ),
-                      child: const Text('Kilidi aç'),
+                      child: Text('gallery.unlock'.tr()),
                     ),
                   ],
                 ),

@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motto/features/chain/application/chain_cubit.dart';
@@ -30,13 +31,13 @@ class DayClosing extends StatelessWidget {
         children: [
           FilledButton(
             onPressed: () => _askHourThenStart(context),
-            child: const Text('Zincirini başlat'),
+            child: Text('dayClosing.startChain'.tr()),
           ),
           const SizedBox(height: 8),
           // Said before the tap rather than after: a button that opens a
           // clock nobody expected is a button people cancel.
           Text(
-            'Hatırlatma saatini soracağım.',
+            'dayClosing.willAskHour'.tr(),
             textAlign: TextAlign.center,
             style: text.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
           ),
@@ -49,7 +50,7 @@ class DayClosing extends StatelessWidget {
     if (state.chain.periodDone) {
       return FilledButton(
         onPressed: () => context.router.push(const PeriodDoneRoute()),
-        child: const Text('Dönemi kapat'),
+        child: Text('dayClosing.closePeriod'.tr()),
       );
     }
 
@@ -60,29 +61,31 @@ class DayClosing extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (state.canFreeze(now)) ...[
-          Text('Bir gün kaçtı. Telafi hakkın duruyor.', style: text.bodyMedium),
+          Text('dayClosing.missedOne'.tr(), style: text.bodyMedium),
           const SizedBox(height: 8),
           OutlinedButton(
             onPressed: () => context.read<ChainCubit>().useFreeze(),
-            child: const Text('Telafi et'),
+            child: Text('dayClosing.makeUp'.tr()),
           ),
           TextButton(
             onPressed: () =>
                 context.router.push(FaqRoute(openItem: 'chain_broken')),
-            child: const Text('Telafi nasıl çalışıyor?'),
+            child: Text('dayClosing.howMakeUp'.tr()),
           ),
           const SizedBox(height: 8),
         ],
         FilledButton(
           onPressed: state.markedToday(now) ? null : () => _mark(context),
           child: Text(
-            state.markedToday(now) ? 'Bugün işaretlendi' : 'Bugünü işaretle',
+            state.markedToday(now)
+                ? 'dayClosing.markedToday'.tr()
+                : 'dayClosing.markToday'.tr(),
           ),
         ),
         if (!state.remindersAllowed) ...[
           const SizedBox(height: 12),
           Text(
-            'Hatırlatıcılar kapalı. Zincir yine de işliyor.',
+            'dayClosing.remindersOff'.tr(),
             style: text.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
           ),
         ],
@@ -97,7 +100,7 @@ class DayClosing extends StatelessWidget {
     final picked = await showTimePicker(
       context: context,
       initialTime: const TimeOfDay(hour: ChainStore.defaultHour, minute: 0),
-      helpText: 'Hatırlatma saati',
+      helpText: 'dayClosing.reminderHour'.tr(),
     );
     if (picked == null) return;
 

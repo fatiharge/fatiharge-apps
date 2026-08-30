@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:motto/route/app_router.gr.dart';
 
@@ -13,6 +14,6 @@ class SettingsButton extends StatelessWidget {
   Widget build(BuildContext context) => IconButton(
     onPressed: () => context.router.push(const SettingsRoute()),
     icon: const Icon(Icons.settings_outlined),
-    tooltip: 'Ayarlar',
+    tooltip: 'settings.title'.tr(),
   );
 }

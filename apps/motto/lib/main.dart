@@ -5,6 +5,7 @@ import 'package:motto/app.dart';
 import 'package:motto/config/app_crash_listener.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/infrastructure/bootstrap/bootstrap_adapter.dart';
+import 'package:motto/infrastructure/language/app_language.dart';
 import 'package:motto/route/app_router.dart';
 
 Future<void> main() => AppCrashListener().runGuarded(startApp);
@@ -23,10 +24,14 @@ Future<void> startApp() async {
 
   runApp(
     EasyLocalization(
-      supportedLocales: const [Locale('tr')],
+      supportedLocales: const [Locale('tr'), Locale('en')],
       path: 'assets/translations',
-      fallbackLocale: const Locale('tr'),
+      fallbackLocale: const Locale(AppLanguage.fallback),
       useOnlyLangCode: true,
+      // The container is not up yet — configureDependencies is a bootstrap job
+      // — so the stored choice is read straight from the preferences here. The
+      // alternative is a frame in the wrong language before the right one.
+      startLocale: await AppLanguage.stored(),
       child: MottoApp(router: getIt<AppRouter>()),
     ),
   );

@@ -1,15 +1,18 @@
 package com.dafalabs.api.motto.report;
 
 import com.dafalabs.api.core.auth.AuthenticatedDevice;
+import com.dafalabs.api.motto.content.ContentLocale;
 import com.dafalabs.api.motto.report.dto.DeepReport;
 import com.dafalabs.api.motto.report.dto.ResultReport;
 import io.quarkus.security.Authenticated;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 
 /** The two reports on a result: the free reading, and the deep one behind it. */
 @Path("/v1/reports")
@@ -28,14 +31,18 @@ public class ReportResource {
   @GET
   @Path("/{resultId}/summary")
   @Operation(operationId = "resultReport", summary = "The free report for a result")
-  public ResultReport summaryFor(@PathParam("resultId") long resultId) {
-    return reports.readingFor(current.id(), resultId);
+  public ResultReport summaryFor(
+      @PathParam("resultId") long resultId,
+      @Parameter(hidden = true) @HeaderParam("Accept-Language") String acceptLanguage) {
+    return reports.readingFor(current.id(), resultId, ContentLocale.from(acceptLanguage));
   }
 
   @GET
   @Path("/{resultId}")
   @Operation(operationId = "deepReport", summary = "The deep report for a result")
-  public DeepReport forResult(@PathParam("resultId") long resultId) {
-    return reports.forResult(current.id(), resultId);
+  public DeepReport forResult(
+      @PathParam("resultId") long resultId,
+      @Parameter(hidden = true) @HeaderParam("Accept-Language") String acceptLanguage) {
+    return reports.forResult(current.id(), resultId, ContentLocale.from(acceptLanguage));
   }
 }
