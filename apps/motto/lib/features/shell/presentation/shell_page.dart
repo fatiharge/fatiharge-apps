@@ -15,6 +15,8 @@ import 'package:motto/features/support/presentation/widgets/trouble_sheet.dart';
 import 'package:motto/features/tasks/application/task_cubit.dart';
 import 'package:motto/infrastructure/api/outcome.dart';
 import 'package:motto/infrastructure/api/trouble_bus.dart';
+import 'package:motto/infrastructure/effects/effects.dart';
+import 'package:motto/infrastructure/effects/refresh_requests.dart';
 import 'package:motto/infrastructure/session/device_session.dart';
 import 'package:motto/route/app_router.gr.dart';
 import 'package:motto/route/reloads_on_return.dart';
@@ -84,6 +86,7 @@ class _ShellViewState extends State<_ShellView> with ReloadsOnReturn {
   }
 
   StreamSubscription<Trouble>? _troubles;
+  StreamSubscription<void>? _refreshes;
 
   @override
   void initState() {
@@ -93,27 +96,36 @@ class _ShellViewState extends State<_ShellView> with ReloadsOnReturn {
     // offered do not become different problems because a different screen was
     // asking, and answering them in every cubit is how one meaning turns into
     // six sentences.
-    _troubles = getIt<TroubleBus>().stream.listen(_answer);
+    _troubles = getIt<TroubleBus>().stream.listen(
+      (trouble) => unawaited(_answer(trouble)),
+    );
+    // A definition can end with "and now go and look again".
+    _refreshes = getIt<RefreshRequests>().stream.listen((_) => reload());
   }
 
   @override
   void dispose() {
     unawaited(_troubles?.cancel());
+    unawaited(_refreshes?.cancel());
     _lifecycle.dispose();
     super.dispose();
   }
 
-  void _answer(Trouble trouble) {
+  Future<void> _answer(Trouble trouble) async {
     if (!mounted) return;
-    unawaited(
-      showTroubleSheet(
-        context,
-        // Nothing to retry: the client already renewed and retried before a
-        // session ever came through here, and a door that is closed stays
-        // closed however many times it is pushed.
-        failure: trouble,
-      ),
-    );
+
+    // A named refusal is the one kind somebody wrote an answer for. Running it
+    // is the whole point: the sentence and the way out live in a row, not in a
+    // release.
+    if (trouble is Refused && await getIt<Effects>().forCode(trouble.code)) {
+      return;
+    }
+    if (!mounted) return;
+
+    // Nothing to retry: the client already renewed and retried before a
+    // session ever came through here, and a door that is closed stays closed
+    // however many times it is pushed.
+    await showTroubleSheet(context, failure: trouble);
   }
 
   static const _items = [

@@ -1,3 +1,4 @@
+import 'package:injectable/injectable.dart';
 import 'package:motto/config/reported.dart';
 import 'package:motto/infrastructure/effects/effect.dart';
 import 'package:motto/infrastructure/effects/effect_catalogue.dart';
@@ -8,6 +9,7 @@ import 'package:motto/infrastructure/effects/effect_host.dart';
 /// One place, so a cubit's whole answer to "the server said no" is a single
 /// call — and the only refusals a cubit writes code for are the ones that
 /// change what its own screen shows.
+@lazySingleton
 class Effects {
   Effects(this._catalogue, this._host, this._permits);
 
