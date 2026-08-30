@@ -216,6 +216,8 @@ class ApiClient {
           return ChainPeriod.fromJson(value);
         case 'ChainState':
           return ChainState.fromJson(value);
+        case 'CodeEffects':
+          return CodeEffects.fromJson(value);
         case 'Connector':
           return Connector.fromJson(value);
         case 'ContentBundle':
@@ -234,6 +236,8 @@ class ApiClient {
           return DeletionResponse.fromJson(value);
         case 'DimensionReading':
           return DimensionReading.fromJson(value);
+        case 'EffectCatalogue':
+          return EffectCatalogue.fromJson(value);
         case 'EntitlementResponse':
           return EntitlementResponse.fromJson(value);
         case 'EventBatch':

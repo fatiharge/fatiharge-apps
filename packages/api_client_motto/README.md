@@ -71,6 +71,7 @@ Class | Method | HTTP request | Description
 *ChainResourceApi* | [**startChain**](doc//ChainResourceApi.md#startchain) | **POST** /v1/chain/start | Start the chain and mark today
 *ChainResourceApi* | [**startNextPeriod**](doc//ChainResourceApi.md#startnextperiod) | **POST** /v1/chain/next | Begin the next fourteen days under a chosen motto
 *ContentResourceApi* | [**contentBundle**](doc//ContentResourceApi.md#contentbundle) | **GET** /v1/content | The content package
+*EffectResourceApi* | [**errorEffects**](doc//EffectResourceApi.md#erroreffects) | **GET** /v1/effects | What each refusal leads to
 *EntitlementResourceApi* | [**currentEntitlement**](doc//EntitlementResourceApi.md#currententitlement) | **GET** /v1/entitlements | What this device may do now
 *EntitlementResourceApi* | [**deleteMyData**](doc//EntitlementResourceApi.md#deletemydata) | **DELETE** /v1/me | Delete this device's data
 *EventResourceApi* | [**recordEvents**](doc//EventResourceApi.md#recordevents) | **POST** /v1/events | Report what happened
@@ -99,6 +100,7 @@ Class | Method | HTTP request | Description
  - [ChainHistory](doc//ChainHistory.md)
  - [ChainPeriod](doc//ChainPeriod.md)
  - [ChainState](doc//ChainState.md)
+ - [CodeEffects](doc//CodeEffects.md)
  - [Connector](doc//Connector.md)
  - [ContentBundle](doc//ContentBundle.md)
  - [DailySkeleton](doc//DailySkeleton.md)
@@ -108,6 +110,7 @@ Class | Method | HTTP request | Description
  - [DeletionCopy](doc//DeletionCopy.md)
  - [DeletionResponse](doc//DeletionResponse.md)
  - [DimensionReading](doc//DimensionReading.md)
+ - [EffectCatalogue](doc//EffectCatalogue.md)
  - [EntitlementResponse](doc//EntitlementResponse.md)
  - [EventBatch](doc//EventBatch.md)
  - [EventBatchResponse](doc//EventBatchResponse.md)
