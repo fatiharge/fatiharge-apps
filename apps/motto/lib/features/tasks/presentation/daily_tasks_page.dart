@@ -8,6 +8,7 @@ import 'package:motto/features/chain/application/chain_state.dart';
 import 'package:motto/features/chain/presentation/widgets/chain_strip.dart';
 import 'package:motto/features/game/application/turns_cubit.dart';
 import 'package:motto/features/game/presentation/widgets/game_row.dart';
+import 'package:motto/features/support/presentation/widgets/settings_button.dart';
 import 'package:motto/features/tasks/application/task_cubit.dart';
 import 'package:motto/features/tasks/presentation/widgets/day_closing.dart';
 import 'package:motto/features/tasks/presentation/widgets/task_card.dart';
@@ -36,6 +37,7 @@ class DailyTasksPage extends StatelessWidget {
         appBar: AppBar(
           title: const Text('Görevler'),
           automaticallyImplyLeading: false,
+          actions: const [SettingsButton()],
         ),
         body: SafeArea(
           child: BlocBuilder<TaskCubit, TaskState>(

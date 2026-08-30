@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motto/features/days/application/days_cubit.dart';
 import 'package:motto/features/days/presentation/widgets/day_sheet.dart';
 import 'package:motto/features/days/presentation/widgets/period_grid.dart';
+import 'package:motto/features/support/presentation/widgets/settings_button.dart';
 
 /// Every day that was marked, and the words each one carried.
 ///
@@ -22,6 +23,7 @@ class DaysPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Günler'),
         automaticallyImplyLeading: false,
+        actions: const [SettingsButton()],
       ),
       body: SafeArea(
         child: BlocBuilder<DaysCubit, DaysState>(

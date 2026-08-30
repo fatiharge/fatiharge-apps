@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motto/features/game/application/turns_cubit.dart';
 import 'package:motto/features/game/presentation/open_game.dart';
 import 'package:motto/features/profile/application/profile_cubit.dart';
+import 'package:motto/features/support/presentation/widgets/settings_button.dart';
 import 'package:motto/route/app_router.gr.dart';
 
 @RoutePage()
@@ -26,16 +27,7 @@ class _ProfileView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profil'),
-        actions: [
-          // Out of the list and into the bar: settings is not one of the
-          // things somebody came to this screen to read, and a row makes it
-          // look like it is.
-          IconButton(
-            onPressed: () => context.router.push(const SettingsRoute()),
-            icon: const Icon(Icons.settings_outlined),
-            tooltip: 'Ayarlar',
-          ),
-        ],
+        actions: const [SettingsButton()],
       ),
       body: SafeArea(
         child: BlocBuilder<ProfileCubit, ProfileState>(
