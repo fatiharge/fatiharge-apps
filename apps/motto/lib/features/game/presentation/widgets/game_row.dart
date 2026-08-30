@@ -4,11 +4,10 @@ import 'package:motto/features/game/presentation/open_game.dart';
 
 /// The way into the game, offered once the day is marked.
 ///
-/// Earned rather than always there: the game is not what somebody opens this
-/// app to do, and a permanent invitation next to the day's three things is a
-/// second thing asking to be done. Shown on a schedule rather than at random,
-/// because a card somebody sees once and cannot find again is a card they
-/// read as a bug.
+/// On Görevler rather than Bugün, under the button that just closed the day:
+/// this is the screen where the work happens, and a reward belongs where it
+/// was earned. Shown on a schedule rather than at random, because a card
+/// somebody sees once and cannot find again is a card they read as a bug.
 ///
 /// The mascot still offers it. This is the door for the people who switched
 /// the mascot off, and for everybody who never sat still long enough to be

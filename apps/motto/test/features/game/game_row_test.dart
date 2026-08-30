@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:motto/features/chain/application/chain_state.dart';
 import 'package:motto/features/chain/domain/chain.dart';
-import 'package:motto/features/daily/presentation/widgets/game_row.dart';
+import 'package:motto/features/game/presentation/widgets/game_row.dart';
 
 ChainState _chain({Set<DateTime> marked = const {}}) => ChainState(
   chain: Chain(startedOn: DateTime(2026, 8, 20), markedDays: marked),
@@ -11,10 +11,10 @@ ChainState _chain({Set<DateTime> marked = const {}}) => ChainState(
 void main() {
   final today = DateTime(2026, 8, 30);
 
-  group('the way into the game on the home screen', () {
+  group('the way into the game beside the day', () {
     test('is not there until the day is marked', () {
-      // The game is not what somebody opens this app to do. A permanent
-      // invitation beside the day's three things is a second thing asking to
+      // The game is not what somebody opens this app to do, and a permanent
+      // invitation under the day's three things is a second thing asking to
       // be done.
       expect(GameRow.forChain(_chain(), today), isNull);
     });

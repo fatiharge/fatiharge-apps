@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motto/features/chain/application/chain_cubit.dart';
 import 'package:motto/features/chain/application/chain_state.dart';
 import 'package:motto/features/chain/presentation/widgets/chain_strip.dart';
+import 'package:motto/features/game/presentation/widgets/game_row.dart';
 import 'package:motto/features/tasks/application/task_cubit.dart';
 import 'package:motto/features/tasks/presentation/widgets/day_closing.dart';
 import 'package:motto/features/tasks/presentation/widgets/task_card.dart';
@@ -45,13 +46,23 @@ class DailyTasksPage extends StatelessWidget {
                 // working chain off the screen.
                 const _Run(),
                 BlocBuilder<ChainCubit, ChainState>(
-                  builder: (context, chain) => Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _Middle(state: state, started: chain.chain.started),
-                      DayClosing(state: chain),
-                    ],
-                  ),
+                  builder: (context, chain) {
+                    // Under the button that just closed the day, not on Bugün:
+                    // the reward belongs where the work was done.
+                    final turn = GameRow.forChain(chain, DateTime.now());
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _Middle(state: state, started: chain.chain.started),
+                        DayClosing(state: chain),
+                        if (turn != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 28),
+                            child: turn,
+                          ),
+                      ],
+                    );
+                  },
                 ),
               ],
             ),
