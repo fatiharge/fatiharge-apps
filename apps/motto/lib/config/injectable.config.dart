@@ -53,6 +53,7 @@ import 'package:motto/features/test/application/test_draft.dart' as _i547;
 import 'package:motto/infrastructure/analytics/analytics.dart' as _i190;
 import 'package:motto/infrastructure/analytics/event_queue.dart' as _i98;
 import 'package:motto/infrastructure/api/api_clients.dart' as _i366;
+import 'package:motto/infrastructure/api/trouble_bus.dart' as _i328;
 import 'package:motto/infrastructure/identity/device_identity.dart' as _i37;
 import 'package:motto/infrastructure/identity/device_identity_impl.dart'
     as _i917;
@@ -82,6 +83,10 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i113.DailyWidget>(() => const _i113.DailyWidget());
     gh.lazySingleton<_i111.CardExporter>(() => const _i111.CardExporter());
     gh.lazySingleton<_i818.ApiClient>(() => apiClients.authClient());
+    gh.lazySingleton<_i328.TroubleBus>(
+      () => _i328.TroubleBus(),
+      dispose: (i) => i.close(),
+    );
     gh.lazySingleton<_i759.TokenStore>(
       () => _i759.TokenStore(gh<_i558.FlutterSecureStorage>()),
     );

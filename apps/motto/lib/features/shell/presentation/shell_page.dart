@@ -11,7 +11,10 @@ import 'package:motto/features/days/application/days_cubit.dart';
 import 'package:motto/features/game/application/turns_cubit.dart';
 import 'package:motto/features/profile/application/profile_cubit.dart';
 import 'package:motto/features/shell/presentation/widgets/floating_nav_bar.dart';
+import 'package:motto/features/support/presentation/widgets/trouble_sheet.dart';
 import 'package:motto/features/tasks/application/task_cubit.dart';
+import 'package:motto/infrastructure/api/outcome.dart';
+import 'package:motto/infrastructure/api/trouble_bus.dart';
 import 'package:motto/infrastructure/session/device_session.dart';
 import 'package:motto/route/app_router.gr.dart';
 import 'package:motto/route/reloads_on_return.dart';
@@ -80,16 +83,37 @@ class _ShellViewState extends State<_ShellView> with ReloadsOnReturn {
     if (mounted) reload();
   }
 
+  StreamSubscription<Trouble>? _troubles;
+
   @override
   void initState() {
     super.initState();
     _lifecycle.hashCode;
+    // Said once, above the tabs. A dead session and a door we should not have
+    // offered do not become different problems because a different screen was
+    // asking, and answering them in every cubit is how one meaning turns into
+    // six sentences.
+    _troubles = getIt<TroubleBus>().stream.listen(_answer);
   }
 
   @override
   void dispose() {
+    unawaited(_troubles?.cancel());
     _lifecycle.dispose();
     super.dispose();
+  }
+
+  void _answer(Trouble trouble) {
+    if (!mounted) return;
+    unawaited(
+      showTroubleSheet(
+        context,
+        // Nothing to retry: the client already renewed and retried before a
+        // session ever came through here, and a door that is closed stays
+        // closed however many times it is pushed.
+        failure: trouble,
+      ),
+    );
   }
 
   static const _items = [

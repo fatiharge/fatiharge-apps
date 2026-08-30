@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:api_client_motto/api.dart' as api;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -32,7 +34,7 @@ void main() {
     testWidgets('a request that never arrived is a connection', (
       tester,
     ) async {
-      await open(tester, failure: Exception('socket'));
+      await open(tester, failure: const SocketException('no route'));
 
       // The one thing the person can actually act on.
       expect(find.text('Bağlanamadım'), findsOneWidget);
@@ -44,6 +46,8 @@ void main() {
 
     testWidgets('a request the server answered is ours to own', (tester) async {
       await open(tester, failure: api.ApiException(500, 'boom'));
+      // A 5xx goes to the report on its way past.
+      tester.takeException();
 
       // No status code reaches the screen: that is a fact about our server,
       // not about anything they can do.
@@ -56,7 +60,7 @@ void main() {
       var tried = 0;
       await open(
         tester,
-        failure: Exception('socket'),
+        failure: const SocketException('no route'),
         retry: () async => tried++,
       );
 
@@ -70,7 +74,7 @@ void main() {
     testWidgets('and only closes when there is nothing to retry', (
       tester,
     ) async {
-      await open(tester, failure: Exception('socket'));
+      await open(tester, failure: const SocketException('no route'));
 
       expect(find.text('Tekrar dene'), findsNothing);
       expect(find.text('Tamam'), findsOneWidget);
