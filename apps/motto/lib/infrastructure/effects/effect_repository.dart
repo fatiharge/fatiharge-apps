@@ -9,7 +9,11 @@ import 'package:motto/infrastructure/effects/effect_store.dart';
 /// Unlike the content package this one is allowed to be missing. An app with
 /// no definitions still works: every refusal reads as a code nobody wrote for,
 /// which already has an answer. That is why nothing here throws.
-@LazySingleton(as: EffectCatalogue)
+/// Registered under its own name as well as the interface: the bootstrap job
+/// has to ask it to refresh, and `as:` alone leaves the concrete type
+/// unregistered — the job threw, was skipped because it is allowed to be, and
+/// the catalogue silently never arrived.
+@lazySingleton
 class EffectRepository implements EffectCatalogue {
   EffectRepository(this._effects, this._store);
 

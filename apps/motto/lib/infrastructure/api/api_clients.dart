@@ -4,7 +4,9 @@ import 'package:injectable/injectable.dart';
 import 'package:motto/config/env.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/infrastructure/api/renewing_client.dart';
+import 'package:motto/infrastructure/effects/effect_catalogue.dart';
 import 'package:motto/infrastructure/effects/effect_host.dart';
+import 'package:motto/infrastructure/effects/effect_repository.dart';
 import 'package:motto/infrastructure/effects/motto_effect_host.dart';
 import 'package:motto/infrastructure/session/device_session.dart';
 import 'package:motto/infrastructure/session/token_store.dart';
@@ -94,6 +96,11 @@ abstract class ApiClients {
   /// the engine: the engine is the same everywhere, the permits never are.
   @lazySingleton
   EffectPermits permits() => MottoEffectHost.permits;
+
+  /// The engine reads definitions through the interface; the bootstrap asks
+  /// the same object to go and get them.
+  @lazySingleton
+  EffectCatalogue catalogue(EffectRepository definitions) => definitions;
 
   @lazySingleton
   motto.SupportResourceApi support(motto.ApiClient client) =>
