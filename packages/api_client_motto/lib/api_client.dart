@@ -260,6 +260,8 @@ class ApiClient {
           return NextPeriodRequest.fromJson(value);
         case 'PeriodReport':
           return PeriodReport.fromJson(value);
+        case 'PlayCredits':
+          return PlayCredits.fromJson(value);
         case 'ProfileScores':
           return ProfileScores.fromJson(value);
         case 'Question':

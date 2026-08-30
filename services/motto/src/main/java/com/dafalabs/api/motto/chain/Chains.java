@@ -3,6 +3,8 @@ package com.dafalabs.api.motto.chain;
 import com.dafalabs.api.core.error.CustomRuntimeException;
 import com.dafalabs.api.motto.chain.dto.ChainState;
 import com.dafalabs.api.motto.chain.dto.MarkedDay;
+import com.dafalabs.api.motto.game.CreditReason;
+import com.dafalabs.api.motto.game.Plays;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import java.time.Clock;
@@ -28,11 +30,13 @@ public class Chains {
 
   private final ChainRepository chains;
   private final ChainDayRepository days;
+  private final Plays plays;
   private final Clock clock;
 
-  Chains(ChainRepository chains, ChainDayRepository days, Clock clock) {
+  Chains(ChainRepository chains, ChainDayRepository days, Plays plays, Clock clock) {
     this.chains = chains;
     this.days = days;
+    this.plays = plays;
     this.clock = clock;
   }
 
@@ -72,6 +76,10 @@ public class Chains {
     if (!days.exists(deviceId, day)) {
       days.persist(ChainDay.of(deviceId, day, false, chain.period()));
     }
+    // Granted against the day that was marked, not against today: a day
+    // backfilled from the offline queue paid for a turn on the day it belongs
+    // to, and that day is over.
+    plays.grant(deviceId, day, CreditReason.MARKED_DAY);
     return state(deviceId, today);
   }
 

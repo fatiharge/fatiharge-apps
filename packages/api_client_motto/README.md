@@ -76,6 +76,8 @@ Class | Method | HTTP request | Description
 *EventResourceApi* | [**recordEvents**](doc//EventResourceApi.md#recordevents) | **POST** /v1/events | Report what happened
 *FeedbackResourceApi* | [**submitFeedback**](doc//FeedbackResourceApi.md#submitfeedback) | **POST** /v1/feedback | Send feedback
 *MottoResourceApi* | [**claimMotto**](doc//MottoResourceApi.md#claimmotto) | **POST** /v1/mottos/claim | Spend a use and get a motto
+*PlayResourceApi* | [**gameTurns**](doc//PlayResourceApi.md#gameturns) | **GET** /v1/game/turns | What today has paid for
+*PlayResourceApi* | [**spendGameTurn**](doc//PlayResourceApi.md#spendgameturn) | **POST** /v1/game/turns | Spend a turn to start a game
 *ReportResourceApi* | [**deepReport**](doc//ReportResourceApi.md#deepreport) | **GET** /v1/reports/{resultId} | The deep report for a result
 *ReportResourceApi* | [**resultReport**](doc//ReportResourceApi.md#resultreport) | **GET** /v1/reports/{resultId}/summary | The free report for a result
 *ResultResourceApi* | [**resultHistory**](doc//ResultResourceApi.md#resulthistory) | **GET** /v1/me/results | Past results, newest first
@@ -119,6 +121,7 @@ Class | Method | HTTP request | Description
  - [MottoContent](doc//MottoContent.md)
  - [NextPeriodRequest](doc//NextPeriodRequest.md)
  - [PeriodReport](doc//PeriodReport.md)
+ - [PlayCredits](doc//PlayCredits.md)
  - [ProfileScores](doc//ProfileScores.md)
  - [Question](doc//Question.md)
  - [QuestionResponse](doc//QuestionResponse.md)
