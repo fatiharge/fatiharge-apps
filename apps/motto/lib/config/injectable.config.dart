@@ -244,12 +244,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i190.Analytics>(),
       ),
     );
-    gh.lazySingleton<_i781.EffectCatalogue>(
-      () => _i316.EffectRepository(
-        gh<_i66.EffectResourceApi>(),
-        gh<_i480.EffectStore>(),
-      ),
-    );
     gh.lazySingleton<_i876.ContentRepository>(
       () => _i876.ContentRepository(
         gh<_i66.ContentResourceApi>(),
@@ -268,6 +262,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i460.SharedPreferences>(),
       ),
     );
+    gh.lazySingleton<_i316.EffectRepository>(
+      () => _i316.EffectRepository(
+        gh<_i66.EffectResourceApi>(),
+        gh<_i480.EffectStore>(),
+      ),
+    );
     gh.factory<_i875.FeedbackCubit>(
       () => _i875.FeedbackCubit(
         gh<_i66.FeedbackResourceApi>(),
@@ -275,12 +275,8 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i190.Analytics>(),
       ),
     );
-    gh.lazySingleton<_i574.Effects>(
-      () => _i574.Effects(
-        gh<_i781.EffectCatalogue>(),
-        gh<_i774.EffectHost>(),
-        gh<_i774.EffectPermits>(),
-      ),
+    gh.lazySingleton<_i781.EffectCatalogue>(
+      () => apiClients.catalogue(gh<_i316.EffectRepository>()),
     );
     gh.factory<_i1068.DailyCubit>(
       () => _i1068.DailyCubit(
@@ -296,6 +292,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i66.ChainResourceApi>(),
         gh<_i876.ContentRepository>(),
         gh<_i1019.LastArchetype>(),
+      ),
+    );
+    gh.lazySingleton<_i574.Effects>(
+      () => _i574.Effects(
+        gh<_i781.EffectCatalogue>(),
+        gh<_i774.EffectHost>(),
+        gh<_i774.EffectPermits>(),
       ),
     );
     return this;

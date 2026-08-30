@@ -79,5 +79,23 @@ void main() {
       expect(find.text('Tekrar dene'), findsNothing);
       expect(find.text('Tamam'), findsOneWidget);
     });
+    testWidgets('a refusal nobody wrote for never quotes the server', (
+      tester,
+    ) async {
+      await open(
+        tester,
+        failure: api.ApiException(
+          409,
+          '{"code":"no_turns_yet","message":"There is no turn to spend."}',
+        ),
+      );
+
+      // The server's message is written for us. It is in English and it names
+      // our machinery; handing it to somebody holding a phone is a bug that
+      // looks like a translation.
+      expect(find.textContaining('no turn to spend'), findsNothing);
+      expect(find.textContaining('no_turns_yet'), findsNothing);
+      expect(find.text('Olmadı'), findsOneWidget);
+    });
   });
 }

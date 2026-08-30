@@ -83,11 +83,12 @@ Future<void> showTroubleSheet(
     'Buna erişimin yok',
     'Bu senin hatan değil; olmaması gereken bir kapıydı.',
   ),
-  // A named refusal normally never gets here — the screen that asked is the
-  // one that knows what it means. When it does, its own words beat ours.
-  Refused(message: final said) => (
+  // A named refusal reaching here means nobody has written what it leads to
+  // yet. The server's own message is written for us, not for whoever is
+  // holding the phone — it is in English and it names our machinery.
+  Refused() => (
     'Olmadı',
-    said ?? 'Bu isteği şu an karşılayamadım.',
+    'Bu isteği şu an karşılayamadım. Birazdan tekrar dene.',
   ),
   Broken() => (
     'Olmadı',
