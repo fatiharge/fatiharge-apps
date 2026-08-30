@@ -138,4 +138,27 @@ void main() {
 
     expect(cubit.state.status, TaskStatus.failed);
   });
+
+  test('a dead session does not throw away the tick it was carrying', () async {
+    await cubit.load();
+    when(
+      () => tasks.completeTask(any(), today: any(named: 'today')),
+    ).thenThrow(Exception('offline'));
+    await cubit.complete(cubit.state.tasks.first);
+
+    // The first request out of the door when the wifi comes back can answer
+    // 401 while the token is being renewed. Reading that as "the server does
+    // not want this tick" threw away work somebody did on a plane.
+    when(
+      () => tasks.completeTask(any(), today: any(named: 'today')),
+    ).thenThrow(api.ApiException(401, ''));
+    await cubit.load();
+
+    when(
+      () => tasks.completeTask(any(), today: any(named: 'today')),
+    ).thenAnswer((_) async => null);
+    await cubit.load();
+
+    verify(() => tasks.completeTask(1, today: any(named: 'today'))).called(3);
+  });
 }

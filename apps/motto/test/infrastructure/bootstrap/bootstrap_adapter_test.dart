@@ -20,7 +20,9 @@ void main() {
       // server still holds the result, so skipping this would send somebody
       // with a running chain back through the inventory.
       expect(names.indexOf('archetype'), greaterThan(names.indexOf('session')));
-      expect(archetype.errorPolicy, isNot(BootstrapErrorPolicy.skip));
+      // It cannot fail the launch: everything this app does offline lives
+      // behind this point.
+      expect(archetype.errorPolicy, BootstrapErrorPolicy.skip);
       expect(archetype.retries, greaterThan(0));
     });
 

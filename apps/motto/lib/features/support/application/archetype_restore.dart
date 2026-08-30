@@ -32,13 +32,22 @@ class ArchetypeRestore {
   /// Görevler asks the server and comes back with nothing, so the app says
   /// "there is nothing for today" to somebody it just called a Gece Nöbetçisi.
   Future<void> ensure() async {
-    final history = await _results.resultHistory();
+    final api.ResultHistory? history;
+    try {
+      history = await _results.resultHistory();
+    } on Object {
+      // Reconciling needs an answer, and there is none. Everything this app
+      // does offline — the day's text, the chain, the three things — is
+      // behind the bootstrap, so throwing here made a cached app that cannot
+      // open at all. Leave the phone as it is and try again next launch.
+      return;
+    }
+
     final results = history?.results ?? const <api.ResultSummary>[];
 
     if (results.isEmpty) {
-      // Only ever reached when the server answered. A call that failed throws
-      // out of here and the bootstrap retries; nothing is forgotten because a
-      // train went into a tunnel.
+      // Only ever reached when the server answered. Nothing is forgotten
+      // because a train went into a tunnel.
       await _last.forget();
       return;
     }
