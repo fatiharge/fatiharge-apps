@@ -40,15 +40,32 @@ void main() {
   }
 
   group('ArchetypeRestore', () {
-    test('asks nothing when the phone already knows', () async {
+    test('leaves a phone that already agrees alone', () async {
       await build(stored: {'last_archetype': 'night_watch'});
+      when(() => results.resultHistory()).thenAnswer(
+        (_) async => api.ResultHistory(
+          results: [_summary(9, 'night_watch', DateTime(2026, 8, 20))],
+        ),
+      );
 
       await restore.ensure();
 
-      // Every launch but the first after a reinstall takes this path, so it
-      // must not cost a request.
-      verifyNever(() => results.resultHistory());
       expect(last.id, 'night_watch');
+    });
+
+    test('forgets an archetype the server has no record of', () async {
+      await build(stored: {'last_archetype': 'night_watch'});
+      when(
+        () => results.resultHistory(),
+      ).thenAnswer((_) async => api.ResultHistory());
+
+      await restore.ensure();
+
+      // Bugün draws the claim from the package and looks fine; Görevler asks
+      // the server and comes back empty. The app told somebody it had nothing
+      // for them today, right under the name of an archetype it had just
+      // called them.
+      expect(last.id, isNull);
     });
 
     test('takes the newest result back from the server', () async {
