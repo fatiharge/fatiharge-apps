@@ -131,6 +131,20 @@ class _ShellViewState extends State<_ShellView> with ReloadsOnReturn {
     NavItem(icon: Icons.person_outline, filled: Icons.person, label: 'Profil'),
   ];
 
+  /// What one tab changes for another.
+  ///
+  /// A tab is built once and kept alive, so marking the day on Görevler left
+  /// Günler still showing no days at all — the screen whose whole job is to
+  /// show marked days did not notice one being marked. The turns behave the
+  /// same way: marking the day earns one, and the row that spends it lived on
+  /// another tab.
+  ///
+  /// Only these two: the rest read cubits that the act itself updates.
+  void _crossTabs() {
+    context.read<DaysCubit>().unawaitedLoad();
+    context.read<TurnsCubit>().unawaitedLoad();
+  }
+
   /// Everything the three tabs read. The inventory, the report and a marked
   /// day all happen on screens pushed over this one, and every one of them
   /// changes what at least two tabs should say.
@@ -159,7 +173,10 @@ class _ShellViewState extends State<_ShellView> with ReloadsOnReturn {
       bottomNavigationBuilder: (context, tabsRouter) => FloatingNavBar(
         items: _items,
         index: tabsRouter.activeIndex,
-        onSelected: tabsRouter.setActiveIndex,
+        onSelected: (index) {
+          tabsRouter.setActiveIndex(index);
+          _crossTabs();
+        },
       ),
     );
   }
