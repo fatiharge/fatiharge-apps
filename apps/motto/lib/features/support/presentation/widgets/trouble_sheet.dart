@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:api_client_motto/api.dart' as api;
 import 'package:flutter/material.dart';
+import 'package:motto/infrastructure/api/outcome.dart';
 
 /// What to say when something somebody pressed did not happen.
 ///
@@ -17,10 +17,9 @@ Future<void> showTroubleSheet(
   required Object failure,
   Future<void> Function()? retry,
 }) {
-  // Anything the server answered is a fault on our side; anything that never
-  // reached it is a connection. The person can act on the second one, which is
-  // the only reason the two sentences differ.
-  final reachedUs = failure is api.ApiException;
+  // Read through the same classifier the repositories use, so a sheet and a
+  // cubit can never disagree about what just happened.
+  final (title, body) = _words(troubleFrom(failure));
 
   return showModalBottomSheet<void>(
     context: context,
@@ -36,16 +35,10 @@ Future<void> showTroubleSheet(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                reachedUs ? 'Olmadı' : 'Bağlanamadım',
-                style: text.titleLarge,
-              ),
+              Text(title, style: text.titleLarge),
               const SizedBox(height: 12),
               Text(
-                reachedUs
-                    ? 'Bizim tarafımızda bir aksaklık oldu. Birazdan tekrar '
-                          'dene.'
-                    : 'İnternet bağlantını kontrol edip tekrar dene.',
+                body,
                 style: text.bodyLarge?.copyWith(color: scheme.onSurfaceVariant),
               ),
               const SizedBox(height: 24),
@@ -74,3 +67,30 @@ Future<void> showTroubleSheet(
     },
   );
 }
+
+/// One sentence per kind, and nothing technical in any of them. A status code
+/// is a fact about our server, not about anything the person can do.
+(String, String) _words(Trouble trouble) => switch (trouble) {
+  Offline() => (
+    'Bağlanamadım',
+    'İnternet bağlantını kontrol edip tekrar dene.',
+  ),
+  SessionOver() => (
+    'Oturumun tazelenemedi',
+    'Uygulamayı kapatıp açman yeter. Verilerin duruyor.',
+  ),
+  NotAllowed() => (
+    'Buna erişimin yok',
+    'Bu senin hatan değil; olmaması gereken bir kapıydı.',
+  ),
+  // A named refusal normally never gets here — the screen that asked is the
+  // one that knows what it means. When it does, its own words beat ours.
+  Refused(message: final said) => (
+    'Olmadı',
+    said ?? 'Bu isteği şu an karşılayamadım.',
+  ),
+  Broken() => (
+    'Olmadı',
+    'Bizim tarafımızda bir aksaklık oldu. Birazdan tekrar dene.',
+  ),
+};
