@@ -104,7 +104,16 @@ void main() {
       // A row that answers a tap with "you have none" is worse than a row that
       // was not there.
       expect(find.text('Oyun'), findsNothing);
-      expect(find.text('Ayarlar'), findsOneWidget);
+      expect(find.text('Geçmiş sonuçların'), findsOneWidget);
+    });
+
+    testWidgets('keeps settings in the bar, not in the list', (tester) async {
+      await pump(tester, remaining: 1);
+
+      // A row made settings look like one of the things somebody came to this
+      // screen to read.
+      expect(find.widgetWithText(ListTile, 'Ayarlar'), findsNothing);
+      expect(find.byIcon(Icons.settings_outlined), findsOneWidget);
     });
   });
 }
