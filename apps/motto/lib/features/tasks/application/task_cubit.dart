@@ -71,8 +71,9 @@ class TaskCubit extends Cubit<TaskState> {
   /// Ticked here before the server hears about it: the point of a checkbox is
   /// that it answers instantly, and the server refusing is not a case anyone
   /// can act on.
-  Future<void> complete(api.DailyTask task) async {
-    if (task.done) return;
+  /// False when the server never heard about it and the tick was rolled back.
+  Future<bool> complete(api.DailyTask task) async {
+    if (task.done) return true;
 
     final ticked = [
       for (final each in state.tasks)
@@ -99,9 +100,13 @@ class TaskCubit extends Cubit<TaskState> {
 
     try {
       await _tasks.completeTask(task.id, today: isoDay(now()));
+      return true;
     } on Object catch (failure, trace) {
       reported('tasks', failure, trace);
+      // The box unticks itself and nothing says why. Somebody who ticked it,
+      // looked away and looked back reads that as the app losing their work.
       await load();
+      return false;
     }
   }
 }

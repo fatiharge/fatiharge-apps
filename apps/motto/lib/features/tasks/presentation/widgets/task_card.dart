@@ -2,6 +2,7 @@ import 'package:api_client_motto/api.dart' as api;
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:motto/features/support/presentation/widgets/trouble_sheet.dart';
 import 'package:motto/features/tasks/application/task_cubit.dart';
 import 'package:motto/route/app_router.gr.dart';
 
@@ -38,7 +39,7 @@ class TaskCard extends StatelessWidget {
         contentPadding: const EdgeInsets.fromLTRB(8, 8, 16, 8),
         leading: Checkbox(
           value: task.done,
-          onChanged: countable ? (_) => cubit.complete(task) : null,
+          onChanged: countable ? (_) => _tick(context, cubit, task) : null,
         ),
         title: Text(task.title, style: text.titleSmall),
         subtitle: Padding(
@@ -54,10 +55,36 @@ class TaskCard extends StatelessWidget {
           TaskDetailRoute(
             task: task,
             day: day,
-            onDone: countable ? () => cubit.complete(task) : null,
+            onDone: countable ? () => _tick(context, cubit, task) : null,
           ),
         ),
       ),
     );
   }
+}
+
+/// Ticks it, and says so when it did not stick.
+///
+/// The box unticks itself when the server never heard about it. Somebody who
+/// ticked it, looked away and looked back reads that as the app losing their
+/// work — so the box coming back needs a sentence next to it.
+Future<void> _tick(
+  BuildContext context,
+  TaskCubit cubit,
+  api.DailyTask task,
+) async {
+  if (await cubit.complete(task)) return;
+  if (!context.mounted) return;
+
+  await showTroubleSheet(
+    context,
+    failure: const _TickFailed(),
+    retry: () => _tick(context, cubit, task),
+  );
+}
+
+/// Stands in for the failure the cubit already reported: the screen needs to
+/// know that something went wrong, not what.
+class _TickFailed implements Exception {
+  const _TickFailed();
 }
