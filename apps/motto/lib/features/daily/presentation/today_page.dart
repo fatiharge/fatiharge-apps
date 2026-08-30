@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motto/features/chain/application/chain_cubit.dart';
@@ -23,7 +24,7 @@ class TodayPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Bugün'),
+        title: Text('tabs.today'.tr()),
         automaticallyImplyLeading: false,
         actions: const [SettingsButton()],
       ),

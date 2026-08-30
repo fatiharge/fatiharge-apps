@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:motto/infrastructure/api/outcome.dart';
 
@@ -48,7 +49,7 @@ Future<void> showTroubleSheet(
                     Navigator.of(sheet).pop();
                     unawaited(retry());
                   },
-                  child: const Text('Tekrar dene'),
+                  child: Text('trouble.retry'.tr()),
                 ),
                 const SizedBox(height: 4),
                 TextButton(
@@ -72,26 +73,26 @@ Future<void> showTroubleSheet(
 /// is a fact about our server, not about anything the person can do.
 (String, String) _words(Trouble trouble) => switch (trouble) {
   Offline() => (
-    'Bağlanamadım',
-    'İnternet bağlantını kontrol edip tekrar dene.',
+    'trouble.offlineTitle'.tr(),
+    'trouble.offlineBody'.tr(),
   ),
   SessionOver() => (
-    'Oturumun tazelenemedi',
-    'Uygulamayı kapatıp açman yeter. Verilerin duruyor.',
+    'trouble.sessionTitle'.tr(),
+    'trouble.sessionBody'.tr(),
   ),
   NotAllowed() => (
-    'Buna erişimin yok',
-    'Bu senin hatan değil; olmaması gereken bir kapıydı.',
+    'trouble.deniedTitle'.tr(),
+    'trouble.deniedBody'.tr(),
   ),
   // A named refusal reaching here means nobody has written what it leads to
   // yet. The server's own message is written for us, not for whoever is
   // holding the phone — it is in English and it names our machinery.
   Refused() => (
-    'Olmadı',
-    'Bu isteği şu an karşılayamadım. Birazdan tekrar dene.',
+    'trouble.refusedTitle'.tr(),
+    'trouble.refusedBody'.tr(),
   ),
   Broken() => (
-    'Olmadı',
-    'Bizim tarafımızda bir aksaklık oldu. Birazdan tekrar dene.',
+    'trouble.refusedTitle'.tr(),
+    'trouble.brokenBody'.tr(),
   ),
 };

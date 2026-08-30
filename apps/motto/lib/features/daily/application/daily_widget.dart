@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:injectable/injectable.dart';
 import 'package:motto/features/daily/domain/daily_content.dart';
@@ -15,12 +16,14 @@ class DailyWidget {
     try {
       await HomeWidget.saveWidgetData<String>(
         'widget_day',
-        '${content.day}. GÜN',
+        'daily.dayLabel'.tr(namedArgs: {'day': '${content.day}'}),
       );
       await HomeWidget.saveWidgetData<String>('widget_action', content.action);
       await HomeWidget.saveWidgetData<String>(
         'widget_streak',
-        streak > 0 ? '$streak gün' : 'Zincir bekliyor',
+        streak > 0
+            ? 'daily.streakDays'.plural(streak)
+            : 'daily.chainWaiting'.tr(),
       );
       await HomeWidget.updateWidget(androidName: androidName);
     } on Object {

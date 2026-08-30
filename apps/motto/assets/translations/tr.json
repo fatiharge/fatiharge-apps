@@ -5,5 +5,357 @@
   "startup": {
     "failed": "Başlatılamadı",
     "retry": "Tekrar dene"
+  },
+  "welcome": {
+    "line": "Kısa bir envanter, sana ait bir motto.",
+    "start": "Başla"
+  },
+  "tabs": {
+    "today": "Bugün",
+    "tasks": "Görevler",
+    "days": "Günler",
+    "profile": "Profil"
+  },
+  "common": {
+    "retry": "Tekrar dene"
+  },
+  "days": {
+    "title": "Günler",
+    "failed": "Günlerin yüklenemedi.",
+    "empty": "Buraya işaretlediğin günler geliyor. İlkini işaretlediğinde burada olacak.",
+    "missing": "O günün metni elimde yok.",
+    "periodLabel": "{period}. DÖNEM",
+    "periodRunning": "{done} / {of} · sürüyor"
+  },
+  "onboarding": {
+    "inventory": {
+      "body": "Yirmi soru soracağım. Sonunda sana ait bir cümle çıkacak — bir kişilik envanteri, bir fal değil."
+    },
+    "daily": {
+      "title": "Sonra her gün bir dakika",
+      "body": "Her güne küçük bir şey düşüyor. Bir dakikanı alıyor, ve zincirin uzadıkça yapması kolaylaşıyor."
+    },
+    "mascot": {
+      "title": "Ben buradayım",
+      "body": "Ekranda dolaşıyorum. Canın sıkılırsa sürükle, dürt, oynat. Fazla dürtersen kaçarım."
+    },
+    "skip": "Geç",
+    "start": "Başla",
+    "hello": "Merhaba"
+  },
+  "likert": {
+    "disagree": "Hiç katılmıyorum",
+    "agree": "Tamamen katılıyorum",
+    "point": "{point} / {of}"
+  },
+  "questions": {
+    "failed": "Sorular yüklenemedi."
+  },
+  "glimpse": {
+    "title": "Şimdilik böyle görünüyorsun",
+    "note": "Kalan sorular bunu değiştirebilir.",
+    "continue": "Devam et"
+  },
+  "calculating": {
+    "reading": "Cevapların okunuyor",
+    "wait": "Yeni bir motto için biraz beklemen gerekiyor.",
+    "noUses": "Ücretsiz hakların doldu.",
+    "noSkips": "Atlama hakkın kalmadı.",
+    "failed": "Sonucun alınamadı.",
+    "skipOffer": "Bir atlama hakkın var. Kullanırsan beklemeden devam edersin.",
+    "back": "Geri dön",
+    "waiting": "Bekle…",
+    "useSkip": "Atlama hakkımı kullan ({left})"
+  },
+  "result": {
+    "yours": "SENİN ARKETİPİN",
+    "share": "Kartı paylaş",
+    "deepReport": "Derin rapor",
+    "notMe": "Bana uymadı"
+  },
+  "shareCard": {
+    "preparing": "Hazırlanıyor…",
+    "share": "Paylaş",
+    "label": "KİŞİLİK ENVANTERİ"
+  },
+  "basis": {
+    "title": "Bu neye dayanıyor?",
+    "body": "Sorular, kamuya açık IPIP madde havuzundan Türkçeye uyarlanmıştır. Cevapların beş eğilim ekseninde bir profil oluşturur; arketip, o profilin en yakın düştüğü tanıma verilen addır.",
+    "limits": "Sınırlılıklar: kısa form düşük çözünürlüklüdür, kendi kendini bildirme yanlılığı taşır ve arketip sınırları keskin değildir. Arketip adı bilimsel bir kategori değil, editöryal bir yorumdur."
+  },
+  "report": {
+    "openness": "Deneyime açıklık",
+    "conscientiousness": "Düzen ve süreklilik",
+    "extraversion": "Dışa dönüklük",
+    "neuroticism": "Duygusal iniş çıkış",
+    "low": "düşük",
+    "high": "yüksek",
+    "failed": "Rapor alınamadı.",
+    "axes": "BEŞ EKSEN",
+    "gives": "Bu sana ne veriyor",
+    "costs": "Neye mal oluyor",
+    "agreeableness": "Uyum",
+    "mid": "orta",
+    "title": "Rapor"
+  },
+  "profile": {
+    "failed": "Profil yüklenemedi.",
+    "noInventory": "Henüz bir envanter doldurmadın.",
+    "past": "Geçmiş sonuçların",
+    "gameNote": "Haftanın ilk 10 skoru bir derin rapor kazanır.",
+    "gallery": "Sekizini de gez",
+    "records": {
+      "other": "{} kayıt"
+    },
+    "game": "Oyun"
+  },
+  "archive": {
+    "title": "Geçmiş",
+    "empty": "Burada henüz bir şey yok."
+  },
+  "deepReport": {
+    "title": "Derin rapor",
+    "failed": "Rapor alınamadı.",
+    "pitch": "Beş bölüm, senin profiline göre kuruluyor. Aynı arketipteki iki kişi aynı raporu okumuyor.",
+    "soon": "Satın alma yakında.",
+    "unlock": "Kilidi aç"
+  },
+  "gallery": {
+    "locked": "Hepsini okumak premium. Kendi arketibin her zaman açık.",
+    "soon": "Satın alma yakında.",
+    "unlock": "Kilidi aç",
+    "count": {
+      "other": "{} arketip"
+    }
+  },
+  "periodDone": {
+    "done": "On dört gün bitti.",
+    "body": "Bir dönem tamamlandı. Devam etmeden önce raporunu oku — yaptığın şey orada sayılı.",
+    "readReport": "Dönem raporunu oku",
+    "next": "Sırada ne var",
+    "nextBody": "Arketipin değişmedi. Değişen, önümüzdeki on dört günü hangi cümlenin taşıyacağı.",
+    "current": "ŞU ANKİ"
+  },
+  "chain": {
+    "title": "ZİNCİR",
+    "notStarted": "Henüz başlamadı.",
+    "notMarked": "Bugün işaretlenmedi.",
+    "perfect": "Hiç kaçırmadın.",
+    "ofDays": " / {days}",
+    "inARow": {
+      "other": "{} gün üst üste."
+    }
+  },
+  "daily": {
+    "yours": "ARKETİPİN",
+    "reports": "Raporun ve derin raporun burada.",
+    "bannerDone": "On dört gün bitti.",
+    "bannerBody": "Raporunu oku, sonra devam et.",
+    "yesterdayMarked": "Dün işaretledin.",
+    "yesterdayMissed": "Dün kaçtı.",
+    "inventoryFirst": "Önce envanteri doldur",
+    "inventoryBody": "Günlük içerik arketibine göre kuruluyor. Ondan önce sana söylenecek kişisel bir şey yok.",
+    "start": "Başla",
+    "neverDownloaded": "Günlük içerik bu cihaza hiç inmedi. Bağlantını kontrol edip tekrar dene.",
+    "failed": "Bugünün metni açılamadı. Tekrar dene.",
+    "dayLabel": "{day}. GÜN",
+    "streakDays": {
+      "other": "{} gün"
+    },
+    "chainWaiting": "Zincir bekliyor"
+  },
+  "tasks": {
+    "title": "Görevler",
+    "failed": "Bugünün görevleri alınamadı. Bağlantını kontrol edip tekrar dene.",
+    "nothing": "Bugün için bir şey yok.",
+    "lockedUntilChain": "Zincirini başlattığında işaretlenmeye açılıyor.",
+    "done": "Yapıldı",
+    "didIt": "Yaptım",
+    "threeThings": "BUGÜNÜN ÜÇ ŞEYİ · {done}/{of}",
+    "dayTitle": "{day}. gün"
+  },
+  "motto": {
+    "meaning": "NE DEMEK",
+    "daily": "HER GÜN ŞUNU DUYACAKSIN",
+    "periodReport": "Dönem raporu"
+  },
+  "periodReport": {
+    "title": "Dönem raporu",
+    "failed": "Rapor alınamadı.",
+    "complete": "On dört gün bitti",
+    "markedDays": "İşaretlenen gün",
+    "madeUp": "Bunların telafiyle gelen",
+    "tasksDone": "Yapılan görev",
+    "closing": "Bundan sonra devam eden şey artık bir deneme değil, senin yaptığın bir şey.",
+    "running": "Dönem sürüyor. Rapor her gün biraz daha doluyor.",
+    "onDay": "{day}. gündesin",
+    "outOf": "{done} / {of}"
+  },
+  "dayClosing": {
+    "startChain": "Zincirini başlat",
+    "willAskHour": "Hatırlatma saatini soracağım.",
+    "closePeriod": "Dönemi kapat",
+    "missedOne": "Bir gün kaçtı. Telafi hakkın duruyor.",
+    "makeUp": "Telafi et",
+    "howMakeUp": "Telafi nasıl çalışıyor?",
+    "markedToday": "Bugün işaretlendi",
+    "markToday": "Bugünü işaretle",
+    "remindersOff": "Hatırlatıcılar kapalı. Zincir yine de işliyor.",
+    "reminderHour": "Hatırlatma saati"
+  },
+  "dayDone": {
+    "allDone": "Bugünün üç şeyi de bitti. Zincir bir gün daha uzadı.",
+    "threeTurns": "+3 OYUN HAKKI",
+    "threeTurnsWhy": "Günün üçünü de bitirmek üç hak kazandırıyor."
+  },
+  "gameOver": {
+    "scoreFailed": "Skor gönderilemedi. Bağlantın gelince tekrar dene.",
+    "thisWeek": "Bu hafta",
+    "playAgain": "Tekrar oyna",
+    "topWin": "İlk {ranks} bir derin rapor kazanıyor."
+  },
+  "gameRules": {
+    "title": "Nasıl oynanır",
+    "sortTitle": "Düşeni doğru kutuya at",
+    "sortBody": "Sola gidecekse ekranın soluna, sağa gidecekse sağına dokun.",
+    "livesTitle": "Üç hakkın var",
+    "livesBody": "Yanlış kutu bir hak götürür. Yere düşen de yanlış sayılır — beklemek bir taktik değil.",
+    "rewardNote": "Haftanın en iyi 10 skoru bir derin rapor kazanır.",
+    "start": "Başla",
+    "pointsTitle": "Her doğru {points} puan",
+    "pointsBody": "Üst üste {every} doğru yaptıkça hızlanıyor. Yanlış yaparsan puanın durur, hız başa döner."
+  },
+  "game": {
+    "right": "Sağ",
+    "left": "Sol"
+  },
+  "gameRow": {
+    "markedToday": "BUGÜNÜ İŞARETLEDİN",
+    "play": "Bir tur at",
+    "reward": "Haftanın ilk 10 skoru bir derin rapor kazanıyor."
+  },
+  "settings": {
+    "reminderHour": "Hatırlatma saati",
+    "askedLater": "Zincir başlayınca sorulur",
+    "mascotOn": "Ekranda dolaşıyor",
+    "mascotOff": "Kapalı",
+    "privacy": "Gizlilik ve izinler",
+    "faq": "Sık sorulanlar",
+    "method": "Yöntem",
+    "feedback": "Geri bildirim",
+    "title": "Ayarlar",
+    "language": "Dil",
+    "languageName": "Türkçe",
+    "languages": {
+      "tr": "Türkçe",
+      "en": "English"
+    }
+  },
+  "privacy": {
+    "title": "Gizlilik ve izinler",
+    "failed": "Metin yüklenemedi.",
+    "permissions": "İzinler",
+    "notificationsOn": "Bildirimler açık.",
+    "notificationsOff": "Bildirimler kapalı. Zincir yine de işliyor; günü kendin işaretlersin.",
+    "deleteData": "Verilerimi sil"
+  },
+  "faq": {
+    "title": "Sık sorulanlar",
+    "failed": "Sorular yüklenemedi. Bağlantını kontrol edip tekrar dene."
+  },
+  "method": {
+    "title": "Yöntem",
+    "scale": {
+      "heading": "Ölçek",
+      "body": "Sorular, kamuya açık IPIP madde havuzundan Türkçeye uyarlandı. Beş boyut ölçülüyor: deneyime açıklık, sorumluluk, dışadönüklük, uyumluluk ve duygusal denge. Her boyut için dört madde var ve yarısı ters kodlu — aynı yöne peş peşe onaylamak profili bozmasın diye."
+    },
+    "adaptation": {
+      "heading": "Uyarlama",
+      "body": "Maddeler birebir çevrilmedi. Türkçede karşılığı zorlama duran ifadeler, aynı davranışı soran günlük cümlelerle değiştirildi. Bu, uluslararası normlarla karşılaştırma yapılamaması demek; sonuç kendi içinde tutarlı, dışarıyla kıyaslanabilir değil."
+    },
+    "matching": {
+      "heading": "Arketip nasıl seçiliyor",
+      "body": "Cevaplar beş boyutlu bir profile dönüşüyor ve bu profil, on sekiz arketibin her birinin tanımlı noktasına olan uzaklığına göre eşleşiyor — eşik sırası değil, en yakın nokta. Bu yüzden iki arketip arasında kalan bir profil, hangi eşiği önce geçtiğine göre değil, gerçekten hangisine yakın olduğuna göre yerleşiyor."
+    },
+    "limits": {
+      "heading": "Sınırlılıklar",
+      "body": "Kısa form kaba çözünürlük verir: yirmi madde, bir boyutu birkaç kademede ayırt eder, daha ince değil.\n\nÖzbildirim yanlıdır. İnsan kendini olduğu gibi değil, o gün olmak istediği gibi işaretler; ruh hali sonucu kaydırır.\n\nArketip sınırları keskin değildir. İki arketip arasında kalan bir profil için \"doğru\" cevap yoktur, yakın olan vardır.\n\nArketip etiketi bilimsel bir kategori değil, editöryal bir yorumdur. Beş boyutlu bir profili okunabilir bir isme çeviriyor; bir teşhis, bir yetenek ölçümü ya da bir kişilik tipi değil."
+    },
+    "sources": {
+      "heading": "Kaynaklar",
+      "body": "Goldberg, L. R. (1999). A broad-bandwidth, public-domain personality inventory. International Personality Item Pool — ipip.ori.org.\n\nJohn, O. P. & Srivastava, S. (1999). The Big Five trait taxonomy."
+    }
+  },
+  "deletion": {
+    "title": "Verilerimi sil",
+    "failed": "Silinemedi. Bağlantını kontrol edip tekrar dene.",
+    "copyFailed": "Metin yüklenemedi. Bağlantını kontrol edip tekrar dene.",
+    "deleting": "Siliniyor…"
+  },
+  "rejection": {
+    "opposite": "Tam tersi gibi",
+    "close": "Yakın ama tam değil",
+    "nothing": "Hiç tanımadım",
+    "thanks": "Not aldık, teşekkürler."
+  },
+  "trouble": {
+    "retry": "Tekrar dene",
+    "offlineTitle": "Bağlanamadım",
+    "offlineBody": "İnternet bağlantını kontrol edip tekrar dene.",
+    "sessionTitle": "Oturumun tazelenemedi",
+    "sessionBody": "Uygulamayı kapatıp açman yeter. Verilerin duruyor.",
+    "deniedTitle": "Buna erişimin yok",
+    "deniedBody": "Bu senin hatan değil; olmaması gereken bir kapıydı.",
+    "refusedTitle": "Olmadı",
+    "refusedBody": "Bu isteği şu an karşılayamadım. Birazdan tekrar dene.",
+    "brokenBody": "Bizim tarafımızda bir aksaklık oldu. Birazdan tekrar dene."
+  },
+  "feedback": {
+    "broken": "Bir şey çalışmıyor",
+    "idea": "Öneri",
+    "words": "Metinlerle ilgili",
+    "other": "Diğer",
+    "title": "Geri bildirim",
+    "sent": "Ulaştı. Teşekkürler.",
+    "what": "Ne oldu?",
+    "email": "E-posta (isteğe bağlı)",
+    "emailNote": "Bırakmazsan okuruz ama cevap yazamayız.",
+    "attached": "Uygulama sürümü, platform ve mevcut arketibin otomatik eklenir. Cevapların eklenmez.",
+    "failed": "Gönderilemedi. Bağlantını kontrol edip tekrar dene.",
+    "sending": "Gönderiliyor…",
+    "send": "Gönder"
+  },
+  "reminder": {
+    "daily": {
+      "title": "Zincirin seni bekliyor",
+      "first": "Bugün başlıyor. Bir dakikanı alacak.",
+      "body": {
+        "other": "{} gün oldu. Bugünü de ekle."
+      }
+    },
+    "dayEnding": {
+      "title": "Gün bitmeden",
+      "body": "Bir dakika yeter, zincirin duruyor."
+    },
+    "broken": {
+      "title": "Zincirin durdu",
+      "body": "Bir günlük telafi hakkın var. Kaldığın yerden devam edebilirsin."
+    },
+    "freezeRenewed": {
+      "title": "Telafi hakkın yenilendi",
+      "body": "Bu ay bir gün kaçırsan da zincirin kalır."
+    },
+    "mottoReady": {
+      "title": "Yeni mottona hazırsın",
+      "body": "Bekleme süresi doldu."
+    },
+    "milestone": {
+      "title": {
+        "other": "{} gün"
+      },
+      "week": "Bir hafta. En zor kısmı geçtin.",
+      "threeWeeks": "Üç hafta. Artık kendiliğinden geliyor.",
+      "month": "Bir ay. Bunu sen yaptın."
+    }
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motto/features/chain/application/chain_cubit.dart';
@@ -36,7 +37,7 @@ class DailyTasksPage extends StatelessWidget {
       child: Scaffold(
         // No back arrow: this is a tab, and there is nowhere behind it.
         appBar: AppBar(
-          title: const Text('Görevler'),
+          title: Text('tasks.title'.tr()),
           automaticallyImplyLeading: false,
           actions: const [SettingsButton()],
         ),
@@ -120,21 +121,24 @@ class _Middle extends StatelessWidget {
         child: Center(child: CircularProgressIndicator()),
       ),
       TaskStatus.failed => CouldNotLoad.inline(
-        said:
-            'Bugünün görevleri alınamadı. Bağlantını kontrol edip tekrar '
-            'dene.',
+        said: 'tasks.failed'.tr(),
         retry: context.read<TaskCubit>().unawaitedLoad,
       ),
       _ when state.tasks.isEmpty => Padding(
         padding: const EdgeInsets.symmetric(vertical: 32),
-        child: Text('Bugün için bir şey yok.', style: text.bodyLarge),
+        child: Text('tasks.nothing'.tr(), style: text.bodyLarge),
       ),
       _ => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 28),
           Text(
-            'BUGÜNÜN ÜÇ ŞEYİ · ${state.done}/${state.tasks.length}',
+            'tasks.threeThings'.tr(
+              namedArgs: {
+                'done': '${state.done}',
+                'of': '${state.tasks.length}',
+              },
+            ),
             style: text.labelSmall?.copyWith(
               color: scheme.onSurfaceVariant,
               letterSpacing: 1.5,
@@ -143,8 +147,7 @@ class _Middle extends StatelessWidget {
           if (!started) ...[
             const SizedBox(height: 8),
             Text(
-              'Bunlar bugünün üç şeyi. Zincirini başlattığında '
-              'işaretlenmeye açılıyorlar.',
+              'tasks.lockedUntilChain'.tr(),
               style: text.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
             ),
           ],

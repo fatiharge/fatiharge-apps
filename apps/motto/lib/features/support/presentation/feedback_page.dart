@@ -1,5 +1,6 @@
 import 'package:api_client_motto/api.dart' as api;
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motto/config/injectable.dart';
@@ -21,11 +22,11 @@ class FeedbackPage extends StatelessWidget {
   }
 }
 
-const Map<api.FeedbackKind, String> _kinds = {
-  api.FeedbackKind.BUG: 'Bir şey çalışmıyor',
-  api.FeedbackKind.SUGGESTION: 'Öneri',
-  api.FeedbackKind.CONTENT: 'Metinlerle ilgili',
-  api.FeedbackKind.OTHER: 'Diğer',
+Map<api.FeedbackKind, String> _kinds = {
+  api.FeedbackKind.BUG: 'feedback.broken'.tr(),
+  api.FeedbackKind.SUGGESTION: 'feedback.idea'.tr(),
+  api.FeedbackKind.CONTENT: 'feedback.words'.tr(),
+  api.FeedbackKind.OTHER: 'feedback.other'.tr(),
 };
 
 class _FeedbackView extends StatefulWidget {
@@ -52,14 +53,14 @@ class _FeedbackViewState extends State<_FeedbackView> {
     final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Geri bildirim')),
+      appBar: AppBar(title: Text('feedback.title'.tr())),
       body: SafeArea(
         child: BlocBuilder<FeedbackCubit, FeedbackState>(
           builder: (context, state) {
             if (state.status == FeedbackStatus.sent) {
               return Padding(
                 padding: const EdgeInsets.all(24),
-                child: Text('Ulaştı. Teşekkürler.', style: text.titleMedium),
+                child: Text('feedback.sent'.tr(), style: text.titleMedium),
               );
             }
 
@@ -82,26 +83,25 @@ class _FeedbackViewState extends State<_FeedbackView> {
                 TextField(
                   controller: _message,
                   maxLines: 6,
-                  decoration: const InputDecoration(
-                    labelText: 'Ne oldu?',
+                  decoration: InputDecoration(
+                    labelText: 'feedback.what'.tr(),
                     alignLabelWithHint: true,
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 16),
                 TextField(
                   controller: _email,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    labelText: 'E-posta (isteğe bağlı)',
-                    helperText: 'Bırakmazsan okuruz ama cevap yazamayız.',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: 'feedback.email'.tr(),
+                    helperText: 'feedback.emailNote'.tr(),
+                    border: const OutlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'Uygulama sürümü, platform ve mevcut arketibin otomatik '
-                  'eklenir. Cevapların eklenmez.',
+                  'feedback.attached'.tr(),
                   style: text.bodySmall?.copyWith(
                     color: scheme.onSurfaceVariant,
                   ),
@@ -109,7 +109,7 @@ class _FeedbackViewState extends State<_FeedbackView> {
                 const SizedBox(height: 24),
                 if (state.status == FeedbackStatus.failed) ...[
                   Text(
-                    'Gönderilemedi. Bağlantını kontrol edip tekrar dene.',
+                    'feedback.failed'.tr(),
                     style: text.bodyMedium?.copyWith(color: scheme.error),
                   ),
                   const SizedBox(height: 12),
@@ -123,8 +123,8 @@ class _FeedbackViewState extends State<_FeedbackView> {
                         ),
                   child: Text(
                     state.status == FeedbackStatus.sending
-                        ? 'Gönderiliyor…'
-                        : 'Gönder',
+                        ? 'feedback.sending'.tr()
+                        : 'feedback.send'.tr(),
                   ),
                 ),
               ],

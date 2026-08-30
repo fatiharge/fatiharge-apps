@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 /// A screen, or a part of one, that could not read what it needed.
@@ -51,9 +52,9 @@ class CouldNotLoad extends StatelessWidget {
           // Outlined inline, filled when it is the only thing on the screen:
           // the same promise, weighted for what else is competing with it.
           if (_inline)
-            OutlinedButton(onPressed: retry, child: const Text('Tekrar dene'))
+            OutlinedButton(onPressed: retry, child: Text('common.retry'.tr()))
           else
-            FilledButton(onPressed: retry, child: const Text('Tekrar dene')),
+            FilledButton(onPressed: retry, child: Text('common.retry'.tr())),
         ],
       ],
     );

@@ -1,0 +1,367 @@
+{
+  "app": {
+    "name": "Motto"
+  },
+  "startup": {
+    "failed": "Could not start",
+    "retry": "Try again"
+  },
+  "welcome": {
+    "line": "A short inventory, and a motto of your own.",
+    "start": "Start"
+  },
+  "tabs": {
+    "today": "Today",
+    "tasks": "Tasks",
+    "days": "Days",
+    "profile": "Profile"
+  },
+  "common": {
+    "retry": "Try again"
+  },
+  "days": {
+    "title": "Days",
+    "failed": "Your days could not be loaded.",
+    "empty": "The days you mark land here. The first one will show up as soon as you mark it.",
+    "missing": "I do not have that day's text.",
+    "periodLabel": "PERIOD {period}",
+    "periodRunning": "{done} / {of} · running"
+  },
+  "onboarding": {
+    "inventory": {
+      "body": "I will ask twenty questions. At the end you get a sentence of your own — a personality inventory, not a fortune."
+    },
+    "daily": {
+      "title": "Then a minute a day",
+      "body": "Each day asks something small of you. It takes a minute, and it gets easier as your chain grows."
+    },
+    "mascot": {
+      "title": "I am right here",
+      "body": "I wander around the screen. Drag me, poke me, play with me if you get bored. Poke too much and I run off."
+    },
+    "skip": "Skip",
+    "start": "Start",
+    "hello": "Hello"
+  },
+  "likert": {
+    "disagree": "Strongly disagree",
+    "agree": "Strongly agree",
+    "point": "{point} / {of}"
+  },
+  "questions": {
+    "failed": "The questions could not be loaded."
+  },
+  "glimpse": {
+    "title": "This is how you look so far",
+    "note": "The questions left could still change it.",
+    "continue": "Keep going"
+  },
+  "calculating": {
+    "reading": "Reading your answers",
+    "wait": "You need to wait a while before a new motto.",
+    "noUses": "You have used up your free goes.",
+    "noSkips": "You have no skips left.",
+    "failed": "Your result could not be fetched.",
+    "skipOffer": "You have one skip. Use it and you carry on without waiting.",
+    "back": "Go back",
+    "waiting": "One moment…",
+    "useSkip": "Use my skip ({left})"
+  },
+  "result": {
+    "yours": "YOUR ARCHETYPE",
+    "share": "Share the card",
+    "deepReport": "Deep report",
+    "notMe": "This is not me"
+  },
+  "shareCard": {
+    "preparing": "Getting it ready…",
+    "share": "Share",
+    "label": "PERSONALITY INVENTORY"
+  },
+  "basis": {
+    "title": "What is this based on?",
+    "body": "The questions are adapted from the public-domain IPIP item pool. Your answers form a profile across five axes of tendency; the archetype is the name given to the description that profile falls closest to.",
+    "limits": "Limits: a short form is low resolution, it carries self-report bias, and the borders between archetypes are not sharp. An archetype name is an editorial reading, not a scientific category."
+  },
+  "report": {
+    "openness": "Openness to experience",
+    "conscientiousness": "Order and follow-through",
+    "extraversion": "Extraversion",
+    "neuroticism": "Emotional ups and downs",
+    "low": "low",
+    "high": "high",
+    "failed": "The report could not be fetched.",
+    "axes": "FIVE AXES",
+    "gives": "What this gives you",
+    "costs": "What it costs",
+    "agreeableness": "Agreeableness",
+    "mid": "middling",
+    "title": "Report"
+  },
+  "profile": {
+    "failed": "Your profile could not be loaded.",
+    "noInventory": "You have not filled in an inventory yet.",
+    "past": "Your past results",
+    "gameNote": "The week's top ten scores each win a deep report.",
+    "gallery": "Walk through all eighteen",
+    "records": {
+      "one": "{} record",
+      "other": "{} records"
+    },
+    "game": "Game"
+  },
+  "archive": {
+    "title": "History",
+    "empty": "There is nothing here yet."
+  },
+  "deepReport": {
+    "title": "Deep report",
+    "failed": "The report could not be fetched.",
+    "pitch": "Five sections, built around your profile. Two people with the same archetype do not read the same report.",
+    "soon": "Buying it is coming soon.",
+    "unlock": "Unlock"
+  },
+  "gallery": {
+    "locked": "Reading all of them is premium. Your own archetype is always open.",
+    "soon": "Buying it is coming soon.",
+    "unlock": "Unlock",
+    "count": {
+      "one": "{} archetype",
+      "other": "{} archetypes"
+    }
+  },
+  "periodDone": {
+    "done": "Fourteen days are done.",
+    "body": "A period is complete. Read your report before you carry on — what you did is counted there.",
+    "readReport": "Read the period report",
+    "next": "What comes next",
+    "nextBody": "Your archetype has not changed. What changes is which sentence carries the next fourteen days.",
+    "current": "CURRENT"
+  },
+  "chain": {
+    "title": "CHAIN",
+    "notStarted": "Not started yet.",
+    "notMarked": "Today is not marked.",
+    "perfect": "You have not missed one.",
+    "ofDays": " / {days}",
+    "inARow": {
+      "one": "{} day in a row.",
+      "other": "{} days in a row."
+    }
+  },
+  "daily": {
+    "yours": "YOUR ARCHETYPE",
+    "reports": "Your report and your deep report are here.",
+    "bannerDone": "Fourteen days are done.",
+    "bannerBody": "Read your report, then carry on.",
+    "yesterdayMarked": "You marked yesterday.",
+    "yesterdayMissed": "Yesterday got away.",
+    "inventoryFirst": "Fill in the inventory first",
+    "inventoryBody": "The daily text is built around your archetype. Before that there is nothing personal to say to you.",
+    "start": "Start",
+    "neverDownloaded": "The daily content never reached this phone. Check your connection and try again.",
+    "failed": "Today's text could not be opened. Try again.",
+    "dayLabel": "DAY {day}",
+    "streakDays": {
+      "one": "{} day",
+      "other": "{} days"
+    },
+    "chainWaiting": "The chain is waiting"
+  },
+  "tasks": {
+    "title": "Tasks",
+    "failed": "Today's tasks could not be fetched. Check your connection and try again.",
+    "nothing": "There is nothing for today.",
+    "lockedUntilChain": "It opens up for ticking once you start your chain.",
+    "done": "Done",
+    "didIt": "I did it",
+    "threeThings": "TODAY'S THREE THINGS · {done}/{of}",
+    "dayTitle": "Day {day}"
+  },
+  "motto": {
+    "meaning": "WHAT IT MEANS",
+    "daily": "YOU WILL HEAR THIS EVERY DAY",
+    "periodReport": "Period report"
+  },
+  "periodReport": {
+    "title": "Period report",
+    "failed": "The report could not be fetched.",
+    "complete": "Fourteen days are done",
+    "markedDays": "Days marked",
+    "madeUp": "Of those, made up",
+    "tasksDone": "Tasks done",
+    "closing": "What carries on from here is not an experiment any more. It is something you did.",
+    "running": "The period is still running. The report fills up a little more each day.",
+    "onDay": "You're on day {day}",
+    "outOf": "{done} / {of}"
+  },
+  "dayClosing": {
+    "startChain": "Start your chain",
+    "willAskHour": "I will ask what time to remind you.",
+    "closePeriod": "Close the period",
+    "missedOne": "A day got away. Your make-up is still there.",
+    "makeUp": "Make it up",
+    "howMakeUp": "How does making up work?",
+    "markedToday": "Today is marked",
+    "markToday": "Mark today",
+    "remindersOff": "Reminders are off. The chain still works.",
+    "reminderHour": "Reminder time"
+  },
+  "dayDone": {
+    "allDone": "All three of today's things are done. The chain grew by a day.",
+    "threeTurns": "+3 GAME TURNS",
+    "threeTurnsWhy": "Finishing all three earns you three turns."
+  },
+  "gameOver": {
+    "scoreFailed": "Your score could not be sent. Try again when your connection is back.",
+    "thisWeek": "This week",
+    "playAgain": "Play again",
+    "topWin": "The top {ranks} each win a deep report."
+  },
+  "gameRules": {
+    "title": "How to play",
+    "sortTitle": "Send each one to the right box",
+    "sortBody": "Tap the left of the screen for the left box, the right for the right one.",
+    "livesTitle": "You have three lives",
+    "livesBody": "A wrong box costs a life. So does letting one drop — waiting is not a tactic.",
+    "rewardNote": "The week's top ten scores each win a deep report.",
+    "start": "Start",
+    "pointsTitle": "{points} points for each right one",
+    "pointsBody": "It speeds up every {every} in a row. Get one wrong and your run stops, and the speed goes back to the start."
+  },
+  "game": {
+    "right": "Right",
+    "left": "Left"
+  },
+  "gameRow": {
+    "markedToday": "YOU MARKED TODAY",
+    "play": "Take a turn",
+    "reward": "The week's top ten scores each win a deep report."
+  },
+  "settings": {
+    "reminderHour": "Reminder time",
+    "askedLater": "Asked when the chain starts",
+    "mascotOn": "Wandering the screen",
+    "mascotOff": "Off",
+    "privacy": "Privacy and permissions",
+    "faq": "Frequently asked",
+    "method": "Method",
+    "feedback": "Feedback",
+    "title": "Settings",
+    "language": "Language",
+    "languageName": "English",
+    "languages": {
+      "tr": "Türkçe",
+      "en": "English"
+    }
+  },
+  "privacy": {
+    "title": "Privacy and permissions",
+    "failed": "The text could not be loaded.",
+    "permissions": "Permissions",
+    "notificationsOn": "Notifications are on.",
+    "notificationsOff": "Notifications are off. The chain still works; you mark the day yourself.",
+    "deleteData": "Delete my data"
+  },
+  "faq": {
+    "title": "Frequently asked",
+    "failed": "The questions could not be loaded. Check your connection and try again."
+  },
+  "method": {
+    "title": "Method",
+    "scale": {
+      "heading": "The scale",
+      "body": "The questions come from the public-domain IPIP item pool. Five axes are measured: openness to experience, conscientiousness, extraversion, agreeableness and emotional steadiness. Each has four items, half of them reverse-keyed, so that agreeing your way down the list does not build a profile out of nothing."
+    },
+    "adaptation": {
+      "heading": "The two versions",
+      "body": "The Turkish items are not word-for-word translations. Phrases that read as forced in Turkish were replaced with everyday sentences asking about the same behaviour. That means neither version can be compared against international norms: each is consistent within itself and not against anything outside it."
+    },
+    "matching": {
+      "heading": "How an archetype is picked",
+      "body": "Your answers become a point in five dimensions, and that point is matched to whichever of the eighteen archetypes it lands nearest to — nearest point, not first threshold crossed. So a profile sitting between two archetypes settles on the one it is genuinely closer to rather than on whichever gate it happened to pass first."
+    },
+    "limits": {
+      "heading": "Limits",
+      "body": "A short form is coarse: twenty items separate an axis into a few steps, not into fine grades.\n\nSelf-report is biased. People mark themselves not as they are but as they would like to be that day; mood moves the result.\n\nThe borders between archetypes are not sharp. For a profile sitting between two of them there is no \"right\" answer, only a nearer one.\n\nAn archetype label is an editorial reading, not a scientific category. It turns a five-dimensional profile into a name you can read; it is not a diagnosis, a measure of ability, or a personality type."
+    },
+    "sources": {
+      "heading": "Sources",
+      "body": "Goldberg, L. R. (1999). A broad-bandwidth, public-domain personality inventory. International Personality Item Pool — ipip.ori.org.\n\nJohn, O. P. & Srivastava, S. (1999). The Big Five trait taxonomy."
+    }
+  },
+  "deletion": {
+    "title": "Delete my data",
+    "failed": "It could not be deleted. Check your connection and try again.",
+    "copyFailed": "The text could not be loaded. Check your connection and try again.",
+    "deleting": "Deleting…"
+  },
+  "rejection": {
+    "opposite": "The opposite, really",
+    "close": "Close, but not quite",
+    "nothing": "I do not recognise it at all",
+    "thanks": "Noted, thank you."
+  },
+  "trouble": {
+    "retry": "Try again",
+    "offlineTitle": "I could not connect",
+    "offlineBody": "Check your connection and try again.",
+    "sessionTitle": "Your session could not be refreshed",
+    "sessionBody": "Closing and reopening the app is enough. Your data is still there.",
+    "deniedTitle": "You do not have access to this",
+    "deniedBody": "This is not your fault; it was a door that should not have been there.",
+    "refusedTitle": "That did not work",
+    "refusedBody": "I could not do that just now. Try again in a moment.",
+    "brokenBody": "Something went wrong on our side. Try again in a moment."
+  },
+  "feedback": {
+    "broken": "Something is broken",
+    "idea": "A suggestion",
+    "words": "About the words",
+    "other": "Other",
+    "title": "Feedback",
+    "sent": "It arrived. Thank you.",
+    "what": "What happened?",
+    "email": "Email (optional)",
+    "emailNote": "Without one we will read it but cannot write back.",
+    "attached": "Your app version, platform and current archetype are attached automatically. Your answers are not.",
+    "failed": "It could not be sent. Check your connection and try again.",
+    "sending": "Sending…",
+    "send": "Send"
+  },
+  "reminder": {
+    "daily": {
+      "title": "Your chain is waiting",
+      "first": "It starts today. It will take a minute.",
+      "body": {
+        "one": "It has been {} day. Add today to it.",
+        "other": "It has been {} days. Add today to it."
+      }
+    },
+    "dayEnding": {
+      "title": "Before the day is out",
+      "body": "A minute is enough, and your chain is still standing."
+    },
+    "broken": {
+      "title": "Your chain stopped",
+      "body": "You have one day to make up. You can carry on from where you left off."
+    },
+    "freezeRenewed": {
+      "title": "Your make-up day is back",
+      "body": "Miss a day this month and your chain still stands."
+    },
+    "mottoReady": {
+      "title": "You are ready for a new motto",
+      "body": "The wait is over."
+    },
+    "milestone": {
+      "title": {
+        "one": "{} day",
+        "other": "{} days"
+      },
+      "week": "A week. The hardest part is behind you.",
+      "threeWeeks": "Three weeks. It comes on its own now.",
+      "month": "A month. You did this."
+    }
+  }
+}

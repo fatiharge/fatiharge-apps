@@ -1,5 +1,6 @@
 import 'package:api_client_motto/api.dart' as api;
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 /// One task, with the reason it is one.
@@ -25,7 +26,9 @@ class TaskDetailPage extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: Text('$day. gün')),
+      appBar: AppBar(
+        title: Text('tasks.dayTitle'.tr(namedArgs: {'day': '$day'})),
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
@@ -41,14 +44,14 @@ class TaskDetailPage extends StatelessWidget {
                   children: [
                     Icon(Icons.check_circle, color: scheme.primary),
                     const SizedBox(width: 8),
-                    Text('Yapıldı', style: text.titleMedium),
+                    Text('tasks.done'.tr(), style: text.titleMedium),
                   ],
                 )
               else if (onDone == null)
                 // The chain has not started. Without this the button is still
                 // here and still pops, so the tap looks like it counted.
                 Text(
-                  'Zincirini başlattığında işaretlenmeye açılıyor.',
+                  'tasks.lockedUntilChain'.tr(),
                   style: text.bodyMedium?.copyWith(
                     color: scheme.onSurfaceVariant,
                   ),
@@ -62,7 +65,7 @@ class TaskDetailPage extends StatelessWidget {
                     // tested without a router in the tree.
                     if (context.mounted) await Navigator.maybePop(context);
                   },
-                  child: const Text('Yaptım'),
+                  child: Text('tasks.didIt'.tr()),
                 ),
             ],
           ),

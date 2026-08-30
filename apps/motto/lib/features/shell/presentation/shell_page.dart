@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motto/config/injectable.dart';
@@ -128,19 +129,29 @@ class _ShellViewState extends State<_ShellView> with ReloadsOnReturn {
     await showTroubleSheet(context, failure: trouble);
   }
 
-  static const _items = [
-    NavItem(icon: Icons.today_outlined, filled: Icons.today, label: 'Bugün'),
+  /// Read rather than held: a `const` list is built once, and once is before
+  /// anybody has said which language they read in.
+  static List<NavItem> get _items => [
+    NavItem(
+      icon: Icons.today_outlined,
+      filled: Icons.today,
+      label: 'tabs.today'.tr(),
+    ),
     NavItem(
       icon: Icons.check_circle_outline,
       filled: Icons.check_circle,
-      label: 'Görevler',
+      label: 'tabs.tasks'.tr(),
     ),
     NavItem(
       icon: Icons.calendar_month_outlined,
       filled: Icons.calendar_month,
-      label: 'Günler',
+      label: 'tabs.days'.tr(),
     ),
-    NavItem(icon: Icons.person_outline, filled: Icons.person, label: 'Profil'),
+    NavItem(
+      icon: Icons.person_outline,
+      filled: Icons.person,
+      label: 'tabs.profile'.tr(),
+    ),
   ];
 
   /// What one tab changes for another.

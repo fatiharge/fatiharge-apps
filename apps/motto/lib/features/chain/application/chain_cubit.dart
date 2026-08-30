@@ -8,7 +8,7 @@ import 'package:motto/features/chain/application/chain_state.dart';
 import 'package:motto/features/chain/application/chain_store.dart';
 import 'package:motto/features/chain/application/reminder_scheduler.dart';
 import 'package:motto/features/chain/domain/reminder_plan.dart';
-import 'package:motto/features/chain/domain/turkish_reminder_copy.dart';
+import 'package:motto/features/chain/domain/reminder_words.dart';
 import 'package:motto/infrastructure/analytics/analytics.dart';
 import 'package:motto/infrastructure/analytics/motto_event.dart';
 
@@ -140,7 +140,7 @@ class ChainCubit extends Cubit<ChainState> {
         chain: state.chain,
         now: now(),
         hour: state.hour,
-        copy: turkishReminderCopy,
+        copy: reminderWords,
         unopenedInARow: _store.unopenedInARow,
       ),
     );

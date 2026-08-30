@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/features/mascot/presentation/mascot_host.dart';
@@ -33,24 +34,23 @@ class _OnboardingStep {
   final String body;
 }
 
-const _steps = [
+/// Read rather than held: a `const` list is built once, and once is before
+/// anybody has said which language they read in.
+List<_OnboardingStep> get _steps => [
   _OnboardingStep(
     MascotSpot.centre,
-    'Merhaba',
-    'Yirmi soru soracağım. Sonunda sana ait bir cümle çıkacak — bir kişilik '
-        'envanteri, bir fal değil.',
+    'onboarding.hello'.tr(),
+    'onboarding.inventory.body'.tr(),
   ),
   _OnboardingStep(
     MascotSpot.topLeft,
-    'Sonra her gün bir dakika',
-    'Her güne küçük bir şey düşüyor. Bir dakikanı alıyor, ve zincirin '
-        'uzadıkça yapması kolaylaşıyor.',
+    'onboarding.daily.title'.tr(),
+    'onboarding.daily.body'.tr(),
   ),
   _OnboardingStep(
     MascotSpot.topRight,
-    'Ben buradayım',
-    'Ekranda dolaşıyorum. Canın sıkılırsa sürükle, dürt, oynat. Fazla '
-        'dürtersen kaçarım.',
+    'onboarding.mascot.title'.tr(),
+    'onboarding.mascot.body'.tr(),
   ),
 ];
 
@@ -119,7 +119,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: _skip,
-                  child: const Text('Geç'),
+                  child: Text('onboarding.skip'.tr()),
                 ),
               ),
               // Room for the mascot to move through, but not half a screen of
@@ -159,7 +159,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
               FilledButton(
                 onPressed: _next,
                 child: Text(
-                  _step == _steps.length - 1 ? 'Başla' : 'Devam',
+                  _step == _steps.length - 1
+                      ? 'onboarding.start'.tr()
+                      : 'Devam',
                 ),
               ),
             ],

@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motto/config/injectable.dart';
@@ -55,7 +56,7 @@ class _DataDeletionViewState extends State<_DataDeletionView> {
     final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Verilerimi sil')),
+      appBar: AppBar(title: Text('deletion.title'.tr())),
       body: SafeArea(
         child: BlocBuilder<SupportCopyCubit, SupportCopyState>(
           builder: (context, state) {
@@ -66,8 +67,7 @@ class _DataDeletionViewState extends State<_DataDeletionView> {
                   padding: const EdgeInsets.all(24),
                   child: Text(
                     state.status == SupportCopyStatus.failed
-                        ? 'Metin yüklenemedi. Bağlantını kontrol edip tekrar '
-                              'dene.'
+                        ? 'deletion.copyFailed'.tr()
                         : '…',
                   ),
                 ),
@@ -103,7 +103,7 @@ class _DataDeletionViewState extends State<_DataDeletionView> {
                   const SizedBox(height: 32),
                   if (_failed) ...[
                     Text(
-                      'Silinemedi. Bağlantını kontrol edip tekrar dene.',
+                      'deletion.failed'.tr(),
                       style: text.bodyMedium?.copyWith(color: scheme.error),
                     ),
                     const SizedBox(height: 12),
@@ -114,7 +114,11 @@ class _DataDeletionViewState extends State<_DataDeletionView> {
                       foregroundColor: scheme.onError,
                     ),
                     onPressed: _deleting ? null : _delete,
-                    child: Text(_deleting ? 'Siliniyor…' : 'Verilerimi sil'),
+                    child: Text(
+                      _deleting
+                          ? 'deletion.deleting'.tr()
+                          : 'deletion.title'.tr(),
+                    ),
                   ),
                 ],
               ],

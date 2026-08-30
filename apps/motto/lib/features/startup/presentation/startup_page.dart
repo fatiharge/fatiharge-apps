@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:bootstrap_kit/bootstrap_kit.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/theme/motto_loading.dart';
@@ -43,14 +44,14 @@ class _StartupError extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Başlatılamadı',
+                'startup.failed'.tr(),
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 16),
               if (onRetry != null)
                 FilledButton(
                   onPressed: onRetry,
-                  child: const Text('Tekrar dene'),
+                  child: Text('startup.retry'.tr()),
                 ),
             ],
           ),

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:api_client_motto/api.dart' as api;
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motto/config/injectable.dart';
@@ -141,6 +142,6 @@ class _Failed extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CouldNotLoad(said: 'Sorular yüklenemedi.', retry: onRetry);
+    return CouldNotLoad(said: 'questions.failed'.tr(), retry: onRetry);
   }
 }

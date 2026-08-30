@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:motto/route/app_router.gr.dart';
 
@@ -28,14 +29,14 @@ class PeriodDoneBanner extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'On dört gün bitti.',
+                    'daily.bannerDone'.tr(),
                     style: text.titleMedium?.copyWith(
                       color: scheme.onPrimaryContainer,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Raporunu oku, sonra devam et.',
+                    'daily.bannerBody'.tr(),
                     style: text.bodySmall?.copyWith(
                       color: scheme.onPrimaryContainer,
                     ),

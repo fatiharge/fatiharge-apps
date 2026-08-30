@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:auto_route/auto_route.dart';
 import 'package:confetti/confetti.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:motto/features/game/presentation/open_game.dart';
 
@@ -53,7 +54,7 @@ class _DayDonePageState extends State<DayDonePage> {
                   Text('Tebrikler', style: text.displaySmall),
                   const SizedBox(height: 12),
                   Text(
-                    'Bugünün üç şeyi de bitti. Zincir bir gün daha uzadı.',
+                    'dayDone.allDone'.tr(),
                     style: text.bodyLarge?.copyWith(
                       color: scheme.onSurfaceVariant,
                     ),
@@ -72,7 +73,7 @@ class _DayDonePageState extends State<DayDonePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '+3 OYUN HAKKI',
+                          'dayDone.threeTurns'.tr(),
                           style: text.labelSmall?.copyWith(
                             color: scheme.onPrimaryContainer.withValues(
                               alpha: 0.7,
@@ -82,7 +83,7 @@ class _DayDonePageState extends State<DayDonePage> {
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          'Günün üçünü de bitirmek üç hak kazandırıyor.',
+                          'dayDone.threeTurnsWhy'.tr(),
                           style: text.titleMedium?.copyWith(
                             color: scheme.onPrimaryContainer,
                           ),

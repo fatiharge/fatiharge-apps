@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:api_client_motto/api.dart' as api;
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motto/config/injectable.dart';
@@ -55,7 +56,7 @@ class CalculatingPage extends StatelessWidget implements AutoRouteWrapper {
           body: Center(
             child: state.status == TestStatus.failed
                 ? _Failed(code: state.errorCode)
-                : const MottoLoading(label: 'Cevapların okunuyor'),
+                : MottoLoading(label: 'calculating.reading'.tr()),
           ),
         ),
       ),
@@ -106,10 +107,10 @@ class _FailedState extends State<_Failed> {
   /// The API answers with a code; the sentence belongs to the app, in the
   /// app's language.
   String get _message => switch (code) {
-    'cooldown_open' => 'Yeni bir motto için biraz beklemen gerekiyor.',
-    'no_uses_left' => 'Ücretsiz hakların doldu.',
-    'no_skips_left' => 'Atlama hakkın kalmadı.',
-    _ => 'Sonucun alınamadı.',
+    'cooldown_open' => 'calculating.wait'.tr(),
+    'no_uses_left' => 'calculating.noUses'.tr(),
+    'no_skips_left' => 'calculating.noSkips'.tr(),
+    _ => 'calculating.failed'.tr(),
   };
 
   @override
@@ -123,7 +124,7 @@ class _FailedState extends State<_Failed> {
           const SizedBox(height: 16),
           if (code == 'cooldown_open' && _skipsLeft > 0) ...[
             Text(
-              'Bir atlama hakkın var. Kullanırsan beklemeden devam edersin.',
+              'calculating.skipOffer'.tr(),
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -133,7 +134,11 @@ class _FailedState extends State<_Failed> {
             FilledButton(
               onPressed: _spending ? null : _spendSkip,
               child: Text(
-                _spending ? 'Bekle…' : 'Atlama hakkımı kullan ($_skipsLeft)',
+                _spending
+                    ? 'calculating.waiting'.tr()
+                    : 'calculating.useSkip'.tr(
+                        namedArgs: {'left': '$_skipsLeft'},
+                      ),
               ),
             ),
             const SizedBox(height: 8),
@@ -144,7 +149,7 @@ class _FailedState extends State<_Failed> {
           ] else
             FilledButton(
               onPressed: () => context.router.maybePop(),
-              child: const Text('Geri dön'),
+              child: Text('calculating.back'.tr()),
             ),
         ],
       ),

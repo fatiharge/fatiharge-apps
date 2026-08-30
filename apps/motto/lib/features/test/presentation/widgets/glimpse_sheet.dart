@@ -1,4 +1,5 @@
 import 'package:api_client_motto/api.dart' as api;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 /// A sheet rather than a screen, so dismissing it returns to the next question
@@ -35,7 +36,7 @@ class GlimpseSheet extends StatelessWidget {
             ),
           ),
           Text(
-            'Şimdilik böyle görünüyorsun',
+            'glimpse.title'.tr(),
             style: text.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
           ),
           const SizedBox(height: 8),
@@ -46,11 +47,14 @@ class GlimpseSheet extends StatelessWidget {
           // Said plainly, because it is true and because it is the reason to
           // keep going.
           Text(
-            'Kalan sorular bunu değiştirebilir.',
+            'glimpse.note'.tr(),
             style: text.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
           ),
           const SizedBox(height: 20),
-          FilledButton(onPressed: onContinue, child: const Text('Devam et')),
+          FilledButton(
+            onPressed: onContinue,
+            child: Text('glimpse.continue'.tr()),
+          ),
         ],
       ),
     );

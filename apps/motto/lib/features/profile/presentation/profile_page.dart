@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motto/features/game/application/turns_cubit.dart';
@@ -42,7 +43,7 @@ class _ProfileView extends StatelessWidget {
               // dead end: nothing to press, and nothing that would ask again
               // short of killing the app.
               return CouldNotLoad(
-                said: 'Profil yüklenemedi.',
+                said: 'profile.failed'.tr(),
                 retry: context.read<ProfileCubit>().load,
               );
             }
@@ -57,15 +58,17 @@ class _ProfileView extends StatelessWidget {
                 // look like a copy of that one rather than a place of its own.
                 if (current == null) ...[
                   Text(
-                    'Henüz bir envanter doldurmadın.',
+                    'profile.noInventory'.tr(),
                     style: text.bodyLarge,
                   ),
                   const SizedBox(height: 24),
                 ],
                 ListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Geçmiş sonuçların'),
-                  subtitle: Text('${state.results.length} kayıt'),
+                  title: Text('profile.past'.tr()),
+                  subtitle: Text(
+                    'profile.records'.plural(state.results.length),
+                  ),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => context.router.push(const ArchiveRoute()),
                 ),
@@ -73,20 +76,20 @@ class _ProfileView extends StatelessWidget {
                 // state in which it leads anywhere. Somebody who switched the
                 // mascot off has no other way in.
                 if (context.watch<TurnsCubit>().state.any)
-                  const ListTile(
+                  ListTile(
                     contentPadding: EdgeInsets.zero,
-                    title: Text('Oyun'),
+                    title: Text('profile.game'.tr()),
                     subtitle: Text(
-                      'Haftanın ilk 10 skoru bir derin rapor kazanır.',
+                      'profile.gameNote'.tr(),
                     ),
-                    trailing: Icon(Icons.chevron_right),
+                    trailing: const Icon(Icons.chevron_right),
                     onTap: openGame,
                   ),
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   title: const Text('Arketipler'),
                   subtitle: Text(
-                    state.premium ? 'Sekizini de gez' : 'Premium',
+                    state.premium ? 'profile.gallery'.tr() : 'Premium',
                   ),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => context.router.push(const GalleryRoute()),

@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/features/game/application/game_store.dart';
@@ -21,7 +22,7 @@ class GameRulesPage extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Nasıl oynanır')),
+      appBar: AppBar(title: Text('gameRules.title'.tr())),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
@@ -29,29 +30,27 @@ class GameRulesPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _Rule(
-                title: 'Düşeni doğru kutuya at',
-                body:
-                    'Sola gidecekse ekranın soluna, sağa gidecekse sağına '
-                    'dokun.',
+                title: 'gameRules.sortTitle'.tr(),
+                body: 'gameRules.sortBody'.tr(),
                 text: text,
               ),
               _Rule(
-                title: 'Üç hakkın var',
-                body:
-                    'Yanlış kutu bir hak götürür. Yere düşen de yanlış '
-                    'sayılır — beklemek bir taktik değil.',
+                title: 'gameRules.livesTitle'.tr(),
+                body: 'gameRules.livesBody'.tr(),
                 text: text,
               ),
               _Rule(
-                title: 'Her doğru ${SortingGame.perSort} puan',
-                body:
-                    'Üst üste ${SortingGame.speedsUpEvery} doğru yaptıkça '
-                    'hızlanıyor. Yanlış yaparsan puanın durur, hız başa döner.',
+                title: 'gameRules.pointsTitle'.tr(
+                  namedArgs: {'points': '${SortingGame.perSort}'},
+                ),
+                body: 'gameRules.pointsBody'.tr(
+                  namedArgs: {'every': '${SortingGame.speedsUpEvery}'},
+                ),
                 text: text,
               ),
               const Spacer(),
               Text(
-                'Haftanın en iyi 10 skoru bir derin rapor kazanır.',
+                'gameRules.rewardNote'.tr(),
                 style: text.bodyMedium?.copyWith(
                   color: scheme.onSurfaceVariant,
                 ),
@@ -64,7 +63,7 @@ class GameRulesPage extends StatelessWidget {
                   final start = onStart ?? _push;
                   await start(context);
                 },
-                child: const Text('Başla'),
+                child: Text('gameRules.start'.tr()),
               ),
             ],
           ),

@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motto/config/injectable.dart';
@@ -50,7 +51,7 @@ class _MottoDetailView extends StatelessWidget {
                 ),
                 const SizedBox(height: 28),
                 Text(
-                  'NE DEMEK',
+                  'motto.meaning'.tr(),
                   style: text.labelSmall?.copyWith(
                     color: scheme.onSurfaceVariant,
                     letterSpacing: 1.5,
@@ -78,7 +79,7 @@ class _MottoDetailView extends StatelessWidget {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            'HER GÜN ŞUNU DUYACAKSIN',
+                            'motto.daily'.tr(),
                             style: text.labelSmall?.copyWith(
                               color: scheme.onSurfaceVariant,
                               letterSpacing: 1.2,
@@ -95,7 +96,7 @@ class _MottoDetailView extends StatelessWidget {
                 OutlinedButton(
                   onPressed: () =>
                       context.router.push(const PeriodReportRoute()),
-                  child: const Text('Dönem raporu'),
+                  child: Text('motto.periodReport'.tr()),
                 ),
               ],
             );

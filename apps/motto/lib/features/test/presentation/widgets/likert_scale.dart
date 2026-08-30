@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 /// Five targets rather than a slider: a slider asks for a gesture where a tap
@@ -34,8 +35,8 @@ class LikertScale extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Hiç katılmıyorum', style: ends),
-            Text('Tamamen katılıyorum', style: ends),
+            Text('likert.disagree'.tr(), style: ends),
+            Text('likert.agree'.tr(), style: ends),
           ],
         ),
       ],
@@ -69,7 +70,9 @@ class _Point extends StatelessWidget {
     return Semantics(
       selected: isSelected,
       button: true,
-      label: '$point / ${LikertScale.points}',
+      label: 'likert.point'.tr(
+        namedArgs: {'point': '$point', 'of': '${LikertScale.points}'},
+      ),
       child: InkWell(
         onTap: onTap,
         customBorder: const CircleBorder(),

@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:api_client_motto/api.dart' as api;
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/features/game/domain/sorting_game.dart';
@@ -137,7 +138,7 @@ class _GamePageState extends State<GamePage>
                       falling: _fall,
                       showThing: left,
                       colour: scheme.primary,
-                      label: 'Sol',
+                      label: 'game.left'.tr(),
                       scheme: scheme,
                       text: text,
                     ),
@@ -149,7 +150,7 @@ class _GamePageState extends State<GamePage>
                       falling: _fall,
                       showThing: !left,
                       colour: scheme.tertiary,
-                      label: 'Sağ',
+                      label: 'game.right'.tr(),
                       scheme: scheme,
                       text: text,
                     ),

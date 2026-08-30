@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:api_client_motto/api.dart' as api;
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/theme/motto_loading.dart';
@@ -51,10 +52,10 @@ class _DeepReportPageState extends State<DeepReportPage> {
     final report = _report;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Derin rapor')),
+      appBar: AppBar(title: Text('deepReport.title'.tr())),
       body: SafeArea(
         child: switch ((report, _failed)) {
-          (null, true) => const Center(child: Text('Rapor alınamadı.')),
+          (null, true) => Center(child: Text('deepReport.failed'.tr())),
           (null, _) => const MottoLoading(),
           (final api.DeepReport ready, _) when ready.locked => _locked(
             context,
@@ -99,17 +100,16 @@ class _DeepReportPageState extends State<DeepReportPage> {
         ),
         const SizedBox(height: 24),
         Text(
-          'Beş bölüm, senin profiline göre kuruluyor. Aynı arketipteki iki '
-          'kişi aynı raporu okumuyor.',
+          'deepReport.pitch'.tr(),
           style: text.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
         ),
         const SizedBox(height: 24),
         // TODO(fcetin): open the paywall — T13.
         FilledButton(
           onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Satın alma yakında.')),
+            SnackBar(content: Text('deepReport.soon'.tr())),
           ),
-          child: const Text('Kilidi aç'),
+          child: Text('deepReport.unlock'.tr()),
         ),
       ],
     );

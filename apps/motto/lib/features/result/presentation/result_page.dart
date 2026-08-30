@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:api_client_motto/api.dart' as api;
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:motto/config/injectable.dart';
 import 'package:motto/features/result/presentation/widgets/basis_section.dart';
@@ -83,7 +84,7 @@ class _ResultPageState extends State<ResultPage> {
           padding: const EdgeInsets.fromLTRB(24, 8, 24, 40),
           children: [
             Text(
-              'SENİN ARKETİPİN',
+              'result.yours'.tr(),
               style: text.labelSmall?.copyWith(
                 color: scheme.onSurfaceVariant,
                 letterSpacing: 1.5,
@@ -139,7 +140,7 @@ class _ResultPageState extends State<ResultPage> {
                 ShareCardRoute(archetype: archetype),
               ),
               icon: const Icon(Icons.ios_share),
-              label: const Text('Kartı paylaş'),
+              label: Text('result.share'.tr()),
             ),
             const SizedBox(height: 12),
             OutlinedButton(
@@ -154,14 +155,14 @@ class _ResultPageState extends State<ResultPage> {
               ),
               // "Analiz" is on the 1.4.1 word table; the screen is the same
               // one either way and the word is what gets a listing rejected.
-              child: const Text('Derin rapor'),
+              child: Text('result.deepReport'.tr()),
             ),
             const SizedBox(height: 8),
             Align(
               alignment: Alignment.centerLeft,
               child: TextButton(
                 onPressed: () => showRejectionSheet(context),
-                child: const Text('Bana uymadı'),
+                child: Text('result.notMe'.tr()),
               ),
             ),
             const SizedBox(height: 24),
