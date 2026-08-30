@@ -569,6 +569,29 @@
           }
         }
       },
+      "PlayCredits" : {
+        "type" : "object",
+        "properties" : {
+          "remaining" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "earned" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "spent" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "dayMarked" : {
+            "type" : "boolean"
+          },
+          "tasksDone" : {
+            "type" : "boolean"
+          }
+        }
+      },
       "ProfileScores" : {
         "type" : "object",
         "required" : [ "openness", "conscientiousness", "extraversion", "agreeableness", "neuroticism" ],
@@ -1106,6 +1129,74 @@
           }
         },
         "tags" : [ "Feedback Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      }
+    },
+    "/v1/game/turns" : {
+      "get" : {
+        "summary" : "What today has paid for",
+        "operationId" : "gameTurns",
+        "parameters" : [ {
+          "name" : "today",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PlayCredits"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "tags" : [ "Play Resource" ],
+        "security" : [ {
+          "SecurityScheme" : [ ]
+        } ]
+      },
+      "post" : {
+        "summary" : "Spend a turn to start a game",
+        "operationId" : "spendGameTurn",
+        "parameters" : [ {
+          "name" : "today",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PlayCredits"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "tags" : [ "Play Resource" ],
         "security" : [ {
           "SecurityScheme" : [ ]
         } ]

@@ -2,6 +2,8 @@ package com.dafalabs.api.motto.task;
 
 import com.dafalabs.api.core.error.CustomRuntimeException;
 import com.dafalabs.api.motto.chain.dto.ChainState;
+import com.dafalabs.api.motto.game.CreditReason;
+import com.dafalabs.api.motto.game.Plays;
 import com.dafalabs.api.motto.result.Results;
 import com.dafalabs.api.motto.task.dto.DailyTask;
 import com.dafalabs.api.motto.task.dto.DailyTasks;
@@ -27,11 +29,17 @@ public class Tasks {
   private final TaskRepository tasks;
   private final TaskCompletionRepository completions;
   private final Results results;
+  private final Plays plays;
 
-  Tasks(TaskRepository tasks, TaskCompletionRepository completions, Results results) {
+  Tasks(
+      TaskRepository tasks,
+      TaskCompletionRepository completions,
+      Results results,
+      Plays plays) {
     this.tasks = tasks;
     this.completions = completions;
     this.results = results;
+    this.plays = plays;
   }
 
   /**
@@ -82,6 +90,13 @@ public class Tasks {
     // twice the moment somebody double taps.
     if (completions.findById(new TaskCompletion.Key(deviceId, taskId)) == null) {
       completions.persist(TaskCompletion.of(deviceId, taskId, day));
+    }
+
+    // Counted rather than assumed from this call: the tick that finishes the
+    // day is not always the third one to arrive, and a double tap must not
+    // pay twice. `grant` is idempotent for the same reason.
+    if (completions.countForDay(deviceId, day) >= perDay) {
+      plays.grant(deviceId, day, CreditReason.TASKS_DONE);
     }
   }
 

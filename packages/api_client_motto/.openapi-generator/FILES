@@ -37,6 +37,8 @@ doc/MottoContent.md
 doc/MottoResourceApi.md
 doc/NextPeriodRequest.md
 doc/PeriodReport.md
+doc/PlayCredits.md
+doc/PlayResourceApi.md
 doc/ProfileScores.md
 doc/Question.md
 doc/QuestionResponse.md
@@ -61,6 +63,7 @@ lib/api/entitlement_resource_api.dart
 lib/api/event_resource_api.dart
 lib/api/feedback_resource_api.dart
 lib/api/motto_resource_api.dart
+lib/api/play_resource_api.dart
 lib/api/report_resource_api.dart
 lib/api/result_resource_api.dart
 lib/api/score_resource_api.dart
@@ -103,6 +106,7 @@ lib/model/marked_day.dart
 lib/model/motto_content.dart
 lib/model/next_period_request.dart
 lib/model/period_report.dart
+lib/model/play_credits.dart
 lib/model/profile_scores.dart
 lib/model/question.dart
 lib/model/question_response.dart
@@ -148,6 +152,8 @@ test/motto_content_test.dart
 test/motto_resource_api_test.dart
 test/next_period_request_test.dart
 test/period_report_test.dart
+test/play_credits_test.dart
+test/play_resource_api_test.dart
 test/profile_scores_test.dart
 test/question_response_test.dart
 test/question_test.dart
