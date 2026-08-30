@@ -210,6 +210,10 @@ class ApiClient {
           return ArchetypeContent.fromJson(value);
         case 'ArchetypeResponse':
           return ArchetypeResponse.fromJson(value);
+        case 'ChainHistory':
+          return ChainHistory.fromJson(value);
+        case 'ChainPeriod':
+          return ChainPeriod.fromJson(value);
         case 'ChainState':
           return ChainState.fromJson(value);
         case 'Connector':

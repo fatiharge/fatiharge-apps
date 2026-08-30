@@ -48,13 +48,12 @@ import 'package:api_client_motto/api.dart';
 //defaultApiClient.getAuthentication<HttpBearerAuth>('SecurityScheme').setAccessToken(yourTokenGeneratorFunction);
 
 final api_instance = ChainResourceApi();
-final today = today_example; // String | 
 
 try {
-    final result = api_instance.currentChain(today);
+    final result = api_instance.chainHistory();
     print(result);
 } catch (e) {
-    print('Exception when calling ChainResourceApi->currentChain: $e\n');
+    print('Exception when calling ChainResourceApi->chainHistory: $e\n');
 }
 
 ```
@@ -65,6 +64,7 @@ All URIs are relative to *http://localhost*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
+*ChainResourceApi* | [**chainHistory**](doc//ChainResourceApi.md#chainhistory) | **GET** /v1/chain/history | Every run and its days
 *ChainResourceApi* | [**currentChain**](doc//ChainResourceApi.md#currentchain) | **GET** /v1/chain | The chain as it stands
 *ChainResourceApi* | [**markChainDay**](doc//ChainResourceApi.md#markchainday) | **POST** /v1/chain/days | Mark a day
 *ChainResourceApi* | [**spendChainFreeze**](doc//ChainResourceApi.md#spendchainfreeze) | **POST** /v1/chain/freeze | Spend the month's make-up
@@ -96,6 +96,8 @@ Class | Method | HTTP request | Description
  - [AnswerSubmission](doc//AnswerSubmission.md)
  - [ArchetypeContent](doc//ArchetypeContent.md)
  - [ArchetypeResponse](doc//ArchetypeResponse.md)
+ - [ChainHistory](doc//ChainHistory.md)
+ - [ChainPeriod](doc//ChainPeriod.md)
  - [ChainState](doc//ChainState.md)
  - [Connector](doc//Connector.md)
  - [ContentBundle](doc//ContentBundle.md)

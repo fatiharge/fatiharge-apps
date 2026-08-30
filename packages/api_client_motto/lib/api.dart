@@ -45,6 +45,8 @@ part 'api/test_resource_api.dart';
 part 'model/answer_submission.dart';
 part 'model/archetype_content.dart';
 part 'model/archetype_response.dart';
+part 'model/chain_history.dart';
+part 'model/chain_period.dart';
 part 'model/chain_state.dart';
 part 'model/connector.dart';
 part 'model/content_bundle.dart';
