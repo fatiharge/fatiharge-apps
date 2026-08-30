@@ -20,6 +20,8 @@ class MascotHost extends StatefulWidget {
     required this.child,
     this.onGameOffered,
     this.loadFile = RiveFile.asset,
+    this.controller,
+    this.clock,
     super.key,
   });
 
@@ -28,6 +30,17 @@ class MascotHost extends StatefulWidget {
 
   /// Passed through so a test can exercise the drag without a renderer.
   final Future<RiveFile> Function(String) loadFile;
+
+  /// Stands in for the one rive hands over. Without it a test has no
+  /// controller at all — the file cannot load here — and the tap path is the
+  /// only way to the game, which is how the game came to be unreachable with
+  /// every rule around it passing.
+  @visibleForTesting
+  final MascotController? controller;
+
+  /// The idle clock, so a test can be bored without waiting.
+  @visibleForTesting
+  final DateTime Function()? clock;
 
   /// The controller, for a screen that wants it to react — a finished task,
   /// a claimed motto.
@@ -80,8 +93,17 @@ class _MascotHostState extends State<MascotHost>
 
   /// Owned here rather than inside the mascot, because the tap that answers
   /// the offer is caught here.
-  final _attention = MascotAttention();
+  late final _attention = MascotAttention(clock: widget.clock);
   Timer? _idle;
+
+  /// True only between a pan starting and ending.
+  ///
+  /// `onPanCancel` fires for an ordinary tap as well — the drag recognizer
+  /// losing the arena to the tap — and releasing on that told the mascot
+  /// somebody was holding it. Which reset the idle clock microseconds before
+  /// the tap it was meant to answer, so the offer was always gone by the time
+  /// the tap arrived and the game could not be opened at all.
+  bool _dragging = false;
   Offset _from = Offset.zero;
   Offset _to = Offset.zero;
 
@@ -92,6 +114,11 @@ class _MascotHostState extends State<MascotHost>
       vsync: this,
       duration: const Duration(milliseconds: 420),
     )..addListener(_followSettle);
+
+    if (widget.controller case final given?) {
+      _controller = _TouchAware(given, _attention.touched);
+      _startIdleClock();
+    }
   }
 
   @override
@@ -164,6 +191,7 @@ class _MascotHostState extends State<MascotHost>
   /// go. Left in the middle it covers what someone is reading; against an edge
   /// it is still reachable and out of the way.
   void _release(Rect bounds) {
+    _dragging = false;
     _controller?.drag(held: false);
     final at = _resolved(bounds);
 
@@ -233,13 +261,19 @@ class _MascotHostState extends State<MascotHost>
                 behavior: HitTestBehavior.opaque,
                 onTap: _tapped,
                 onPanStart: (_) {
+                  _dragging = true;
                   _attention.touched();
                   _settle.stop();
                   _controller?.drag(held: true);
                 },
                 onPanUpdate: (details) => _dragTo(details.delta, bounds),
                 onPanEnd: (_) => _release(bounds),
-                onPanCancel: () => _release(bounds),
+                // Only a drag that started has something to settle. A cancel
+                // without one is the tap winning the arena, and it is on its
+                // way to `onTap`.
+                onPanCancel: () {
+                  if (_dragging) _release(bounds);
+                },
                 child: Mascot(
                   size: MascotPlacement.size,
                   loadFile: widget.loadFile,
