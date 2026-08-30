@@ -48,11 +48,13 @@ public class ContentResource {
     ContentBundle bundle = catalog.bundle(ContentLocale.from(acceptLanguage));
     EntityTag tag = new EntityTag(bundle.version());
 
+    // Vary on both answers, or a proxy hands the Turkish package to the next
+    // English phone — a 304 updates the stored headers, so leaving it off
+    // there is the same hole one round trip later.
     if (matches(ifNoneMatch, bundle.version())) {
-      return Response.notModified(tag).build();
+      return Response.notModified(tag).header("Vary", "Accept-Language").build();
     }
 
-    // Vary, or a proxy hands the Turkish package to the next English phone.
     return Response.ok(bundle).tag(tag).header("Vary", "Accept-Language").build();
   }
 

@@ -50,10 +50,12 @@ public class EffectResource {
 
     // The definitions change when somebody edits a sentence and not otherwise,
     // so most of these requests are a phone asking and being told nothing has.
+    // Vary on both answers, or a proxy hands the Turkish sentences to the next
+    // English phone — a 304 updates the stored headers, so leaving it off
+    // there is the same hole one round trip later.
     if (matches(ifNoneMatch, catalogue.version())) {
-      return Response.notModified(tag).build();
+      return Response.notModified(tag).header("Vary", "Accept-Language").build();
     }
-    // Vary, or a proxy hands the Turkish sentences to the next English phone.
     return Response.ok(catalogue).tag(tag).header("Vary", "Accept-Language").build();
   }
 
