@@ -104,6 +104,22 @@ generated client learns they exist, and closed to everyone when the variable is
 unset. The rule that follows: if a human wrote it and might rewrite it, it does
 not belong in `db/migration`.
 
+**A worded row belongs to one language.** Every content table is keyed by
+`(…, locale)`, every read takes the language as a parameter, and the resources
+resolve it from `Accept-Language` — a header kept out of the published schema
+with `@Parameter(hidden = true)`, so the language is a property of the client
+rather than an argument at every call site. Turkish is the fallback and the
+answer to anything unrecognised.
+
+Two things follow from that, and they are the reason it is worth a paragraph
+here. A package is answered in one language *whole*: `ContentCatalog` reads the
+requested language, finds it empty, and serves the fallback rather than a half
+of each. And the tables that decide a *result* — `archetype_rules`, which
+generation of the inventory is live — carry no locale at all; `ContentWriter`
+takes them from the fallback and ignores them from any other language, so
+pushing a translation cannot move who gets which archetype. That is the same
+rule `content/README.md` states for the words, enforced on the write path.
+
 ## The contract
 
 Code-first. Resources and DTOs are the source; SmallRye emits the schema at
