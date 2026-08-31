@@ -29,3 +29,7 @@ target/
 # The contract is the JSON. Quarkus writes a YAML twin beside it; two files that
 # can disagree is one too many.
 contracts/*.yaml
+
+# The admin token, pasted in to run a content push. Never committed:
+# this repository is public.
+.adminenv
