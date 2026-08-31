@@ -64,12 +64,11 @@ envanterin hangi kuşağının canlı olduğu ölçüm aletidir; yazıcı bunlar
 geri düşülen dilden alıyor, başka dilden gelirse yok sayıyor. Yani bir çeviri
 kimin hangi arketibi aldığını değiştiremiyor.
 
-`content/<dil>/` bir dili ayağa kaldırırken uç başına bir dosya tutuyor —
-`content/en/` İngilizce. Sözlerin depoda durduğu tek yer burası ve bu bir
-**başvuru**, kaynak değil: bir çevirinin pull request'te okunabilmesi için var,
-çünkü bir dilin gördüğü tek inceleme o. Yazıldıktan sonra kaynak tablolardır;
-düzeltmeler diğer her ifade değişikliği gibi API'den geçer ve buraya geri
-dönmez. Gönderen betik `scripts/push_content.py`.
+Sözlerin kendisi burada hiç durmadı. `content/en/` İngilizce yükü yalnızca
+gönderilene kadar tuttu; o günden beri kaynak tablolar ve düzeltmeler diğer her
+ifade değişikliği gibi API'den geçiyor. Gönderen betik `scripts/push_content.py`:
+`content/<dil>/` altını uç başına bir dosya olarak okuyup `?locale=` ile
+yolluyor. Üçüncü bir dil, o dizini yazmak, göndermek ve tekrar silmek demek.
 
 ## Bir parça için "bitti"
 

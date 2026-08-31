@@ -50,27 +50,18 @@ dimensions, and which generation of the inventory is live, are the instrument.
 The writer takes them from the fallback language and ignores them from any
 other, so pushing a translation can never change who gets which archetype.
 
-### The exception to "the words are not here"
-
-`content/<locale>/` holds one file per endpoint for a language being brought
-up — `content/en/` is English. This is the one place the words sit in the
-repository, and it is a **submission**, not the source:
-
-- it exists so a translation can be read in a pull request before it is pushed,
-  which is the only review a language ever gets;
-- once it is pushed, the tables are authoritative. Corrections go through the
-  API like every other wording change, and they do **not** come back here.
-
-`scripts/push_content.py` sends it:
+The words themselves never sat here. `content/en/` held the English payload for
+exactly as long as it took to push it — the tables have been authoritative
+since, and corrections go through the API like every other wording change.
 
 ```bash
-MOTTO_ADMIN_TOKEN=… scripts/push_content.py https://mottostage.dafalabs.com en --dry-run
-MOTTO_ADMIN_TOKEN=… scripts/push_content.py https://mottostage.dafalabs.com en
+MOTTO_ADMIN_TOKEN=… scripts/push_content.py <base> <locale> --dry-run
+MOTTO_ADMIN_TOKEN=… scripts/push_content.py <base> <locale>
 ```
 
-A file that is not in the directory is a part that is not pushed, which is how
-a language lands in pieces. `EnglishPayloadTest` runs the same writer over the
-committed files, so a payload the server would refuse fails locally instead.
+`scripts/push_content.py` reads `content/<locale>/`, one file per endpoint, and
+sends each with `?locale=`. Bringing up a third language means writing that
+directory, pushing it, and deleting it again.
 
 ## Adding an archetype
 
