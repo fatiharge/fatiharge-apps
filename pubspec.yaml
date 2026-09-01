@@ -11,6 +11,7 @@ workspace:
   - packages/lint_kit
   - packages/utility_kit
   - packages/bootstrap_kit
+  - packages/card_kit
   # Generated from contracts/ by scripts/generate_api_clients.sh, never by hand.
   - packages/api_client_auth
   - packages/api_client_motto
