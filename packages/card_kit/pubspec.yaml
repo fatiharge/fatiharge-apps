@@ -1,0 +1,19 @@
+name: card_kit
+description: Content cards for club apps — one widget per card, drawn from a view model and nothing else.
+version: 0.1.0
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.12.0
+  flutter: ">=3.44.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  lint_kit:
+    path: ../lint_kit
