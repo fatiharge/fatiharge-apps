@@ -54,6 +54,13 @@
       <artifactId>quarkus-flyway</artifactId>
     </dependency>
 
+    <!-- BCrypt. Deliberately a library rather than a hand-rolled hash: the
+         mistakes in writing one are silent and only show up after a leak. -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-elytron-security-common</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-junit5</artifactId>

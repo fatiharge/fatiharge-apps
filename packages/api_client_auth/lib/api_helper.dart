@@ -65,6 +65,9 @@ String parameterToString(dynamic value) {
   if (value is DateTime) {
     return value.toUtc().toIso8601String();
   }
+  if (value is IdentityType) {
+    return IdentityTypeTypeTransformer().encode(value).toString();
+  }
   return value.toString();
 }
 

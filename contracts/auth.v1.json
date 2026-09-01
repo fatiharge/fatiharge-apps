@@ -1,7 +1,39 @@
 {
   "openapi" : "3.1.0",
+  "tags" : [ {
+    "name" : "Device Resource",
+    "description" : "Hesabı olmayan bir kişinin tek kimliği. Uygulama, cihaz kimliğinin ham hâlini değil SHA-256 özetini gönderir; ham kimlik telefonda kalır."
+  }, {
+    "name" : "Session Resource",
+    "description" : "Giriş ve oturumun sürdürülmesi. Sıradan bir kullanıcı tek kullanımlık kodla girer; yönetici hesabı önce parolasını, sonra kodunu verir. Erişim token'ı kısa ömürlüdür ve hiçbir istekte veritabanına sorulmaz, yenileme token'ı uzundur ve kişinin satırındaki sayaç arttığında topluca geçersiz olur."
+  } ],
   "components" : {
     "schemas" : {
+      "ChallengeResponse" : {
+        "type" : "object",
+        "required" : [ "challengeId", "expiresInSeconds" ],
+        "properties" : {
+          "challengeId" : {
+            "type" : "string"
+          },
+          "expiresInSeconds" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
+      "CodeSignInRequest" : {
+        "type" : "object",
+        "required" : [ "challengeId", "code" ],
+        "properties" : {
+          "challengeId" : {
+            "type" : "string"
+          },
+          "code" : {
+            "type" : "string"
+          }
+        }
+      },
       "CurrentDeviceResponse" : {
         "type" : "object",
         "required" : [ "deviceId" ],
@@ -27,6 +59,56 @@
           }
         }
       },
+      "IdentityType" : {
+        "type" : "string",
+        "enum" : [ "EMAIL", "PHONE" ]
+      },
+      "PasswordSignInRequest" : {
+        "type" : "object",
+        "required" : [ "identityType", "identity", "password" ],
+        "properties" : {
+          "identityType" : {
+            "$ref" : "#/components/schemas/IdentityType"
+          },
+          "identity" : {
+            "type" : "string"
+          },
+          "password" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PasswordSignInResponse" : {
+        "type" : "object",
+        "required" : [ "status" ],
+        "properties" : {
+          "status" : {
+            "type" : "string"
+          },
+          "session" : {
+            "$ref" : "#/components/schemas/SessionResponse"
+          },
+          "pendingToken" : {
+            "type" : "string"
+          },
+          "challengeId" : {
+            "type" : "string"
+          },
+          "codeExpiresInSeconds" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
+      "RefreshRequest" : {
+        "type" : "object",
+        "required" : [ "refreshToken" ],
+        "properties" : {
+          "refreshToken" : {
+            "type" : "string"
+          }
+        }
+      },
       "RegisterDeviceRequest" : {
         "type" : "object",
         "required" : [ "deviceHash", "platform" ],
@@ -36,6 +118,46 @@
           },
           "platform" : {
             "type" : "string"
+          }
+        }
+      },
+      "RequestCodeRequest" : {
+        "type" : "object",
+        "required" : [ "identityType", "identity" ],
+        "properties" : {
+          "identityType" : {
+            "$ref" : "#/components/schemas/IdentityType"
+          },
+          "identity" : {
+            "type" : "string"
+          }
+        }
+      },
+      "SecondFactorRequest" : {
+        "type" : "object",
+        "required" : [ "pendingToken", "code" ],
+        "properties" : {
+          "pendingToken" : {
+            "type" : "string"
+          },
+          "code" : {
+            "type" : "string"
+          }
+        }
+      },
+      "SessionResponse" : {
+        "type" : "object",
+        "required" : [ "accessToken", "refreshToken", "expiresInSeconds" ],
+        "properties" : {
+          "accessToken" : {
+            "type" : "string"
+          },
+          "refreshToken" : {
+            "type" : "string"
+          },
+          "expiresInSeconds" : {
+            "type" : "integer",
+            "format" : "int64"
           }
         }
       }
@@ -50,10 +172,193 @@
     }
   },
   "paths" : {
+    "/v1/auth/codes" : {
+      "post" : {
+        "summary" : "Bir kimliğe tek kullanımlık kod gönderir",
+        "description" : "Kodun kendisi cevapta dönmez — yalnızca kodun var olduğu ve ne kadar yaşayacağı döner. Kod şu an bir mesaj kuyruğu tablosuna yazılır, henüz onu taşıyan bir kanal yoktur. Aynı kimliğe saatlik ve günlük istek sınırı uygulanır; sınır kiracı başına sayılır, yani bir kiracının trafiği diğerinin kullanıcısını kilitleyemez. Telefon şemada vardır ama SMS sağlayıcısı olmadığı için reddedilir.",
+        "operationId" : "requestCode",
+        "tags" : [ "Session Resource" ],
+        "parameters" : [ {
+          "required" : true,
+          "name" : "X-Tenant-Id",
+          "in" : "header",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/RequestCodeRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ChallengeResponse"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        }
+      }
+    },
+    "/v1/auth/sessions/by-code" : {
+      "post" : {
+        "summary" : "Tek kullanımlık kodu oturuma çevirir",
+        "description" : "Hesap yoksa ilk girişte oluşturulur. Kiracı, isteğin gövdesinden değil kodun ait olduğu doğrulamadan okunur: bir kiracı için alınan kod başka bir kiracıya giriş yapamaz. Yönetici hesapları bu yolu kullanamaz, parolayla girmek zorundadır.",
+        "operationId" : "signInWithCode",
+        "tags" : [ "Session Resource" ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CodeSignInRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SessionResponse"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        }
+      }
+    },
+    "/v1/auth/sessions/by-password" : {
+      "post" : {
+        "summary" : "Parolayla giriş yapar",
+        "description" : "Sıradan kullanıcı için oturumu doğrudan açar. Yönetici hesabı için ikinci adım gerekir: cevap `SECOND_FACTOR_REQUIRED` döner, bir kod gönderilir ve parola adımının geçildiğini kanıtlayan geçici bir token verilir. Parola yanlışsa hiçbir kod gönderilmez.",
+        "operationId" : "signInWithPassword",
+        "tags" : [ "Session Resource" ],
+        "parameters" : [ {
+          "required" : true,
+          "name" : "X-Tenant-Id",
+          "in" : "header",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PasswordSignInRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PasswordSignInResponse"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        }
+      }
+    },
+    "/v1/auth/sessions/refresh" : {
+      "post" : {
+        "summary" : "Yenileme token'ını yeni bir oturumla değiştirir",
+        "description" : "Rol ve durum her seferinde veritabanından okunur, sunulan token'dan taşınmaz — yetkisi alınan birinin elindeki token yetkiyi sürdüremesin diye. Kişinin satırındaki sayaç arttıysa daha eski her token reddedilir; \"tüm cihazlardan çık\" budur.",
+        "operationId" : "refreshSession",
+        "tags" : [ "Session Resource" ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/RefreshRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SessionResponse"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        }
+      }
+    },
+    "/v1/auth/sessions/second-factor" : {
+      "post" : {
+        "summary" : "Yönetici girişini kodla tamamlar",
+        "description" : "Hangi doğrulamanın tamamlandığını geçici token söyler, çağıran değil. Böylece bir hesap için gönderilen kod başka bir hesabın girişini bitiremez.",
+        "operationId" : "completeSecondFactor",
+        "tags" : [ "Session Resource" ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/SecondFactorRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SessionResponse"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        }
+      }
+    },
     "/v1/devices/me" : {
       "get" : {
-        "summary" : "Resolve the token holder",
+        "summary" : "Token'ı taşıyanın kim olduğunu söyler",
+        "description" : "İstemcinin, elindeki token'ın hâlâ geçerli olup olmadığını bir sonraki çağrının hatasından tahmin etmek yerine doğrudan sorabilmesi için.",
         "operationId" : "currentDevice",
+        "tags" : [ "Device Resource" ],
         "responses" : {
           "200" : {
             "description" : "OK",
@@ -72,7 +377,6 @@
             "description" : "Not Allowed"
           }
         },
-        "tags" : [ "Device Resource" ],
         "security" : [ {
           "SecurityScheme" : [ ]
         } ]
@@ -80,8 +384,10 @@
     },
     "/v1/devices/register" : {
       "post" : {
-        "summary" : "Register a device and get a token",
+        "summary" : "Cihazı kaydeder ve token verir",
+        "description" : "İkinci kez kaydolmak hata değil olağan durumdur: uygulama token'ı dolduğunda yeniden kaydolur ve silinip kurulan bir uygulama aynı özetle gelir. İkisi de zaten sahip oldukları kimliği alır.",
         "operationId" : "registerDevice",
+        "tags" : [ "Device Resource" ],
         "requestBody" : {
           "content" : {
             "application/json" : {
@@ -106,13 +412,13 @@
           "400" : {
             "description" : "Bad Request"
           }
-        },
-        "tags" : [ "Device Resource" ]
+        }
       }
     }
   },
   "info" : {
-    "title" : "auth API",
-    "version" : "1.0.0"
+    "title" : "Kimlik servisi",
+    "version" : "1.0.0",
+    "description" : "Uygulamaları kullanan kişileri ve cihazları tanıyan **ortak** servis: birden fazla ürün buraya bağlanır, o yüzden hiçbir ürünün kendi sözlüğü buraya girmez — kulüp, takım ya da çalışma alanı değil, **kiracı** denir. Bir kiracının ne olduğuna ona satan ürün karar verir. İki ayrı kimlik vardır: hesabı olmayan bir kişi için **cihaz**, hesabı olan bir kişi için **kullanıcı**. Her kullanıcı bir kiracıya bağlıdır ve aynı e-posta adresi iki kiracıda iki ayrı kişidir. Bastığı token'ı diğer servisler bu servise sormadan, açık anahtarla doğrular."
   }
 }

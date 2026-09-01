@@ -204,12 +204,30 @@ class ApiClient {
           return valueString == 'true' || valueString == '1';
         case 'DateTime':
           return value is DateTime ? value : DateTime.tryParse(value);
+        case 'ChallengeResponse':
+          return ChallengeResponse.fromJson(value);
+        case 'CodeSignInRequest':
+          return CodeSignInRequest.fromJson(value);
         case 'CurrentDeviceResponse':
           return CurrentDeviceResponse.fromJson(value);
         case 'DeviceTokenResponse':
           return DeviceTokenResponse.fromJson(value);
+        case 'IdentityType':
+          return IdentityTypeTypeTransformer().decode(value);
+        case 'PasswordSignInRequest':
+          return PasswordSignInRequest.fromJson(value);
+        case 'PasswordSignInResponse':
+          return PasswordSignInResponse.fromJson(value);
+        case 'RefreshRequest':
+          return RefreshRequest.fromJson(value);
         case 'RegisterDeviceRequest':
           return RegisterDeviceRequest.fromJson(value);
+        case 'RequestCodeRequest':
+          return RequestCodeRequest.fromJson(value);
+        case 'SecondFactorRequest':
+          return SecondFactorRequest.fromJson(value);
+        case 'SessionResponse':
+          return SessionResponse.fromJson(value);
         default:
           dynamic match;
           if (value is List &&

@@ -16,7 +16,9 @@ class DeviceResourceApi {
 
   final ApiClient apiClient;
 
-  /// Resolve the token holder
+  /// Token'ı taşıyanın kim olduğunu söyler
+  ///
+  /// İstemcinin, elindeki token'ın hâlâ geçerli olup olmadığını bir sonraki çağrının hatasından tahmin etmek yerine doğrudan sorabilmesi için.
   ///
   /// Note: This method returns the HTTP [Response].
   Future<Response> currentDeviceWithHttpInfo({
@@ -46,7 +48,9 @@ class DeviceResourceApi {
     );
   }
 
-  /// Resolve the token holder
+  /// Token'ı taşıyanın kim olduğunu söyler
+  ///
+  /// İstemcinin, elindeki token'ın hâlâ geçerli olup olmadığını bir sonraki çağrının hatasından tahmin etmek yerine doğrudan sorabilmesi için.
   Future<CurrentDeviceResponse?> currentDevice({
     Future<void>? abortTrigger,
   }) async {
@@ -69,7 +73,9 @@ class DeviceResourceApi {
     return null;
   }
 
-  /// Register a device and get a token
+  /// Cihazı kaydeder ve token verir
+  ///
+  /// İkinci kez kaydolmak hata değil olağan durumdur: uygulama token'ı dolduğunda yeniden kaydolur ve silinip kurulan bir uygulama aynı özetle gelir. İkisi de zaten sahip oldukları kimliği alır.
   ///
   /// Note: This method returns the HTTP [Response].
   ///
@@ -104,7 +110,9 @@ class DeviceResourceApi {
     );
   }
 
-  /// Register a device and get a token
+  /// Cihazı kaydeder ve token verir
+  ///
+  /// İkinci kez kaydolmak hata değil olağan durumdur: uygulama token'ı dolduğunda yeniden kaydolur ve silinip kurulan bir uygulama aynı özetle gelir. İkisi de zaten sahip oldukları kimliği alır.
   ///
   /// Parameters:
   ///

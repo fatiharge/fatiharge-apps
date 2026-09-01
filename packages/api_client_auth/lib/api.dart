@@ -29,10 +29,20 @@ part 'auth/http_basic_auth.dart';
 part 'auth/http_bearer_auth.dart';
 
 part 'api/device_resource_api.dart';
+part 'api/session_resource_api.dart';
 
+part 'model/challenge_response.dart';
+part 'model/code_sign_in_request.dart';
 part 'model/current_device_response.dart';
 part 'model/device_token_response.dart';
+part 'model/identity_type.dart';
+part 'model/password_sign_in_request.dart';
+part 'model/password_sign_in_response.dart';
+part 'model/refresh_request.dart';
 part 'model/register_device_request.dart';
+part 'model/request_code_request.dart';
+part 'model/second_factor_request.dart';
+part 'model/session_response.dart';
 
 /// An [ApiClient] instance that uses the default values obtained from
 /// the OpenAPI specification file.
