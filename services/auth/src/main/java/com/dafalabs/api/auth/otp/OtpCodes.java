@@ -10,7 +10,6 @@ import java.util.UUID;
 /** Generates the code and reduces it to the only form that gets stored. */
 final class OtpCodes {
 
-  private static final SecureRandom RANDOM = new SecureRandom();
   private static final int BOUND = 1_000_000;
 
   private OtpCodes() {}
@@ -19,9 +18,16 @@ final class OtpCodes {
    * Six digits, zero padded. {@link SecureRandom} rather than {@link
    * java.util.Random}: the second is seeded predictably enough that a code can
    * be computed rather than guessed.
+   *
+   * <p>Constructed per call rather than held in a static field, and that is not
+   * an oversight. A static one is created while the native image is being built,
+   * so its seed is baked into the image and every deployed instance produces the
+   * same sequence of codes. The native build refuses to compile it, which is the
+   * only reason this is a build failure rather than a silent one. Seeding costs
+   * far less than the message the code is about to travel in.
    */
   static String generate() {
-    return String.format("%06d", RANDOM.nextInt(BOUND));
+    return String.format("%06d", new SecureRandom().nextInt(BOUND));
   }
 
   /**
