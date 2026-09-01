@@ -105,6 +105,23 @@ public class OtpChallenge {
     return false;
   }
 
+  /**
+   * Marks the challenge answered without checking the code.
+   *
+   * <p>The only caller is guarded by {@link OtpOverride}, whose accepting
+   * implementation is not compiled into the packaged application. The method is
+   * named so that a second caller would have to be written on purpose.
+   */
+  boolean acceptWithoutCheckingTheCode(Instant now) {
+    if (status != OtpStatus.PENDING || now.isAfter(expiresAt)) {
+      return false;
+    }
+    attempts++;
+    status = OtpStatus.VERIFIED;
+    verifiedAt = now;
+    return true;
+  }
+
   /** Spends a verified challenge. Verifying twice is fine; spending twice is not. */
   boolean consume(Instant now) {
     if (status != OtpStatus.VERIFIED) {
