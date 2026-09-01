@@ -70,4 +70,80 @@ void main() {
     await tester.tap(find.byType(HeroCard));
     expect(taps, 1);
   });
+
+  group('HeroCardData', () {
+    // Kart bir listede yeniden çiziliyor ve Flutter aynı veriyle gereksiz
+    // çizimden kaçınmak için eşitliğe bakıyor. Elle yazılmış bir == her zaman
+    // bir alanı unutmaya açıktır, o yüzden sınanıyor.
+    const base = HeroCardData(
+      imageUrl: 'https://example.com/a.jpg',
+      headline: 'Başlık',
+      eyebrow: 'Haber',
+    );
+
+    test('aynı alanlar eşit ve aynı hash', () {
+      const same = HeroCardData(
+        imageUrl: 'https://example.com/a.jpg',
+        headline: 'Başlık',
+        eyebrow: 'Haber',
+      );
+
+      expect(base, same);
+      expect(base.hashCode, same.hashCode);
+      expect(base, base);
+    });
+
+    test('her alan tek başına eşitliği bozuyor', () {
+      expect(
+        base,
+        isNot(
+          const HeroCardData(
+            imageUrl: 'https://example.com/b.jpg',
+            headline: 'Başlık',
+            eyebrow: 'Haber',
+          ),
+        ),
+      );
+      expect(
+        base,
+        isNot(
+          const HeroCardData(
+            imageUrl: 'https://example.com/a.jpg',
+            headline: 'Başka',
+            eyebrow: 'Haber',
+          ),
+        ),
+      );
+      expect(
+        base,
+        isNot(
+          const HeroCardData(
+            imageUrl: 'https://example.com/a.jpg',
+            headline: 'Başlık',
+            eyebrow: 'Duyuru',
+          ),
+        ),
+      );
+      expect(base, isNot(const Object()));
+    });
+  });
+
+  testWidgets('görsel yüklenemezse yer tutucuya düşüyor', (tester) async {
+    // Test ortamındaki HTTP istemcisi 400 döndürüyor, yani bu tam olarak
+    // ağın çalışmadığı hâli sınıyor.
+    await tester.runAsync(() async {
+      await pump(
+        tester,
+        const HeroCard(
+          data: HeroCardData(
+            imageUrl: 'https://example.com/yok.jpg',
+            headline: 'Kırık görsel',
+          ),
+        ),
+      );
+      await tester.pump(const Duration(milliseconds: 100));
+    });
+
+    expect(find.byIcon(Icons.image_outlined), findsOneWidget);
+  });
 }
