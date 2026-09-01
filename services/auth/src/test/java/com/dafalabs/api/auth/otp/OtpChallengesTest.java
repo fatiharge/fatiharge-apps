@@ -6,12 +6,17 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.dafalabs.api.auth.delivery.OutboxMessage;
+import com.dafalabs.api.auth.delivery.OutboxRepository;
 import com.dafalabs.api.auth.identity.IdentityType;
 import com.dafalabs.api.core.error.CustomRuntimeException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.TestTransaction;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,23 +25,40 @@ import org.junit.jupiter.api.Test;
 class OtpChallengesTest {
 
   @Inject OtpChallenges otp;
+  @Inject OutboxRepository outbox;
   @Inject EntityManager entityManager;
+  @Inject ObjectMapper json;
 
   @Test
   @TestTransaction
-  @DisplayName("a code is issued and answers its own challenge")
-  void issuesAndAnswers() {
-    IssuedChallenge issued = otp.issue(UUID.randomUUID(), IdentityType.EMAIL, "fan@example.com");
+  @DisplayName("the code reaches the outbox and answers its own challenge")
+  void issuesThroughTheOutbox() {
+    UUID tenant = UUID.randomUUID();
+    IssuedChallenge issued = otp.issue(tenant, IdentityType.EMAIL, "fan@example.com");
 
     assertEquals(300, issued.expiresInSeconds());
-    assertTrue(otp.answer(issued.challengeId(), issued.codeForDelivery()));
+    assertTrue(otp.answer(issued.challengeId(), codeSentTo(tenant, "fan@example.com")));
   }
 
   @Test
   @TestTransaction
-  @DisplayName("the code is not in the table it was written to")
-  void theCodeIsNeverStored() {
-    IssuedChallenge issued = otp.issue(UUID.randomUUID(), IdentityType.EMAIL, "fan@example.com");
+  @DisplayName("the message is addressed to the right person for the right club")
+  void theOutboxRowCarriesItsTenant() {
+    UUID tenant = UUID.randomUUID();
+    otp.issue(tenant, IdentityType.EMAIL, "fan@example.com");
+
+    OutboxMessage message = onlyMessage(tenant, "fan@example.com");
+    assertEquals(tenant, message.tenantId());
+    assertEquals(IdentityType.EMAIL, message.channel());
+    assertEquals(OtpChallenges.CODE_TEMPLATE, message.template());
+  }
+
+  @Test
+  @TestTransaction
+  @DisplayName("the code is not in the challenge table it was written to")
+  void theCodeIsNeverStoredAlongsideItsChallenge() {
+    UUID tenant = UUID.randomUUID();
+    IssuedChallenge issued = otp.issue(tenant, IdentityType.EMAIL, "fan@example.com");
 
     Object stored =
         entityManager
@@ -44,7 +66,7 @@ class OtpChallengesTest {
             .setParameter("id", issued.challengeId())
             .getSingleResult();
 
-    assertNotEquals(issued.codeForDelivery(), stored);
+    assertNotEquals(codeSentTo(tenant, "fan@example.com"), stored);
   }
 
   @Test
@@ -89,7 +111,8 @@ class OtpChallengesTest {
     otp.issue(tenant, IdentityType.EMAIL, " fan@example.com ");
 
     assertThrows(
-        CustomRuntimeException.class, () -> otp.issue(tenant, IdentityType.EMAIL, "fan@example.com"));
+        CustomRuntimeException.class,
+        () -> otp.issue(tenant, IdentityType.EMAIL, "fan@example.com"));
   }
 
   @Test
@@ -97,5 +120,20 @@ class OtpChallengesTest {
   @DisplayName("an unknown challenge answers no differently from a wrong code")
   void unknownChallengeIsIndistinguishable() {
     assertFalse(otp.answer(UUID.randomUUID(), "123456"));
+  }
+
+  private String codeSentTo(UUID tenantId, String recipient) {
+    try {
+      Map<?, ?> variables = json.readValue(onlyMessage(tenantId, recipient).variables(), Map.class);
+      return (String) variables.get("code");
+    } catch (Exception e) {
+      throw new IllegalStateException(e);
+    }
+  }
+
+  private OutboxMessage onlyMessage(UUID tenantId, String recipient) {
+    List<OutboxMessage> messages = outbox.to(tenantId, recipient);
+    assertEquals(1, messages.size(), "expected exactly one message for " + recipient);
+    return messages.get(0);
   }
 }

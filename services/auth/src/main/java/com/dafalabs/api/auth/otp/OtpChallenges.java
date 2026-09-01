@@ -1,5 +1,6 @@
 package com.dafalabs.api.auth.otp;
 
+import com.dafalabs.api.auth.delivery.MessageDelivery;
 import com.dafalabs.api.auth.identity.IdentityType;
 import com.dafalabs.api.core.error.CustomRuntimeException;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -7,6 +8,7 @@ import jakarta.transaction.Transactional;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -15,7 +17,11 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 @ApplicationScoped
 public class OtpChallenges {
 
+  /** The one template this service sends. */
+  static final String CODE_TEMPLATE = "auth.otp.code";
+
   private final OtpChallengeRepository challenges;
+  private final MessageDelivery delivery;
   private final Clock clock;
   private final Duration lifetime;
   private final int maxAttempts;
@@ -24,12 +30,14 @@ public class OtpChallenges {
 
   OtpChallenges(
       OtpChallengeRepository challenges,
+      MessageDelivery delivery,
       Clock clock,
       @ConfigProperty(name = "auth.otp.lifetime") Duration lifetime,
       @ConfigProperty(name = "auth.otp.max-attempts") int maxAttempts,
       @ConfigProperty(name = "auth.otp.hourly-limit") long hourlyLimit,
       @ConfigProperty(name = "auth.otp.daily-limit") long dailyLimit) {
     this.challenges = challenges;
+    this.delivery = delivery;
     this.clock = clock;
     this.lifetime = lifetime;
     this.maxAttempts = maxAttempts;
@@ -53,7 +61,16 @@ public class OtpChallenges {
         OtpChallenge.issue(tenantId, type, identity, code, now, now.plus(lifetime));
     challenges.persist(challenge);
 
-    return new IssuedChallenge(challenge.id(), code, lifetime.toSeconds());
+    // The code leaves this method in exactly one direction. Handing it back as
+    // well would put it one careless DTO away from the response body.
+    delivery.deliver(
+        tenantId,
+        type,
+        identity,
+        CODE_TEMPLATE,
+        Map.of("code", code, "expiresInMinutes", String.valueOf(lifetime.toMinutes())));
+
+    return new IssuedChallenge(challenge.id(), lifetime.toSeconds());
   }
 
   /**

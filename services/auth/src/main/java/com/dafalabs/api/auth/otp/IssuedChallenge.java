@@ -3,12 +3,12 @@ package com.dafalabs.api.auth.otp;
 import java.util.UUID;
 
 /**
- * A challenge and the code that answers it.
+ * What the caller learns when a code is issued: that one exists, and how long it
+ * lasts.
  *
- * <p>{@link #codeForDelivery()} goes to the channel carrying it and nowhere
- * else. It must never reach a response body: the system this replaces returned
- * the code to whoever asked for it, which let anyone take any account by naming
- * its address. The accessor is named the way it is so that putting it in a DTO
- * has to be a decision rather than an autocomplete.
+ * <p>Not the code. The code goes to the outbox and to nowhere the caller can
+ * reach — the system this replaces returned it in the response body, which let
+ * anyone take any account by naming its address. Leaving it out of this record
+ * makes repeating that a change to the type rather than an oversight.
  */
-public record IssuedChallenge(UUID challengeId, String codeForDelivery, long expiresInSeconds) {}
+public record IssuedChallenge(UUID challengeId, long expiresInSeconds) {}
