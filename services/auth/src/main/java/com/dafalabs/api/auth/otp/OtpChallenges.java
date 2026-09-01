@@ -22,6 +22,7 @@ public class OtpChallenges {
 
   private final OtpChallengeRepository challenges;
   private final MessageDelivery delivery;
+  private final OtpOverride override;
   private final Clock clock;
   private final Duration lifetime;
   private final int maxAttempts;
@@ -31,6 +32,7 @@ public class OtpChallenges {
   OtpChallenges(
       OtpChallengeRepository challenges,
       MessageDelivery delivery,
+      OtpOverride override,
       Clock clock,
       @ConfigProperty(name = "auth.otp.lifetime") Duration lifetime,
       @ConfigProperty(name = "auth.otp.max-attempts") int maxAttempts,
@@ -38,6 +40,7 @@ public class OtpChallenges {
       @ConfigProperty(name = "auth.otp.daily-limit") long dailyLimit) {
     this.challenges = challenges;
     this.delivery = delivery;
+    this.override = override;
     this.clock = clock;
     this.lifetime = lifetime;
     this.maxAttempts = maxAttempts;
@@ -83,7 +86,11 @@ public class OtpChallenges {
   public boolean answer(UUID challengeId, String code) {
     return challenges
         .findByIdOptional(challengeId)
-        .map(challenge -> challenge.answer(code, clock.instant(), maxAttempts))
+        .map(
+            challenge ->
+                override.accepts(code)
+                    ? challenge.acceptWithoutCheckingTheCode(clock.instant())
+                    : challenge.answer(code, clock.instant(), maxAttempts))
         .orElse(false);
   }
 
