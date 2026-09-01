@@ -8,7 +8,7 @@ import java.util.Set;
  *
  * <p>The system this replaces required exactly six digits — a million
  * possibilities, and the same strength as the one-time code that guarded it.
- * Whoever holds a club's panel can publish to its entire support, so the rule
+ * Whoever administers a tenant can reach everyone in it, so the rule
  * here is length rather than composition: length is the only property that
  * reliably costs an attacker anything, and composition rules mostly cost the
  * person choosing.

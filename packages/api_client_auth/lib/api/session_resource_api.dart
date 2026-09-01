@@ -16,7 +16,7 @@ class SessionResourceApi {
 
   final ApiClient apiClient;
 
-  /// Panel girişini kodla tamamlar
+  /// Yönetici girişini kodla tamamlar
   ///
   /// Hangi doğrulamanın tamamlandığını geçici token söyler, çağıran değil. Böylece bir hesap için gönderilen kod başka bir hesabın girişini bitiremez.
   ///
@@ -53,7 +53,7 @@ class SessionResourceApi {
     );
   }
 
-  /// Panel girişini kodla tamamlar
+  /// Yönetici girişini kodla tamamlar
   ///
   /// Hangi doğrulamanın tamamlandığını geçici token söyler, çağıran değil. Böylece bir hesap için gönderilen kod başka bir hesabın girişini bitiremez.
   ///
@@ -154,17 +154,17 @@ class SessionResourceApi {
 
   /// Bir kimliğe tek kullanımlık kod gönderir
   ///
-  /// Kodun kendisi cevapta dönmez — yalnızca kodun var olduğu ve ne kadar yaşayacağı döner. Kod şu an bir mesaj kuyruğu tablosuna yazılır, henüz onu taşıyan bir kanal yoktur. Aynı kimliğe saatlik ve günlük istek sınırı uygulanır; sınır kulüp başına sayılır, yani bir kulübün trafiği diğerinin taraftarını kilitleyemez. Telefon şemada vardır ama SMS sağlayıcısı olmadığı için reddedilir.
+  /// Kodun kendisi cevapta dönmez — yalnızca kodun var olduğu ve ne kadar yaşayacağı döner. Kod şu an bir mesaj kuyruğu tablosuna yazılır, henüz onu taşıyan bir kanal yoktur. Aynı kimliğe saatlik ve günlük istek sınırı uygulanır; sınır kiracı başına sayılır, yani bir kiracının trafiği diğerinin kullanıcısını kilitleyemez. Telefon şemada vardır ama SMS sağlayıcısı olmadığı için reddedilir.
   ///
   /// Note: This method returns the HTTP [Response].
   ///
   /// Parameters:
   ///
-  /// * [String] xClubId (required):
+  /// * [String] xTenantId (required):
   ///
   /// * [RequestCodeRequest] requestCodeRequest (required):
   Future<Response> requestCodeWithHttpInfo(
-    String xClubId,
+    String xTenantId,
     RequestCodeRequest requestCodeRequest, {
     Future<void>? abortTrigger,
   }) async {
@@ -178,7 +178,7 @@ class SessionResourceApi {
     final headerParams = <String, String>{};
     final formParams = <String, String>{};
 
-    headerParams[r'X-Club-Id'] = parameterToString(xClubId);
+    headerParams[r'X-Tenant-Id'] = parameterToString(xTenantId);
 
     const contentTypes = <String>['application/json'];
 
@@ -196,20 +196,20 @@ class SessionResourceApi {
 
   /// Bir kimliğe tek kullanımlık kod gönderir
   ///
-  /// Kodun kendisi cevapta dönmez — yalnızca kodun var olduğu ve ne kadar yaşayacağı döner. Kod şu an bir mesaj kuyruğu tablosuna yazılır, henüz onu taşıyan bir kanal yoktur. Aynı kimliğe saatlik ve günlük istek sınırı uygulanır; sınır kulüp başına sayılır, yani bir kulübün trafiği diğerinin taraftarını kilitleyemez. Telefon şemada vardır ama SMS sağlayıcısı olmadığı için reddedilir.
+  /// Kodun kendisi cevapta dönmez — yalnızca kodun var olduğu ve ne kadar yaşayacağı döner. Kod şu an bir mesaj kuyruğu tablosuna yazılır, henüz onu taşıyan bir kanal yoktur. Aynı kimliğe saatlik ve günlük istek sınırı uygulanır; sınır kiracı başına sayılır, yani bir kiracının trafiği diğerinin kullanıcısını kilitleyemez. Telefon şemada vardır ama SMS sağlayıcısı olmadığı için reddedilir.
   ///
   /// Parameters:
   ///
-  /// * [String] xClubId (required):
+  /// * [String] xTenantId (required):
   ///
   /// * [RequestCodeRequest] requestCodeRequest (required):
   Future<ChallengeResponse?> requestCode(
-    String xClubId,
+    String xTenantId,
     RequestCodeRequest requestCodeRequest, {
     Future<void>? abortTrigger,
   }) async {
     final response = await requestCodeWithHttpInfo(
-      xClubId,
+      xTenantId,
       requestCodeRequest,
       abortTrigger: abortTrigger,
     );
@@ -231,7 +231,7 @@ class SessionResourceApi {
 
   /// Tek kullanımlık kodu oturuma çevirir
   ///
-  /// Hesap yoksa ilk girişte oluşturulur. Kulüp, isteğin gövdesinden değil kodun ait olduğu doğrulamadan okunur: bir kulüp için alınan kod başka bir kulübe giriş yapamaz. Panele erişen hesaplar bu yolu kullanamaz, parolayla girmek zorundadır.
+  /// Hesap yoksa ilk girişte oluşturulur. Kiracı, isteğin gövdesinden değil kodun ait olduğu doğrulamadan okunur: bir kiracı için alınan kod başka bir kiracıya giriş yapamaz. Yönetici hesapları bu yolu kullanamaz, parolayla girmek zorundadır.
   ///
   /// Note: This method returns the HTTP [Response].
   ///
@@ -268,7 +268,7 @@ class SessionResourceApi {
 
   /// Tek kullanımlık kodu oturuma çevirir
   ///
-  /// Hesap yoksa ilk girişte oluşturulur. Kulüp, isteğin gövdesinden değil kodun ait olduğu doğrulamadan okunur: bir kulüp için alınan kod başka bir kulübe giriş yapamaz. Panele erişen hesaplar bu yolu kullanamaz, parolayla girmek zorundadır.
+  /// Hesap yoksa ilk girişte oluşturulur. Kiracı, isteğin gövdesinden değil kodun ait olduğu doğrulamadan okunur: bir kiracı için alınan kod başka bir kiracıya giriş yapamaz. Yönetici hesapları bu yolu kullanamaz, parolayla girmek zorundadır.
   ///
   /// Parameters:
   ///
@@ -299,17 +299,17 @@ class SessionResourceApi {
 
   /// Parolayla giriş yapar
   ///
-  /// Taraftar için oturumu doğrudan açar. Panele erişen bir hesap için ikinci adım gerekir: cevap `SECOND_FACTOR_REQUIRED` döner, bir kod gönderilir ve parola adımının geçildiğini kanıtlayan geçici bir token verilir. Parola yanlışsa hiçbir kod gönderilmez.
+  /// Sıradan kullanıcı için oturumu doğrudan açar. Yönetici hesabı için ikinci adım gerekir: cevap `SECOND_FACTOR_REQUIRED` döner, bir kod gönderilir ve parola adımının geçildiğini kanıtlayan geçici bir token verilir. Parola yanlışsa hiçbir kod gönderilmez.
   ///
   /// Note: This method returns the HTTP [Response].
   ///
   /// Parameters:
   ///
-  /// * [String] xClubId (required):
+  /// * [String] xTenantId (required):
   ///
   /// * [PasswordSignInRequest] passwordSignInRequest (required):
   Future<Response> signInWithPasswordWithHttpInfo(
-    String xClubId,
+    String xTenantId,
     PasswordSignInRequest passwordSignInRequest, {
     Future<void>? abortTrigger,
   }) async {
@@ -323,7 +323,7 @@ class SessionResourceApi {
     final headerParams = <String, String>{};
     final formParams = <String, String>{};
 
-    headerParams[r'X-Club-Id'] = parameterToString(xClubId);
+    headerParams[r'X-Tenant-Id'] = parameterToString(xTenantId);
 
     const contentTypes = <String>['application/json'];
 
@@ -341,20 +341,20 @@ class SessionResourceApi {
 
   /// Parolayla giriş yapar
   ///
-  /// Taraftar için oturumu doğrudan açar. Panele erişen bir hesap için ikinci adım gerekir: cevap `SECOND_FACTOR_REQUIRED` döner, bir kod gönderilir ve parola adımının geçildiğini kanıtlayan geçici bir token verilir. Parola yanlışsa hiçbir kod gönderilmez.
+  /// Sıradan kullanıcı için oturumu doğrudan açar. Yönetici hesabı için ikinci adım gerekir: cevap `SECOND_FACTOR_REQUIRED` döner, bir kod gönderilir ve parola adımının geçildiğini kanıtlayan geçici bir token verilir. Parola yanlışsa hiçbir kod gönderilmez.
   ///
   /// Parameters:
   ///
-  /// * [String] xClubId (required):
+  /// * [String] xTenantId (required):
   ///
   /// * [PasswordSignInRequest] passwordSignInRequest (required):
   Future<PasswordSignInResponse?> signInWithPassword(
-    String xClubId,
+    String xTenantId,
     PasswordSignInRequest passwordSignInRequest, {
     Future<void>? abortTrigger,
   }) async {
     final response = await signInWithPasswordWithHttpInfo(
-      xClubId,
+      xTenantId,
       passwordSignInRequest,
       abortTrigger: abortTrigger,
     );

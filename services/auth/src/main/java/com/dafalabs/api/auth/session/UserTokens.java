@@ -17,14 +17,14 @@ import org.eclipse.microprofile.jwt.JsonWebToken;
 /**
  * Signs and reads the tokens a signed-in person carries.
  *
- * <p>Every token names the club it was issued for. A service that trusts the
- * subject without reading that claim would let one club's token act in another,
- * and no amount of care at the call sites makes up for leaving it out.
+ * <p>Every token names the tenant it was issued for. A service that trusts the
+ * subject without reading that claim would let one tenant's token act in
+ * another, and no amount of care at the call sites makes up for leaving it out.
  */
 @ApplicationScoped
 public class UserTokens {
 
-  static final String CLUB = "club";
+  static final String TENANT = "tenant";
   static final String ROLE = "role";
   static final String EPOCH = "epoch";
   // Not "typ": that is a JOSE header name, and setting a claim by that name
@@ -102,7 +102,7 @@ public class UserTokens {
       User user, String type, Duration lifetime, Instant now) {
     return Jwt.issuer(issuer)
         .subject(user.id().toString())
-        .claim(CLUB, user.tenantId().toString())
+        .claim(TENANT, user.tenantId().toString())
         .claim(ROLE, user.role().name())
         .claim(EPOCH, user.tokenEpoch())
         .claim(TYPE, type)

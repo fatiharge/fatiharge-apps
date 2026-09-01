@@ -35,8 +35,8 @@ public class Passwords {
   }
 
   /**
-   * False for someone who has no password at all, which is the ordinary case for
-   * a supporter. Answering differently would say which accounts are staff.
+   * False for someone who has no password at all, which is the ordinary case.
+   * Answering differently would say which accounts administer something.
    */
   public boolean verify(UUID userId, String password) {
     Optional<UserCredential> credential = credentials.find(userId, CredentialType.PASSWORD);

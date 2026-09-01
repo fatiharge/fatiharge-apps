@@ -2,10 +2,10 @@ package com.dafalabs.api.auth.identity;
 
 /** What someone may do. Carried in the token, always read from the database. */
 public enum Role {
-  /** Uses a club's app. The overwhelming majority of rows. */
-  FAN,
-  /** Runs one club's panel: publishes content, sends notifications. */
-  CLUB_ADMIN,
-  /** Works for us. Reaches a club's panel only by choosing that club first. */
+  /** Uses a tenant's product. The overwhelming majority of rows. */
+  USER,
+  /** Administers one tenant: its content, its people, what it sends them. */
+  TENANT_ADMIN,
+  /** Works for us. Reaches a tenant only by choosing that tenant first. */
   STAFF
 }

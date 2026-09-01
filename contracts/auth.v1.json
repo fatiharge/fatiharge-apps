@@ -5,7 +5,7 @@
     "description" : "Hesabı olmayan bir kişinin tek kimliği. Uygulama, cihaz kimliğinin ham hâlini değil SHA-256 özetini gönderir; ham kimlik telefonda kalır."
   }, {
     "name" : "Session Resource",
-    "description" : "Giriş ve oturumun sürdürülmesi. Taraftar tek kullanımlık kodla girer; panele erişen biri önce parolasını, sonra kodunu verir. Erişim token'ı kısa ömürlüdür ve hiçbir istekte veritabanına sorulmaz, yenileme token'ı uzundur ve kişinin satırındaki sayaç arttığında topluca geçersiz olur."
+    "description" : "Giriş ve oturumun sürdürülmesi. Sıradan bir kullanıcı tek kullanımlık kodla girer; yönetici hesabı önce parolasını, sonra kodunu verir. Erişim token'ı kısa ömürlüdür ve hiçbir istekte veritabanına sorulmaz, yenileme token'ı uzundur ve kişinin satırındaki sayaç arttığında topluca geçersiz olur."
   } ],
   "components" : {
     "schemas" : {
@@ -175,12 +175,12 @@
     "/v1/auth/codes" : {
       "post" : {
         "summary" : "Bir kimliğe tek kullanımlık kod gönderir",
-        "description" : "Kodun kendisi cevapta dönmez — yalnızca kodun var olduğu ve ne kadar yaşayacağı döner. Kod şu an bir mesaj kuyruğu tablosuna yazılır, henüz onu taşıyan bir kanal yoktur. Aynı kimliğe saatlik ve günlük istek sınırı uygulanır; sınır kulüp başına sayılır, yani bir kulübün trafiği diğerinin taraftarını kilitleyemez. Telefon şemada vardır ama SMS sağlayıcısı olmadığı için reddedilir.",
+        "description" : "Kodun kendisi cevapta dönmez — yalnızca kodun var olduğu ve ne kadar yaşayacağı döner. Kod şu an bir mesaj kuyruğu tablosuna yazılır, henüz onu taşıyan bir kanal yoktur. Aynı kimliğe saatlik ve günlük istek sınırı uygulanır; sınır kiracı başına sayılır, yani bir kiracının trafiği diğerinin kullanıcısını kilitleyemez. Telefon şemada vardır ama SMS sağlayıcısı olmadığı için reddedilir.",
         "operationId" : "requestCode",
         "tags" : [ "Session Resource" ],
         "parameters" : [ {
           "required" : true,
-          "name" : "X-Club-Id",
+          "name" : "X-Tenant-Id",
           "in" : "header",
           "schema" : {
             "type" : "string"
@@ -216,7 +216,7 @@
     "/v1/auth/sessions/by-code" : {
       "post" : {
         "summary" : "Tek kullanımlık kodu oturuma çevirir",
-        "description" : "Hesap yoksa ilk girişte oluşturulur. Kulüp, isteğin gövdesinden değil kodun ait olduğu doğrulamadan okunur: bir kulüp için alınan kod başka bir kulübe giriş yapamaz. Panele erişen hesaplar bu yolu kullanamaz, parolayla girmek zorundadır.",
+        "description" : "Hesap yoksa ilk girişte oluşturulur. Kiracı, isteğin gövdesinden değil kodun ait olduğu doğrulamadan okunur: bir kiracı için alınan kod başka bir kiracıya giriş yapamaz. Yönetici hesapları bu yolu kullanamaz, parolayla girmek zorundadır.",
         "operationId" : "signInWithCode",
         "tags" : [ "Session Resource" ],
         "requestBody" : {
@@ -249,12 +249,12 @@
     "/v1/auth/sessions/by-password" : {
       "post" : {
         "summary" : "Parolayla giriş yapar",
-        "description" : "Taraftar için oturumu doğrudan açar. Panele erişen bir hesap için ikinci adım gerekir: cevap `SECOND_FACTOR_REQUIRED` döner, bir kod gönderilir ve parola adımının geçildiğini kanıtlayan geçici bir token verilir. Parola yanlışsa hiçbir kod gönderilmez.",
+        "description" : "Sıradan kullanıcı için oturumu doğrudan açar. Yönetici hesabı için ikinci adım gerekir: cevap `SECOND_FACTOR_REQUIRED` döner, bir kod gönderilir ve parola adımının geçildiğini kanıtlayan geçici bir token verilir. Parola yanlışsa hiçbir kod gönderilmez.",
         "operationId" : "signInWithPassword",
         "tags" : [ "Session Resource" ],
         "parameters" : [ {
           "required" : true,
-          "name" : "X-Club-Id",
+          "name" : "X-Tenant-Id",
           "in" : "header",
           "schema" : {
             "type" : "string"
@@ -322,7 +322,7 @@
     },
     "/v1/auth/sessions/second-factor" : {
       "post" : {
-        "summary" : "Panel girişini kodla tamamlar",
+        "summary" : "Yönetici girişini kodla tamamlar",
         "description" : "Hangi doğrulamanın tamamlandığını geçici token söyler, çağıran değil. Böylece bir hesap için gönderilen kod başka bir hesabın girişini bitiremez.",
         "operationId" : "completeSecondFactor",
         "tags" : [ "Session Resource" ],
@@ -419,6 +419,6 @@
   "info" : {
     "title" : "Kimlik servisi",
     "version" : "1.0.0",
-    "description" : "Uygulamaları kullanan kişileri ve cihazları tanıyan servis. İki ayrı kimlik vardır: hesabı olmayan bir kişi için **cihaz**, hesabı olan bir kişi için **kullanıcı**. Her kullanıcı bir kulübe bağlıdır ve aynı e-posta adresi iki kulüpte iki ayrı kişidir. Bastığı token'ı diğer servisler bu servise sormadan, açık anahtarla doğrular."
+    "description" : "Uygulamaları kullanan kişileri ve cihazları tanıyan **ortak** servis: birden fazla ürün buraya bağlanır, o yüzden hiçbir ürünün kendi sözlüğü buraya girmez — kulüp, takım ya da çalışma alanı değil, **kiracı** denir. Bir kiracının ne olduğuna ona satan ürün karar verir. İki ayrı kimlik vardır: hesabı olmayan bir kişi için **cihaz**, hesabı olan bir kişi için **kullanıcı**. Her kullanıcı bir kiracıya bağlıdır ve aynı e-posta adresi iki kiracıda iki ayrı kişidir. Bastığı token'ı diğer servisler bu servise sormadan, açık anahtarla doğrular."
   }
 }

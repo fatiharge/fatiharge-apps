@@ -48,8 +48,8 @@ public class Sessions {
   /**
    * Signs in, creating the account on first arrival.
    *
-   * <p>The club comes from the challenge rather than from the request. A caller
-   * who could name the club here would sign into one club with a code proving
+   * <p>The tenant comes from the challenge rather than from the request. A caller
+   * who could name the tenant here would sign into one tenant with a code proving
    * only that they can read mail for another.
    */
   @Transactional
@@ -66,10 +66,10 @@ public class Sessions {
 
     User user = users.findByIdOptional(identity.userId()).orElseThrow(Sessions::wrongCredentials);
 
-    // A code alone must not open a panel. Whoever holds one signs in with a
-    // password and then answers a code; letting this path through would make the
+    // A code alone must not open an administrative account. Those sign in with a
+    // password and then answer a code; letting this path through would make the
     // password decorative and reduce two factors to one.
-    if (user.role() != Role.FAN) {
+    if (user.role() != Role.USER) {
       throw new CustomRuntimeException(
           409, "password_required", "This account signs in with a password.");
     }
@@ -93,7 +93,7 @@ public class Sessions {
       throw wrongCredentials();
     }
 
-    if (user.role() == Role.FAN) {
+    if (user.role() == Role.USER) {
       return PasswordSignIn.complete(openSession(user));
     }
 
@@ -105,7 +105,7 @@ public class Sessions {
   }
 
   /**
-   * Completes a panel sign-in. The challenge is named by the pending token, not
+   * Completes an administrative sign-in. The challenge is named by the pending token, not
    * by the caller, so a code issued for one account cannot finish another's.
    */
   @Transactional
@@ -166,7 +166,7 @@ public class Sessions {
   }
 
   private UserIdentity register(OtpChallenge challenge) {
-    User user = User.create(challenge.tenantId(), Role.FAN, clock.instant());
+    User user = User.create(challenge.tenantId(), Role.USER, clock.instant());
     users.persist(user);
     UserIdentity identity =
         UserIdentity.claim(

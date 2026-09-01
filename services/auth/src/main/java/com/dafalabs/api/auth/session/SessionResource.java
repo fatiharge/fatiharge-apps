@@ -28,8 +28,8 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 @Tag(
     name = "Session Resource",
     description =
-        "Giriş ve oturumun sürdürülmesi. Taraftar tek kullanımlık kodla girer; "
-            + "panele erişen biri önce parolasını, sonra kodunu verir. Erişim "
+        "Giriş ve oturumun sürdürülmesi. Sıradan bir kullanıcı tek kullanımlık "
+            + "kodla girer; yönetici hesabı önce parolasını, sonra kodunu verir. Erişim "
             + "token'ı kısa ömürlüdür ve hiçbir istekte veritabanına sorulmaz, "
             + "yenileme token'ı uzundur ve kişinin satırındaki sayaç arttığında "
             + "topluca geçersiz olur.")
@@ -39,14 +39,18 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 public class SessionResource {
 
   /**
-   * Which club the caller is acting for.
+   * Which tenant the caller is acting for.
    *
-   * <p>A header rather than a path, because the app knows its club from the
-   * build and the panel from its hostname, and neither should have to put it in
-   * every URL. It says which club is being asked for; the token says whether the
-   * caller may have it.
+   * <p>A header rather than a path, because a client knows its tenant from its
+   * build or its hostname and should not have to put it in every URL. It says
+   * which tenant is being asked for; the token says whether the caller may have
+   * it.
+   *
+   * <p>More than one product authenticates here, so this is a tenant and not a
+   * club, a workspace or a team. What a tenant means belongs to the product that
+   * sells to it.
    */
-  static final String CLUB_HEADER = "X-Club-Id";
+  static final String TENANT_HEADER = "X-Tenant-Id";
 
   private final Sessions sessions;
   private final OtpChallenges otp;
@@ -68,14 +72,14 @@ public class SessionResource {
           "Kodun kendisi cevapta dönmez — yalnızca kodun var olduğu ve ne kadar "
               + "yaşayacağı döner. Kod şu an bir mesaj kuyruğu tablosuna yazılır, "
               + "henüz onu taşıyan bir kanal yoktur. Aynı kimliğe saatlik ve "
-              + "günlük istek sınırı uygulanır; sınır kulüp başına sayılır, yani "
-              + "bir kulübün trafiği diğerinin taraftarını kilitleyemez. "
+              + "günlük istek sınırı uygulanır; sınır kiracı başına sayılır, yani "
+              + "bir kiracının trafiği diğerinin kullanıcısını kilitleyemez. "
               + "Telefon şemada vardır ama SMS sağlayıcısı olmadığı için reddedilir.")
   public ChallengeResponse requestCode(
-      @Parameter(required = true) @HeaderParam(CLUB_HEADER) String clubId,
+      @Parameter(required = true) @HeaderParam(TENANT_HEADER) String tenantId,
       RequestCodeRequest request) {
     IssuedChallenge issued =
-        otp.issue(club(clubId), request.identityType(), request.identity());
+        otp.issue(tenant(tenantId), request.identityType(), request.identity());
     return new ChallengeResponse(issued.challengeId().toString(), issued.expiresInSeconds());
   }
 
@@ -85,9 +89,9 @@ public class SessionResource {
       operationId = "signInWithCode",
       summary = "Tek kullanımlık kodu oturuma çevirir",
       description =
-          "Hesap yoksa ilk girişte oluşturulur. Kulüp, isteğin gövdesinden değil "
-              + "kodun ait olduğu doğrulamadan okunur: bir kulüp için alınan kod "
-              + "başka bir kulübe giriş yapamaz. Panele erişen hesaplar bu yolu "
+          "Hesap yoksa ilk girişte oluşturulur. Kiracı, isteğin gövdesinden değil "
+              + "kodun ait olduğu doğrulamadan okunur: bir kiracı için alınan kod "
+              + "başka bir kiracıya giriş yapamaz. Yönetici hesapları bu yolu "
               + "kullanamaz, parolayla girmek zorundadır.")
   public SessionResponse signInWithCode(CodeSignInRequest request) {
     return session(sessions.signInWithCode(challenge(request.challengeId()), request.code()));
@@ -99,16 +103,16 @@ public class SessionResource {
       operationId = "signInWithPassword",
       summary = "Parolayla giriş yapar",
       description =
-          "Taraftar için oturumu doğrudan açar. Panele erişen bir hesap için "
+          "Sıradan kullanıcı için oturumu doğrudan açar. Yönetici hesabı için "
               + "ikinci adım gerekir: cevap `SECOND_FACTOR_REQUIRED` döner, bir "
               + "kod gönderilir ve parola adımının geçildiğini kanıtlayan geçici "
               + "bir token verilir. Parola yanlışsa hiçbir kod gönderilmez.")
   public PasswordSignInResponse signInWithPassword(
-      @Parameter(required = true) @HeaderParam(CLUB_HEADER) String clubId,
+      @Parameter(required = true) @HeaderParam(TENANT_HEADER) String tenantId,
       PasswordSignInRequest request) {
     PasswordSignIn outcome =
         sessions.signInWithPassword(
-            club(clubId), request.identityType(), request.identity(), request.password());
+            tenant(tenantId), request.identityType(), request.identity(), request.password());
 
     if (outcome.isComplete()) {
       return new PasswordSignInResponse("COMPLETE", session(outcome.tokens()), null, null, 0);
@@ -125,7 +129,7 @@ public class SessionResource {
   @Path("/sessions/second-factor")
   @Operation(
       operationId = "completeSecondFactor",
-      summary = "Panel girişini kodla tamamlar",
+      summary = "Yönetici girişini kodla tamamlar",
       description =
           "Hangi doğrulamanın tamamlandığını geçici token söyler, çağıran değil. "
               + "Böylece bir hesap için gönderilen kod başka bir hesabın girişini "
@@ -153,8 +157,8 @@ public class SessionResource {
         tokens.accessToken(), tokens.refreshToken(), tokens.expiresInSeconds());
   }
 
-  private static UUID club(String clubId) {
-    return uuid(clubId, "invalid_club", CLUB_HEADER + " must be a UUID.");
+  private static UUID tenant(String tenantId) {
+    return uuid(tenantId, "invalid_tenant", TENANT_HEADER + " must be a UUID.");
   }
 
   private static UUID challenge(String challengeId) {

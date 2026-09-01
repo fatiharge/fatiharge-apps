@@ -46,9 +46,9 @@ public class OtpChallenges {
   }
 
   /**
-   * The limits are counted per identity within a tenant, not globally: one club's
-   * traffic must not be able to lock another club's supporters out, and the same
-   * address in two clubs is two different people as far as this service knows.
+   * The limits are counted per identity within a tenant, not globally: one
+   * tenant's traffic must not lock another tenant's people out, and the same
+   * address in two tenants is two different people as far as this service knows.
    */
   @Transactional
   public IssuedChallenge issue(UUID tenantId, IdentityType type, String value) {

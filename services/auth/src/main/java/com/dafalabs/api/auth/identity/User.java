@@ -13,8 +13,8 @@ import java.util.UUID;
  * Someone a product recognises across devices.
  *
  * <p>Scoped to a tenant, and the tenant is an opaque id: this service knows that
- * two tenants differ, not who they are. A club's name and colours belong to the
- * product that sells to it.
+ * two tenants differ, not who they are. A tenant's name and colours belong to
+ * the product that sells to it.
  */
 @Entity
 @Table(name = "users")

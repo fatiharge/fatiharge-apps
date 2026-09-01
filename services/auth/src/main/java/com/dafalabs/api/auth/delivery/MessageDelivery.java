@@ -7,10 +7,10 @@ import java.util.UUID;
 /**
  * Hands a message to whatever carries it.
  *
- * <p>The tenant is the first parameter and not an afterthought. Whether a club's
- * mail leaves from its own domain or from ours is undecided, and the decision
- * can only stay open if every caller already says which club it is sending for —
- * otherwise choosing later means editing every call site.
+ * <p>The tenant is the first parameter and not an afterthought. Whether a
+ * tenant's mail leaves from its own domain or from ours is undecided, and the
+ * decision can only stay open if every caller already says which tenant it is
+ * sending for — otherwise choosing later means editing every call site.
  */
 public interface MessageDelivery {
 

@@ -1,11 +1,12 @@
 -- An account, for the products that have one. A device (V1) is enough while
 -- nothing is owned; a user appears when someone has to be recognised across
--- devices — a fan whose club follows them, a club employee with a panel.
+-- devices — someone a product keeps something for, someone who administers it.
 --
 -- Every row is scoped to a tenant. The tenant is an opaque id here on purpose:
--- who a tenant *is* — a club's name, colours, domain — belongs to the product
--- that sells to it, not to the service that authenticates its people. This
--- service only needs to know that two tenants are different.
+-- who a tenant *is* — its name, its colours, its domain — belongs to the product
+-- that sells to it, not to the service that authenticates its people. More than
+-- one product authenticates here, and none of their vocabularies belong in this
+-- schema. This service only needs to know that two tenants are different.
 CREATE TABLE users (
     id          uuid        PRIMARY KEY,
     tenant_id   uuid        NOT NULL,
@@ -20,7 +21,7 @@ CREATE TABLE users (
 );
 
 ALTER TABLE users
-    ADD CONSTRAINT users_role_known   CHECK (role   IN ('FAN', 'CLUB_ADMIN', 'STAFF')),
+    ADD CONSTRAINT users_role_known   CHECK (role   IN ('USER', 'TENANT_ADMIN', 'STAFF')),
     ADD CONSTRAINT users_status_known CHECK (status IN ('ACTIVE', 'BLOCKED', 'DELETED'));
 
 CREATE INDEX users_tenant_idx ON users (tenant_id);
@@ -44,8 +45,9 @@ CREATE TABLE user_identities (
 ALTER TABLE user_identities
     ADD CONSTRAINT user_identities_type_known CHECK (type IN ('EMAIL', 'PHONE'));
 
--- Scoped to the tenant, not global. The same person supports two clubs with one
--- address, and neither club may learn that from the other's sign-up failing.
+-- Scoped to the tenant, not global. The same person can hold an account in two
+-- tenants with one address, and neither may learn that from the other's sign-up
+-- failing.
 CREATE UNIQUE INDEX user_identities_tenant_value_uq
     ON user_identities (tenant_id, type, identity_value);
 
@@ -53,7 +55,8 @@ CREATE INDEX user_identities_user_idx ON user_identities (user_id);
 
 -- How someone proves the identity above. Separate from users because having a
 -- password is optional: a fan signs in with a one-time code and has no row
--- here at all, while a club employee is required to have one. A nullable column
+-- here at all, while whoever administers a tenant is required to have one. A
+-- nullable column
 -- on users could not tell "no password" from "password not set yet".
 CREATE TABLE user_credentials (
     id          uuid        PRIMARY KEY,

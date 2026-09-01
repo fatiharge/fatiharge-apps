@@ -12,8 +12,8 @@ import java.util.UUID;
 /**
  * How someone proves an identity they hold.
  *
- * <p>Optional by design: a fan signs in with a one-time code and never has a row
- * here, while a club employee is required to have one. That difference cannot be
+ * <p>Optional by design: an ordinary user signs in with a one-time code and never
+ * has a row here, while whoever administers a tenant is required to have one. That difference cannot be
  * expressed by a nullable column on {@link User}, which could not tell "no
  * password" from "password not set yet".
  */

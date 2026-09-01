@@ -42,7 +42,7 @@ class OtpChallengesTest {
 
   @Test
   @TestTransaction
-  @DisplayName("the message is addressed to the right person for the right club")
+  @DisplayName("the message is addressed to the right person for the right tenant")
   void theOutboxRowCarriesItsTenant() {
     UUID tenant = UUID.randomUUID();
     otp.issue(tenant, IdentityType.EMAIL, "fan@example.com");
@@ -88,16 +88,16 @@ class OtpChallengesTest {
 
   @Test
   @TestTransaction
-  @DisplayName("one club's limit does not spend another club's")
+  @DisplayName("one tenant's limit does not spend another tenant's")
   void limitsAreCountedPerTenant() {
-    UUID bingol = UUID.randomUUID();
-    UUID ankaragucu = UUID.randomUUID();
+    UUID firstTenant = UUID.randomUUID();
+    UUID secondTenant = UUID.randomUUID();
     for (int i = 0; i < 3; i++) {
-      otp.issue(bingol, IdentityType.EMAIL, "fan@example.com");
+      otp.issue(firstTenant, IdentityType.EMAIL, "fan@example.com");
     }
 
-    // The same address, exhausted in one club, is untouched in the other.
-    IssuedChallenge elsewhere = otp.issue(ankaragucu, IdentityType.EMAIL, "fan@example.com");
+    // The same address, exhausted in one tenant, is untouched in the other.
+    IssuedChallenge elsewhere = otp.issue(secondTenant, IdentityType.EMAIL, "fan@example.com");
     assertTrue(otp.find(elsewhere.challengeId()).isPresent());
   }
 

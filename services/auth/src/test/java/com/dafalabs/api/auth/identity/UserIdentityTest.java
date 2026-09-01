@@ -28,29 +28,29 @@ class UserIdentityTest {
   @TestTransaction
   @DisplayName("the same address belongs to two tenants at once")
   void oneAddressCanExistInEveryTenant() {
-    UUID bingol = UUID.randomUUID();
-    UUID ankaragucu = UUID.randomUUID();
+    UUID firstTenant = UUID.randomUUID();
+    UUID secondTenant = UUID.randomUUID();
 
-    claim(bingol, "fan@example.com");
-    claim(ankaragucu, "fan@example.com");
+    claim(firstTenant, "fan@example.com");
+    claim(secondTenant, "fan@example.com");
 
-    // Supporting two clubs is ordinary, and neither club may learn of the other
+    // Holding an account in two tenants is ordinary, and neither may learn of the other
     // from a sign-up that failed.
-    assertTrue(identities.find(bingol, IdentityType.EMAIL, "fan@example.com").isPresent());
-    assertTrue(identities.find(ankaragucu, IdentityType.EMAIL, "fan@example.com").isPresent());
+    assertTrue(identities.find(firstTenant, IdentityType.EMAIL, "fan@example.com").isPresent());
+    assertTrue(identities.find(secondTenant, IdentityType.EMAIL, "fan@example.com").isPresent());
   }
 
   @Test
   @TestTransaction
   @DisplayName("the same address twice inside one tenant is refused")
   void oneAddressIsUniqueWithinATenant() {
-    UUID bingol = UUID.randomUUID();
-    claim(bingol, "fan@example.com");
+    UUID firstTenant = UUID.randomUUID();
+    claim(firstTenant, "fan@example.com");
 
     assertThrows(
         PersistenceException.class,
         () -> {
-          claim(bingol, "fan@example.com");
+          claim(firstTenant, "fan@example.com");
           identities.flush();
         });
   }
@@ -59,8 +59,8 @@ class UserIdentityTest {
   @TestTransaction
   @DisplayName("a lookup in one tenant cannot see another tenant's identity")
   void lookupIsScopedToTheTenant() {
-    UUID bingol = UUID.randomUUID();
-    claim(bingol, "fan@example.com");
+    UUID firstTenant = UUID.randomUUID();
+    claim(firstTenant, "fan@example.com");
 
     Optional<UserIdentity> elsewhere =
         identities.find(UUID.randomUUID(), IdentityType.EMAIL, "fan@example.com");
@@ -72,19 +72,19 @@ class UserIdentityTest {
   @TestTransaction
   @DisplayName("an address is stored in one form however it was typed")
   void addressesAreNormalised() {
-    UUID bingol = UUID.randomUUID();
-    claim(bingol, "  Fan@Example.COM ");
+    UUID firstTenant = UUID.randomUUID();
+    claim(firstTenant, "  Fan@Example.COM ");
 
     // Found by the form nobody typed, because both were reduced to it.
-    assertTrue(identities.find(bingol, IdentityType.EMAIL, "fan@example.com").isPresent());
+    assertTrue(identities.find(firstTenant, IdentityType.EMAIL, "fan@example.com").isPresent());
   }
 
   @Test
   @TestTransaction
   @DisplayName("a claimed identity is not a verified one")
   void claimingDoesNotVerify() {
-    UUID bingol = UUID.randomUUID();
-    UserIdentity identity = claim(bingol, "fan@example.com");
+    UUID firstTenant = UUID.randomUUID();
+    UserIdentity identity = claim(firstTenant, "fan@example.com");
 
     assertFalse(identity.isVerified());
 
@@ -94,12 +94,12 @@ class UserIdentityTest {
 
   @Test
   @TestTransaction
-  @DisplayName("a fan has no credential, a club admin has one")
+  @DisplayName("a fan has no credential, a tenant admin has one")
   void credentialsAreOptional() {
-    UUID bingol = UUID.randomUUID();
+    UUID firstTenant = UUID.randomUUID();
 
-    User fan = User.create(bingol, Role.FAN, NOW);
-    User admin = User.create(bingol, Role.CLUB_ADMIN, NOW);
+    User fan = User.create(firstTenant, Role.USER, NOW);
+    User admin = User.create(firstTenant, Role.TENANT_ADMIN, NOW);
     users.persist(fan);
     users.persist(admin);
     credentials.persist(UserCredential.of(admin, CredentialType.PASSWORD, "hash", NOW));
@@ -112,7 +112,7 @@ class UserIdentityTest {
   @TestTransaction
   @DisplayName("blocking someone invalidates the tokens already in their hands")
   void blockingRevokesIssuedTokens() {
-    User user = User.create(UUID.randomUUID(), Role.FAN, NOW);
+    User user = User.create(UUID.randomUUID(), Role.USER, NOW);
     users.persist(user);
     assertEquals(0, user.tokenEpoch());
     assertTrue(user.canSignIn());
@@ -125,7 +125,7 @@ class UserIdentityTest {
   }
 
   private UserIdentity claim(UUID tenantId, String address) {
-    User user = User.create(tenantId, Role.FAN, NOW);
+    User user = User.create(tenantId, Role.USER, NOW);
     users.persist(user);
     UserIdentity identity = UserIdentity.claim(user, IdentityType.EMAIL, address, NOW);
     identities.persist(identity);

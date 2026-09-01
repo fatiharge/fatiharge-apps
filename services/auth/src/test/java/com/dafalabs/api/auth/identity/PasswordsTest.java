@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 class PasswordsTest {
 
   private static final Instant NOW = Instant.parse("2026-09-01T10:00:00Z");
-  private static final String GOOD = "kartallar-yesil-beyaz";
+  private static final String GOOD = "yeterince-uzun-bir-parola";
 
   @Inject Passwords passwords;
   @Inject UserRepository users;
@@ -70,17 +70,17 @@ class PasswordsTest {
   void settingAgainReplaces() {
     User admin = admin();
     passwords.set(admin, GOOD);
-    passwords.set(admin, "bingolspor-kartallari");
+    passwords.set(admin, "ikinci-uzun-parola");
 
     assertFalse(passwords.verify(admin.id(), GOOD));
-    assertTrue(passwords.verify(admin.id(), "bingolspor-kartallari"));
+    assertTrue(passwords.verify(admin.id(), "ikinci-uzun-parola"));
   }
 
   @Test
   @TestTransaction
   @DisplayName("someone with no password verifies nothing")
   void aFanWithoutAPasswordCannotBeVerified() {
-    User fan = User.create(UUID.randomUUID(), Role.FAN, NOW);
+    User fan = User.create(UUID.randomUUID(), Role.USER, NOW);
     users.persist(fan);
 
     assertFalse(passwords.has(fan.id()));
@@ -107,7 +107,7 @@ class PasswordsTest {
   }
 
   private User admin() {
-    User admin = User.create(UUID.randomUUID(), Role.CLUB_ADMIN, NOW);
+    User admin = User.create(UUID.randomUUID(), Role.TENANT_ADMIN, NOW);
     users.persist(admin);
     return admin;
   }

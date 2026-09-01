@@ -11,7 +11,7 @@ public class UserIdentityRepository implements PanacheRepositoryBase<UserIdentit
   /**
    * The tenant is part of the lookup, never an afterthought applied later. A
    * query that found an identity first and checked the tenant afterwards would
-   * be one forgotten line away from signing someone into another club.
+   * be one forgotten line away from signing someone into another tenant.
    */
   public Optional<UserIdentity> find(UUID tenantId, IdentityType type, String value) {
     return find(

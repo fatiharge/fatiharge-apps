@@ -36,7 +36,7 @@ class SessionResourceTest {
   private static final String BY_PASSWORD = "/v1/auth/sessions/by-password";
   private static final String SECOND_FACTOR = "/v1/auth/sessions/second-factor";
   private static final String REFRESH = "/v1/auth/sessions/refresh";
-  private static final String ADMIN_PASSWORD = "yesil-beyaz-kartallar";
+  private static final String ADMIN_PASSWORD = "yonetici-icin-uzun-parola";
 
   @Inject OutboxRepository outbox;
   @Inject UserRepository users;
@@ -46,69 +46,69 @@ class SessionResourceTest {
   @Inject Clock clock;
 
   @Test
-  @DisplayName("a supporter signs in with a code, and the account appears on the way")
+  @DisplayName("an ordinary user signs in with a code, and the account appears on the way")
   void firstCodeSignInCreatesTheAccount() {
-    UUID club = UUID.randomUUID();
+    UUID tenant = UUID.randomUUID();
     String address = address();
 
-    String challengeId = requestCode(club, address);
-    String access = signInWithCode(challengeId, codeSentTo(club, address)).get("accessToken").toString();
+    String challengeId = requestCode(tenant, address);
+    String access = signInWithCode(challengeId, codeSentTo(tenant, address)).get("accessToken").toString();
 
-    assertEquals(club.toString(), claim(access, "club"));
-    assertEquals(Role.FAN.name(), claim(access, "role"));
+    assertEquals(tenant.toString(), claim(access, "tenant"));
+    assertEquals(Role.USER.name(), claim(access, "role"));
   }
 
   @Test
   @DisplayName("signing in again finds the account rather than making a second one")
   void repeatSignInReusesTheAccount() {
-    UUID club = UUID.randomUUID();
+    UUID tenant = UUID.randomUUID();
     String address = address();
 
-    String first = signInWithCode(requestCode(club, address), codeSentTo(club, address))
+    String first = signInWithCode(requestCode(tenant, address), codeSentTo(tenant, address))
         .get("accessToken").toString();
-    String second = signInWithCode(requestCode(club, address), codeSentTo(club, address))
+    String second = signInWithCode(requestCode(tenant, address), codeSentTo(tenant, address))
         .get("accessToken").toString();
 
     assertEquals(claim(first, "sub"), claim(second, "sub"));
   }
 
   @Test
-  @DisplayName("the same address in two clubs is two unrelated people")
-  void oneAddressBecomesTwoAccountsInTwoClubs() {
-    UUID bingol = UUID.randomUUID();
-    UUID ankaragucu = UUID.randomUUID();
+  @DisplayName("the same address in two tenants is two unrelated people")
+  void oneAddressBecomesTwoAccountsInTwoTenants() {
+    UUID firstTenant = UUID.randomUUID();
+    UUID secondTenant = UUID.randomUUID();
     String address = address();
 
-    String inBingol = signInWithCode(requestCode(bingol, address), codeSentTo(bingol, address))
+    String inFirst = signInWithCode(requestCode(firstTenant, address), codeSentTo(firstTenant, address))
         .get("accessToken").toString();
-    String inAnkaragucu =
-        signInWithCode(requestCode(ankaragucu, address), codeSentTo(ankaragucu, address))
+    String inSecond =
+        signInWithCode(requestCode(secondTenant, address), codeSentTo(secondTenant, address))
             .get("accessToken").toString();
 
-    assertNotEquals(claim(inBingol, "sub"), claim(inAnkaragucu, "sub"));
-    assertEquals(bingol.toString(), claim(inBingol, "club"));
-    assertEquals(ankaragucu.toString(), claim(inAnkaragucu, "club"));
+    assertNotEquals(claim(inFirst, "sub"), claim(inSecond, "sub"));
+    assertEquals(firstTenant.toString(), claim(inFirst, "tenant"));
+    assertEquals(secondTenant.toString(), claim(inSecond, "tenant"));
   }
 
   @Test
-  @DisplayName("a code proves an address in one club and cannot be spent in another")
-  void aCodeCannotBeCarriedToAnotherClub() {
-    UUID bingol = UUID.randomUUID();
+  @DisplayName("a code proves an address in one tenant and cannot be spent in another")
+  void aCodeCannotBeCarriedToAnotherTenant() {
+    UUID firstTenant = UUID.randomUUID();
     String address = address();
-    String challengeId = requestCode(bingol, address);
+    String challengeId = requestCode(firstTenant, address);
 
-    // The club is read from the challenge, so naming another one changes nothing:
-    // the session that comes back still belongs to the club that was proven.
-    String access = signInWithCode(challengeId, codeSentTo(bingol, address)).get("accessToken").toString();
-    assertEquals(bingol.toString(), claim(access, "club"));
+    // The tenant is read from the challenge, so naming another one changes nothing:
+    // the session that comes back still belongs to the tenant that was proven.
+    String access = signInWithCode(challengeId, codeSentTo(firstTenant, address)).get("accessToken").toString();
+    assertEquals(firstTenant.toString(), claim(access, "tenant"));
   }
 
   @Test
   @DisplayName("a wrong code buys nothing")
   void wrongCodeIsRefused() {
-    UUID club = UUID.randomUUID();
+    UUID tenant = UUID.randomUUID();
     String address = address();
-    String challengeId = requestCode(club, address);
+    String challengeId = requestCode(tenant, address);
 
     given()
         .contentType(ContentType.JSON)
@@ -121,16 +121,16 @@ class SessionResourceTest {
   }
 
   @Test
-  @DisplayName("a code alone does not open a panel")
+  @DisplayName("a code alone does not open an administrator's account")
   void anAdminCannotSignInWithACodeAlone() {
-    UUID club = UUID.randomUUID();
+    UUID tenant = UUID.randomUUID();
     String address = address();
-    givenAnAdmin(club, address);
+    givenAnAdmin(tenant, address);
 
-    String challengeId = requestCode(club, address);
+    String challengeId = requestCode(tenant, address);
     given()
         .contentType(ContentType.JSON)
-        .body(Map.of("challengeId", challengeId, "code", codeSentTo(club, address)))
+        .body(Map.of("challengeId", challengeId, "code", codeSentTo(tenant, address)))
         .when()
         .post(BY_CODE)
         .then()
@@ -141,11 +141,11 @@ class SessionResourceTest {
   @Test
   @DisplayName("an admin's password is the first step, and the code is the second")
   void adminSignInTakesTwoSteps() {
-    UUID club = UUID.randomUUID();
+    UUID tenant = UUID.randomUUID();
     String address = address();
-    givenAnAdmin(club, address);
+    givenAnAdmin(tenant, address);
 
-    Map<String, Object> first = signInWithPassword(club, address, ADMIN_PASSWORD);
+    Map<String, Object> first = signInWithPassword(tenant, address, ADMIN_PASSWORD);
     assertEquals("SECOND_FACTOR_REQUIRED", first.get("status"));
 
     String access =
@@ -154,7 +154,7 @@ class SessionResourceTest {
             .body(
                 Map.of(
                     "pendingToken", first.get("pendingToken"),
-                    "code", codeSentTo(club, address)))
+                    "code", codeSentTo(tenant, address)))
             .when()
             .post(SECOND_FACTOR)
             .then()
@@ -162,35 +162,35 @@ class SessionResourceTest {
             .extract()
             .path("accessToken");
 
-    assertEquals(Role.CLUB_ADMIN.name(), claim(access, "role"));
+    assertEquals(Role.TENANT_ADMIN.name(), claim(access, "role"));
   }
 
   @Test
   @DisplayName("a wrong password is refused before any code is sent")
   void wrongPasswordSendsNothing() {
-    UUID club = UUID.randomUUID();
+    UUID tenant = UUID.randomUUID();
     String address = address();
-    givenAnAdmin(club, address);
+    givenAnAdmin(tenant, address);
 
     given()
         .contentType(ContentType.JSON)
-        .header(SessionResource.CLUB_HEADER, club.toString())
+        .header(SessionResource.TENANT_HEADER, tenant.toString())
         .body(Map.of("identityType", "EMAIL", "identity", address, "password", "not-the-password"))
         .when()
         .post(BY_PASSWORD)
         .then()
         .statusCode(401);
 
-    assertEquals(0, messagesTo(club, address).size());
+    assertEquals(0, messagesTo(tenant, address).size());
   }
 
   @Test
   @DisplayName("a refresh token buys a new session")
   void refreshIssuesANewSession() {
-    UUID club = UUID.randomUUID();
+    UUID tenant = UUID.randomUUID();
     String address = address();
     Map<String, Object> session =
-        signInWithCode(requestCode(club, address), codeSentTo(club, address));
+        signInWithCode(requestCode(tenant, address), codeSentTo(tenant, address));
 
     given()
         .contentType(ContentType.JSON)
@@ -205,10 +205,10 @@ class SessionResourceTest {
   @Test
   @DisplayName("an access token is not a refresh token")
   void anAccessTokenCannotRefresh() {
-    UUID club = UUID.randomUUID();
+    UUID tenant = UUID.randomUUID();
     String address = address();
     Map<String, Object> session =
-        signInWithCode(requestCode(club, address), codeSentTo(club, address));
+        signInWithCode(requestCode(tenant, address), codeSentTo(tenant, address));
 
     given()
         .contentType(ContentType.JSON)
@@ -222,16 +222,16 @@ class SessionResourceTest {
   @Test
   @DisplayName("blocking someone stops the refresh token already in their hands")
   void blockingEndsEveryLiveSession() {
-    UUID club = UUID.randomUUID();
+    UUID tenant = UUID.randomUUID();
     String address = address();
     Map<String, Object> session =
-        signInWithCode(requestCode(club, address), codeSentTo(club, address));
+        signInWithCode(requestCode(tenant, address), codeSentTo(tenant, address));
 
     QuarkusTransaction.requiringNew()
         .run(
             () ->
                 identities
-                    .find(club, IdentityType.EMAIL, address)
+                    .find(tenant, IdentityType.EMAIL, address)
                     .flatMap(identity -> users.findByIdOptional(identity.userId()))
                     .orElseThrow()
                     .block());
@@ -250,7 +250,7 @@ class SessionResourceTest {
   void phoneIsRefused() {
     given()
         .contentType(ContentType.JSON)
-        .header(SessionResource.CLUB_HEADER, UUID.randomUUID().toString())
+        .header(SessionResource.TENANT_HEADER, UUID.randomUUID().toString())
         .body(Map.of("identityType", "PHONE", "identity", "+905000000000"))
         .when()
         .post(CODES)
@@ -260,8 +260,8 @@ class SessionResourceTest {
   }
 
   @Test
-  @DisplayName("a request without a club is refused")
-  void theClubHeaderIsRequired() {
+  @DisplayName("a request without a tenant is refused")
+  void theTenantHeaderIsRequired() {
     given()
         .contentType(ContentType.JSON)
         .body(Map.of("identityType", "EMAIL", "identity", address()))
@@ -269,13 +269,13 @@ class SessionResourceTest {
         .post(CODES)
         .then()
         .statusCode(400)
-        .body("code", equalTo("invalid_club"));
+        .body("code", equalTo("invalid_tenant"));
   }
 
-  private String requestCode(UUID club, String address) {
+  private String requestCode(UUID tenant, String address) {
     return given()
         .contentType(ContentType.JSON)
-        .header(SessionResource.CLUB_HEADER, club.toString())
+        .header(SessionResource.TENANT_HEADER, tenant.toString())
         .body(Map.of("identityType", "EMAIL", "identity", address))
         .when()
         .post(CODES)
@@ -299,10 +299,10 @@ class SessionResourceTest {
         .as(Map.class);
   }
 
-  private Map<String, Object> signInWithPassword(UUID club, String address, String password) {
+  private Map<String, Object> signInWithPassword(UUID tenant, String address, String password) {
     return given()
         .contentType(ContentType.JSON)
-        .header(SessionResource.CLUB_HEADER, club.toString())
+        .header(SessionResource.TENANT_HEADER, tenant.toString())
         .body(Map.of("identityType", "EMAIL", "identity", address, "password", password))
         .when()
         .post(BY_PASSWORD)
@@ -312,11 +312,11 @@ class SessionResourceTest {
         .as(Map.class);
   }
 
-  private void givenAnAdmin(UUID club, String address) {
+  private void givenAnAdmin(UUID tenant, String address) {
     QuarkusTransaction.requiringNew()
         .run(
             () -> {
-              User admin = User.create(club, Role.CLUB_ADMIN, clock.instant());
+              User admin = User.create(tenant, Role.TENANT_ADMIN, clock.instant());
               users.persist(admin);
               identities.persist(
                   UserIdentity.claim(admin, IdentityType.EMAIL, address, clock.instant()));
@@ -325,8 +325,8 @@ class SessionResourceTest {
   }
 
   /** The only place a test can learn a code — the same place a person would. */
-  private String codeSentTo(UUID club, String address) {
-    List<String> payloads = messagesTo(club, address);
+  private String codeSentTo(UUID tenant, String address) {
+    List<String> payloads = messagesTo(tenant, address);
     try {
       Map<?, ?> variables = json.readValue(payloads.get(0), Map.class);
       return (String) variables.get("code");
@@ -335,9 +335,9 @@ class SessionResourceTest {
     }
   }
 
-  private List<String> messagesTo(UUID club, String address) {
+  private List<String> messagesTo(UUID tenant, String address) {
     return QuarkusTransaction.requiringNew()
-        .call(() -> outbox.to(club, address).stream().map(m -> m.variables()).toList());
+        .call(() -> outbox.to(tenant, address).stream().map(m -> m.variables()).toList());
   }
 
   private String claim(String jwt, String name) {
