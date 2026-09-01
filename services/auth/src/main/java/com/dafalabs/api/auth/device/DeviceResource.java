@@ -12,8 +12,17 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 /** The only endpoint anyone calls on this service. */
+// The name is the generated Dart class name: a tag called "Cihaz" renames
+// DeviceResourceApi to CihazApi and stops the app compiling. The name stays as
+// the resource is called; the Turkish belongs in the description.
+@Tag(
+    name = "Device Resource",
+    description =
+        "Hesabı olmayan bir kişinin tek kimliği. Uygulama, cihaz kimliğinin ham "
+            + "hâlini değil SHA-256 özetini gönderir; ham kimlik telefonda kalır.")
 @Path("/v1/devices")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -32,7 +41,13 @@ public class DeviceResource {
   // silently rename the client's API.
   @POST
   @Path("/register")
-  @Operation(operationId = "registerDevice", summary = "Register a device and get a token")
+  @Operation(
+      operationId = "registerDevice",
+      summary = "Cihazı kaydeder ve token verir",
+      description =
+          "İkinci kez kaydolmak hata değil olağan durumdur: uygulama token'ı "
+              + "dolduğunda yeniden kaydolur ve silinip kurulan bir uygulama aynı "
+              + "özetle gelir. İkisi de zaten sahip oldukları kimliği alır.")
   public DeviceTokenResponse register(RegisterDeviceRequest request) {
     IssuedToken issued = registration.register(request.deviceHash(), request.platform());
     return new DeviceTokenResponse(
@@ -46,7 +61,12 @@ public class DeviceResource {
   @GET
   @Path("/me")
   @Authenticated
-  @Operation(operationId = "currentDevice", summary = "Resolve the token holder")
+  @Operation(
+      operationId = "currentDevice",
+      summary = "Token'ı taşıyanın kim olduğunu söyler",
+      description =
+          "İstemcinin, elindeki token'ın hâlâ geçerli olup olmadığını bir sonraki "
+              + "çağrının hatasından tahmin etmek yerine doğrudan sorabilmesi için.")
   public CurrentDeviceResponse me() {
     return new CurrentDeviceResponse(current.id().toString());
   }

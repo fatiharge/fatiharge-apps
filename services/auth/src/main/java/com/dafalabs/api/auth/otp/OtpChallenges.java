@@ -52,6 +52,7 @@ public class OtpChallenges {
    */
   @Transactional
   public IssuedChallenge issue(UUID tenantId, IdentityType type, String value) {
+    refuseUncarriedChannel(type);
     String identity = normalise(value);
     Instant now = clock.instant();
     refuseIfTooMany(tenantId, type, identity, now);
@@ -96,6 +97,20 @@ public class OtpChallenges {
 
   public Optional<OtpChallenge> find(UUID challengeId) {
     return challenges.findByIdOptional(challengeId);
+  }
+
+  /**
+   * PHONE exists in the model so that adding SMS later is a channel and a
+   * setting rather than a migration. Until there is one, asking for a code by
+   * phone is refused here: accepting it would leave unverified numbers behind
+   * that nothing could ever prove, and they would be trusted later precisely
+   * because they were already in the table.
+   */
+  private void refuseUncarriedChannel(IdentityType type) {
+    if (type != IdentityType.EMAIL) {
+      throw new CustomRuntimeException(
+          400, "channel_unavailable", "Codes can only be sent by email at the moment.");
+    }
   }
 
   private void refuseIfTooMany(UUID tenantId, IdentityType type, String identity, Instant now) {
