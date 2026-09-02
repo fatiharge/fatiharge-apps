@@ -57,7 +57,7 @@ dependencies:
 
   # The mascot. Rive rather than Lottie because the behaviour is interactive —
   # a state machine the file drives itself, rather than frames Dart has to push.
-  rive: ^0.13.20
+  rive: ^0.14.11
   meta: any
   confetti: ^0.8.0
 
