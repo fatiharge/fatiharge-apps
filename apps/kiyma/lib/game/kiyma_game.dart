@@ -1,0 +1,36 @@
+import 'package:flame/components.dart';
+import 'package:flame/game.dart';
+import 'package:kiyma/data/scene.dart';
+import 'package:kiyma/game/assets.dart';
+import 'package:kiyma/game/day_run.dart';
+import 'package:kiyma/game/render/counter.dart';
+
+/// The engine's share of the work: a clock, a gesture stream, and a viewport
+/// that keeps the painted kitchen the same shape on every phone.
+///
+/// One game object per day. Restarting a day builds a new one, which costs
+/// nothing — the images live in [GameAssets] and are never reloaded.
+class KiymaGame extends FlameGame {
+  KiymaGame({required this.scene, required this.art, required this.run});
+
+  final SceneData scene;
+
+  /// Not named `assets`: [FlameGame] already has a field by that name.
+  final GameAssets art;
+  final DayRun run;
+
+  @override
+  Future<void> onLoad() async {
+    // Everything in the art was measured in one 1024x576 space, so the fit is
+    // a single letterbox rather than a layout pass. The viewfinder is moved
+    // to the top-left because scene coordinates start there, not at a centre.
+    camera = CameraComponent.withFixedResolution(
+      world: world,
+      width: scene.size.width,
+      height: scene.size.height,
+    )..viewfinder.anchor = Anchor.topLeft;
+    camera.viewfinder.position = Vector2.zero();
+
+    world.add(CounterComponent(scene: scene, assets: art, run: run));
+  }
+}

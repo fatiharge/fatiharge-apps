@@ -1,0 +1,560 @@
+import 'dart:math' as math;
+import 'dart:ui';
+
+import 'package:kiyma/data/scene.dart';
+import 'package:kiyma/game/balance.dart';
+import 'package:kiyma/game/model/carried.dart';
+import 'package:kiyma/game/model/order.dart';
+import 'package:kiyma/game/model/products.dart';
+import 'package:kiyma/game/order_maker.dart';
+import 'package:kiyma/game/progress.dart';
+
+/// Something the day did that the screen should react to once.
+enum DayEvent {
+  kabul,
+  reddedildi,
+  gecersiz,
+  yandi,
+  musteriGeldi,
+  musteriMemnun,
+  musteriKizgin,
+  gunBitti,
+}
+
+/// One day behind the counter: the mutable world, and every rule that moves
+/// it.
+///
+/// Deliberately free of Flame and of Flutter widgets. The engine ticks it and
+/// draws from it; nothing here knows about either, which is what makes the
+/// rules testable without a canvas.
+class DayRun {
+  DayRun({
+    required this.scene,
+    required this.progress,
+    required this.onEvent,
+    required this.onChanged,
+    math.Random? random,
+  }) : day = progress.gun,
+       _maker = OrderMaker(progress.unlocks, random: random) {
+    final unlocks = progress.unlocks;
+    mangal = [
+      for (var i = 0; i < 4; i++) MangalSlot(unlocked: i < unlocks.mangalSlots),
+    ];
+    durumBekleme = List<Urun?>.filled(4, null);
+    tabakBirakma = List<Urun?>.filled(2, null);
+    bardakBekletme = List<Bardak?>.filled(3, null);
+    musteriler = List<Customer?>.filled(4, null);
+    kuyruk = Balance.customerCount(day, progress.itibar);
+  }
+
+  final SceneData scene;
+  final Progress progress;
+  final int day;
+  final void Function(DayEvent event) onEvent;
+
+  /// Called whenever something the HUD shows moved. Patience and cooking are
+  /// drawn on the canvas and deliberately do not go through here — a bloc
+  /// emitting at frame rate is a bloc nobody can debug.
+  final void Function() onChanged;
+
+  final OrderMaker _maker;
+
+  late final List<MangalSlot> mangal;
+  late final List<Urun?> durumBekleme;
+  late final List<Urun?> tabakBirakma;
+  late final List<Bardak?> bardakBekletme;
+  late final List<Customer?> musteriler;
+
+  Durum? durumIstasyonu;
+  Porsiyon? tabakIstasyonu;
+
+  Carried? carried;
+  Offset carriedAt = Offset.zero;
+
+  /// Customers still to walk in today. The day is over when this and the
+  /// counter are both empty.
+  late int kuyruk;
+  double _sonrakiGelis = 0;
+  bool bitti = false;
+
+  int get kalanMusteri => kuyruk + musteriler.where((c) => c != null).length;
+
+  // --- Clock ---
+
+  void tick(double dt) {
+    if (bitti) return;
+
+    for (final slot in mangal) {
+      if (slot.tick(dt, day)) {
+        progress.cezalandir(Balance.burnPenalty(day).round());
+        onEvent(DayEvent.yandi);
+        onChanged();
+      }
+    }
+
+    for (final bardak in bardakBekletme) {
+      bardak?.tick(dt);
+    }
+
+    for (var i = 0; i < musteriler.length; i++) {
+      final customer = musteriler[i];
+      if (customer == null) continue;
+      customer.sabirKalan -= dt;
+      if (customer.sabirKalan <= 0) {
+        _ayril(i, memnun: false);
+      }
+    }
+
+    _sonrakiGelis -= dt;
+    if (kuyruk > 0 && _sonrakiGelis <= 0) {
+      final free = _bosMusteriSlotu();
+      if (free != null) {
+        musteriler[free] = Customer(order: _maker.make(), day: day);
+        kuyruk--;
+        _sonrakiGelis = Balance.arrivalGap;
+        onEvent(DayEvent.musteriGeldi);
+        onChanged();
+      }
+    }
+
+    if (kuyruk == 0 && musteriler.every((c) => c == null)) {
+      bitti = true;
+      onEvent(DayEvent.gunBitti);
+      onChanged();
+    }
+  }
+
+  int? _bosMusteriSlotu() {
+    for (var i = 0; i < progress.unlocks.musteriSlots; i++) {
+      if (musteriler[i] == null) return i;
+    }
+    return null;
+  }
+
+  // --- Hit testing ---
+
+  /// The region under [point], smallest first.
+  ///
+  /// The counter's own surface is a region too and it covers half the scene,
+  /// so a first-match search would swallow everything on it. Area order makes
+  /// the specific area win without any z ordering to maintain.
+  SceneRegion? regionAt(Offset point) {
+    SceneRegion? best;
+    var bestArea = double.infinity;
+    for (final region in scene.interactive) {
+      if (!region.quad.contains(point)) continue;
+      final bounds = region.quad.bounds;
+      final area = bounds.width * bounds.height;
+      if (area < bestArea) {
+        best = region;
+        bestArea = area;
+      }
+    }
+    return best;
+  }
+
+  int _slotAt(SceneRegion region, Offset point) {
+    final slots = region.slots;
+    for (var i = 0; i < slots.length; i++) {
+      if (slots[i].contains(point)) return i;
+    }
+    // Fall back to the nearest centre: leaning slots leave hairline gaps and
+    // a drop that lands in one should not silently do nothing.
+    var best = 0;
+    var bestDistance = double.infinity;
+    for (var i = 0; i < slots.length; i++) {
+      final distance = (slots[i].center - point).distanceSquared;
+      if (distance < bestDistance) {
+        best = i;
+        bestDistance = distance;
+      }
+    }
+    return best;
+  }
+
+  /// Whether the thing normally drawn at [region] is currently in the hand.
+  ///
+  /// Picking something up does not take it off the counter — that only
+  /// happens once it lands somewhere, so a failed drop needs no undo. The
+  /// renderer asks this instead, and skips what the finger is already
+  /// carrying.
+  bool lifted(String region, [int? slot]) => switch (carried) {
+    PismisEt(slot: final from) when region == 'mangal_alani' => from == slot,
+    HazirUrun(fromSource: false, :final origin, slot: final from) =>
+      origin == region && from == slot,
+    _ => false,
+  };
+
+  // --- Tap: sources with exactly one destination (design doc 13) ---
+
+  void tap(Offset point) {
+    if (bitti) return;
+    final region = regionAt(point);
+    switch (region?.name) {
+      case 'tabak_kaynak':
+        if (progress.unlocks.porsiyonHatti && tabakIstasyonu == null) {
+          tabakIstasyonu = Porsiyon();
+          return;
+        }
+      case 'bardak_kaynak':
+        if (progress.unlocks.icecekHatti) {
+          final free = bardakBekletme.indexWhere((b) => b == null);
+          if (free >= 0) {
+            bardakBekletme[free] = Bardak();
+            return;
+          }
+        }
+    }
+    onEvent(DayEvent.gecersiz);
+  }
+
+  // --- Upward flick: rolling, and nothing else ---
+
+  void flickUp(Offset point) {
+    if (bitti) return;
+    final station = durumIstasyonu;
+    if (regionAt(point)?.name == 'durum_hazirlama' &&
+        station != null &&
+        station.sarilabilir) {
+      station.sarili = true;
+      return;
+    }
+    onEvent(DayEvent.gecersiz);
+  }
+
+  // --- Drag ---
+
+  bool beginDrag(Offset point) {
+    if (bitti) return false;
+    final region = regionAt(point);
+    if (region == null) return false;
+    carried = _pickUp(region, point);
+    carriedAt = point;
+    return carried != null;
+  }
+
+  void endDrag(Offset point) {
+    final held = carried;
+    carried = null;
+    if (held == null) return;
+    if (!_drop(held, point)) {
+      onEvent(DayEvent.gecersiz);
+      _putBack(held);
+    }
+    onChanged();
+  }
+
+  Carried? _pickUp(SceneRegion region, Offset point) {
+    final unlocks = progress.unlocks;
+
+    if (region.name == 'malzeme_kiyma') return const CigKiyma();
+    if (region.name == 'lavas_kaynak') return const Lavas();
+    if (region.name == 'kagit_kaynak') return const Kagit();
+
+    for (final malzeme in unlocks.malzemeler) {
+      if (region.name == malzeme.region) return MalzemeTutami(malzeme);
+    }
+    for (final bilesen in unlocks.bilesenler) {
+      if (region.name == bilesen.region) return BilesenTutami(bilesen);
+    }
+    for (final icecek in unlocks.icecekler) {
+      if (region.name != icecek.sourceRegion) continue;
+      return icecek.poured
+          ? Surahi(icecek)
+          : HazirUrun(IcecekUrun(icecek), region.name, fromSource: true);
+    }
+    for (final tatli in unlocks.tatlilar) {
+      if (region.name == tatli.region) {
+        return HazirUrun(TatliUrun(tatli), region.name, fromSource: true);
+      }
+    }
+
+    switch (region.name) {
+      case 'mangal_alani':
+        final index = _slotAt(region, point);
+        final slot = mangal[index];
+        if (slot.alinabilir) return PismisEt(index);
+        if (slot.yanmis) return PismisEt(index, yanik: true);
+
+      case 'durum_hazirlama':
+        final station = durumIstasyonu;
+        if (station != null && station.hazir) {
+          return HazirUrun(DurumUrun(station), region.name);
+        }
+
+      case 'tabak_hazirlama':
+        final station = tabakIstasyonu;
+        if (station != null && station.hazir) {
+          return HazirUrun(PorsiyonUrun(station), region.name);
+        }
+
+      case 'durum_bekleme':
+        final index = _slotAt(region, point);
+        final urun = durumBekleme[index];
+        if (urun != null) return HazirUrun(urun, region.name, slot: index);
+
+      case 'tabak_birakma':
+        final index = _slotAt(region, point);
+        final urun = tabakBirakma[index];
+        if (urun != null) return HazirUrun(urun, region.name, slot: index);
+
+      case 'bardak_bekletme':
+        final index = _slotAt(region, point);
+        final bardak = bardakBekletme[index];
+        if (bardak != null && bardak.hazir) {
+          return HazirUrun(
+            IcecekUrun(bardak.icerik!),
+            region.name,
+            slot: index,
+          );
+        }
+    }
+    return null;
+  }
+
+  bool _drop(Carried held, Offset point) {
+    final region = regionAt(point);
+    if (region == null) return false;
+
+    // The bin takes everything, always open. Without it burnt meat would hold
+    // a grill slot for the rest of the day.
+    if (region.name == 'cop_alani') {
+      _consume(held);
+      return true;
+    }
+
+    if (region.name.startsWith('musteri_slot_')) {
+      final index = int.parse(region.name.split('_').last) - 1;
+      final customer = musteriler[index];
+      if (customer == null || held is! HazirUrun) return false;
+      return _servis(index, customer, held);
+    }
+
+    switch (region.name) {
+      case 'mangal_alani':
+        if (held is! CigKiyma) return false;
+        final slot = mangal[_slotAt(region, point)];
+        if (!slot.unlocked || !slot.bos) return false;
+        slot.koy();
+        return true;
+
+      case 'durum_hazirlama':
+        return _durumaBirak(held);
+
+      case 'tabak_hazirlama':
+        return _tabagaBirak(held);
+
+      case 'durum_bekleme':
+        if (held is! HazirUrun || held.urun is! DurumUrun) return false;
+        return _rafaKoy(
+          durumBekleme,
+          held,
+          progress.unlocks.durumBekleme,
+          _slotAt(region, point),
+        );
+
+      case 'tabak_birakma':
+        if (held is! HazirUrun || held.urun is! PorsiyonUrun) return false;
+        return _rafaKoy(
+          tabakBirakma,
+          held,
+          progress.unlocks.porsiyonBekleme,
+          _slotAt(region, point),
+        );
+
+      case 'bardak_bekletme':
+        if (held is! Surahi) return false;
+        final bardak = bardakBekletme[_slotAt(region, point)];
+        if (bardak == null || !bardak.bos) return false;
+        bardak.doldur(held.icecek);
+        return true;
+    }
+    return false;
+  }
+
+  bool _durumaBirak(Carried held) {
+    if (held is Lavas) {
+      if (durumIstasyonu != null) return false;
+      durumIstasyonu = Durum();
+      return true;
+    }
+    final station = durumIstasyonu;
+    if (station == null) return false;
+    switch (held) {
+      case PismisEt(yanik: false):
+        if (station.etli || station.sarili) return false;
+        station.etli = true;
+      case MalzemeTutami(:final malzeme):
+        if (!station.malzemeKabul(malzeme)) return false;
+        station.malzemeler.add(malzeme);
+      case Kagit():
+        if (!station.kagitBekliyor) return false;
+        station.kagitli = true;
+      case _:
+        return false;
+    }
+    _consume(held);
+    return true;
+  }
+
+  bool _tabagaBirak(Carried held) {
+    final station = tabakIstasyonu;
+    if (station == null) return false;
+    switch (held) {
+      case Lavas():
+        if (!station.lavasBekliyor) return false;
+        station.lavasli = true;
+      case PismisEt(yanik: false):
+        if (!station.lavasli || station.etli) return false;
+        station.etli = true;
+      case BilesenTutami(:final bilesen):
+        if (!station.bilesenKabul(bilesen)) return false;
+        station.bilesenler.add(bilesen);
+      case _:
+        return false;
+    }
+    _consume(held);
+    return true;
+  }
+
+  bool _rafaKoy(List<Urun?> raf, HazirUrun held, int capacity, int preferred) {
+    final target = preferred < capacity && raf[preferred] == null
+        ? preferred
+        : _ilkBos(raf, capacity);
+    if (target == null) return false;
+    _consume(held);
+    raf[target] = held.urun;
+    return true;
+  }
+
+  int? _ilkBos(List<Urun?> raf, int capacity) {
+    for (var i = 0; i < capacity; i++) {
+      if (raf[i] == null) return i;
+    }
+    return null;
+  }
+
+  // --- Serving ---
+
+  bool _servis(int index, Customer customer, HazirUrun held) {
+    final order = customer.order;
+    final kazanc = switch (held.urun) {
+      TatliUrun(:final tatli)
+          when order.tatli == tatli && !customer.tatliVerildi =>
+        Balance.income(Balance.tatliBase[tatli]!, day),
+      IcecekUrun(:final icecek)
+          when order.icecek == icecek && !customer.icecekVerildi =>
+        Balance.income(Balance.icecekBase[icecek]!, day),
+      final urun when !customer.anaUrunVerildi && order.anaUrunKabul(urun) =>
+        _anaUrunGeliri(urun),
+      _ => null,
+    };
+
+    if (kazanc == null) {
+      customer.reddet();
+      onEvent(DayEvent.reddedildi);
+      // Handled, not invalid: the drop was a legal move that the customer
+      // turned down, so the product goes to its shelf rather than reporting a
+      // mis-drop.
+      _putBack(held);
+      return true;
+    }
+
+    switch (held.urun) {
+      case TatliUrun():
+        customer.tatliVerildi = true;
+      case IcecekUrun():
+        customer.icecekVerildi = true;
+      case _:
+        customer.anaUrunVerildi = true;
+    }
+
+    _consume(held);
+    customer.odenen += kazanc;
+    progress.kazan(kazanc);
+    onEvent(DayEvent.kabul);
+
+    if (customer.tamamlandi) _ayril(index, memnun: true);
+    return true;
+  }
+
+  int _anaUrunGeliri(Urun urun) => switch (urun) {
+    DurumUrun(:final durum) => Balance.income(
+      Balance.durumBase,
+      day,
+      ingredients: durum.malzemeler.length,
+    ),
+    PorsiyonUrun(:final porsiyon) => Balance.income(
+      Balance.porsiyonBase,
+      day,
+      ingredients: porsiyon.bilesenler.length,
+    ),
+    _ => 0,
+  };
+
+  void _ayril(int index, {required bool memnun}) {
+    final customer = musteriler[index];
+    if (customer == null) return;
+    musteriler[index] = null;
+
+    if (memnun) {
+      progress.itibarDegistir(Balance.reputationServed);
+      onEvent(DayEvent.musteriMemnun);
+    } else {
+      progress.itibarDegistir(
+        customer.hicAlmadi
+            ? Balance.reputationNothing
+            : Balance.reputationPartial,
+      );
+      onEvent(DayEvent.musteriKizgin);
+    }
+    _sonrakiGelis = math.max(_sonrakiGelis, Balance.arrivalGap);
+    onChanged();
+  }
+
+  // --- Where things go ---
+
+  /// Removes what was picked up from wherever it was sitting. Called only on
+  /// a successful drop, so a drop that fails needs no undo.
+  void _consume(Carried held) {
+    switch (held) {
+      case PismisEt(:final slot):
+        mangal[slot].bosalt();
+      case HazirUrun(fromSource: false, :final origin, :final slot):
+        switch (origin) {
+          case 'durum_hazirlama':
+            durumIstasyonu = null;
+          case 'tabak_hazirlama':
+            tabakIstasyonu = null;
+          case 'durum_bekleme':
+            durumBekleme[slot!] = null;
+          case 'tabak_birakma':
+            tabakBirakma[slot!] = null;
+          case 'bardak_bekletme':
+            bardakBekletme[slot!] = null;
+        }
+      case _:
+        break; // Sources are endless; nothing to take away.
+    }
+  }
+
+  /// Design doc 8.5: a refused product goes to its own waiting shelf, and
+  /// when that is full it stays in the prep area and blocks it. Nothing here
+  /// has to move for that second case — a failed drop never removed it.
+  void _putBack(Carried held) {
+    if (held is! HazirUrun || held.fromSource) return;
+    if (held.origin != 'durum_hazirlama' && held.origin != 'tabak_hazirlama') {
+      return;
+    }
+    final shelf = switch (held.urun) {
+      DurumUrun() => (durumBekleme, progress.unlocks.durumBekleme),
+      PorsiyonUrun() => (tabakBirakma, progress.unlocks.porsiyonBekleme),
+      _ => null,
+    };
+    if (shelf == null) return;
+    final target = _ilkBos(shelf.$1, shelf.$2);
+    if (target == null) return;
+    _consume(held);
+    shelf.$1[target] = held.urun;
+  }
+}
