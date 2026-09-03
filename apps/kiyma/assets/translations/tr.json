@@ -1,0 +1,61 @@
+{
+  "hud": {
+    "para": "₺{}",
+    "gun": "Gün {}",
+    "musteri": "{} müşteri",
+    "itibar": "İtibar {}"
+  },
+  "gun_basi": {
+    "baslik": "Gün {}",
+    "hedef": "Kümülatif hedef ₺{}",
+    "durum": "Şu ana kadar ₺{}",
+    "basla": "Tezgahı aç"
+  },
+  "gun_sonu": {
+    "gecti": "Gün geçildi",
+    "kaldi": "Hedef tutmadı",
+    "kazanc": "Toplam kazanç ₺{} / ₺{}",
+    "itibar": "İtibar {}",
+    "tekrar": "Gün tekrar oynanır, kazandığın para kalır.",
+    "devam": "Devam"
+  },
+  "magaza": {
+    "baslik": "Dükkanı büyüt",
+    "bakiye": "Kasada ₺{}",
+    "kapat": "Sonraki güne geç",
+    "bos": "Şimdilik alınacak bir şey yok."
+  },
+  "kilit": {
+    "malzeme_biber": "Biber",
+    "malzeme_tursu": "Turşu",
+    "malzeme_maydanoz": "Maydanoz",
+    "mangal_3": "3. mangal slotu",
+    "mangal_4": "4. mangal slotu",
+    "musteri_3": "3. müşteri yeri",
+    "musteri_4": "4. müşteri yeri",
+    "durum_bekleme_2": "2. dürüm rafı",
+    "durum_bekleme_3": "3. dürüm rafı",
+    "durum_bekleme_4": "4. dürüm rafı",
+    "porsiyon_hatti": "Porsiyon hattı",
+    "porsiyon_bekleme": "Porsiyon rafı",
+    "icecek_hatti": "İçecek hattı",
+    "icecek_salgam": "Şalgam",
+    "icecek_ayran": "Ayran",
+    "icecek_kola": "Kola",
+    "bilesen_icli_kofte": "İçli köfte",
+    "bilesen_pilav": "Bulgur pilavı",
+    "bilesen_patates": "Patates",
+    "bilesen_patlican": "Patlıcan",
+    "bilesen_ezme": "Ezme",
+    "tatli_baklava": "Baklava",
+    "tatli_sutlac": "Sütlaç",
+    "tatli_kunefe": "Künefe"
+  },
+  "olay": {
+    "reddedildi": "Sipariş tutmadı",
+    "yandi": "Kıyma yandı",
+    "gecersiz": "Olmaz",
+    "musteri_kizgin": "Müşteri gitti"
+  },
+  "yukleniyor": "Tezgah kuruluyor"
+}

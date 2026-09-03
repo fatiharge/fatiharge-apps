@@ -15,6 +15,7 @@ workspace:
   # Generated from contracts/ by scripts/generate_api_clients.sh, never by hand.
   - packages/api_client_auth
   - packages/api_client_motto
+  - apps/kiyma
   - apps/wallet
   - apps/motto
 

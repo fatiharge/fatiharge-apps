@@ -1,0 +1,46 @@
+name: kiyma
+description: Adana kebap dükkanı tezgahını yöneten 2D cooking-sim.
+publish_to: none
+
+version: 0.1.0
+
+environment:
+  sdk: ^3.12.0
+  flutter: ">=3.44.0"
+
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Monorepo packages.
+  bootstrap_kit:
+    path: ../../packages/bootstrap_kit
+  utility_kit:
+    path: ../../packages/utility_kit
+
+  # The scene is a static painting with 35 hit regions and one drag at a time,
+  # which Flutter draws on its own. Flame is here for the loop: cooking,
+  # patience and the customer queue are all clocks, and a component tree
+  # ticking at frame rate is what this genre is written against.
+  flame: ^1.35.0
+
+  bloc: ^9.0.0
+  flutter_bloc: ^9.1.1
+  easy_localization: ^3.0.8
+  meta: any
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  lint_kit:
+    path: ../../packages/lint_kit
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/translations/
+    - assets/data/
+    - assets/scene/
+    - assets/items/

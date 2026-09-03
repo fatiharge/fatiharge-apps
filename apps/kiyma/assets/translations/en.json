@@ -1,0 +1,61 @@
+{
+  "hud": {
+    "para": "₺{}",
+    "gun": "Day {}",
+    "musteri": "{} customers",
+    "itibar": "Reputation {}"
+  },
+  "gun_basi": {
+    "baslik": "Day {}",
+    "hedef": "Cumulative target ₺{}",
+    "durum": "So far ₺{}",
+    "basla": "Open the counter"
+  },
+  "gun_sonu": {
+    "gecti": "Day cleared",
+    "kaldi": "Target missed",
+    "kazanc": "Total earned ₺{} / ₺{}",
+    "itibar": "Reputation {}",
+    "tekrar": "The day replays; the money you made stays.",
+    "devam": "Continue"
+  },
+  "magaza": {
+    "baslik": "Grow the shop",
+    "bakiye": "₺{} in the till",
+    "kapat": "Start the next day",
+    "bos": "Nothing to buy yet."
+  },
+  "kilit": {
+    "malzeme_biber": "Pepper",
+    "malzeme_tursu": "Pickles",
+    "malzeme_maydanoz": "Parsley",
+    "mangal_3": "3rd grill slot",
+    "mangal_4": "4th grill slot",
+    "musteri_3": "3rd customer place",
+    "musteri_4": "4th customer place",
+    "durum_bekleme_2": "2nd wrap shelf",
+    "durum_bekleme_3": "3rd wrap shelf",
+    "durum_bekleme_4": "4th wrap shelf",
+    "porsiyon_hatti": "Plate line",
+    "porsiyon_bekleme": "Plate shelf",
+    "icecek_hatti": "Drinks line",
+    "icecek_salgam": "Turnip juice",
+    "icecek_ayran": "Ayran",
+    "icecek_kola": "Cola",
+    "bilesen_icli_kofte": "Stuffed kofte",
+    "bilesen_pilav": "Bulgur pilaf",
+    "bilesen_patates": "Potatoes",
+    "bilesen_patlican": "Aubergine",
+    "bilesen_ezme": "Ezme",
+    "tatli_baklava": "Baklava",
+    "tatli_sutlac": "Rice pudding",
+    "tatli_kunefe": "Kunefe"
+  },
+  "olay": {
+    "reddedildi": "Not what they ordered",
+    "yandi": "The meat burned",
+    "gecersiz": "Not there",
+    "musteri_kizgin": "A customer left"
+  },
+  "yukleniyor": "Setting up the counter"
+}
