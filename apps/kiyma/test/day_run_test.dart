@@ -102,7 +102,6 @@ void main() {
 
       // 10 * 1.08 rounded, plus one ingredient at the flat bonus.
       expect(run.progress.para, 13);
-      expect(run.progress.itibar, Balance.startingReputation + 1);
     });
 
     test('will not take an ingredient before the meat', () {
@@ -238,7 +237,7 @@ void main() {
       expect(run.durumIstasyonu, isNotNull, reason: 'stuck in the prep area');
     });
 
-    test('pays for what it got and costs half the reputation on partial', () {
+    test('pays for each item as it is handed over', () {
       final run = build(unlock: ['tatli_baklava']);
       final customer = waiting(
         run,
@@ -261,29 +260,32 @@ void main() {
       customer.sabirKalan = 0.05;
       run.tick(0.1);
       expect(run.musteriler[0], isNull);
-      expect(
-        run.progress.itibar,
-        Balance.startingReputation + Balance.reputationPartial,
-      );
+      // The money for what they did get stays; there is nothing else to lose.
+      expect(run.progress.para, customer.odenen);
     });
 
-    test('costs the full reputation when it gets nothing', () {
-      final run = build();
-      waiting(run, wrapFor(const {})).sabirKalan = 0.05;
-      run.tick(0.1);
-      expect(
-        run.progress.itibar,
-        Balance.startingReputation + Balance.reputationNothing,
-      );
-      expect(events, contains(DayEvent.musteriKizgin));
-    });
+    test('a customer nobody serves holds the seat until they give up', () {
+      // What losing a customer costs, now that reputation is gone: with two
+      // seats open, one of them is tied up for the whole patience bar by
+      // somebody who pays nothing.
+      final run = build()
+        ..kuyruk = 1
+        ..musteriler[0] = Customer(order: wrapFor(const {}), day: 1)
+        ..musteriler[1] = Customer(order: wrapFor(const {}), day: 1);
 
-    test('reputation never falls through the floor', () {
-      final run = build();
-      run.progress.itibar = Balance.reputationFloor + 2;
-      waiting(run, wrapFor(const {})).sabirKalan = 0.05;
+      for (var i = 0; i < 10; i++) {
+        run.tick(0.5);
+      }
+      expect(run.kuyruk, 1, reason: 'both seats are taken');
+
+      run.musteriler[1]!.sabirKalan = 0.05;
       run.tick(0.1);
-      expect(run.progress.itibar, Balance.reputationFloor);
+      expect(run.musteriler[1], isNull);
+
+      for (var i = 0; i < 10; i++) {
+        run.tick(0.5);
+      }
+      expect(run.kuyruk, 0, reason: 'the freed seat took the next in line');
     });
   });
 

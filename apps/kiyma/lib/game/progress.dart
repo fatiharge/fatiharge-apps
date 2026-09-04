@@ -3,7 +3,7 @@ import 'dart:math' as math;
 import 'package:kiyma/game/balance.dart';
 import 'package:kiyma/game/unlocks.dart';
 
-/// What survives a day: money, standing, and what is open.
+/// What survives a day: money, the day reached, and what is open.
 ///
 /// [para] and [toplamKazanc] are separate on purpose. The day target is
 /// measured against the cumulative figure, so spending on an upgrade never
@@ -11,14 +11,22 @@ import 'package:kiyma/game/unlocks.dart';
 class Progress {
   int para = 0;
   int toplamKazanc = 0;
-  int itibar = Balance.startingReputation;
   int gun = 1;
 
   final Unlocks unlocks = Unlocks();
 
   int get hedef => Balance.target(gun);
 
+  /// Whether the day can be moved on from. The player decides when to take
+  /// it: the day is a counter, not a gate, so a target already met simply
+  /// stays met until they use it.
   bool get hedefTutturuldu => toplamKazanc >= hedef;
+
+  bool gunuIlerlet() {
+    if (!hedefTutturuldu) return false;
+    gun++;
+    return true;
+  }
 
   void kazan(int miktar) {
     para += miktar;
@@ -31,11 +39,6 @@ class Progress {
     para = math.max(0, para - miktar);
     toplamKazanc = math.max(0, toplamKazanc - miktar);
   }
-
-  void itibarDegistir(int delta) => itibar = (itibar + delta).clamp(
-    Balance.reputationFloor,
-    Balance.reputationCeiling,
-  );
 
   bool satinAl(Unlock unlock) {
     if (para < unlock.price || unlocks.has(unlock.id)) return false;

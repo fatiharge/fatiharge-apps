@@ -44,7 +44,7 @@ class DayRun {
     tabakBirakma = List<Urun?>.filled(2, null);
     bardakBekletme = List<Bardak?>.filled(3, null);
     musteriler = List<Customer?>.filled(4, null);
-    kuyruk = Balance.customerCount(day, progress.itibar);
+    kuyruk = Balance.baseCustomers(day);
   }
 
   final SceneData scene;
@@ -497,17 +497,7 @@ class DayRun {
     if (customer == null) return;
     musteriler[index] = null;
 
-    if (memnun) {
-      progress.itibarDegistir(Balance.reputationServed);
-      onEvent(DayEvent.musteriMemnun);
-    } else {
-      progress.itibarDegistir(
-        customer.hicAlmadi
-            ? Balance.reputationNothing
-            : Balance.reputationPartial,
-      );
-      onEvent(DayEvent.musteriKizgin);
-    }
+    onEvent(memnun ? DayEvent.musteriMemnun : DayEvent.musteriKizgin);
     _sonrakiGelis = math.max(_sonrakiGelis, Balance.arrivalGap);
     onChanged();
   }

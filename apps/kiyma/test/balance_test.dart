@@ -22,12 +22,9 @@ void main() {
       expect(late - Balance.income(Balance.durumBase, 20), 6);
     });
 
-    test('customer count scales with reputation', () {
-      expect(Balance.customerCount(1, 100), Balance.baseCustomers(1));
-      expect(
-        Balance.customerCount(10, 0),
-        (Balance.baseCustomers(10) * 0.7).round(),
-      );
+    test('the queue is a flat count per day', () {
+      expect(Balance.baseCustomers(1), 7);
+      expect(Balance.baseCustomers(10), 25);
     });
 
     test('the target table is the doc table, and keeps climbing past it', () {

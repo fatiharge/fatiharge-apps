@@ -52,7 +52,7 @@ abstract final class Balance {
   static int income(int base, int day, {int ingredients = 0}) =>
       (base * dayMultiplier(day)).round() + ingredients * ingredientBonus;
 
-  // --- Patience and reputation (design doc 8.4, 9) ---
+  // --- Patience (design doc 8.4) ---
 
   static double patience(int day) => math.max(12, 30 - day * 0.6);
 
@@ -61,23 +61,18 @@ abstract final class Balance {
   /// not kill instantly.
   static const refusalKeeps = 0.8;
 
-  static const startingReputation = 70;
-
-  /// Never below this. The repeat-the-day rule already stops the death
-  /// spiral; this stops the flow of customers drying up mid-day.
-  static const reputationFloor = 30;
-  static const reputationCeiling = 100;
-
-  static const reputationServed = 1;
-  static const reputationPartial = -4;
-  static const reputationNothing = -8;
-
   // --- The day (design doc 11) ---
 
+  /// How many customers a day's queue holds.
+  ///
+  /// Flat, where the design doc scaled it by reputation. That scale only ever
+  /// spanned 0.79 to 1.00, and it had teeth solely because a missed target
+  /// forced the day to be replayed. Advancing the day is the player's own
+  /// choice now, so what is left is a thirteen percent slowdown nobody would
+  /// notice — paid for with a HUD slot and a stat to keep. The cost of losing
+  /// a customer is the customer: two seats, and one of them tied up for half
+  /// a minute by somebody you are not serving.
   static int baseCustomers(int day) => 5 + day * 2;
-
-  static int customerCount(int day, int reputation) =>
-      (baseCustomers(day) * (0.7 + 0.3 * reputation / 100)).round();
 
   /// Gap between one customer leaving and the next taking the place.
   static const arrivalGap = 1.5;
