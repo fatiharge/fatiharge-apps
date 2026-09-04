@@ -19,6 +19,7 @@ abstract final class KiymaPalette {
   static const komur = Color(0xFF2E2A26);
   static const ates = Color(0xFFE8641A);
   static const ahsap = Color(0xFF8B5E34);
+  static const celik = Color(0xFFB9BEC4);
 
   static ThemeData get theme => ThemeData(
     useMaterial3: true,

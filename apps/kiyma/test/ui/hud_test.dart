@@ -5,21 +5,20 @@ import 'package:kiyma/ui/hud.dart';
 import 'package:kiyma/ui/palette.dart';
 
 void main() {
-  testWidgets('the HUD shows money, the day, the target, standing and queue', (
+  testWidgets('the HUD shows money, the day, the target and the queue', (
     tester,
   ) async {
     await tester.pumpWidget(
       const MaterialApp(
         home: Hud(
           state: KiymaState(
-            phase: GamePhase.oynaniyor,
             gun: 2,
             para: 120,
             toplamKazanc: 140,
             hedef: 170,
-            itibar: 64,
             kalanMusteri: 5,
-            gunGecildi: false,
+            ilerleyebilir: false,
+            gunBitti: false,
           ),
         ),
       ),
@@ -28,7 +27,6 @@ void main() {
     expect(find.text('₺120'), findsOneWidget);
     expect(find.text('Gün 2'), findsOneWidget);
     expect(find.text('140/170'), findsOneWidget);
-    expect(find.text('64'), findsOneWidget);
     expect(find.text('5'), findsOneWidget);
 
     final bar = tester.widget<LinearProgressIndicator>(
@@ -43,14 +41,13 @@ void main() {
       const MaterialApp(
         home: Hud(
           state: KiymaState(
-            phase: GamePhase.oynaniyor,
             gun: 1,
             para: 90,
             toplamKazanc: 90,
             hedef: 70,
-            itibar: 70,
             kalanMusteri: 1,
-            gunGecildi: true,
+            ilerleyebilir: true,
+            gunBitti: false,
           ),
         ),
       ),

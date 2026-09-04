@@ -2,35 +2,37 @@
   "hud": {
     "para": "₺{}",
     "gun": "Gün {}",
-    "musteri": "{} müşteri",
-    "itibar": "İtibar {}"
+    "musteri": "{} müşteri"
   },
   "baslangic": {
-    "rozet": "OCAKBAŞI SİMÜLATÖRÜ",
-    "slogan": "ATEŞ USTASI, KEBAP SANATI",
     "hata": "Tezgah kurulamadı",
     "aciklama": "Uygulamayı kapatıp yeniden aç.",
     "yeniden": "Yeniden dene"
   },
-  "gun_basi": {
-    "baslik": "Gün {}",
-    "hedef": "Kümülatif hedef ₺{}",
-    "durum": "Şu ana kadar ₺{}",
-    "basla": "Tezgahı aç"
-  },
-  "gun_sonu": {
-    "gecti": "Gün geçildi",
-    "kaldi": "Hedef tutmadı",
-    "kazanc": "Toplam kazanç ₺{} / ₺{}",
-    "itibar": "İtibar {}",
-    "tekrar": "Gün tekrar oynanır, kazandığın para kalır.",
+  "dil": {
     "devam": "Devam"
+  },
+  "menu": {
+    "oyna": "Oyna",
+    "yukselt": "Yükselt",
+    "dil": "Dil"
+  },
+  "gun": {
+    "baslik": "Gün {}",
+    "hedef": "₺{} / ₺{}",
+    "ac": "Tezgahı aç",
+    "ilerlet": "Günü ilerlet",
+    "kilitli": "Hedefi tutturunca gün ilerler."
   },
   "magaza": {
     "baslik": "Dükkanı büyüt",
-    "bakiye": "Kasada ₺{}",
-    "kapat": "Sonraki güne geç",
     "bos": "Şimdilik alınacak bir şey yok."
+  },
+  "olay": {
+    "reddedildi": "Sipariş tutmadı",
+    "yandi": "Kıyma yandı",
+    "gecersiz": "Olmaz",
+    "musteri_kizgin": "Müşteri gitti"
   },
   "kilit": {
     "malzeme_biber": "Biber",
@@ -57,11 +59,5 @@
     "tatli_baklava": "Baklava",
     "tatli_sutlac": "Sütlaç",
     "tatli_kunefe": "Künefe"
-  },
-  "olay": {
-    "reddedildi": "Sipariş tutmadı",
-    "yandi": "Kıyma yandı",
-    "gecersiz": "Olmaz",
-    "musteri_kizgin": "Müşteri gitti"
   }
 }

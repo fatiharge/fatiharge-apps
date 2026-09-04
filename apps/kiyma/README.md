@@ -51,13 +51,32 @@ The between-days cards are not routes. They are drawn over the live canvas so
 the counter stays visible behind them, which is why `AppRouter` has two
 entries and not five; the shell screens of stage 7 are what it grows for.
 
+## The screens
+
+```
+Startup ─ no language stored? ─ Language ─┐
+        └─ otherwise ──────────────────────┴─ Menu ─ Play ─ Day ─ Open counter ─ Game
+                                              └─ Upgrade ─ Shop        ↑ queue empty ─┘
+```
+
+Six routes, one game. `KiymaCubit` is a `@lazySingleton` because it outlives
+every screen; each page provides the same instance rather than making one.
+
+The day is a **counter, not a gate**. The counter can be opened as often as
+the player likes and every run adds to the same cumulative total; when that
+total clears the day's target the day card offers to move on, and moving on
+is their button to press. Nothing is carried over from a previous session and
+nothing is lost by closing the app — which is why the design doc's
+half-finished day (11.5) and its reputation system (9) are both gone. What
+losing a customer costs is the seat they occupy for the length of their
+patience bar.
+
 ## Where the rules live
 
 `DayRun` is the whole game: the grill, the two prep stations, the shelves, the
 customers, and every rule that moves them. It is plain Dart — no Flame, no
 widgets — and it is what the tests drive. `CounterComponent` renders from it
-and feeds gestures into it; `KiymaCubit` owns what survives a day and the
-between-days screens.
+and feeds gestures into it; `KiymaCubit` owns what survives a run.
 
 The split is deliberate about update rates. Patience bars and cooking meters
 change every frame and are drawn inside the canvas. The bloc only emits when
@@ -95,12 +114,13 @@ baseline is rendered by the host, and macOS does not match Linux.
 
 Stages 6 to 8 of the plan. Named so nobody has to rediscover them:
 
-- **Nothing is saved.** Money, standing, the day number and the unlocks live
-  in memory and are gone when the app closes. The design doc's rules about
-  saving on every transaction and resuming a half-finished day (11.4, 11.5)
-  are not implemented.
-- **No shell.** No splash beyond the loading bar, no menu, no settings, no
-  language switch in the UI, no ads and no IAP.
+- **Nothing is saved except the language.** Money, the day number and the
+  unlocks live in memory and are gone when the app closes, so the menu's
+  money chip reads zero on every launch. easy_localization persists the
+  chosen locale on its own, which is also what tells the app it is a first
+  run.
+- **No settings screen, no ads, no IAP.** The menu reaches the language
+  screen directly, which is the whole of the settings that exists.
 - **Placeholder art in two places.** The chef and the customers were never
   drawn — they are meant to be animated — so a customer is a silhouette with
   a real order card. The bin has no asset either and is drawn in code; drop a

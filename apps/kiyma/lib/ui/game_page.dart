@@ -1,33 +1,46 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kiyma/config/injectable.dart';
-import 'package:kiyma/data/scene.dart';
-import 'package:kiyma/game/assets.dart';
 import 'package:kiyma/game/day_run.dart';
 import 'package:kiyma/game/kiyma_cubit.dart';
 import 'package:kiyma/game/kiyma_game.dart';
 import 'package:kiyma/game/world.dart';
 import 'package:kiyma/ui/hud.dart';
 import 'package:kiyma/ui/palette.dart';
-import 'package:kiyma/ui/panels.dart';
 import 'package:utility_kit/utility_kit.dart';
 
-/// The counter, the numbers above it, and whichever between-days card is
-/// open. Everything that moves every frame is inside the canvas; everything
-/// here rebuilds a handful of times a second at most.
+/// The counter and the numbers above it.
+///
+/// Everything that moves every frame is inside the canvas; the HUD rebuilds a
+/// handful of times a second at most. When the queue empties the day card
+/// takes over again — this screen has no ending of its own.
 @RoutePage()
-class GamePage extends StatelessWidget {
+class GamePage extends StatefulWidget {
   const GamePage({super.key});
 
   @override
-  Widget build(BuildContext context) => BlocProvider(
-    create: (_) => getIt<KiymaCubit>(),
+  State<GamePage> createState() => _GamePageState();
+}
+
+class _GamePageState extends State<GamePage> {
+  @override
+  void initState() {
+    super.initState();
+    // The page that shows a run is the one that starts it. Doing it in the
+    // day card instead meant the button both changed state and navigated,
+    // and the two were easy to get into the wrong order.
+    final cubit = getIt<KiymaCubit>();
+    if (cubit.run == null || cubit.run!.bitti) cubit.startDay();
+  }
+
+  @override
+  Widget build(BuildContext context) => BlocProvider.value(
+    value: getIt<KiymaCubit>(),
     child: const _GameView(),
   );
 }
@@ -37,39 +50,29 @@ class _GameView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final world = getIt<GameWorld>();
-    final scene = world.scene;
-    final assets = world.art;
     final cubit = context.read<KiymaCubit>();
     return Scaffold(
       backgroundColor: KiymaPalette.zemin,
       body: EffectListener<KiymaCubit, DayEvent>(
         bloc: cubit,
-        onEffect: _Toast.show,
+        onEffect: (context, event) {
+          if (event == DayEvent.gunBitti) {
+            unawaited(context.router.maybePop());
+            return;
+          }
+          _Toast.show(context, event);
+        },
         child: BlocBuilder<KiymaCubit, KiymaState>(
           builder: (context, state) {
             final run = cubit.run;
             return Stack(
               fit: StackFit.expand,
               children: [
-                if (run != null)
-                  _GameHost(scene: scene, assets: assets, run: run),
-                if (state.phase == GamePhase.oynaniyor)
-                  Align(
-                    alignment: Alignment.topCenter,
-                    child: Hud(state: state),
-                  ),
-                if (state.phase == GamePhase.gunBasi)
-                  DayStartPanel(state: state, onStart: cubit.startDay),
-                if (state.phase == GamePhase.gunSonu)
-                  DayEndPanel(state: state, onContinue: cubit.continueFromEnd),
-                if (state.phase == GamePhase.magaza)
-                  ShopPanel(
-                    state: state,
-                    unlocks: cubit.progress.unlocks,
-                    onBuy: cubit.buy,
-                    onClose: cubit.closeShop,
-                  ),
+                if (run != null) _GameHost(run: run),
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: Hud(state: state),
+                ),
                 const _Toast(),
               ],
             );
@@ -80,19 +83,13 @@ class _GameView extends StatelessWidget {
   }
 }
 
-/// Holds one [KiymaGame] per day.
+/// Holds one [KiymaGame] per run.
 ///
 /// [GameWidget] would restart the engine on every rebuild if handed a new
 /// game object, and the parent rebuilds whenever money moves.
 class _GameHost extends StatefulWidget {
-  const _GameHost({
-    required this.scene,
-    required this.assets,
-    required this.run,
-  });
+  const _GameHost({required this.run});
 
-  final SceneData scene;
-  final GameAssets assets;
   final DayRun run;
 
   @override
@@ -102,8 +99,10 @@ class _GameHost extends StatefulWidget {
 class _GameHostState extends State<_GameHost> {
   late KiymaGame _game = _build();
 
-  KiymaGame _build() =>
-      KiymaGame(scene: widget.scene, art: widget.assets, run: widget.run);
+  KiymaGame _build() {
+    final world = getIt<GameWorld>();
+    return KiymaGame(scene: world.scene, art: world.art, run: widget.run);
+  }
 
   @override
   void didUpdateWidget(covariant _GameHost old) {
@@ -167,10 +166,7 @@ class _ToastState extends State<_Toast> {
               color: KiymaPalette.panel,
               borderRadius: BorderRadius.circular(14),
             ),
-            child: Text(
-              message ?? '',
-              style: const TextStyle(fontSize: 13),
-            ),
+            child: Text(message ?? '', style: const TextStyle(fontSize: 13)),
           ),
         ),
       ),

@@ -2,35 +2,37 @@
   "hud": {
     "para": "₺{}",
     "gun": "Day {}",
-    "musteri": "{} customers",
-    "itibar": "Reputation {}"
+    "musteri": "{} customers"
   },
   "baslangic": {
-    "rozet": "GRILL HOUSE SIMULATOR",
-    "slogan": "MASTER OF FIRE, ART OF KEBAB",
     "hata": "The counter would not open",
     "aciklama": "Close the app and open it again.",
     "yeniden": "Try again"
   },
-  "gun_basi": {
-    "baslik": "Day {}",
-    "hedef": "Cumulative target ₺{}",
-    "durum": "So far ₺{}",
-    "basla": "Open the counter"
-  },
-  "gun_sonu": {
-    "gecti": "Day cleared",
-    "kaldi": "Target missed",
-    "kazanc": "Total earned ₺{} / ₺{}",
-    "itibar": "Reputation {}",
-    "tekrar": "The day replays; the money you made stays.",
+  "dil": {
     "devam": "Continue"
+  },
+  "menu": {
+    "oyna": "Play",
+    "yukselt": "Upgrade",
+    "dil": "Language"
+  },
+  "gun": {
+    "baslik": "Day {}",
+    "hedef": "₺{} / ₺{}",
+    "ac": "Open the counter",
+    "ilerlet": "Move on a day",
+    "kilitli": "Meet the target to move on."
   },
   "magaza": {
     "baslik": "Grow the shop",
-    "bakiye": "₺{} in the till",
-    "kapat": "Start the next day",
     "bos": "Nothing to buy yet."
+  },
+  "olay": {
+    "reddedildi": "Not what they ordered",
+    "yandi": "The meat burned",
+    "gecersiz": "Not there",
+    "musteri_kizgin": "A customer left"
   },
   "kilit": {
     "malzeme_biber": "Pepper",
@@ -57,11 +59,5 @@
     "tatli_baklava": "Baklava",
     "tatli_sutlac": "Rice pudding",
     "tatli_kunefe": "Kunefe"
-  },
-  "olay": {
-    "reddedildi": "Not what they ordered",
-    "yandi": "The meat burned",
-    "gecersiz": "Not there",
-    "musteri_kizgin": "A customer left"
   }
 }

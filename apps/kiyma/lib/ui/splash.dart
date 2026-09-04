@@ -1,15 +1,9 @@
 import 'dart:math' as math;
 
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:kiyma/ui/brand.dart';
 import 'package:kiyma/ui/palette.dart';
 
-/// What the startup jobs are shown behind.
-///
-/// A port of the brand screen from the design: cream ground, tiled dots, the
-/// wordmark in its charcoal outline, a drawn skewer. Nothing here loads an
-/// asset — this is the screen the art is being loaded *behind*, so the
-/// illustration is painted rather than drawn from `assets/items`.
 class SplashView extends StatefulWidget {
   const SplashView({
     required this.progress,
@@ -17,13 +11,8 @@ class SplashView extends StatefulWidget {
     super.key,
   });
 
-  /// How far the startup jobs have got, `0..1`.
   final double progress;
 
-  /// The floor the page is held for. The bar is driven by whichever is
-  /// further along, this clock or [progress] — the jobs finish in a fraction
-  /// of the hold, so a bar that only tracked them would fill at once and then
-  /// sit full, which reads as a hang rather than as a wait.
   final Duration hold;
 
   @override
@@ -31,8 +20,6 @@ class SplashView extends StatefulWidget {
 }
 
 class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
-  // The design's `softGlow`: a breath, not an animation anybody should
-  // notice. Startup is usually over before it completes a cycle.
   late final AnimationController _breath = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 3500),
@@ -51,97 +38,53 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    backgroundColor: KiymaPalette.krema,
-    body: CustomPaint(
-      painter: const _TilePainter(),
-      child: SafeArea(
-        child: Stack(
-          children: [
-            const Positioned(top: 14, left: 22, child: _CornerTrim()),
-            const Positioned(
-              top: 14,
-              right: 22,
-              child: _CornerTrim(mirrored: true),
-            ),
-            Center(
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ScaleTransition(
-                      scale: Tween<double>(
-                        begin: 1,
-                        end: 1.02,
-                      ).animate(_breath),
-                      child: const Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          _Badge(),
-                          SizedBox(height: 6),
-                          _Wordmark(),
-                          SizedBox(height: 14),
-                          SizedBox(
-                            width: 300,
-                            height: 56,
-                            child: CustomPaint(painter: _SkewerPainter()),
-                          ),
-                          SizedBox(height: 10),
-                          _Tagline(),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 22),
-                    AnimatedBuilder(
-                      animation: _held,
-                      builder: (context, _) => _Progress(
-                        value: math.max(_held.value, widget.progress),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const Align(alignment: Alignment.bottomCenter, child: _Studio()),
-          ],
+  Widget build(BuildContext context) => BrandBackground(
+    child: Stack(
+      children: [
+        const Positioned(top: 14, left: 22, child: _CornerTrim()),
+        const Positioned(
+          top: 14,
+          right: 22,
+          child: _CornerTrim(mirrored: true),
         ),
-      ),
+        Center(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ScaleTransition(
+                  scale: Tween<double>(
+                    begin: 1,
+                    end: 1.02,
+                  ).animate(_breath),
+                  child: const Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Wordmark(),
+                      SizedBox(height: 14),
+                      SizedBox(
+                        width: 300,
+                        height: 56,
+                        child: CustomPaint(painter: _SkewerPainter()),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 22),
+                AnimatedBuilder(
+                  animation: _held,
+                  builder: (context, _) => _Progress(
+                    value: math.max(_held.value, widget.progress),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const Align(alignment: Alignment.bottomCenter, child: _Studio()),
+      ],
     ),
   );
-}
-
-/// The cream ground: a faint 48px grid with a 24px dot lattice offset into
-/// its centres. Cheap enough to repaint every frame, so it is not cached.
-class _TilePainter extends CustomPainter {
-  const _TilePainter();
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    canvas.drawRect(
-      Offset.zero & size,
-      Paint()..color = KiymaPalette.krema,
-    );
-
-    final line = Paint()
-      ..color = KiymaPalette.komur.withValues(alpha: 0.05)
-      ..strokeWidth = 1;
-    for (var x = 0.0; x < size.width; x += 48) {
-      canvas.drawLine(Offset(x, 0), Offset(x, size.height), line);
-    }
-    for (var y = 0.0; y < size.height; y += 48) {
-      canvas.drawLine(Offset(0, y), Offset(size.width, y), line);
-    }
-
-    final dot = Paint()..color = KiymaPalette.ahsap.withValues(alpha: 0.06);
-    for (var x = 12.0; x < size.width; x += 24) {
-      for (var y = 12.0; y < size.height; y += 24) {
-        canvas.drawCircle(Offset(x, y), 2, dot);
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(_TilePainter oldDelegate) => false;
 }
 
 class _CornerTrim extends StatelessWidget {
@@ -197,120 +140,6 @@ class _Dot extends StatelessWidget {
   );
 }
 
-class _Badge extends StatelessWidget {
-  const _Badge();
-
-  @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-    decoration: BoxDecoration(
-      color: KiymaPalette.ahsap.withValues(alpha: 0.1),
-      borderRadius: BorderRadius.circular(999),
-      border: Border.all(color: KiymaPalette.ahsap.withValues(alpha: 0.3)),
-    ),
-    child: Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const Icon(
-          Icons.local_fire_department,
-          size: 17,
-          color: KiymaPalette.ates,
-        ),
-        const SizedBox(width: 8),
-        // Stored uppercase rather than uppercased here: Turkish casing turns
-        // "Simülatörü" into "SIMÜLATÖRÜ" under an invariant toUpperCase, and
-        // which letters a language shouts is the content's business anyway.
-        Text(
-          'baslangic.rozet'.tr(),
-          style: const TextStyle(
-            fontFamily: 'Rubik',
-            fontVariations: [FontVariation('wght', 800)],
-            fontSize: 11,
-            letterSpacing: 2,
-            color: KiymaPalette.ahsap,
-          ),
-        ),
-        const SizedBox(width: 8),
-        const Icon(
-          Icons.local_fire_department,
-          size: 17,
-          color: KiymaPalette.ates,
-        ),
-      ],
-    ),
-  );
-}
-
-class _Wordmark extends StatelessWidget {
-  const _Wordmark();
-
-  /// The design's `text-cel-shadow`, at the size it was drawn for. Eight
-  /// offsets make the outline, the ninth is the extrusion the letters sit on,
-  /// and the last is the shadow it casts.
-  static const _size = 84.0;
-  static const _at = 96.0;
-
-  @override
-  Widget build(BuildContext context) {
-    const scale = _size / _at;
-    Shadow hard(double dx, double dy) => Shadow(
-      color: KiymaPalette.komur,
-      offset: Offset(dx * scale, dy * scale),
-    );
-
-    return Text(
-      'KIYMA',
-      textAlign: TextAlign.center,
-      style: TextStyle(
-        fontFamily: 'Rubik',
-        fontVariations: const [FontVariation('wght', 900)],
-        fontSize: _size,
-        height: 1,
-        letterSpacing: 6,
-        color: KiymaPalette.ates,
-        shadows: [
-          hard(-3, -3),
-          hard(3, -3),
-          hard(-3, 3),
-          hard(3, 3),
-          hard(-4, 0),
-          hard(4, 0),
-          hard(0, -4),
-          hard(0, 4),
-          hard(0, 8),
-          Shadow(
-            color: KiymaPalette.komur.withValues(alpha: 0.35),
-            offset: const Offset(0, 12 * scale),
-            blurRadius: 14,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _Tagline extends StatelessWidget {
-  const _Tagline();
-
-  @override
-  Widget build(BuildContext context) => Opacity(
-    opacity: 0.85,
-    child: Text(
-      'baslangic.slogan'.tr(),
-      textAlign: TextAlign.center,
-      style: const TextStyle(
-        fontFamily: 'Rubik',
-        fontVariations: [FontVariation('wght', 700)],
-        fontSize: 13,
-        letterSpacing: 2.6,
-        color: KiymaPalette.ahsap,
-      ),
-    ),
-  );
-}
-
-/// Not in the design, which had nothing to wait for. Kept because the art is
-/// 12 MB and a screen that never moves reads as a hang.
 class _Progress extends StatelessWidget {
   const _Progress({required this.value});
 

@@ -31,10 +31,15 @@ import 'package:kiyma/game/world.dart';
 import 'package:kiyma/infrastructure/bootstrap/bootstrap_adapter.dart';
 import 'package:kiyma/main.dart';
 import 'package:kiyma/route/app_router.dart';
+import 'package:kiyma/route/first_run.dart';
+import 'package:kiyma/ui/brand.dart';
+import 'package:kiyma/ui/day_page.dart';
 import 'package:kiyma/ui/game_page.dart';
 import 'package:kiyma/ui/hud.dart';
+import 'package:kiyma/ui/language_page.dart';
+import 'package:kiyma/ui/menu_page.dart';
 import 'package:kiyma/ui/palette.dart';
-import 'package:kiyma/ui/panels.dart';
+import 'package:kiyma/ui/shop_page.dart';
 import 'package:kiyma/ui/splash.dart';
 import 'package:kiyma/ui/startup_page.dart';
 

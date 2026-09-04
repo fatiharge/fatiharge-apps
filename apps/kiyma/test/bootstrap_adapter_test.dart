@@ -19,8 +19,13 @@ void main() {
     const adapter = BootstrapAdapter();
     final jobs = adapter.jobs();
 
-    expect(jobs.map((job) => job.name), ['dependencies', 'scene', 'art']);
-    for (final job in jobs) {
+    expect(jobs.map((job) => job.name), [
+      'dependencies',
+      'scene',
+      'art',
+      'display',
+    ]);
+    for (final job in jobs.take(3)) {
       expect(
         job.errorPolicy,
         BootstrapErrorPolicy.restart,
@@ -32,13 +37,19 @@ void main() {
     // resolved before the first one has run.
     expect(getIt.isRegistered<GameWorld>(), isFalse);
 
-    for (final job in jobs) {
+    for (final job in jobs.take(3)) {
       await job.run();
     }
 
     final world = getIt<GameWorld>();
     expect(world.scene.regions, isNotEmpty);
     expect(world.art['sis_cig'], isNotNull);
+  });
+
+  test('a locked orientation is nice to have, not a reason to fail', () {
+    final display = const BootstrapAdapter().jobs().last;
+    expect(display.name, 'display');
+    expect(display.errorPolicy, BootstrapErrorPolicy.skip);
   });
 
   test('the world refuses to be read before its job has run', () async {

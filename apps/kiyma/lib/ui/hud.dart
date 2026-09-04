@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:kiyma/game/kiyma_cubit.dart';
 import 'package:kiyma/ui/palette.dart';
 
-/// The four numbers that decide how the day is going, and never more.
-///
-/// Reputation is here because it sets how many customers arrive, so it
-/// changes which order is worth rescuing — the design doc asks for it to stay
-/// visible for exactly that reason.
+/// The three numbers that decide how the run is going, and never more:
+/// what is in the till, how far the cumulative target is, and how many
+/// customers are still to come.
 class Hud extends StatelessWidget {
   const Hud({required this.state, super.key});
 
@@ -26,12 +24,6 @@ class Hud extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Expanded(child: _TargetBar(state: state)),
-          const SizedBox(width: 8),
-          _Chip(
-            icon: Icons.favorite_outline,
-            label: '${state.itibar}',
-            accent: KiymaPalette.yesil,
-          ),
           const SizedBox(width: 8),
           _Chip(
             icon: Icons.groups_outlined,
@@ -72,7 +64,7 @@ class _TargetBar extends StatelessWidget {
               minHeight: 6,
               backgroundColor: const Color(0x33FFFFFF),
               valueColor: AlwaysStoppedAnimation(
-                state.gunGecildi ? KiymaPalette.yesil : KiymaPalette.kor,
+                state.ilerleyebilir ? KiymaPalette.yesil : KiymaPalette.kor,
               ),
             ),
           ),

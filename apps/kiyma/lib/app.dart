@@ -10,9 +10,6 @@ class KiymaApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MaterialApp.router(
-    // Keyed on the language so a change rebuilds everything below it: `.tr()`
-    // reads the words without a context, so no widget is subscribed to the
-    // locale on its own.
     key: ValueKey(context.locale.languageCode),
     title: 'Kıyma',
     debugShowCheckedModeBanner: false,
@@ -20,8 +17,6 @@ class KiymaApp extends StatelessWidget {
     localizationsDelegates: context.localizationDelegates,
     supportedLocales: context.supportedLocales,
     locale: context.locale,
-    // The first route is the startup page; what it opens once the jobs are
-    // done is the bootstrap port's business, not this widget's.
     routerConfig: router.config(),
   );
 }

@@ -22,7 +22,9 @@ extension GetItInjectableX on _i174.GetIt {
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     gh.lazySingleton<_i139.GameWorld>(() => _i139.GameWorld());
-    gh.factory<_i645.KiymaCubit>(() => _i645.KiymaCubit(gh<_i139.GameWorld>()));
+    gh.lazySingleton<_i645.KiymaCubit>(
+      () => _i645.KiymaCubit(gh<_i139.GameWorld>()),
+    );
     return this;
   }
 }

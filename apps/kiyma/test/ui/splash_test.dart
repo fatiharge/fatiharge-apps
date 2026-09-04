@@ -21,17 +21,15 @@ void main() {
       .widget<LinearProgressIndicator>(find.byType(LinearProgressIndicator))
       .value!;
 
-  testWidgets('carries the wordmark, the badge and the studio line', (
+  testWidgets('carries the wordmark and the studio line, and no words', (
     tester,
   ) async {
     await show(tester, 0.4);
 
     expect(find.text('KIYMA'), findsOneWidget);
-    expect(find.text('OCAKBAŞI SİMÜLATÖRÜ'), findsOneWidget);
-    expect(find.text('ATEŞ USTASI, KEBAP SANATI'), findsOneWidget);
     expect(find.text('dafalabs'), findsOneWidget);
-    // Two flames, one either side of the badge.
-    expect(find.byIcon(Icons.local_fire_department), findsNWidgets(2));
+    // Nothing translated: this runs before anybody has chosen a language.
+    expect(find.byType(Text), findsNWidgets(2));
   });
 
   testWidgets('the wordmark is Rubik in the ember colour, outlined', (

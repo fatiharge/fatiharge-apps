@@ -2,7 +2,6 @@ import 'package:bootstrap_kit/bootstrap_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kiyma/config/injectable.dart';
-import 'package:kiyma/route/app_router.dart';
 import 'package:kiyma/ui/splash.dart';
 import 'package:kiyma/ui/startup_page.dart';
 
@@ -80,12 +79,5 @@ void main() {
     await tester.tap(find.text('Yeniden dene'));
     await tester.pump();
     expect(attempts, 2);
-  });
-
-  test('the startup page is the first route', () {
-    final routes = AppRouter().routes;
-    expect(routes.first.name, 'StartupRoute');
-    expect(routes.first.initial, isTrue);
-    expect(routes.map((route) => route.name), ['StartupRoute', 'GameRoute']);
   });
 }

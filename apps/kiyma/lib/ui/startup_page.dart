@@ -3,22 +3,47 @@ import 'package:bootstrap_kit/bootstrap_kit.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:kiyma/config/injectable.dart';
+import 'package:kiyma/route/first_run.dart' as first_run;
 import 'package:kiyma/ui/palette.dart';
 import 'package:kiyma/ui/splash.dart';
 
-
+/// The first route, and the only place the container is built.
+///
+/// Everything downstream resolves out of get_it, so this page cannot be
+/// skipped: a route that renders before it finds an empty container.
 @RoutePage()
-class StartupPage extends StatelessWidget {
+class StartupPage extends StatefulWidget {
   const StartupPage({super.key});
 
+  /// How long the brand screen is held even when there is nothing left to
+  /// wait for.
+  ///
+  /// Everything loads off the device in a couple of hundred milliseconds, so
+  /// without a floor the splash is a flicker. Only the remainder is waited
+  /// out, so this never adds to a slow start.
   static const hold = Duration(seconds: 3);
+
+  @override
+  State<StartupPage> createState() => _StartupPageState();
+}
+
+class _StartupPageState extends State<StartupPage> {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Read here because this is the last place with a context before the port
+    // decides which door opens, and an inherited widget cannot be reached
+    // from `initState`.
+    first_run.languageChosen =
+        EasyLocalization.of(context)?.savedLocale != null;
+  }
 
   @override
   Widget build(BuildContext context) => BootstrapPage.withProgress(
     port: getIt<BootstrapPort>(),
-    minDuration: hold,
+    minDuration: StartupPage.hold,
     runningBuilder: (context, state) =>
-        SplashView(progress: state.progress, hold: hold),
+        SplashView(progress: state.progress, hold: StartupPage.hold),
     errorBuilder: (context, state, onRetry) =>
         _StartupError(state: state, onRetry: onRetry),
   );
@@ -54,9 +79,6 @@ class _StartupError extends StatelessWidget {
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 13, color: KiymaPalette.soluk),
             ),
-            // The job name, always. Every job here is fatal, so whoever is
-            // holding the phone is the one who has to report this, and "art"
-            // versus "scene" is the whole of the report.
             const SizedBox(height: 10),
             Text(
               '${state.jobName}: ${state.error}',
