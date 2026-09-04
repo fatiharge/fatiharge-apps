@@ -30,10 +30,19 @@ and everything else comes out of the container, because
 before it can depend on it. `StartupPage` is the initial route and the only
 place that container is built.
 
-The three jobs are `dependencies`, `scene`, `art`, in that order, all under
-the `restart` policy. There is no reduced game to fall back to, and a scene
-file that will not parse is not something a retry fixes. They are three jobs
-rather than one so the splash bar moves and a failure names the step.
+The four jobs are `display`, `dependencies`, `scene`, `art`, in that order;
+the last three are under the `restart` policy. There is no reduced game to
+fall back to, and a scene file that will not parse is not something a retry
+fixes. They are separate jobs rather than one so a failure names the step.
+
+`art` does more than load. All four together take about 60 ms and the brand
+screen is held for three seconds, so the window is free, and two things that
+would otherwise land on the first frame of a day are done in it: the hint
+glows are blurred once (`game/halo.dart`), and every image is drawn once
+offscreen to force its texture upload. Decoding happens when the file is
+read; the upload does not, and without this it arrives all at once — 54
+images, 38 MB, including a 2048x1152 background — on the frame the counter
+first appears.
 
 The splash bar shows the **lower** of the two things the screen is waiting on
 — how far the jobs have got, and how much of the three-second brand hold has
