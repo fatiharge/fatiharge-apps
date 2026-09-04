@@ -20,12 +20,12 @@ void main() {
     final jobs = adapter.jobs();
 
     expect(jobs.map((job) => job.name), [
+      'display',
       'dependencies',
       'scene',
       'art',
-      'display',
     ]);
-    for (final job in jobs.take(3)) {
+    for (final job in jobs.skip(1)) {
       expect(
         job.errorPolicy,
         BootstrapErrorPolicy.restart,
@@ -37,7 +37,7 @@ void main() {
     // resolved before the first one has run.
     expect(getIt.isRegistered<GameWorld>(), isFalse);
 
-    for (final job in jobs.take(3)) {
+    for (final job in jobs.skip(1)) {
       await job.run();
     }
 
@@ -47,7 +47,7 @@ void main() {
   });
 
   test('a locked orientation is nice to have, not a reason to fail', () {
-    final display = const BootstrapAdapter().jobs().last;
+    final display = const BootstrapAdapter().jobs().first;
     expect(display.name, 'display');
     expect(display.errorPolicy, BootstrapErrorPolicy.skip);
   });

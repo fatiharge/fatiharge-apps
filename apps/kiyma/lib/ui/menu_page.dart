@@ -9,11 +9,8 @@ import 'package:kiyma/route/app_router.gr.dart';
 import 'package:kiyma/ui/brand.dart';
 import 'package:kiyma/ui/palette.dart';
 
-/// Where a session starts and comes back to.
-///
 /// Functional, not finished: the design has an illustrated left two thirds
-/// and a fuller button stack. What is here is the shape and every button
-/// working.
+/// and a fuller button stack.
 @RoutePage()
 class MenuPage extends StatelessWidget {
   const MenuPage({super.key});
@@ -89,11 +86,8 @@ class MenuPage extends StatelessWidget {
   );
 }
 
-/// The kitchen itself, blurred, filling the left of the screen.
-///
-/// The design asked for a placeholder illustration here. The real scene is
-/// already decoded by the time this screen exists — bootstrap loaded it — so
-/// it costs nothing to use the actual counter instead.
+/// The design asked for a placeholder illustration. The real scene is already
+/// decoded by the time this screen exists, so it costs nothing to use it.
 class _CounterBackdrop extends StatelessWidget {
   const _CounterBackdrop();
 
@@ -102,8 +96,7 @@ class _CounterBackdrop extends StatelessWidget {
     final scene = getIt<GameWorld>().art['back_scene.jpg'];
     if (scene == null) return const SizedBox();
     return ShaderMask(
-      // Faded out towards the right so the button stack sits on cream, not
-      // on tiles.
+      // Faded right so the buttons sit on cream, not on tiles.
       shaderCallback: (rect) => const LinearGradient(
         colors: [Colors.white, Colors.transparent],
         stops: [0.55, 1],

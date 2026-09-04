@@ -7,20 +7,14 @@ import 'package:kiyma/route/first_run.dart' as first_run;
 import 'package:kiyma/ui/palette.dart';
 import 'package:kiyma/ui/splash.dart';
 
-/// The first route, and the only place the container is built.
-///
-/// Everything downstream resolves out of get_it, so this page cannot be
-/// skipped: a route that renders before it finds an empty container.
+/// The first route, and the only place the container is built: a route that
+/// renders before it finds an empty one.
 @RoutePage()
 class StartupPage extends StatefulWidget {
   const StartupPage({super.key});
 
-  /// How long the brand screen is held even when there is nothing left to
-  /// wait for.
-  ///
-  /// Everything loads off the device in a couple of hundred milliseconds, so
-  /// without a floor the splash is a flicker. Only the remainder is waited
-  /// out, so this never adds to a slow start.
+  /// Everything loads in a couple of hundred milliseconds, so without a
+  /// floor the brand screen is a flicker. Only the remainder is waited out.
   static const hold = Duration(seconds: 3);
 
   @override
@@ -31,9 +25,7 @@ class _StartupPageState extends State<StartupPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Read here because this is the last place with a context before the port
-    // decides which door opens, and an inherited widget cannot be reached
-    // from `initState`.
+    // The last place with a context before the port picks a door.
     first_run.languageChosen =
         EasyLocalization.of(context)?.savedLocale != null;
   }

@@ -14,11 +14,8 @@ import 'package:kiyma/ui/hud.dart';
 import 'package:kiyma/ui/palette.dart';
 import 'package:utility_kit/utility_kit.dart';
 
-/// The counter and the numbers above it.
-///
-/// Everything that moves every frame is inside the canvas; the HUD rebuilds a
-/// handful of times a second at most. When the queue empties the day card
-/// takes over again — this screen has no ending of its own.
+/// The counter and the numbers above it. When the queue empties the day card
+/// takes over again.
 @RoutePage()
 class GamePage extends StatefulWidget {
   const GamePage({super.key});
@@ -31,9 +28,6 @@ class _GamePageState extends State<GamePage> {
   @override
   void initState() {
     super.initState();
-    // The page that shows a run is the one that starts it. Doing it in the
-    // day card instead meant the button both changed state and navigated,
-    // and the two were easy to get into the wrong order.
     final cubit = getIt<KiymaCubit>();
     if (cubit.run == null || cubit.run!.bitti) cubit.startDay();
   }
@@ -83,10 +77,8 @@ class _GameView extends StatelessWidget {
   }
 }
 
-/// Holds one [KiymaGame] per run.
-///
-/// [GameWidget] would restart the engine on every rebuild if handed a new
-/// game object, and the parent rebuilds whenever money moves.
+/// [GameWidget] restarts the engine when handed a new game object, and the
+/// parent rebuilds whenever money moves.
 class _GameHost extends StatefulWidget {
   const _GameHost({required this.run});
 
@@ -114,8 +106,8 @@ class _GameHostState extends State<_GameHost> {
   Widget build(BuildContext context) => GameWidget(game: _game);
 }
 
-/// A one-line note that fades out. Loud feedback would be worse than none: a
-/// refusal already costs patience and the player is mid-drag.
+/// A one-line note that fades out. The player is mid-drag; anything louder
+/// would be worse than nothing.
 class _Toast extends StatefulWidget {
   const _Toast();
 

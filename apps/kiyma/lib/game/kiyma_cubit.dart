@@ -5,11 +5,8 @@ import 'package:kiyma/game/unlocks.dart';
 import 'package:kiyma/game/world.dart';
 import 'package:utility_kit/utility_kit.dart';
 
-/// What the screens around the counter show.
-///
-/// Deliberately coarse: patience bars and cooking meters move every frame and
-/// are drawn on the canvas, so nothing here changes more than a few times a
-/// second.
+/// Coarse on purpose: patience and cooking move every frame and are drawn on
+/// the canvas, so nothing here changes more than a few times a second.
 class KiymaState {
   const KiymaState({
     required this.gun,
@@ -26,23 +23,16 @@ class KiymaState {
   final int toplamKazanc;
   final int hedef;
 
-  /// Customers still to come today, waiting ones included.
+  /// Customers still to come, waiting ones included.
   final int kalanMusteri;
 
-  /// Whether the cumulative target for this day has been met, and so whether
-  /// the day card can offer to move on.
   final bool ilerleyebilir;
-
-  /// Whether the current run has emptied its queue.
   final bool gunBitti;
 
   double get hedefOrani => hedef == 0 ? 1 : (toplamKazanc / hedef).clamp(0, 1);
 }
 
-/// The game as the screens see it: what has been earned, which day it is, and
-/// the run currently on the counter.
-///
-/// A singleton because it outlives every screen — the menu, the day card and
+/// A singleton because it outlives every screen: the menu, the day card and
 /// the counter are three routes over one game.
 @lazySingleton
 class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
@@ -63,10 +53,7 @@ class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
 
   DayRun? run;
 
-  /// Opens the counter for another go at the current day.
-  ///
-  /// The day is a counter, not a gate: this can be called as often as the
-  /// player likes and every run adds to the same cumulative total.
+  /// The day is a counter, not a gate: every run adds to the same total.
   void startDay() {
     run = DayRun(
       scene: _world.scene,
@@ -82,8 +69,7 @@ class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
     if (event == DayEvent.gunBitti) _emit();
   }
 
-  /// Moves to the next day. Only ever the player's own choice, and only once
-  /// the cumulative target is behind them.
+  /// The player's own choice, and only once the target is behind them.
   void advanceDay() {
     if (progress.gunuIlerlet()) {
       run = null;

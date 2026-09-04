@@ -8,11 +8,8 @@ import 'package:kiyma/game/unlocks.dart';
 import 'package:kiyma/ui/brand.dart';
 import 'package:kiyma/ui/palette.dart';
 
-/// Design doc 10.4: the shop opens between days only.
-///
-/// A route rather than a card over the counter, so the menu and the day card
-/// reach the same screen. Functional, not finished — the design has category
-/// tabs and illustrated cards.
+/// Design doc 10.4: between days only. Functional, not finished — the design
+/// has category tabs and illustrated cards.
 @RoutePage()
 class ShopPage extends StatelessWidget {
   const ShopPage({super.key});

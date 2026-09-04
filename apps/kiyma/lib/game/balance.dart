@@ -63,15 +63,8 @@ abstract final class Balance {
 
   // --- The day (design doc 11) ---
 
-  /// How many customers a day's queue holds.
-  ///
-  /// Flat, where the design doc scaled it by reputation. That scale only ever
-  /// spanned 0.79 to 1.00, and it had teeth solely because a missed target
-  /// forced the day to be replayed. Advancing the day is the player's own
-  /// choice now, so what is left is a thirteen percent slowdown nobody would
-  /// notice — paid for with a HUD slot and a stat to keep. The cost of losing
-  /// a customer is the customer: two seats, and one of them tied up for half
-  /// a minute by somebody you are not serving.
+  /// Flat, where the design doc scaled it by reputation. Why that went is in
+  /// section 9 of the doc.
   static int baseCustomers(int day) => 5 + day * 2;
 
   /// Gap between one customer leaving and the next taking the place.

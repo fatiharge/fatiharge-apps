@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:kiyma/ui/palette.dart';
 
-/// The cream ground every screen outside the kitchen sits on.
-///
-/// A faint 48px grid with a 24px dot lattice offset into its centres, from the
-/// design's tile pattern. Shared so the splash, the menu and the shop are
-/// visibly one place.
+/// The cream ground every screen outside the kitchen sits on: the design's
+/// 48px grid with a 24px dot lattice offset into its centres.
 class BrandBackground extends StatelessWidget {
   const BrandBackground({required this.child, super.key});
 
@@ -79,8 +76,7 @@ class BrandCard extends StatelessWidget {
   );
 }
 
-/// The design's chunky button: flat fill, a darker 2px border, and a hard
-/// offset shadow that reads as thickness rather than as blur.
+/// Flat fill, 2px border, and a hard offset shadow that reads as thickness.
 class ChunkyButton extends StatelessWidget {
   const ChunkyButton({
     required this.label,
@@ -148,7 +144,7 @@ class ChunkyButton extends StatelessWidget {
   }
 }
 
-/// A small rounded readout — money, the day, whatever the corner has to say.
+/// A small rounded readout for a corner.
 class BrandChip extends StatelessWidget {
   const BrandChip({required this.label, this.icon, super.key});
 

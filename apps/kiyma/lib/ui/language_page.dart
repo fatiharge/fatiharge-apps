@@ -5,17 +5,14 @@ import 'package:kiyma/route/app_router.gr.dart';
 import 'package:kiyma/ui/brand.dart';
 import 'package:kiyma/ui/palette.dart';
 
-/// Asked once, on a device that has never answered.
-///
-/// Nothing is stored by hand: `setLocale` is persisted by easy_localization
-/// itself, and the absence of that stored value is what routes anybody here
-/// in the first place. Reachable again later, so a mistap is not permanent.
+/// Asked once, on a device that has never answered. Nothing is stored by
+/// hand: easy_localization persists `setLocale`, and the absence of that
+/// value is what routes anybody here.
 @RoutePage()
 class LanguagePage extends StatefulWidget {
   const LanguagePage({this.firstRun = true, super.key});
 
-  /// On the first run this replaces itself with the menu; opened again from
-  /// the menu it just closes.
+  /// On the first run this replaces itself with the menu; otherwise closes.
   final bool firstRun;
 
   @override
@@ -112,8 +109,8 @@ class _LanguageRow extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // A lettered disc rather than a flag: emoji flags render
-            // differently on every platform, and English has no one country.
+            // Not a flag: emoji flags differ per platform and English has
+            // no one country.
             Container(
               width: 34,
               height: 34,

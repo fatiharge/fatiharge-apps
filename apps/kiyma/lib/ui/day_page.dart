@@ -10,11 +10,8 @@ import 'package:kiyma/route/app_router.gr.dart';
 import 'package:kiyma/ui/brand.dart';
 import 'package:kiyma/ui/palette.dart';
 
-/// The card between runs.
-///
-/// The day is a counter rather than a gate: the counter can be opened as
-/// often as the player likes, every run adds to the same cumulative total,
-/// and moving on is a button they press when that total clears the target.
+/// The card between runs. Moving on is a button, not a gate: it opens once
+/// the cumulative total clears the day's target.
 @RoutePage()
 class DayPage extends StatelessWidget {
   const DayPage({super.key});
