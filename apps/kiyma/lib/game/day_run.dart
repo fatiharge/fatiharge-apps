@@ -40,7 +40,7 @@ class DayRun {
     mangal = [
       for (var i = 0; i < 4; i++) MangalSlot(unlocked: i < unlocks.mangalSlots),
     ];
-    bekleme = List<Urun?>.filled(4, null);
+    bekleme = List<Urun?>.filled(3, null);
     bardakBekletme = List<Bardak?>.filled(3, null);
     musteriler = List<Customer?>.filled(4, null);
     kalanSure = Balance.runLength(day).inSeconds.toDouble();
@@ -98,10 +98,15 @@ class DayRun {
   double _sonrakiGelis = 0;
   bool bitti = false;
 
+  /// Everything stops: the clock, the grill, the patience bars. The player
+  /// asked for it, so it is not the free breather that stepping out of the
+  /// counter would have been.
+  bool duraklatildi = false;
+
   // --- Clock ---
 
   void tick(double dt) {
-    if (bitti) return;
+    if (bitti || duraklatildi) return;
 
     for (final slot in mangal) {
       if (slot.tick(dt, day)) {
@@ -221,7 +226,7 @@ class DayRun {
   /// a dessert, a bottle, a finished product — the touch only lights the
   /// source up and the drag stays the way to say where.
   void tap(Offset point) {
-    if (bitti) return;
+    if (bitti || duraklatildi) return;
     final region = regionAt(point);
     switch (region?.name) {
       case 'tabak_kaynak':
@@ -302,7 +307,7 @@ class DayRun {
   /// the wrap line: one wrap at a time, and every one of them a choice
   /// between serving it now and putting it on the shelf.
   void flickUp(Offset point) {
-    if (bitti) return;
+    if (bitti || duraklatildi) return;
     final station = durumIstasyonu;
     if (regionAt(point)?.name == 'durum_hazirlama' &&
         station != null &&
@@ -317,7 +322,7 @@ class DayRun {
   }
 
   bool beginDrag(Offset point) {
-    if (bitti) return false;
+    if (bitti || duraklatildi) return false;
     final region = regionAt(point);
     if (region == null) return false;
     carried = _pickUp(region, point);

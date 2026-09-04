@@ -49,11 +49,8 @@
     "bilesen_patlican": "Patlıcan",
     "bilesen_ezme": "Ezme",
     "tatli_baklava": "Baklava",
-    "tatli_sutlac": "Sütlaç",
-    "tatli_kunefe": "Künefe",
     "bekleme_2": "2. bekleme gözü",
-    "bekleme_3": "3. bekleme gözü",
-    "bekleme_4": "4. bekleme gözü"
+    "bekleme_3": "3. bekleme gözü"
   },
   "ozet": {
     "baslik": "Oturum bitti",
@@ -61,5 +58,9 @@
     "reklam": "Reklam izle, x2 kazan",
     "yeniden": "Yeni oyun",
     "menu": "Ana menü"
+  },
+  "duraklat": {
+    "baslik": "Duraklatıldı",
+    "devam": "Devam et"
   }
 }

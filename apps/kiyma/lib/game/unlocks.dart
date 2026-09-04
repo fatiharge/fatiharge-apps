@@ -37,7 +37,6 @@ class Unlocks {
     Unlock('porsiyon_hatti', 800),
     Unlock('musteri_3', 1000),
     Unlock('mangal_4', 1200),
-    Unlock('bekleme_4', 1400),
     Unlock('malzeme_maydanoz', 400),
     Unlock('icecek_salgam', 200),
     Unlock('icecek_ayran', 300),
@@ -47,9 +46,7 @@ class Unlocks {
     Unlock('bilesen_patates', 300),
     Unlock('bilesen_patlican', 450),
     Unlock('bilesen_ezme', 600),
-    Unlock('tatli_sutlac', 300),
     Unlock('tatli_baklava', 400),
-    Unlock('tatli_kunefe', 500),
     Unlock('musteri_4', 2200),
   ];
 
@@ -65,7 +62,6 @@ class Unlocks {
     'mangal_4' => has('mangal_3'),
     'musteri_4' => has('musteri_3'),
     'bekleme_3' => has('bekleme_2'),
-    'bekleme_4' => has('bekleme_3'),
     final id when id.startsWith('bilesen_') => has('porsiyon_hatti'),
     final id when id.startsWith('icecek_') => has('icecek_hatti'),
     _ => true,
@@ -82,8 +78,8 @@ class Unlocks {
   int get musteriSlots =>
       2 + (has('musteri_3') ? 1 : 0) + (has('musteri_4') ? 1 : 0);
 
-  /// One shelf for both lines, one to four deep.
-  int get bekleme => [2, 3, 4].where((n) => has('bekleme_$n')).length + 1;
+  /// One shelf for both lines, one to three deep.
+  int get bekleme => [2, 3].where((n) => has('bekleme_$n')).length + 1;
 
   bool get porsiyonHatti => has('porsiyon_hatti');
 

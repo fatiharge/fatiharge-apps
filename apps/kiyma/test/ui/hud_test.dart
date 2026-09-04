@@ -7,9 +7,10 @@ import 'package:kiyma/ui/splash.dart';
 void main() {
   testWidgets('the HUD carries the till and nothing else', (tester) async {
     await tester.pumpWidget(
-      const MaterialApp(
+      MaterialApp(
         home: Hud(
-          state: KiymaState(
+          onPause: () {},
+          state: const KiymaState(
             gun: 7,
             para: 120,
             xp: 900,
@@ -17,6 +18,7 @@ void main() {
             hedef: 1125,
             oturum: null,
             gunBitti: false,
+            duraklatildi: false,
           ),
         ),
       ),

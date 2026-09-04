@@ -42,11 +42,7 @@ abstract final class Balance {
   /// dominant late strategy.
   static const ingredientBonus = 2;
 
-  static const Map<Tatli, int> tatliBase = {
-    Tatli.baklava: 8,
-    Tatli.kunefe: 7,
-    Tatli.sutlac: 5,
-  };
+  static const Map<Tatli, int> tatliBase = {Tatli.baklava: 8};
   static const Map<Icecek, int> icecekBase = {
     Icecek.kola: 6,
     Icecek.ayran: 5,

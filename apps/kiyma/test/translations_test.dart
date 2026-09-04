@@ -59,6 +59,24 @@ void main() {
     }
   });
 
+  test('every key the code asks for exists', () {
+    // A missing key is not a crash: easy_localization renders the key itself,
+    // so `duraklat.baslik` appears on the pause screen where a word should
+    // be. That shipped once already.
+    final used = <String>{};
+    final pattern = RegExp(r"'([a-z_]+\.[a-z_.]+)'\s*\.tr\(");
+    for (final file in Directory('lib').listSync(recursive: true)) {
+      if (file is! File || !file.path.endsWith('.dart')) continue;
+      for (final match in pattern.allMatches(file.readAsStringSync())) {
+        used.add(match.group(1)!);
+      }
+    }
+
+    expect(used, isNotEmpty, reason: 'the scan itself must find something');
+    expect(used.difference(turkish.keys.toSet()), isEmpty);
+    expect(used.difference(english.keys.toSet()), isEmpty);
+  });
+
   test('nothing is left empty', () {
     for (final entry in {...turkish, ...english}.entries) {
       expect(entry.value.trim(), isNotEmpty, reason: entry.key);

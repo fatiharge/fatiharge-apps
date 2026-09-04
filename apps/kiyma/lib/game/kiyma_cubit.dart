@@ -18,6 +18,7 @@ class KiymaState {
     required this.hedef,
     required this.oturum,
     required this.gunBitti,
+    required this.duraklatildi,
   });
 
   final int gun;
@@ -33,6 +34,8 @@ class KiymaState {
   final RunSummary? oturum;
 
   final bool gunBitti;
+
+  final bool duraklatildi;
 
   double get seviyeOrani {
     final span = hedef - seviyeTabani;
@@ -57,6 +60,7 @@ class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
     hedef: 70,
     oturum: null,
     gunBitti: false,
+    duraklatildi: false,
   );
 
   final GameWorld _world;
@@ -78,6 +82,21 @@ class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
   void _onEvent(DayEvent event) {
     emitEffect(event);
     if (event == DayEvent.gunBitti) _bank(emitAfter: true);
+  }
+
+  void duraklat({required bool durdur}) {
+    final current = run;
+    if (current == null) return;
+    current.duraklatildi = durdur;
+    _emit();
+  }
+
+  /// Debug only: enough money to reach the far end of the shop without
+  /// playing twenty runs to get there. XP is untouched, so the level is
+  /// still whatever was actually played.
+  void bagisla(int miktar) {
+    progress.para += miktar;
+    _emit();
   }
 
   void buy(Unlock unlock) {
@@ -117,6 +136,7 @@ class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
       hedef: progress.hedef,
       oturum: progress.sonOturum,
       gunBitti: run == null && progress.sonOturum != null,
+      duraklatildi: run?.duraklatildi ?? false,
     ),
   );
 }

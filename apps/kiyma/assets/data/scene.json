@@ -815,34 +815,6 @@
       "asset_fit": "orta"
     },
     {
-      "name": "tatli_kunefe",
-      "x": 877,
-      "y": 449,
-      "w": 45,
-      "h": 30,
-      "quad": [
-        [
-          877.4,
-          449.9
-        ],
-        [
-          911.1,
-          449.9
-        ],
-        [
-          921.7,
-          479.6
-        ],
-        [
-          881.6,
-          479.7
-        ]
-      ],
-      "category": "tatli",
-      "asset": "kunefe",
-      "asset_fit": "doldur"
-    },
-    {
       "name": "tatli_baklava",
       "x": 815,
       "y": 405,
@@ -868,33 +840,6 @@
       ],
       "category": "tatli",
       "asset": "baklava"
-    },
-    {
-      "name": "tatli_sutlac",
-      "x": 820,
-      "y": 449,
-      "w": 58,
-      "h": 31,
-      "quad": [
-        [
-          820.4,
-          449.4
-        ],
-        [
-          872.3,
-          449.9
-        ],
-        [
-          877.7,
-          479.9
-        ],
-        [
-          821.8,
-          480.3
-        ]
-      ],
-      "category": "tatli",
-      "asset": "sutlac"
     },
     {
       "name": "sef",
@@ -1029,7 +974,7 @@
     {
       "name": "bekleme_alani",
       "category": "hazirlik",
-      "kapasite": 4,
+      "kapasite": 3,
       "istif": 0.45,
       "asset_fit": "alt",
       "x": 654,

@@ -31,7 +31,14 @@ MAX_EDGE = 512
 SCENE = (2048, 1152)  # 2x the 1024x576 reference space
 
 # Section 11 of the asset catalogue: no region binds these.
-UNUSED = {"kesme_tahtasi", "dereotu_tepsi", "dereotu_porsiyon"}
+# Only baklava ships: one dessert is the whole of that line.
+UNUSED = {
+    "kesme_tahtasi",
+    "dereotu_tepsi",
+    "dereotu_porsiyon",
+    "sutlac",
+    "kunefe",
+}
 
 # Design doc section 7 makes the bin mandatory, and the art repository has
 # neither a region nor an asset for it. The floor in front of the grill is the
@@ -58,10 +65,14 @@ KEEP = (
 MERGED_SHELF = {
     "name": "bekleme_alani",
     "category": "hazirlik",
-    "kapasite": 4,
+    "kapasite": 3,
     "istif": 0.45,
     "asset_fit": "alt",
 }
+
+# Merged into `bekleme_alani`, or belonging to a dessert that no longer
+# ships.
+DROPPED = {"tabak_birakma", "durum_bekleme", "tatli_sutlac", "tatli_kunefe"}
 
 FAMILY = re.compile(r"^(?P<family>.+?)_(?P<variant>\d+)\.png$")
 
@@ -191,7 +202,7 @@ def main():
         "regions": [
             slim_region(r)
             for r in regions["regions"]
-            if r["name"] not in ("tabak_birakma", "durum_bekleme")
+            if r["name"] not in DROPPED
         ]
         + [merged_shelf(regions["regions"]), COP_ALANI],
     }

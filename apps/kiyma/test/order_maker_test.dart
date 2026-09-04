@@ -91,7 +91,7 @@ void main() {
     });
 
     test('every lock has a name to show', () {
-      expect(Unlocks.catalogue.map((u) => u.id).toSet(), hasLength(23));
+      expect(Unlocks.catalogue.map((u) => u.id).toSet(), hasLength(20));
     });
   });
 }

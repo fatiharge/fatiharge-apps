@@ -39,7 +39,7 @@ void main() {
       // One shelf for both lines.
       expect(DurumUrun(Durum()).beklemeBolgesi, 'bekleme_alani');
       expect(PorsiyonUrun(Porsiyon()).beklemeBolgesi, 'bekleme_alani');
-      expect(const TatliUrun(Tatli.kunefe).beklemeBolgesi, isNull);
+      expect(const TatliUrun(Tatli.baklava).beklemeBolgesi, isNull);
       expect(
         const IcecekUrun(Icecek.salgam).beklemeBolgesi,
         'bardak_bekletme',
@@ -68,8 +68,8 @@ void main() {
         'porsiyon_hazirlama',
       );
       expect(
-        const HazirUrun(TatliUrun(Tatli.sutlac), 'tatli_sutlac').asset,
-        'sutlac',
+        const HazirUrun(TatliUrun(Tatli.baklava), 'tatli_baklava').asset,
+        'baklava',
       );
       expect(
         const HazirUrun(IcecekUrun(Icecek.ayran), 'bardak_bekletme').asset,

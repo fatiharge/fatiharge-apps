@@ -110,6 +110,35 @@ void main() {
       expect(progress.sonOturum, isNull);
     });
 
+    test('pausing stops the clock and resuming starts it again', () {
+      final cubit = KiymaCubit(world, Progress())..startDay();
+      final run = cubit.run!;
+      final left = run.kalanSure;
+
+      cubit.duraklat(durdur: true);
+      expect(cubit.state.duraklatildi, isTrue);
+      run.tick(5);
+      expect(run.kalanSure, left, reason: 'nothing moved');
+
+      cubit.duraklat(durdur: false);
+      run.tick(5);
+      expect(run.kalanSure, lessThan(left));
+    });
+
+    test('nothing can be touched while it is paused', () {
+      final cubit = KiymaCubit(world, Progress())..startDay();
+      final run = cubit.run!;
+      cubit.duraklat(durdur: true);
+      expect(run.beginDrag(world.scene['lavas_kaynak'].quad.center), isFalse);
+    });
+
+    test('the debug grant is money and only money', () {
+      final cubit = KiymaCubit(world, Progress())..bagisla(1000);
+      expect(cubit.state.para, 1000);
+      expect(cubit.state.xp, 0, reason: 'the level is what was played');
+      expect(cubit.state.gun, 1);
+    });
+
     test('buying takes the money and opens the lock', () {
       final cubit = KiymaCubit(world, Progress());
       cubit.progress.kazan(200);

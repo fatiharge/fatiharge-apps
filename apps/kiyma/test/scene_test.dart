@@ -77,7 +77,7 @@ void main() {
 
     test('capacities match what the design doc asks for', () {
       expect(scene['mangal_alani'].capacity, 4);
-      expect(scene['bekleme_alani'].capacity, 4);
+      expect(scene['bekleme_alani'].capacity, 3);
       expect(scene['bardak_bekletme'].capacity, 3);
     });
 

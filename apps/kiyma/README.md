@@ -76,6 +76,12 @@ glass. Dragging is still the vocabulary and still the only way to say *who*
 something is for, but requiring it where there is no choice is friction with
 no decision behind it.
 
+The counter's clock is a digital countdown drawn on the canvas, and the pause
+button beside it stops everything — asked for, so not the free breather that
+walking out would have been. In a debug build, holding the menu's language
+button for three seconds grants ₺1000; XP is untouched, so the level stays
+whatever was actually played.
+
 Wraps and plates share **one** shelf. Two half-depth ones drew everything at
 half size; merged, the items lean on each other so four fit at the size the
 prep area draws them. Nothing shrinks when it is picked up either — a carried

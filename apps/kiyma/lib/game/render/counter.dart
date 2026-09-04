@@ -370,18 +370,34 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     }
   }
 
-  /// The run's clock, across the top of the scene. Here rather than in the
-  /// Flutter HUD because it moves every frame.
+  /// The run's clock. Here rather than in the Flutter HUD because it moves
+  /// every frame.
   void _renderClock(Canvas canvas) {
-    final width = scene.size.width;
-    drawBar(
+    final left = run.kalanSure.ceil();
+    final label = '${left ~/ 60}:${(left % 60).toString().padLeft(2, '0')}';
+    final centre = Offset(scene.size.width / 2, 6);
+
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: centre + const Offset(0, 13),
+          width: 74,
+          height: 30,
+        ),
+        const Radius.circular(9),
+      ),
+      Paint()..color = const Color(0xCC14100F),
+    );
+    drawText(
       canvas,
-      Rect.fromLTWH(width * 0.25, 6, width * 0.5, 7),
-      run.sureOrani,
-      color: run.sureOrani < 0.15
+      label,
+      centre + const Offset(0, 3),
+      size: 21,
+      bold: true,
+      center: true,
+      color: run.kalanSure < 20
           ? const Color(0xFFE0574A)
-          : const Color(0xFFE9A13B),
-      background: const Color(0x59000000),
+          : const Color(0xFFF6EFE6),
     );
   }
 

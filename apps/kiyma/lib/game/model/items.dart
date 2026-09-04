@@ -46,10 +46,11 @@ enum Bilesen {
   String get portionAsset => '${assetBase}_porsiyon';
 }
 
+/// One dessert. The line's whole job is to be the quick, certain sale that
+/// lets the player breathe (design doc 6); three of them was three locks and
+/// three prices for one idea.
 enum Tatli {
-  baklava('baklava'),
-  sutlac('sutlac'),
-  kunefe('kunefe');
+  baklava('baklava');
 
   const Tatli(this.id);
 

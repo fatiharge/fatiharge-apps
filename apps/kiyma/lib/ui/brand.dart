@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:kiyma/ui/palette.dart';
 
@@ -77,13 +79,15 @@ class BrandCard extends StatelessWidget {
 }
 
 /// Flat fill, 2px border, and a hard offset shadow that reads as thickness.
-class ChunkyButton extends StatelessWidget {
+class ChunkyButton extends StatefulWidget {
   const ChunkyButton({
     required this.label,
     required this.onPressed,
     this.icon,
     this.color = KiymaPalette.ates,
     this.big = false,
+    this.onHold,
+    this.holdFor = const Duration(seconds: 3),
     super.key,
   });
 
@@ -93,8 +97,51 @@ class ChunkyButton extends StatelessWidget {
   final Color color;
   final bool big;
 
+  /// Fired after [holdFor] of holding, instead of the tap. Long enough that
+  /// nobody finds it by accident.
+  final VoidCallback? onHold;
+  final Duration holdFor;
+
+  @override
+  State<ChunkyButton> createState() => _ChunkyButtonState();
+}
+
+class _ChunkyButtonState extends State<ChunkyButton> {
+  Timer? _hold;
+  bool _held = false;
+
+  @override
+  void dispose() {
+    _hold?.cancel();
+    super.dispose();
+  }
+
+  void _start(_) {
+    if (widget.onHold == null) return;
+    _held = false;
+    _hold = Timer(widget.holdFor, () {
+      _held = true;
+      widget.onHold!();
+    });
+  }
+
+  void _stop() => _hold?.cancel();
+
+  void _tap() {
+    if (_held) {
+      _held = false;
+      return;
+    }
+    widget.onPressed?.call();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final onPressed = widget.onPressed;
+    final icon = widget.icon;
+    final big = widget.big;
+    final color = widget.color;
+    final label = widget.label;
     final enabled = onPressed != null;
     final fill = enabled ? color : const Color(0xFFC9BEAE);
     return Opacity(
@@ -102,7 +149,10 @@ class ChunkyButton extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: onPressed,
+          onTap: enabled ? _tap : null,
+          onTapDown: enabled ? _start : null,
+          onTapUp: (_) => _stop(),
+          onTapCancel: _stop,
           borderRadius: BorderRadius.circular(14),
           child: Container(
             height: big ? 62 : 50,

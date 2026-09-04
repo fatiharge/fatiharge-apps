@@ -49,11 +49,8 @@
     "bilesen_patlican": "Aubergine",
     "bilesen_ezme": "Ezme",
     "tatli_baklava": "Baklava",
-    "tatli_sutlac": "Rice pudding",
-    "tatli_kunefe": "Kunefe",
     "bekleme_2": "2nd shelf slot",
-    "bekleme_3": "3rd shelf slot",
-    "bekleme_4": "4th shelf slot"
+    "bekleme_3": "3rd shelf slot"
   },
   "ozet": {
     "baslik": "Time is up",
@@ -61,5 +58,9 @@
     "reklam": "Watch an ad for x2",
     "yeniden": "New run",
     "menu": "Main menu"
+  },
+  "duraklat": {
+    "baslik": "Paused",
+    "devam": "Resume"
   }
 }

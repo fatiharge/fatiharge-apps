@@ -11,6 +11,7 @@ import 'package:kiyma/game/kiyma_cubit.dart';
 import 'package:kiyma/game/kiyma_game.dart';
 import 'package:kiyma/game/world.dart';
 import 'package:kiyma/route/app_router.gr.dart';
+import 'package:kiyma/ui/brand.dart';
 import 'package:kiyma/ui/hud.dart';
 import 'package:kiyma/ui/palette.dart';
 import 'package:utility_kit/utility_kit.dart';
@@ -67,8 +68,13 @@ class _GameView extends StatelessWidget {
                 if (run != null) _GameHost(run: run),
                 Align(
                   alignment: Alignment.topCenter,
-                  child: Hud(state: state),
+                  child: Hud(
+                    state: state,
+                    onPause: () => cubit.duraklat(durdur: true),
+                  ),
                 ),
+                if (state.duraklatildi)
+                  _PauseOverlay(onResume: () => cubit.duraklat(durdur: false)),
                 const _Toast(),
               ],
             );
@@ -77,6 +83,58 @@ class _GameView extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Everything is stopped behind this, so it swallows what it covers.
+class _PauseOverlay extends StatelessWidget {
+  const _PauseOverlay({required this.onResume});
+
+  final VoidCallback onResume;
+
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+    behavior: HitTestBehavior.opaque,
+    onTap: () {},
+    child: ColoredBox(
+      color: const Color(0xCC0B0908),
+      child: Center(
+        child: BrandCard(
+          width: 320,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'duraklat.baslik'.tr(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontFamily: 'Rubik',
+                  fontSize: 19,
+                  fontWeight: FontWeight.w800,
+                  color: KiymaPalette.komur,
+                ),
+              ),
+              const SizedBox(height: 18),
+              ChunkyButton(
+                label: 'duraklat.devam'.tr(),
+                icon: Icons.play_arrow_rounded,
+                big: true,
+                onPressed: onResume,
+              ),
+              const SizedBox(height: 12),
+              ChunkyButton(
+                label: 'ozet.menu'.tr(),
+                icon: Icons.home_rounded,
+                color: KiymaPalette.celik,
+                onPressed: () =>
+                    unawaited(context.router.replaceAll([const MenuRoute()])),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
 }
 
 /// [GameWidget] restarts the engine when handed a new game object, and the

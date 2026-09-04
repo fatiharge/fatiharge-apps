@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kiyma/config/injectable.dart';
@@ -73,6 +74,11 @@ class MenuPage extends StatelessWidget {
                         onPressed: () => context.router.push(
                           LanguageRoute(firstRun: false),
                         ),
+                        // Hidden behind three seconds, and only in a debug
+                        // build: a way into the shop without grinding to it.
+                        onHold: kDebugMode
+                            ? () => context.read<KiymaCubit>().bagisla(1000)
+                            : null,
                       ),
                     ],
                   ),
