@@ -4,3 +4,4 @@ analyzer:
   exclude:
     - lib/generated/**
     - "**/*.config.dart"
+    - "**/*.gr.dart"

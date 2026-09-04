@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:bootstrap_kit/bootstrap_kit.dart';
 import 'package:kiyma/config/injectable.dart';
 import 'package:kiyma/game/world.dart';
-import 'package:kiyma/route/app_navigator.dart';
+import 'package:kiyma/route/app_router.dart';
+import 'package:kiyma/route/app_router.gr.dart';
 
 /// The app's side of the bootstrap boundary: the container, then the scene,
 /// then the art.
@@ -25,6 +28,7 @@ class BootstrapAdapter implements BootstrapPort {
       () => getIt<GameWorld>().loadScene(),
       errorPolicy: BootstrapErrorPolicy.restart,
     ),
+
     BootstrapJob(
       'art',
       () => getIt<GameWorld>().loadArt(),
@@ -32,6 +36,9 @@ class BootstrapAdapter implements BootstrapPort {
     ),
   ];
 
+  /// `replaceAll` rather than a push: there is nothing to go back to, and a
+  /// back gesture onto a finished bootstrap would re-run it.
   @override
-  void bootstrapFinished() => getIt<AppNavigator>().openGame();
+  void bootstrapFinished() =>
+      unawaited(getIt<AppRouter>().replaceAll([const GameRoute()]));
 }

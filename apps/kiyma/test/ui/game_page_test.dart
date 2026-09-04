@@ -7,7 +7,7 @@ import 'package:kiyma/game/balance.dart';
 import 'package:kiyma/game/kiyma_cubit.dart';
 import 'package:kiyma/game/kiyma_game.dart';
 import 'package:kiyma/game/world.dart';
-import 'package:kiyma/ui/game_screen.dart';
+import 'package:kiyma/ui/game_page.dart';
 import 'package:kiyma/ui/hud.dart';
 import 'package:kiyma/ui/panels.dart';
 
@@ -26,7 +26,7 @@ void main() {
   tearDownAll(() async => getIt.reset());
 
   Future<KiymaCubit> open(WidgetTester tester) async {
-    await tester.pumpWidget(const MaterialApp(home: GameScreen()));
+    await tester.pumpWidget(const MaterialApp(home: GamePage()));
     return tester.element(find.byType(Scaffold)).read<KiymaCubit>();
   }
 

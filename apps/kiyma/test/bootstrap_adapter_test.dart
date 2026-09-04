@@ -3,14 +3,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kiyma/config/injectable.dart';
 import 'package:kiyma/game/world.dart';
 import 'package:kiyma/infrastructure/bootstrap/bootstrap_adapter.dart';
-import 'package:kiyma/route/app_navigator.dart';
+import 'package:kiyma/route/app_router.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() async {
     await getIt.reset();
-    getIt.registerSingleton<AppNavigator>(AppNavigator());
+    getIt.registerSingleton<AppRouter>(AppRouter());
   });
 
   tearDownAll(() async => getIt.reset());

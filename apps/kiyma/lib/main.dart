@@ -6,7 +6,7 @@ import 'package:kiyma/app.dart';
 import 'package:kiyma/config/app_crash_listener.dart';
 import 'package:kiyma/config/injectable.dart';
 import 'package:kiyma/infrastructure/bootstrap/bootstrap_adapter.dart';
-import 'package:kiyma/route/app_navigator.dart';
+import 'package:kiyma/route/app_router.dart';
 
 Future<void> main() => AppCrashListener().runGuarded(startApp);
 
@@ -28,7 +28,7 @@ Future<void> startApp() async {
   // Upstream of the container: configureDependencies is itself a bootstrap
   // job, so nothing registered here can come out of it.
   getIt
-    ..registerSingleton<AppNavigator>(AppNavigator())
+    ..registerSingleton<AppRouter>(AppRouter())
     ..registerSingleton<BootstrapPort>(const BootstrapAdapter());
 
   runApp(
@@ -37,10 +37,7 @@ Future<void> startApp() async {
       path: 'assets/translations',
       fallbackLocale: const Locale('tr'),
       useOnlyLangCode: true,
-      child: KiymaApp(
-        port: getIt<BootstrapPort>(),
-        navigator: getIt<AppNavigator>(),
-      ),
+      child: KiymaApp(router: getIt<AppRouter>()),
     ),
   );
 }

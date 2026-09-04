@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:auto_route/auto_route.dart';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
@@ -19,8 +21,9 @@ import 'package:utility_kit/utility_kit.dart';
 /// The counter, the numbers above it, and whichever between-days card is
 /// open. Everything that moves every frame is inside the canvas; everything
 /// here rebuilds a handful of times a second at most.
-class GameScreen extends StatelessWidget {
-  const GameScreen({super.key});
+@RoutePage()
+class GamePage extends StatelessWidget {
+  const GamePage({super.key});
 
   @override
   Widget build(BuildContext context) => BlocProvider(

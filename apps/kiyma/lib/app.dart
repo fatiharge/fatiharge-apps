@@ -1,18 +1,15 @@
-import 'package:bootstrap_kit/bootstrap_kit.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:kiyma/route/app_navigator.dart';
+import 'package:kiyma/route/app_router.dart';
 import 'package:kiyma/ui/palette.dart';
-import 'package:kiyma/ui/splash.dart';
 
 class KiymaApp extends StatelessWidget {
-  const KiymaApp({required this.port, required this.navigator, super.key});
+  const KiymaApp({required this.router, super.key});
 
-  final BootstrapPort port;
-  final AppNavigator navigator;
+  final AppRouter router;
 
   @override
-  Widget build(BuildContext context) => MaterialApp(
+  Widget build(BuildContext context) => MaterialApp.router(
     // Keyed on the language so a change rebuilds everything below it: `.tr()`
     // reads the words without a context, so no widget is subscribed to the
     // locale on its own.
@@ -23,13 +20,8 @@ class KiymaApp extends StatelessWidget {
     localizationsDelegates: context.localizationDelegates,
     supportedLocales: context.supportedLocales,
     locale: context.locale,
-    navigatorKey: navigator.key,
-    // The splash is the home, and the port replaces it once the jobs are
-    // done. Nothing here watches for that: what startup opens is the port's
-    // business, which is the whole point of the boundary.
-    home: BootstrapPage.withProgress(
-      port: port,
-      runningBuilder: (context, state) => SplashView(progress: state.progress),
-    ),
+    // The first route is the startup page; what it opens once the jobs are
+    // done is the bootstrap port's business, not this widget's.
+    routerConfig: router.config(),
   );
 }
