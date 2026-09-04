@@ -3,41 +3,51 @@ import 'dart:math' as math;
 import 'package:kiyma/game/balance.dart';
 import 'package:kiyma/game/unlocks.dart';
 
-/// What survives a day: money, the day reached, and what is open.
+/// What survives a run: money, the level reached, and what is open.
 ///
-/// [para] and [toplamKazanc] are separate on purpose. The day target is
-/// measured against the cumulative figure, so spending on an upgrade never
-/// pushes progress backwards.
+/// [para] is spent; [xp] is not. Levelling is measured against the figure
+/// nothing subtracts from, so buying an upgrade never costs progress — which
+/// is also why the player is shown a level bar and not a bank balance.
 class Progress {
   int para = 0;
-  int toplamKazanc = 0;
+  int xp = 0;
   int gun = 1;
 
   final Unlocks unlocks = Unlocks();
 
   int get hedef => Balance.target(gun);
 
-  /// Whether the day can be moved on from. The player decides when to take
-  /// it: the day is a counter, not a gate, so a target already met simply
-  /// stays met until they use it.
-  bool get hedefTutturuldu => toplamKazanc >= hedef;
+  /// XP the current level started at, so a bar can be drawn between levels
+  /// rather than from zero.
+  int get seviyeTabani => gun <= 1 ? 0 : Balance.target(gun - 1);
 
-  bool gunuIlerlet() {
-    if (!hedefTutturuldu) return false;
-    gun++;
-    return true;
+  double get seviyeOrani {
+    final span = hedef - seviyeTabani;
+    return span <= 0 ? 1 : ((xp - seviyeTabani) / span).clamp(0, 1);
+  }
+
+  bool get seviyeAtlandi => xp >= hedef;
+
+  /// Levels up as far as the XP reaches, and answers how many days that was.
+  int seviyeleriIsle() {
+    var gained = 0;
+    while (seviyeAtlandi) {
+      gun++;
+      gained++;
+    }
+    return gained;
   }
 
   void kazan(int miktar) {
     para += miktar;
-    toplamKazanc += miktar;
+    xp += miktar;
   }
 
   /// A burn costs money now and slows the cumulative target as well, which is
   /// the whole of its long-term bite — patience never sees it.
   void cezalandir(int miktar) {
     para = math.max(0, para - miktar);
-    toplamKazanc = math.max(0, toplamKazanc - miktar);
+    xp = math.max(0, xp - miktar);
   }
 
   bool satinAl(Unlock unlock) {

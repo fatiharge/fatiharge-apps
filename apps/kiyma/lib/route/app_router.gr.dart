@@ -9,24 +9,25 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:auto_route/auto_route.dart' as _i7;
-import 'package:flutter/material.dart' as _i8;
+import 'package:auto_route/auto_route.dart' as _i8;
+import 'package:flutter/material.dart' as _i9;
 import 'package:kiyma/ui/day_page.dart' as _i1;
 import 'package:kiyma/ui/game_page.dart' as _i2;
 import 'package:kiyma/ui/language_page.dart' as _i3;
 import 'package:kiyma/ui/menu_page.dart' as _i4;
 import 'package:kiyma/ui/shop_page.dart' as _i5;
 import 'package:kiyma/ui/startup_page.dart' as _i6;
+import 'package:kiyma/ui/summary_page.dart' as _i7;
 
 /// generated route for
 /// [_i1.DayPage]
-class DayRoute extends _i7.PageRouteInfo<void> {
-  const DayRoute({List<_i7.PageRouteInfo>? children})
+class DayRoute extends _i8.PageRouteInfo<void> {
+  const DayRoute({List<_i8.PageRouteInfo>? children})
     : super(DayRoute.name, initialChildren: children);
 
   static const String name = 'DayRoute';
 
-  static _i7.PageInfo page = _i7.PageInfo(
+  static _i8.PageInfo page = _i8.PageInfo(
     name,
     builder: (data) {
       return const _i1.DayPage();
@@ -36,13 +37,13 @@ class DayRoute extends _i7.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i2.GamePage]
-class GameRoute extends _i7.PageRouteInfo<void> {
-  const GameRoute({List<_i7.PageRouteInfo>? children})
+class GameRoute extends _i8.PageRouteInfo<void> {
+  const GameRoute({List<_i8.PageRouteInfo>? children})
     : super(GameRoute.name, initialChildren: children);
 
   static const String name = 'GameRoute';
 
-  static _i7.PageInfo page = _i7.PageInfo(
+  static _i8.PageInfo page = _i8.PageInfo(
     name,
     builder: (data) {
       return const _i2.GamePage();
@@ -52,11 +53,11 @@ class GameRoute extends _i7.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i3.LanguagePage]
-class LanguageRoute extends _i7.PageRouteInfo<LanguageRouteArgs> {
+class LanguageRoute extends _i8.PageRouteInfo<LanguageRouteArgs> {
   LanguageRoute({
     bool firstRun = true,
-    _i8.Key? key,
-    List<_i7.PageRouteInfo>? children,
+    _i9.Key? key,
+    List<_i8.PageRouteInfo>? children,
   }) : super(
          LanguageRoute.name,
          args: LanguageRouteArgs(firstRun: firstRun, key: key),
@@ -65,7 +66,7 @@ class LanguageRoute extends _i7.PageRouteInfo<LanguageRouteArgs> {
 
   static const String name = 'LanguageRoute';
 
-  static _i7.PageInfo page = _i7.PageInfo(
+  static _i8.PageInfo page = _i8.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<LanguageRouteArgs>(
@@ -81,7 +82,7 @@ class LanguageRouteArgs {
 
   final bool firstRun;
 
-  final _i8.Key? key;
+  final _i9.Key? key;
 
   @override
   String toString() {
@@ -101,13 +102,13 @@ class LanguageRouteArgs {
 
 /// generated route for
 /// [_i4.MenuPage]
-class MenuRoute extends _i7.PageRouteInfo<void> {
-  const MenuRoute({List<_i7.PageRouteInfo>? children})
+class MenuRoute extends _i8.PageRouteInfo<void> {
+  const MenuRoute({List<_i8.PageRouteInfo>? children})
     : super(MenuRoute.name, initialChildren: children);
 
   static const String name = 'MenuRoute';
 
-  static _i7.PageInfo page = _i7.PageInfo(
+  static _i8.PageInfo page = _i8.PageInfo(
     name,
     builder: (data) {
       return const _i4.MenuPage();
@@ -117,13 +118,13 @@ class MenuRoute extends _i7.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i5.ShopPage]
-class ShopRoute extends _i7.PageRouteInfo<void> {
-  const ShopRoute({List<_i7.PageRouteInfo>? children})
+class ShopRoute extends _i8.PageRouteInfo<void> {
+  const ShopRoute({List<_i8.PageRouteInfo>? children})
     : super(ShopRoute.name, initialChildren: children);
 
   static const String name = 'ShopRoute';
 
-  static _i7.PageInfo page = _i7.PageInfo(
+  static _i8.PageInfo page = _i8.PageInfo(
     name,
     builder: (data) {
       return const _i5.ShopPage();
@@ -133,16 +134,32 @@ class ShopRoute extends _i7.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i6.StartupPage]
-class StartupRoute extends _i7.PageRouteInfo<void> {
-  const StartupRoute({List<_i7.PageRouteInfo>? children})
+class StartupRoute extends _i8.PageRouteInfo<void> {
+  const StartupRoute({List<_i8.PageRouteInfo>? children})
     : super(StartupRoute.name, initialChildren: children);
 
   static const String name = 'StartupRoute';
 
-  static _i7.PageInfo page = _i7.PageInfo(
+  static _i8.PageInfo page = _i8.PageInfo(
     name,
     builder: (data) {
       return const _i6.StartupPage();
+    },
+  );
+}
+
+/// generated route for
+/// [_i7.SummaryPage]
+class SummaryRoute extends _i8.PageRouteInfo<void> {
+  const SummaryRoute({List<_i8.PageRouteInfo>? children})
+    : super(SummaryRoute.name, initialChildren: children);
+
+  static const String name = 'SummaryRoute';
+
+  static _i8.PageInfo page = _i8.PageInfo(
+    name,
+    builder: (data) {
+      return const _i7.SummaryPage();
     },
   );
 }

@@ -14,77 +14,72 @@ void main() {
     await world.loadScene();
   });
 
-  /// Opens the counter and closes it again with nobody left to serve.
-  void playEmptyDay(KiymaCubit cubit) {
+  /// Opens the counter and lets the clock run out.
+  void playOut(KiymaCubit cubit) {
     cubit.startDay();
-    cubit.run!
-      ..kuyruk = 0
-      ..tick(0.1);
+    cubit.run!.tick(Balance.runLength(cubit.state.gun).inSeconds + 1);
   }
 
   group('KiymaCubit', () {
-    test('opens on day one with the target ahead of it', () {
+    test('opens on day one with nothing behind it', () {
       final cubit = KiymaCubit(world);
       expect(cubit.state.gun, 1);
+      expect(cubit.state.xp, 0);
       expect(cubit.state.hedef, Balance.target(1));
-      expect(cubit.state.ilerleyebilir, isFalse);
+      expect(cubit.state.oturum, isNull);
       expect(cubit.run, isNull);
     });
 
-    test('a finished run says so and leaves the day where it was', () async {
+    test('a finished run is banked and reported', () async {
       final cubit = KiymaCubit(world);
       final effects = <DayEvent>[];
       cubit.effects.listen(effects.add);
 
-      playEmptyDay(cubit);
+      cubit.startDay();
+      cubit.progress.kazan(30);
+      cubit.run!.tick(Balance.runLength(1).inSeconds + 1);
 
+      expect(cubit.run, isNull);
       expect(cubit.state.gunBitti, isTrue);
-      expect(cubit.state.gun, 1, reason: 'the day is a counter, not a gate');
+      expect(cubit.state.oturum!.kazanc, 30);
+      expect(cubit.state.oturum!.seviyeAtladi, isFalse);
+      expect(cubit.state.gun, 1);
       await Future<void>.delayed(Duration.zero);
       expect(effects, contains(DayEvent.gunBitti));
     });
 
-    test('the counter can be opened again on the same day', () {
-      final cubit = KiymaCubit(world);
-      playEmptyDay(cubit);
-      final first = cubit.run;
-      cubit.startDay();
-      expect(cubit.run, isNot(same(first)));
-      expect(cubit.state.gunBitti, isFalse);
-      expect(cubit.state.gun, 1);
-    });
-
-    test('moving on is refused until the target is met', () {
-      final cubit = KiymaCubit(world)..advanceDay();
-      expect(cubit.state.gun, 1);
-
-      cubit.progress.kazan(Balance.target(1) - 1);
-      cubit.advanceDay();
-      expect(cubit.state.gun, 1);
-      expect(cubit.state.ilerleyebilir, isFalse);
-    });
-
-    test('moving on advances the day and keeps the money', () {
-      final cubit = KiymaCubit(world);
+    test('crossing the level takes the day with it', () {
+      final cubit = KiymaCubit(world)..startDay();
       cubit.progress.kazan(Balance.target(1));
-      playEmptyDay(cubit);
+      cubit.run!.tick(Balance.runLength(1).inSeconds + 1);
 
-      expect(cubit.state.ilerleyebilir, isTrue);
-      cubit.advanceDay();
-
+      final summary = cubit.state.oturum!;
+      expect(summary.seviyeAtladi, isTrue);
+      expect(summary.gunOnce, 1);
+      expect(summary.atlananGun, 1);
       expect(cubit.state.gun, 2);
-      expect(cubit.state.para, Balance.target(1));
-      expect(cubit.state.toplamKazanc, Balance.target(1));
-      expect(cubit.run, isNull, reason: 'the finished run is left behind');
       expect(cubit.state.hedef, Balance.target(2));
     });
 
-    test('a target met once stays met until it is used', () {
-      final cubit = KiymaCubit(world);
-      cubit.progress.kazan(Balance.target(1));
-      playEmptyDay(cubit);
-      playEmptyDay(cubit);
-      expect(cubit.state.ilerleyebilir, isTrue);
+    test('a run big enough crosses more than one level', () {
+      final cubit = KiymaCubit(world)..startDay();
+      cubit.progress.kazan(Balance.target(3));
+      cubit.run!.tick(Balance.runLength(1).inSeconds + 1);
+
+      expect(cubit.state.oturum!.atlananGun, 3);
+      expect(cubit.state.gun, 4);
+    });
+
+    test('spending never costs a level', () {
+      final cubit = KiymaCubit(world)..startDay();
+      cubit.progress.kazan(300);
+      cubit.run!.tick(Balance.runLength(1).inSeconds + 1);
+      expect(cubit.state.gun, 4, reason: '300 clears the first three');
+
+      cubit.buy(const Unlock('malzeme_biber', 150));
+      expect(cubit.state.gun, 4, reason: 'spending is not levelling');
+      expect(cubit.state.xp, 300);
+      expect(cubit.state.para, 150);
     });
 
     test('leaving the counter ends the run and reports what it took', () {
@@ -93,18 +88,24 @@ void main() {
 
       cubit.abandonRun();
       expect(cubit.run, isNull, reason: 'stepping out is not a pause');
-      expect(cubit.state.sonOturum, 26);
+      expect(cubit.state.oturum!.kazanc, 26);
       expect(cubit.state.para, 26, reason: 'money banks as it is earned');
+    });
 
-      // A fresh run starts its own count.
+    test('a new run clears the last summary', () {
+      final cubit = KiymaCubit(world);
+      playOut(cubit);
+      expect(cubit.state.oturum, isNotNull);
+
       cubit.startDay();
-      expect(cubit.state.sonOturum, 0);
+      expect(cubit.state.oturum, isNull);
+      expect(cubit.state.gunBitti, isFalse);
     });
 
     test('abandoning nothing does nothing', () {
       final cubit = KiymaCubit(world)..abandonRun();
       expect(cubit.run, isNull);
-      expect(cubit.state.sonOturum, 0);
+      expect(cubit.state.oturum, isNull);
     });
 
     test('buying takes the money and opens the lock', () {

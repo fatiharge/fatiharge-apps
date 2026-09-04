@@ -55,21 +55,25 @@ entries and not five; the shell screens of stage 7 are what it grows for.
 
 ```
 Startup ─ no language stored? ─ Language ─┐
-        └─ otherwise ──────────────────────┴─ Menu ─ Play ─ Day ─ Open counter ─ Game
-                                              └─ Upgrade ─ Shop        ↑ queue empty ─┘
+        └─ otherwise ──────────────────────┴─ Menu ─ Play ─ Day ─ Open ─ Game
+                                              └─ Upgrade ─ Shop         ↓ time up
+                                                     Summary ─ new run / menu
 ```
 
-Six routes, one game. `KiymaCubit` is a `@lazySingleton` because it outlives
+Seven routes, one game. `KiymaCubit` is a `@lazySingleton` because it outlives
 every screen; each page provides the same instance rather than making one.
 
-The day is a **counter, not a gate**. The counter can be opened as often as
-the player likes and every run adds to the same cumulative total; when that
-total clears the day's target the day card offers to move on, and moving on
-is their button to press. Nothing is carried over from a previous session and
-nothing is lost by closing the app — which is why the design doc's
-half-finished day (11.5) and its reputation system (9) are both gone. What
-losing a customer costs is the seat they occupy for the length of their
-patience bar.
+A run is a **clock**: `180s + day * 5s`, with customers arriving as seats
+free until it stops. What it pays feeds **XP**, and XP is what turns the day
+over — the two are the same number underneath and are never shown together,
+so progress reads as levelling rather than as a bank balance. The counter
+itself shows only the till and the clock; the level belongs to the screens
+either side of it.
+
+Nothing is carried between runs and nothing is lost by closing the app, which
+is why the design doc's half-finished day (11.5) and its reputation system
+(9) are both gone. What losing a customer costs is the seat they occupy for
+the length of their patience bar.
 
 The grill is aimed at as one area, not as four slots. Meat dropped anywhere
 on it fills the slot under the finger or the nearest free one; a drag off it

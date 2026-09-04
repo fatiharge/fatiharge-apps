@@ -22,15 +22,13 @@ void main() {
     events.clear();
     final progress = Progress();
     unlock.forEach(progress.unlocks.open);
-    // Arrivals are tested on their own; every other test places the customer
-    // it needs, so the queue is emptied to keep them out of the way.
     return DayRun(
       scene: scene,
       progress: progress,
       onEvent: events.add,
       onChanged: () {},
       random: math.Random(7),
-    )..kuyruk = 0;
+    );
   }
 
   Offset at(String region) => scene[region].quad.center;
@@ -342,18 +340,17 @@ void main() {
     });
 
     test('a customer nobody serves holds the seat until they give up', () {
-      // What losing a customer costs, now that reputation is gone: with two
-      // seats open, one of them is tied up for the whole patience bar by
-      // somebody who pays nothing.
+      // What losing a customer costs: with two seats open, one is tied up for
+      // the whole patience bar by somebody who pays nothing.
       final run = build()
-        ..kuyruk = 1
         ..musteriler[0] = Customer(order: wrapFor(const {}), day: 1)
         ..musteriler[1] = Customer(order: wrapFor(const {}), day: 1);
+      final held = run.musteriler[1];
 
       for (var i = 0; i < 10; i++) {
         run.tick(0.5);
       }
-      expect(run.kuyruk, 1, reason: 'both seats are taken');
+      expect(run.musteriler[1], same(held), reason: 'both seats are taken');
 
       run.musteriler[1]!.sabirKalan = 0.05;
       run.tick(0.1);
@@ -362,7 +359,7 @@ void main() {
       for (var i = 0; i < 10; i++) {
         run.tick(0.5);
       }
-      expect(run.kuyruk, 0, reason: 'the freed seat took the next in line');
+      expect(run.musteriler[1], isNotNull, reason: 'the seat filled again');
     });
   });
 
@@ -463,14 +460,26 @@ void main() {
   });
 
   group('the day', () {
-    test('ends once the queue and the counter are both empty', () {
+    test('ends when the clock does, not when the queue does', () {
       final run = build()..tick(0.1);
+      expect(run.bitti, isFalse, reason: 'there is time left');
+
+      run.tick(Balance.runLength(run.day).inSeconds.toDouble());
       expect(run.bitti, isTrue);
       expect(events, contains(DayEvent.gunBitti));
     });
 
+    test('customers keep coming for as long as the clock runs', () {
+      final run = build();
+      for (var i = 0; i < 200; i++) {
+        run.tick(0.5);
+      }
+      expect(run.bitti, isFalse);
+      expect(run.musteriler.where((c) => c != null), isNotEmpty);
+    });
+
     test('seats arrivals only in the places that are open', () {
-      final run = build()..kuyruk = 4;
+      final run = build();
       for (var i = 0; i < 40; i++) {
         run.tick(0.5);
       }
@@ -481,7 +490,7 @@ void main() {
     });
 
     test('does nothing once it is over', () {
-      final run = build()..tick(0.1);
+      final run = build()..tick(Balance.runLength(1).inSeconds.toDouble() + 1);
       expect(run.beginDrag(at('lavas_kaynak')), isFalse);
       run.tap(at('tabak_kaynak'));
       expect(run.tabakIstasyonu, isNull);

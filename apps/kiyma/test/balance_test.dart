@@ -22,9 +22,9 @@ void main() {
       expect(late - Balance.income(Balance.durumBase, 20), 6);
     });
 
-    test('the queue is a flat count per day', () {
-      expect(Balance.baseCustomers(1), 7);
-      expect(Balance.baseCustomers(10), 25);
+    test('a run is three minutes plus five seconds a day', () {
+      expect(Balance.runLength(1), const Duration(seconds: 185));
+      expect(Balance.runLength(10), const Duration(seconds: 230));
     });
 
     test('the target table is the doc table, and keeps climbing past it', () {

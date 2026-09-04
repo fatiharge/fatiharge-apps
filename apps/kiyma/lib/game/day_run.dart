@@ -44,8 +44,8 @@ class DayRun {
     tabakBirakma = List<Urun?>.filled(2, null);
     bardakBekletme = List<Bardak?>.filled(3, null);
     musteriler = List<Customer?>.filled(4, null);
-    kuyruk = Balance.baseCustomers(day);
-    _acilis = progress.toplamKazanc;
+    kalanSure = Balance.runLength(day).inSeconds.toDouble();
+    _acilis = progress.xp;
   }
 
   final SceneData scene;
@@ -72,18 +72,19 @@ class DayRun {
   Carried? carried;
   Offset carriedAt = Offset.zero;
 
-  /// Customers still to walk in today. The day is over when this and the
-  /// counter are both empty.
-  late int kuyruk;
+  /// Seconds left on the counter. A run is a clock: customers keep arriving
+  /// as seats free until it runs out.
+  late double kalanSure;
 
   late final int _acilis;
 
-  /// What this run has taken, as opposed to the cumulative total.
-  int get kazanc => progress.toplamKazanc - _acilis;
+  /// What this run has taken, as opposed to the running total.
+  int get kazanc => progress.xp - _acilis;
+
+  double get sureOrani =>
+      (kalanSure / Balance.runLength(day).inSeconds).clamp(0, 1);
   double _sonrakiGelis = 0;
   bool bitti = false;
-
-  int get kalanMusteri => kuyruk + musteriler.where((c) => c != null).length;
 
   // --- Clock ---
 
@@ -112,18 +113,19 @@ class DayRun {
     }
 
     _sonrakiGelis -= dt;
-    if (kuyruk > 0 && _sonrakiGelis <= 0) {
+    if (_sonrakiGelis <= 0) {
       final free = _bosMusteriSlotu();
       if (free != null) {
         musteriler[free] = Customer(order: _maker.make(), day: day);
-        kuyruk--;
         _sonrakiGelis = Balance.arrivalGap;
         onEvent(DayEvent.musteriGeldi);
         onChanged();
       }
     }
 
-    if (kuyruk == 0 && musteriler.every((c) => c == null)) {
+    kalanSure -= dt;
+    if (kalanSure <= 0) {
+      kalanSure = 0;
       bitti = true;
       onEvent(DayEvent.gunBitti);
       onChanged();

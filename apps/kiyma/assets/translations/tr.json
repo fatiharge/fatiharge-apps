@@ -18,11 +18,7 @@
   },
   "gun": {
     "baslik": "Gün {}",
-    "hedef": "₺{} / ₺{}",
-    "ac": "Tezgahı aç",
-    "ilerlet": "Günü ilerlet",
-    "kilitli": "Hedefi tutturunca gün ilerler.",
-    "oturum": "Bu oturumda ₺{} kazandın"
+    "ac": "Tezgahı aç"
   },
   "magaza": {
     "baslik": "Dükkanı büyüt",
@@ -59,5 +55,12 @@
     "tatli_baklava": "Baklava",
     "tatli_sutlac": "Sütlaç",
     "tatli_kunefe": "Künefe"
+  },
+  "ozet": {
+    "baslik": "Oturum bitti",
+    "kazanc": "₺{}",
+    "reklam": "Reklam izle, x2 kazan",
+    "yeniden": "Yeni oyun",
+    "menu": "Ana menü"
   }
 }

@@ -18,11 +18,7 @@
   },
   "gun": {
     "baslik": "Day {}",
-    "hedef": "₺{} / ₺{}",
-    "ac": "Open the counter",
-    "ilerlet": "Move on a day",
-    "kilitli": "Meet the target to move on.",
-    "oturum": "This run brought in ₺{}"
+    "ac": "Open the counter"
   },
   "magaza": {
     "baslik": "Grow the shop",
@@ -59,5 +55,12 @@
     "tatli_baklava": "Baklava",
     "tatli_sutlac": "Rice pudding",
     "tatli_kunefe": "Kunefe"
+  },
+  "ozet": {
+    "baslik": "Time is up",
+    "kazanc": "₺{}",
+    "reklam": "Watch an ad for x2",
+    "yeniden": "New run",
+    "menu": "Main menu"
   }
 }

@@ -12,6 +12,7 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: MenuRoute.page),
     AutoRoute(page: DayRoute.page),
     AutoRoute(page: GameRoute.page),
+    AutoRoute(page: SummaryRoute.page),
     AutoRoute(page: ShopRoute.page),
   ];
 }

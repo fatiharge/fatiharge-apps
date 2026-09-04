@@ -63,16 +63,15 @@ abstract final class Balance {
 
   // --- The day (design doc 11) ---
 
-  /// Flat, where the design doc scaled it by reputation. Why that went is in
-  /// section 9 of the doc.
-  static int baseCustomers(int day) => 5 + day * 2;
+  /// How long the counter stays open. A run is a clock, not a queue:
+  /// customers keep arriving as seats free until the time is up.
+  static Duration runLength(int day) => Duration(seconds: 180 + day * 5);
 
   /// Gap between one customer leaving and the next taking the place.
   static const arrivalGap = 1.5;
 
-  /// Cumulative earnings needed to pass the day — roughly 70% of what a
-  /// competent player takes, so it is a floor rather than a wall. Derived
-  /// from [income]; recompute if that changes.
+  /// XP needed to reach each day. Earned money is what feeds it, but the
+  /// player is never shown that link — they see a level bar.
   static const targets = [70, 170, 295, 450, 640, 865, 1125, 1425, 1770, 2155];
 
   static int target(int day) {

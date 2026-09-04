@@ -37,11 +37,13 @@ import 'package:kiyma/ui/day_page.dart';
 import 'package:kiyma/ui/game_page.dart';
 import 'package:kiyma/ui/hud.dart';
 import 'package:kiyma/ui/language_page.dart';
+import 'package:kiyma/ui/level_bar.dart';
 import 'package:kiyma/ui/menu_page.dart';
 import 'package:kiyma/ui/palette.dart';
 import 'package:kiyma/ui/shop_page.dart';
 import 'package:kiyma/ui/splash.dart';
 import 'package:kiyma/ui/startup_page.dart';
+import 'package:kiyma/ui/summary_page.dart';
 
 void main() {
   test('imports every library, so untested files count as 0%', () {

@@ -5,39 +5,62 @@ import 'package:kiyma/game/unlocks.dart';
 import 'package:kiyma/game/world.dart';
 import 'package:utility_kit/utility_kit.dart';
 
-/// Coarse on purpose: patience and cooking move every frame and are drawn on
-/// the canvas, so nothing here changes more than a few times a second.
+/// Coarse on purpose: the clock and the patience bars move every frame and
+/// are drawn on the canvas, so nothing here changes more than a few times a
+/// second.
 class KiymaState {
   const KiymaState({
     required this.gun,
     required this.para,
-    required this.toplamKazanc,
+    required this.xp,
+    required this.seviyeTabani,
     required this.hedef,
-    required this.kalanMusteri,
-    required this.sonOturum,
-    required this.ilerleyebilir,
+    required this.oturum,
     required this.gunBitti,
   });
 
   final int gun;
   final int para;
-  final int toplamKazanc;
+  final int xp;
+
+  /// Where the current level started and where it ends, so a bar can be drawn
+  /// between the two rather than from zero.
+  final int seviyeTabani;
   final int hedef;
 
-  /// Customers still to come, waiting ones included.
-  final int kalanMusteri;
+  /// The run that just ended, or null while one is in progress.
+  final RunSummary? oturum;
 
-  /// What the last run took, for the card that comes after it.
-  final int sonOturum;
-
-  final bool ilerleyebilir;
   final bool gunBitti;
 
-  double get hedefOrani => hedef == 0 ? 1 : (toplamKazanc / hedef).clamp(0, 1);
+  double get seviyeOrani {
+    final span = hedef - seviyeTabani;
+    return span <= 0 ? 1 : ((xp - seviyeTabani) / span).clamp(0, 1);
+  }
 }
 
-/// A singleton because it outlives every screen: the menu, the day card and
-/// the counter are three routes over one game.
+/// What a finished run is worth, held so the summary can animate from before
+/// it to after it.
+class RunSummary {
+  const RunSummary({
+    required this.kazanc,
+    required this.xpOnce,
+    required this.gunOnce,
+    required this.atlananGun,
+  });
+
+  final int kazanc;
+  final int xpOnce;
+  final int gunOnce;
+
+  /// How many levels the run crossed.
+  final int atlananGun;
+
+  bool get seviyeAtladi => atlananGun > 0;
+}
+
+/// A singleton because it outlives every screen: the menu, the start card,
+/// the counter and the summary are four routes over one game.
 @lazySingleton
 class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
   KiymaCubit(this._world) : super(_initial);
@@ -45,11 +68,10 @@ class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
   static const _initial = KiymaState(
     gun: 1,
     para: 0,
-    toplamKazanc: 0,
+    xp: 0,
+    seviyeTabani: 0,
     hedef: 70,
-    kalanMusteri: 0,
-    sonOturum: 0,
-    ilerleyebilir: false,
+    oturum: null,
     gunBitti: false,
   );
 
@@ -57,12 +79,10 @@ class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
   final Progress progress = Progress();
 
   DayRun? run;
+  RunSummary? _oturum;
 
-  int _sonOturum = 0;
-
-  /// The day is a counter, not a gate: every run adds to the same total.
   void startDay() {
-    _sonOturum = 0;
+    _oturum = null;
     run = DayRun(
       scene: _world.scene,
       progress: progress,
@@ -74,31 +94,32 @@ class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
 
   void _onEvent(DayEvent event) {
     emitEffect(event);
-    if (event == DayEvent.gunBitti) {
-      _sonOturum = run?.kazanc ?? 0;
-      _emit();
-    }
+    if (event == DayEvent.gunBitti) _close();
   }
 
   /// Leaving the counter ends the run rather than suspending it: off screen
-  /// the clocks stop, and a run you can step out of is a pause button the
-  /// design does not have (10.4). Nothing is lost — money banks as it is
-  /// earned.
+  /// the clocks stop, and a run you can step out of is a pause the design
+  /// does not have (10.4).
   void abandonRun() {
-    final current = run;
-    if (current == null) return;
-    if (!current.bitti) _sonOturum = current.kazanc;
-    run = null;
-    _emit();
+    if (run != null) _close();
   }
 
-  /// The player's own choice, and only once the target is behind them.
-  void advanceDay() {
-    if (progress.gunuIlerlet()) {
-      run = null;
-      _sonOturum = 0;
-      _emit();
-    }
+  /// Banks the run and levels up as far as its XP reaches. Money is what
+  /// feeds XP, but the two are only ever shown apart.
+  void _close() {
+    final current = run;
+    if (current == null) return;
+
+    final xpOnce = progress.xp - current.kazanc;
+    final gunOnce = progress.gun;
+    _oturum = RunSummary(
+      kazanc: current.kazanc,
+      xpOnce: xpOnce,
+      gunOnce: gunOnce,
+      atlananGun: progress.seviyeleriIsle(),
+    );
+    run = null;
+    _emit();
   }
 
   void buy(Unlock unlock) {
@@ -109,12 +130,11 @@ class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
     KiymaState(
       gun: progress.gun,
       para: progress.para,
-      toplamKazanc: progress.toplamKazanc,
+      xp: progress.xp,
+      seviyeTabani: progress.seviyeTabani,
       hedef: progress.hedef,
-      kalanMusteri: run?.kalanMusteri ?? 0,
-      sonOturum: _sonOturum,
-      ilerleyebilir: progress.hedefTutturuldu,
-      gunBitti: run?.bitti ?? false,
+      oturum: _oturum,
+      gunBitti: run == null && _oturum != null,
     ),
   );
 }

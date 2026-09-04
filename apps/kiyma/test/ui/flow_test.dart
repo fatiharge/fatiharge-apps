@@ -14,8 +14,10 @@ import 'package:kiyma/route/app_router.gr.dart';
 import 'package:kiyma/ui/day_page.dart';
 import 'package:kiyma/ui/hud.dart';
 import 'package:kiyma/ui/language_page.dart';
+import 'package:kiyma/ui/level_bar.dart';
 import 'package:kiyma/ui/menu_page.dart';
 import 'package:kiyma/ui/shop_page.dart';
+import 'package:kiyma/ui/summary_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// The screens as they are actually reached: through the router, off the same
@@ -110,33 +112,16 @@ void main() {
   });
 
   group('the day card', () {
-    testWidgets('will not move on until the target is met', (tester) async {
+    testWidgets('shows the level and reaches the shop', (tester) async {
       await open(tester, const DayRoute());
       expect(find.text('Gün 1'), findsOneWidget);
+      expect(find.byType(LevelBar), findsOneWidget);
+      // The day is never advanced by hand any more.
+      expect(find.text('Günü ilerlet'), findsNothing);
 
-      final locked = tester.widget<InkWell>(
-        find.ancestor(
-          of: find.text('Günü ilerlet'),
-          matching: find.byType(InkWell),
-        ),
-      );
-      expect(locked.onTap, isNull);
-      expect(find.textContaining('Hedefi tutturunca'), findsOneWidget);
-
-      earn(Balance.target(1));
-      await open(tester, const DayRoute());
-
-      final open_ = tester.widget<InkWell>(
-        find.ancestor(
-          of: find.text('Günü ilerlet'),
-          matching: find.byType(InkWell),
-        ),
-      );
-      expect(open_.onTap, isNotNull);
-
-      await tester.tap(find.text('Günü ilerlet'));
+      await tester.tap(find.text('Yükselt'));
       await tester.pumpAndSettle();
-      expect(find.text('Gün 2'), findsOneWidget);
+      expect(find.byType(ShopPage), findsOneWidget);
     });
 
     testWidgets('opening the counter starts a run and shows the HUD', (
@@ -155,20 +140,18 @@ void main() {
       expect(getIt<KiymaCubit>().run, isNotNull);
     });
 
-    testWidgets('an emptied queue hands the day card back', (tester) async {
+    testWidgets('a finished clock hands over to the summary', (tester) async {
       await open(tester, const DayRoute());
       await tester.tap(find.text('Tezgahı aç'));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 400));
 
-      final run = getIt<KiymaCubit>().run!
-        ..kuyruk = 0
-        ..musteriler.fillRange(0, 4, null)
-        ..tick(0.1);
-      expect(run.bitti, isTrue);
-
-      await tester.pumpAndSettle();
-      expect(find.byType(DayPage), findsOneWidget);
+      getIt<KiymaCubit>().run!.tick(
+        Balance.runLength(1).inSeconds.toDouble() + 1,
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+      expect(find.byType(SummaryPage), findsOneWidget);
     });
   });
 

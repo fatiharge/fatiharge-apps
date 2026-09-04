@@ -120,6 +120,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     _renderTrash(canvas);
     _renderCustomers(canvas);
     _renderCarried(canvas);
+    _renderClock(canvas);
   }
 
   void _renderScene(Canvas canvas) {
@@ -339,6 +340,21 @@ class CounterComponent extends PositionComponent with DragCallbacks {
           ..strokeWidth = 2,
       );
     }
+  }
+
+  /// The run's clock, across the top of the scene. Here rather than in the
+  /// Flutter HUD because it moves every frame.
+  void _renderClock(Canvas canvas) {
+    final width = scene.size.width;
+    drawBar(
+      canvas,
+      Rect.fromLTWH(width * 0.25, 6, width * 0.5, 7),
+      run.sureOrani,
+      color: run.sureOrani < 0.15
+          ? const Color(0xFFE0574A)
+          : const Color(0xFFE9A13B),
+      background: const Color(0x59000000),
+    );
   }
 
   void _renderCustomers(Canvas canvas) {

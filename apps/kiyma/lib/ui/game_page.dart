@@ -10,6 +10,7 @@ import 'package:kiyma/game/day_run.dart';
 import 'package:kiyma/game/kiyma_cubit.dart';
 import 'package:kiyma/game/kiyma_game.dart';
 import 'package:kiyma/game/world.dart';
+import 'package:kiyma/route/app_router.gr.dart';
 import 'package:kiyma/ui/hud.dart';
 import 'package:kiyma/ui/palette.dart';
 import 'package:utility_kit/utility_kit.dart';
@@ -34,6 +35,7 @@ class _GamePageState extends State<GamePage> {
 
   @override
   void dispose() {
+    // Also covers the back gesture: stepping out ends the run.
     getIt<KiymaCubit>().abandonRun();
     super.dispose();
   }
@@ -57,7 +59,7 @@ class _GameView extends StatelessWidget {
         bloc: cubit,
         onEffect: (context, event) {
           if (event == DayEvent.gunBitti) {
-            unawaited(context.router.maybePop());
+            unawaited(context.router.replace(const SummaryRoute()));
             return;
           }
           _Toast.show(context, event);
