@@ -65,9 +65,6 @@ class Durum {
   final Set<Malzeme> malzemeler = {};
 
   bool sarili = false;
-
-  /// Paper goes on after it is rolled, and on the shelf rather than in the
-  /// prep area — rolling sends it there in the same gesture.
   bool kagitli = false;
 
   /// Ingredients go on after the meat and before the roll.
@@ -103,7 +100,12 @@ class Bardak {
   bool get bos => icerik == null && _dolum == 0;
   bool get doluyor => _dolum > 0;
   bool get hazir => icerik != null && _dolum == 0;
+
+  /// How full it is, `0..1`. What the glass is drawn at while it pours.
   double get dolumOrani => doluyor ? 1 - _dolum / Balance.pourSeconds : 1;
+
+  /// What is in it, or on its way in.
+  Icecek? get icecek => icerik ?? _bekleyen;
 
   Icecek? _bekleyen;
 

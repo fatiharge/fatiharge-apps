@@ -76,11 +76,11 @@ glass. Dragging is still the vocabulary and still the only way to say *who*
 something is for, but requiring it where there is no choice is friction with
 no decision behind it.
 
-Rolling a wrap sends it flying to the shelf, where the paper goes on: the
-prep area used to be held by a finished wrap while the player fetched paper,
-and nothing else could be started meanwhile. Both the grill and the paper are
-aimed at the **area**, not at a slot — whatever is under the finger if it
-fits, else the nearest thing that does.
+A finished wrap holds the prep area until it is carried off, which is the
+whole of the pressure in the wrap line: one at a time, and each one a choice
+between serving it now and shelving it. The grill is aimed at as an **area**
+rather than a slot — whatever is under the finger if it fits, else the
+nearest thing that does.
 
 Nothing is carried between runs and nothing is lost by closing the app, which
 is why the design doc's half-finished day (11.5) and its reputation system

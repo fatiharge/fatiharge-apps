@@ -124,7 +124,6 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     _renderShelves(canvas);
     _renderTrash(canvas);
     _renderCustomers(canvas);
-    _renderFlights(canvas);
     _renderCarried(canvas);
     _renderFlashes(canvas);
     _renderClock(canvas);
@@ -194,11 +193,15 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     if (station == null || run.lifted('durum_hazirlama')) return;
     final composition = region.composition!;
 
-    // A rolled wrap normally leaves for the shelf at once; it only stays
-    // here when the shelf is full, and then it is drawn wrapped.
-    if (station.sarili) {
+    // Rolled but unwrapped is a different picture from wrapped: the paper is
+    // the step between them and the player has to see which one is missing.
+    if (station.kagitli) {
       final paper = assets['doner_bekleme'];
       if (paper != null) drawInQuad(canvas, paper, region.quad, AssetFit.orta);
+      return;
+    }
+    if (station.sarili) {
+      _layer(canvas, region.quad, composition.finished);
       return;
     }
 
@@ -249,11 +252,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       scene['durum_bekleme'],
       run.durumBekleme,
       run.progress.unlocks.durumBekleme,
-      // Rolled but unwrapped reads as unfinished, which it is: the paper goes
-      // on here, and a customer will not take one without it.
-      (urun) => urun is DurumUrun && urun.durum.kagitBekliyor
-          ? 'durum_sarili'
-          : 'doner_bekleme',
+      (_) => 'doner_bekleme',
     );
     _renderShelf(
       canvas,
@@ -272,21 +271,27 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       }
       final bardak = run.bardakBekletme[i];
       if (bardak == null || run.lifted('bardak_bekletme', i)) continue;
-      final asset = bardak.hazir ? bardak.icerik!.servedAsset : 'bos_bardak';
-      final image = assets[asset];
-      if (image != null) drawInQuad(canvas, image, slots[i], AssetFit.alt);
-      if (bardak.doluyor) {
-        drawBar(
-          canvas,
-          Rect.fromCenter(
-            center: slots[i].center - const Offset(0, 22),
-            width: slots[i].width * 0.6,
-            height: 4,
+
+      final empty = assets['bos_bardak'];
+      if (empty != null) drawInQuad(canvas, empty, slots[i], AssetFit.alt);
+
+      // The full glass, clipped to how much of it has been poured, so the
+      // drink is seen rising rather than appearing.
+      final drink = assets[bardak.icecek?.servedAsset ?? ''];
+      if (drink == null) continue;
+      final bounds = slots[i].bounds;
+      canvas
+        ..save()
+        ..clipRect(
+          Rect.fromLTRB(
+            bounds.left,
+            bounds.bottom - bounds.height * bardak.dolumOrani,
+            bounds.right,
+            bounds.bottom,
           ),
-          bardak.dolumOrani,
-          color: const Color(0xFF9AD7F5),
         );
-      }
+      drawInQuad(canvas, drink, slots[i], AssetFit.alt);
+      canvas.restore();
     }
   }
 
@@ -304,11 +309,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
         continue;
       }
       final urun = shelf[i];
-      if (urun == null ||
-          run.lifted(region.name, i) ||
-          run.ucuyor(region.name, i)) {
-        continue;
-      }
+      if (urun == null || run.lifted(region.name, i)) continue;
       final image = assets[asset(urun)];
       if (image != null) drawInQuad(canvas, image, slots[i], AssetFit.alt);
     }
@@ -351,15 +352,6 @@ class CounterComponent extends PositionComponent with DragCallbacks {
           ..color = const Color(0x33202428)
           ..strokeWidth = 2,
       );
-    }
-  }
-
-  void _renderFlights(Canvas canvas) {
-    for (final flight in run.ucuslar) {
-      final image = assets[flight.asset];
-      if (image != null) {
-        drawInQuad(canvas, image, flight.quad, AssetFit.orta);
-      }
     }
   }
 

@@ -4,7 +4,6 @@ import 'dart:ui';
 import 'package:kiyma/data/scene.dart';
 import 'package:kiyma/game/balance.dart';
 import 'package:kiyma/game/model/carried.dart';
-import 'package:kiyma/game/model/flight.dart';
 import 'package:kiyma/game/model/order.dart';
 import 'package:kiyma/game/model/products.dart';
 import 'package:kiyma/game/order_maker.dart';
@@ -78,13 +77,6 @@ class DayRun {
   /// finger, which reads as a dropped input.
   final Map<String, ({double left, bool ok})> parlama = {};
 
-  /// Things mid-way between two places. Rendered instead of the slot they
-  /// are headed for, so nothing appears where it was not put.
-  final List<Flight> ucuslar = [];
-
-  bool ucuyor(String region, int slot) =>
-      ucuslar.any((f) => f.region == region && f.slot == slot);
-
   static const _flashFor = 0.28;
 
   void _flash(String region, {bool ok = true}) =>
@@ -126,17 +118,6 @@ class DayRun {
     parlama
       ..updateAll((_, flash) => (left: flash.left - dt, ok: flash.ok))
       ..removeWhere((_, flash) => flash.left <= 0);
-
-    for (final flight in ucuslar) {
-      flight.tick(dt);
-    }
-    if (ucuslar.any((f) => f.landed)) {
-      for (final landed in ucuslar.where((f) => f.landed)) {
-        _flash(landed.region);
-      }
-      ucuslar.removeWhere((f) => f.landed);
-      onChanged();
-    }
 
     for (var i = 0; i < musteriler.length; i++) {
       final customer = musteriler[i];
@@ -288,6 +269,7 @@ class DayRun {
         at('durum_hazirlama', () => _durumaBirak(held)) ||
             at('tabak_hazirlama', () => _tabagaBirak(held)),
       MalzemeTutami() => at('durum_hazirlama', () => _durumaBirak(held)),
+      Kagit() => at('durum_hazirlama', () => _durumaBirak(held)),
       BilesenTutami() => at('tabak_hazirlama', () => _tabagaBirak(held)),
       Surahi() => at('bardak_bekletme', () => _surahiyiDok(held)),
       _ => false,
@@ -313,12 +295,10 @@ class DayRun {
 
   // --- Upward flick: rolling, and nothing else ---
 
-  /// Rolling sends the wrap to the shelf, where the paper goes on.
-  ///
-  /// The prep area was the bottleneck: a rolled wrap sat in it while the
-  /// player fetched paper, and nothing else could be started meanwhile. It
-  /// now leaves as soon as it is rolled. If the shelf is full it stays and
-  /// blocks, which is the shelf's job.
+  /// Rolling closes the wrap. It stays in the prep area until the paper is
+  /// on it and somebody carries it off, which is the whole of the pressure in
+  /// the wrap line: one wrap at a time, and every one of them a choice
+  /// between serving it now and putting it on the shelf.
   void flickUp(Offset point) {
     if (bitti) return;
     final station = durumIstasyonu;
@@ -326,20 +306,6 @@ class DayRun {
         station != null &&
         station.sarilabilir) {
       station.sarili = true;
-      final shelf = _ilkBos(durumBekleme, progress.unlocks.durumBekleme);
-      if (shelf != null) {
-        durumBekleme[shelf] = DurumUrun(station);
-        durumIstasyonu = null;
-        ucuslar.add(
-          Flight(
-            asset: 'durum_sarili',
-            from: scene['durum_hazirlama'].quad,
-            to: scene['durum_bekleme'].slots[shelf],
-            region: 'durum_bekleme',
-            slot: shelf,
-          ),
-        );
-      }
       _flash('durum_hazirlama');
       onChanged();
       return;
@@ -347,8 +313,6 @@ class DayRun {
     _flash('durum_hazirlama', ok: false);
     onEvent(DayEvent.gecersiz);
   }
-
-  // --- Drag ---
 
   bool beginDrag(Offset point) {
     if (bitti) return false;
@@ -481,7 +445,6 @@ class DayRun {
         return _tabagaBirak(held);
 
       case 'durum_bekleme':
-        if (held is Kagit) return _kagitSar(_slotAt(region, point));
         if (held is! HazirUrun || held.urun is! DurumUrun) return false;
         return _rafaKoy(
           durumBekleme,
@@ -524,6 +487,9 @@ class DayRun {
       case MalzemeTutami(:final malzeme):
         if (!station.malzemeKabul(malzeme)) return false;
         station.malzemeler.add(malzeme);
+      case Kagit():
+        if (!station.kagitBekliyor) return false;
+        station.kagitli = true;
       case _:
         return false;
     }
@@ -558,31 +524,6 @@ class DayRun {
     if (target == null) return false;
     _consume(held);
     raf[target] = held.urun;
-    return true;
-  }
-
-  /// Papers the wrap under the finger, or the nearest one still waiting.
-  ///
-  /// Aimed at the shelf rather than at a slot, for the same reason the grill
-  /// is: picking one of four leaning boxes mid-rush is not a skill worth
-  /// testing.
-  bool _kagitSar(int preferred) {
-    Durum? waiting(int index) {
-      final urun = durumBekleme[index];
-      return urun is DurumUrun && urun.durum.kagitBekliyor ? urun.durum : null;
-    }
-
-    var pick = waiting(preferred) == null ? -1 : preferred;
-    if (pick < 0) {
-      var distance = durumBekleme.length;
-      for (var i = 0; i < durumBekleme.length; i++) {
-        if (waiting(i) == null || (i - preferred).abs() >= distance) continue;
-        distance = (i - preferred).abs();
-        pick = i;
-      }
-    }
-    if (pick < 0) return false;
-    waiting(pick)!.kagitli = true;
     return true;
   }
 
@@ -654,10 +595,6 @@ class DayRun {
       IcecekUrun(:final icecek)
           when order.icecek == icecek && !customer.icecekVerildi =>
         Balance.income(Balance.icecekBase[icecek]!, day),
-      // Paper is mandatory before service (design doc 3.1); it goes on at
-      // the shelf, and a wrap that skipped it is refused like any other
-      // mistake.
-      DurumUrun(:final durum) when durum.kagitBekliyor => null,
       final urun when !customer.anaUrunVerildi && order.anaUrunKabul(urun) =>
         _anaUrunGeliri(urun),
       _ => null,
