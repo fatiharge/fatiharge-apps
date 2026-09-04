@@ -67,9 +67,13 @@ class Durum {
   bool sarili = false;
   bool kagitli = false;
 
-  /// Ingredients go on after the meat and before the roll.
+  /// Ingredients go on any time before the roll, meat or no meat.
+  ///
+  /// Requiring the meat first made the grill block the whole wrap line: with
+  /// nothing to do but wait for a skewer, the six seconds of cooking were six
+  /// seconds of standing still.
   bool malzemeKabul(Malzeme malzeme) =>
-      etli && !sarili && !malzemeler.contains(malzeme);
+      !sarili && !malzemeler.contains(malzeme);
 
   bool get sarilabilir => etli && !sarili;
   bool get kagitBekliyor => sarili && !kagitli;

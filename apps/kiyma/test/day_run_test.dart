@@ -112,16 +112,17 @@ void main() {
       expect(run.progress.para, 13);
     });
 
-    test('will not take an ingredient before the meat', () {
+    test('takes ingredients while the meat is still on the grill', () {
       final run = build();
       expect(drag(run, at('lavas_kaynak'), at('durum_hazirlama')), isTrue);
-      expect(
-        drag(run, at('malzeme_domates'), at('durum_hazirlama')),
-        isTrue,
-        reason: 'the drag happens; the drop is what is refused',
-      );
-      expect(run.durumIstasyonu!.malzemeler, isEmpty);
-      expect(events, contains(DayEvent.gecersiz));
+      expect(drag(run, at('malzeme_domates'), at('durum_hazirlama')), isTrue);
+      expect(run.durumIstasyonu!.malzemeler, {Malzeme.domates});
+      expect(events, isNot(contains(DayEvent.gecersiz)));
+
+      // The meat is still what closes it: no skewer, no roll.
+      expect(run.durumIstasyonu!.sarilabilir, isFalse);
+      run.flickUp(at('durum_hazirlama'));
+      expect(run.durumIstasyonu!.sarili, isFalse);
     });
 
     test('will not take an ingredient after the roll', () {

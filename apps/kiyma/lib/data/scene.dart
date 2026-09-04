@@ -241,10 +241,11 @@ class SceneData {
   ///
   /// The chef's place is a drawing anchor that covers the grill, and the
   /// grill is smaller than it. Leaving it in would make every hit test depend
-  /// on which of the two happens to have the smaller bounding box.
+  /// on which of the two happens to have the smaller bounding box. `dekor` is
+  /// out for the plainer reason that a wall clock is not a place to put food.
   late final List<SceneRegion> interactive = [
     for (final region in regions)
-      if (region.category != 'sef') region,
+      if (region.category != 'sef' && region.category != 'dekor') region,
   ];
 
   /// Every item asset the scene references, so they can be preloaded in one

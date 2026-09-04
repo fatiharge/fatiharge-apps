@@ -3,15 +3,13 @@ enum UrunTipi { durum, porsiyon }
 
 /// Wrap ingredients. Deliberately a separate set from [Bilesen]: one set goes
 /// in the bread, the other on the plate, and the rule is teachable because it
-/// never has an exception.
+/// never has an exception. Four each, not five — a fifth is more than an
+/// order card shows well and more than a player scans mid-rush.
 enum Malzeme {
   domates('domates'),
   sogan('sogan'),
   biber('biber'),
-  tursu('tursu'),
-  // The design doc's section 3.2 said rocket; the art was drawn as parsley,
-  // which is what an Adana wrap actually carries. The doc follows the art.
-  maydanoz('maydanoz');
+  tursu('tursu');
 
   const Malzeme(this.id);
 
@@ -30,7 +28,6 @@ enum Bilesen {
   icliKofte('icli_kofte', 'icli_kofte'),
   pilav('pilav', 'bulgur_pilavi'),
   patates('patates', 'patates'),
-  patlican('patlican', 'patlican'),
   ezme('ezme', 'ezme');
 
   const Bilesen(this.id, this.assetBase);

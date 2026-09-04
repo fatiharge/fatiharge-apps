@@ -34,7 +34,6 @@
   "kilit": {
     "malzeme_biber": "Biber",
     "malzeme_tursu": "Turşu",
-    "malzeme_maydanoz": "Maydanoz",
     "mangal_3": "3. mangal slotu",
     "mangal_4": "4. mangal slotu",
     "musteri_3": "3. müşteri yeri",
@@ -47,7 +46,6 @@
     "bilesen_icli_kofte": "İçli köfte",
     "bilesen_pilav": "Bulgur pilavı",
     "bilesen_patates": "Patates",
-    "bilesen_patlican": "Patlıcan",
     "bilesen_ezme": "Ezme",
     "tatli_baklava": "Baklava",
     "bekleme_2": "2. bekleme gözü",

@@ -31,14 +31,11 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   final DayRun run;
   final VoidCallback onPause;
 
-  // The HUD lives in the scene, not over it: one coordinate space, the same
-  // art, and a clock that can tick every frame without rebuilding a widget.
-  // Sized for a phone held at arm's length rather than for the 1024-wide
-  // reference space it is measured in.
-  static const _gold = Rect.fromLTWH(14, 10, 312, 92);
-  static const _clock = Rect.fromLTWH(376, 10, 272, 92);
-  static const _day = Rect.fromLTWH(764, 6, 124, 108);
-  static const _pause = Rect.fromLTWH(902, 10, 108, 92);
+  // What is left of the HUD after the clock and the calendar moved onto the
+  // wall: the till and the pause button, both still chrome. They share the
+  // top-left because the whole right-hand wall is now the clock's.
+  static const _pause = Rect.fromLTWH(14, 10, 88, 88);
+  static const _gold = Rect.fromLTWH(114, 10, 282, 88);
 
   /// Areas whose contents change during play, so their idle art is never the
   /// whole story and is drawn by the passes further down.
@@ -130,6 +127,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   @override
   void render(Canvas canvas) {
     _renderScene(canvas);
+    _renderWall(canvas);
     _renderSources(canvas);
     _renderMangal(canvas);
     _renderDurum(canvas);
@@ -156,6 +154,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     for (final region in scene.regions) {
       final asset = region.asset;
       if (asset == null ||
+          region.category == 'dekor' ||
           _dynamic.contains(region.name) ||
           !run.progress.unlocks.shows(region.name)) {
         continue;
@@ -413,53 +412,69 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     }
   }
 
-  /// The till, the clock, the day and the pause button, drawn as counter
-  /// signage rather than as an overlay.
-  void _renderHud(Canvas canvas) {
-    drawPanel(canvas, _gold);
-    final coins = assets['altin'];
-    if (coins != null) {
-      drawCentered(canvas, coins, Offset(_gold.left + 68, _gold.center.dy), 92);
+  /// The clock and the calendar, hung on the tiled wall.
+  ///
+  /// They are the room's, not the HUD's: the run is counted down on a clock
+  /// that is part of the kitchen, and the day is read off a calendar nailed
+  /// up by the grill. Only the numbers are drawn here — the cases are art.
+  void _renderWall(Canvas canvas) {
+    final clock = scene.maybe('duvar_saati');
+    if (clock != null) {
+      final image = assets['duvar_saati'];
+      if (image != null) drawInQuad(canvas, image, clock.quad, clock.fit);
+      final bounds = clock.quad.bounds;
+      final left = run.kalanSure.ceil();
+      drawText(
+        canvas,
+        '${left ~/ 60}:${(left % 60).toString().padLeft(2, '0')}',
+        Offset(bounds.center.dx, bounds.top + bounds.height * 0.24),
+        size: bounds.height * 0.44,
+        weight: 900,
+        family: 'Rubik',
+        center: true,
+        // Lit segments on dark glass, and red once the day is nearly out.
+        color: run.kalanSure < 20
+            ? const Color(0xFFFF5A45)
+            : const Color(0xFFFFC24A),
+      );
     }
-    drawText(
-      canvas,
-      '${run.progress.para}',
-      Offset(_gold.left + 132, _gold.top + 22),
-      size: 44,
-      weight: 800,
-      family: 'Rubik',
-      color: const Color(0xFF2E2A26),
-    );
 
-    final left = run.kalanSure.ceil();
-    drawPanel(canvas, _clock);
-    drawText(
-      canvas,
-      '${left ~/ 60}:${(left % 60).toString().padLeft(2, '0')}',
-      Offset(_clock.center.dx, _clock.top + 16),
-      size: 52,
-      weight: 900,
-      family: 'Rubik',
-      center: true,
-      color: run.kalanSure < 20
-          ? const Color(0xFFC4321F)
-          : const Color(0xFF2E2A26),
-    );
-
-    final calendar = assets['takvim'];
+    final calendar = scene.maybe('duvar_takvimi');
     if (calendar != null) {
-      drawInQuad(canvas, calendar, Quad.fromRect(_day), AssetFit.orta);
+      final image = assets['takvim'];
+      if (image != null) {
+        drawInQuad(canvas, image, calendar.quad, calendar.fit);
+      }
+      final bounds = calendar.quad.bounds;
       drawText(
         canvas,
         '${run.day}',
-        Offset(_day.center.dx, _day.top + 44),
-        size: 48,
+        Offset(bounds.center.dx, bounds.top + bounds.height * 0.41),
+        size: bounds.height * 0.44,
         weight: 900,
         family: 'Rubik',
         center: true,
         color: const Color(0xFF2E2A26),
       );
     }
+  }
+
+  /// What is left over the scene: the till and the pause button.
+  void _renderHud(Canvas canvas) {
+    drawPanel(canvas, _gold);
+    final coins = assets['altin'];
+    if (coins != null) {
+      drawCentered(canvas, coins, Offset(_gold.left + 66, _gold.center.dy), 88);
+    }
+    drawText(
+      canvas,
+      '${run.progress.para}',
+      Offset(_gold.left + 128, _gold.top + 20),
+      size: 44,
+      weight: 800,
+      family: 'Rubik',
+      color: const Color(0xFF2E2A26),
+    );
 
     drawPanel(canvas, _pause);
     for (final dx in [-12.0, 12.0]) {

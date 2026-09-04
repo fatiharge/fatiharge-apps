@@ -90,8 +90,28 @@ void main() {
       expect(open, contains('icecek_ayran'));
     });
 
-    test('every lock has a name to show', () {
-      expect(Unlocks.catalogue.map((u) => u.id).toSet(), hasLength(20));
+    test('the catalogue and the counter agree on what exists', () {
+      final unlocks = Unlocks();
+      final ids = Unlocks.catalogue.map((u) => u.id).toList();
+      expect(ids.toSet(), hasLength(ids.length), reason: 'no lock twice');
+
+      // Every item is either open on day one or somewhere in the catalogue,
+      // and nothing that no longer exists is still for sale — a lock with no
+      // item behind it would sit in the shop taking money for nothing.
+      final byPrefix = {
+        'malzeme_': Malzeme.values.map((m) => m.id),
+        'bilesen_': Bilesen.values.map((b) => b.id),
+        'tatli_': Tatli.values.map((t) => t.id),
+        'icecek_': Icecek.values.map((i) => i.id),
+      };
+      for (final entry in byPrefix.entries) {
+        final expected = entry.value.map((id) => entry.key + id).toSet();
+        final actual = {
+          ...ids.where((id) => id.startsWith(entry.key)),
+          ...expected.where(unlocks.has),
+        }..remove('icecek_hatti');
+        expect(actual, expected, reason: entry.key);
+      }
     });
   });
 }

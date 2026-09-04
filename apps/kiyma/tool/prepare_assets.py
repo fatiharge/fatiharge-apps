@@ -38,7 +38,19 @@ UNUSED = {
     "dereotu_porsiyon",
     "sutlac",
     "kunefe",
+    # Four per line, not five: see DROPPED_INGREDIENTS.
+    "maydanoz_tepsi",
+    "maydanoz_durum",
+    "maydanoz_porsiyon",
+    "patlican_tepsi",
+    "patlican_porsiyon",
 }
+
+# Five ingredients a line is more than an order card can show and more than a
+# player can scan mid-rush. One goes from each: parsley off the wrap and
+# aubergine off the plate. Their trays, their strips and their order icons all
+# come out with them, and the two wells they leave are empty steel.
+DROPPED_INGREDIENTS = {"maydanoz", "patlican"}
 
 # Design doc section 7 makes the bin mandatory, and the art repository has
 # neither a region nor an asset for it. The floor in front of the grill is the
@@ -64,6 +76,28 @@ ALTIN_ALANI = {
     "asset_fit": "alt",
 }
 
+# The clock and the calendar belong to the room, not to a HUD panel: they
+# hang on the tiled wall and the run is read off them. Regions rather than
+# layers so the renderer can draw the digits into them; `dekor` so no gesture
+# can land on one. The `_2` says which generated variant ships, the same way a
+# region in `regions.json` does.
+DEKOR = [
+    {
+        "name": "duvar_saati",
+        "category": "dekor",
+        "asset": "duvar_saati_2.png",
+        "asset_fit": "orta",
+        "x": 782, "y": 32, "w": 230, "h": 103,
+    },
+    {
+        "name": "duvar_takvimi",
+        "category": "dekor",
+        "asset": "takvim_1.png",
+        "asset_fit": "orta",
+        "x": 20, "y": 152, "w": 92, "h": 128,
+    },
+]
+
 KEEP = (
     "name", "x", "y", "w", "h", "quad", "category",
     "kapasite", "asset", "asset_fit", "slot_yon", "istif", "kompozisyon",
@@ -82,7 +116,14 @@ MERGED_SHELF = {
 
 # Merged into `bekleme_alani`, or belonging to a dessert that no longer
 # ships.
-DROPPED = {"tabak_birakma", "durum_bekleme", "tatli_sutlac", "tatli_kunefe"}
+DROPPED = {
+    "tabak_birakma",
+    "durum_bekleme",
+    "tatli_sutlac",
+    "tatli_kunefe",
+    "malzeme_maydanoz",
+    "malzeme_patlican",
+}
 
 FAMILY = re.compile(r"^(?P<family>.+?)_(?P<variant>\d+)\.png$")
 
@@ -125,7 +166,11 @@ def slim_composition(comp):
 
     out = {
         "taban": [slim(e) for e in comp.get("taban", [])],
-        "malzemeler": [slim(e) for e in comp.get("malzemeler", [])],
+        "malzemeler": [
+            slim(e)
+            for e in comp.get("malzemeler", [])
+            if e["ad"] not in DROPPED_INGREDIENTS
+        ],
     }
     if comp.get("son"):
         out["son"] = slim(comp["son"])
@@ -194,7 +239,7 @@ def main():
 
     for layer in regions["layers"]:
         note(layer.get("src"))
-    for region in regions["regions"]:
+    for region in regions["regions"] + DEKOR:
         note(region.get("asset"))
         comp = region.get("kompozisyon") or {}
         for entry in comp.get("taban", []) + comp.get("malzemeler", []):
@@ -239,7 +284,8 @@ def main():
             merged_shelf(regions["regions"]),
             gold_area(regions["regions"]),
             COP_ALANI,
-        ],
+        ]
+        + [slim_region(d) for d in DEKOR],
     }
     with open(f"{DST}/data/scene.json", "w") as out:
         json.dump(scene, out, ensure_ascii=False, indent=2)

@@ -70,18 +70,30 @@ so progress reads as levelling rather than as a bank balance. The counter
 itself shows only the till and the clock; the level belongs to the screens
 either side of it.
 
+Wrap ingredients go on **before or after the meat**. Requiring the meat
+first made the grill a lock on the whole wrap line: with nothing to do but
+wait for a skewer, six seconds of cooking were six seconds of standing still.
+Meat is still what closes the wrap — no skewer, no roll.
+
+Each line carries **four** ingredients, not five. A fifth is more than an
+order card shows well and more than a player scans mid-rush; parsley came off
+the wrap and aubergine off the plate, and the two wells they left are empty
+steel.
+
 **A touch places what has one place to go** — meat on the grill, an
 ingredient on the wrap, a component on the plate, a jug into the first empty
 glass. Dragging is still the vocabulary and still the only way to say *who*
 something is for, but requiring it where there is no choice is friction with
 no decision behind it.
 
-The HUD is drawn **in** the scene rather than over it: gold, a digital
-countdown, the day on a hanging calendar, and a pause button, all in one
-coordinate space and one art style, with no widget rebuilding at frame rate.
-It is sized for a phone at arm's length, not for the 1024-wide space it is
-measured in — every panel, glyph and stroke is twice what the arithmetic
-would suggest.
+**The clock and the calendar are furniture, not HUD.** The countdown burns
+on the glass of a digital clock hung on the tiled wall, and the day number
+sits on a calendar nailed up beside the grill. Both are `dekor` regions —
+they scale and lean with the scene, and nothing can be dropped on them. The
+cases are art; only the digits are drawn in code. What is left of the HUD is
+the pause button and the till, both moved to the top left because the right
+wall is the clock's, and both sized for a phone at arm's length rather than
+for the 1024-wide space they are measured in.
 
 Customers pay in **gold, onto the ledge they stood at**, and it only reaches
 the till when the player touches it; what is left when the clock runs out is

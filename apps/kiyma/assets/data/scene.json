@@ -196,33 +196,6 @@
       "asset_fit": "doldur"
     },
     {
-      "name": "malzeme_maydanoz",
-      "x": 578,
-      "y": 288,
-      "w": 52,
-      "h": 80,
-      "quad": [
-        [
-          578.3,
-          288.8
-        ],
-        [
-          627.1,
-          288.5
-        ],
-        [
-          630.3,
-          368.1
-        ],
-        [
-          580.1,
-          368.5
-        ]
-      ],
-      "category": "tepsi",
-      "asset": "maydanoz_tepsi"
-    },
-    {
       "name": "malzeme_icli_kofte",
       "x": 630,
       "y": 288,
@@ -304,33 +277,6 @@
       ],
       "category": "tepsi",
       "asset": "patates_tepsi"
-    },
-    {
-      "name": "malzeme_patlican",
-      "x": 782,
-      "y": 288,
-      "w": 62,
-      "h": 81,
-      "quad": [
-        [
-          782.4,
-          288.2
-        ],
-        [
-          830.7,
-          288.8
-        ],
-        [
-          844.1,
-          368.8
-        ],
-        [
-          793.3,
-          368.0
-        ]
-      ],
-      "category": "tepsi",
-      "asset": "patlican_tepsi"
     },
     {
       "name": "malzeme_ezme",
@@ -512,13 +458,6 @@
             "genislik": 0.45,
             "ofset_x": 0.0,
             "ofset_y": 0.02
-          },
-          {
-            "ad": "maydanoz",
-            "asset": "maydanoz_durum",
-            "genislik": 0.45,
-            "ofset_x": 0.0,
-            "ofset_y": 0.12
           }
         ],
         "son": {
@@ -628,13 +567,6 @@
             "asset": "patates_porsiyon",
             "genislik": 0.24,
             "ofset_x": -0.25,
-            "ofset_y": -0.076
-          },
-          {
-            "ad": "patlican",
-            "asset": "patlican_porsiyon",
-            "genislik": 0.25,
-            "ofset_x": 0.25,
             "ofset_y": -0.076
           },
           {
@@ -1053,6 +985,26 @@
           576
         ]
       ]
+    },
+    {
+      "name": "duvar_saati",
+      "x": 782,
+      "y": 32,
+      "w": 230,
+      "h": 103,
+      "category": "dekor",
+      "asset": "duvar_saati",
+      "asset_fit": "orta"
+    },
+    {
+      "name": "duvar_takvimi",
+      "x": 20,
+      "y": 152,
+      "w": 92,
+      "h": 128,
+      "category": "dekor",
+      "asset": "takvim",
+      "asset_fit": "orta"
     }
   ]
 }
