@@ -936,7 +936,6 @@
     },
     {
       "name": "cop_alani",
-      "category": "cop",
       "x": 0,
       "y": 470,
       "w": 104,
@@ -958,7 +957,10 @@
           0,
           576
         ]
-      ]
+      ],
+      "category": "cop",
+      "asset": "cop_kovasi",
+      "asset_fit": "alt"
     },
     {
       "name": "duvar_saati",

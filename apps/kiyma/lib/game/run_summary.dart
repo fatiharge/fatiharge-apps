@@ -3,12 +3,16 @@
 class RunSummary {
   const RunSummary({
     required this.kazanc,
+    required this.musteri,
     required this.xpOnce,
     required this.gunOnce,
     required this.atlananGun,
   });
 
   final int kazanc;
+
+  /// How many customers left with everything they asked for.
+  final int musteri;
   final int xpOnce;
   final int gunOnce;
 

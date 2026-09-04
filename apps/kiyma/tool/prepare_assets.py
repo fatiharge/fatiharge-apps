@@ -52,13 +52,14 @@ UNUSED = {
 # come out with them, and the two wells they leave are empty steel.
 DROPPED_INGREDIENTS = {"maydanoz", "patlican"}
 
-# Design doc section 7 makes the bin mandatory, and the art repository has
-# neither a region nor an asset for it. The floor in front of the grill is the
-# only free ground in the scene and it is where burnt meat already is, so the
-# drag is short. Drawn in code until `cop_kovasi.png` exists.
+# Design doc section 7 makes the bin mandatory and the art repository had no
+# region for it. The floor in front of the grill is the only free ground in
+# the scene and it is where burnt meat already is, so the drag is short.
 COP_ALANI = {
     "name": "cop_alani",
     "category": "cop",
+    "asset": "cop_kovasi_1.png",
+    "asset_fit": "alt",
     "x": 0,
     "y": 470,
     "w": 104,
@@ -279,7 +280,7 @@ def main():
 
     for layer in regions["layers"]:
         note(layer.get("src"))
-    for region in regions["regions"] + DEKOR:
+    for region in regions["regions"] + DEKOR + [COP_ALANI]:
         note(region.get("asset"))
         comp = region.get("kompozisyon") or {}
         for entry in comp.get("taban", []) + comp.get("malzemeler", []):
@@ -332,7 +333,7 @@ def main():
         + [
             merged_shelf(regions["regions"]),
             gold_area(regions["regions"]),
-            COP_ALANI,
+            slim_region(COP_ALANI),
         ]
         + [slim_region(d) for d in DEKOR],
     }

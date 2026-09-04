@@ -97,7 +97,7 @@ wall is the clock's, and both sized for a phone at arm's length rather than
 for the 1024-wide space they are measured in.
 
 **Three** customers at most, and each one **walks in from the right** before
-they order and **out to the left** when they are done — until they are
+they order and back out the same way when they are done — until they are
 standing at the counter there is no card, no patience and nothing that can be
 handed to them, and the seat frees the moment they turn to go. Everyone walks
 at their own speed, somewhere between the quickest and 40 % of it, so a queue
@@ -204,6 +204,21 @@ The renderer skips an image it cannot find, so a missing one looks like an
 empty grill rather than an error. `test/assets_test.dart` is what turns that
 into a failing test — add any new name the code asks for by hand to its list.
 
+## The summary
+
+The end-of-run screen follows a Stitch design (`stitch_k_yma_kebab_game_ui`
+in the art project) adapted from tablet to a phone held sideways: the card is
+capped at 900x306 and centred rather than stretched, because on a wide short
+screen the two columns pull apart until the numbers stop reading as one
+result. `test/golden/summary_golden_test.dart` renders it at 880x400, which
+is the check that it still fits.
+
+One line of the design has no mechanic behind it — a "+25 % tip and fast
+service bonus" — so rather than print a number the game does not compute, it
+shows the customers who left happy, which it now counts. The ad button is
+still not wired to anything; the shape of the screen depends on it being
+there.
+
 ## Running it in a browser
 
 `web/` is here so the counter can be opened without a phone:
@@ -239,10 +254,9 @@ Stages 6 to 8 of the plan. Named so nobody has to rediscover them:
   run.
 - **No settings screen, no ads, no IAP.** The menu reaches the language
   screen directly, which is the whole of the settings that exists.
-- **Placeholder art in two places.** The chef and the customers were never
-  drawn — they are meant to be animated — so a customer is a silhouette with
-  a real order card. The bin has no asset either and is drawn in code; drop a
-  `cop_kovasi.png` into `assets/items` and `_renderTrash` becomes one call.
+- **The chef and the customers were never drawn.** They are meant to be
+  animated, so for now a customer is a coloured silhouette — see the nine
+  states above — and the chef is not drawn at all.
 - **The numbers are the doc's opening suggestions.** Everything in
   `Balance` is marked `[ÖNERİ]` in the design doc and is waiting for
   playtest. The money target table was derived from the income formula, so

@@ -52,11 +52,19 @@
     "bekleme_3": "3. bekleme gözü"
   },
   "ozet": {
-    "baslik": "Oturum bitti",
-    "kazanc": "₺{}",
+    "baslik": "OTURUM BİTTİ",
+    "kazanc": "+{}",
     "reklam": "Reklam izle, x2 kazan",
     "yeniden": "Yeni oyun",
-    "menu": "Ana menü"
+    "menu": "Ana menü",
+    "hasilat": "GÜNÜN HASILATI",
+    "gun_basarili": "GÜN #{} BAŞARILI",
+    "altin": "ALTIN",
+    "musteri": "{} müşteri memnun ayrıldı",
+    "ilerleme": "OCAKBAŞI İLERLEMESİ",
+    "xp": "{} / {} XP",
+    "reklam_alt": "Kısa video ile hasılatı ikiye katla!",
+    "hazir": "Siparişler hazır, servise başla!"
   },
   "duraklat": {
     "baslik": "Duraklatıldı",

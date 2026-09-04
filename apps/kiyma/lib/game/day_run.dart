@@ -106,6 +106,9 @@ class DayRun {
   /// What this run has taken, as opposed to the running total.
   int get kazanc => progress.xp - _acilis;
 
+  /// How many customers left with everything they asked for.
+  int memnunMusteri = 0;
+
   double get sureOrani =>
       (kalanSure / Balance.runLength(day).inSeconds).clamp(0, 1);
   double _sonrakiGelis = 0;
@@ -779,6 +782,7 @@ class DayRun {
       );
     }
 
+    if (memnun) memnunMusteri++;
     onEvent(memnun ? DayEvent.musteriMemnun : DayEvent.musteriKizgin);
     _sonrakiGelis = math.max(_sonrakiGelis, Balance.arrivalGap);
     onChanged();

@@ -52,11 +52,19 @@
     "bekleme_3": "3rd shelf slot"
   },
   "ozet": {
-    "baslik": "Time is up",
-    "kazanc": "₺{}",
+    "baslik": "TIME IS UP",
+    "kazanc": "+{}",
     "reklam": "Watch an ad for x2",
     "yeniden": "New run",
-    "menu": "Main menu"
+    "menu": "Main menu",
+    "hasilat": "TODAY'S TAKINGS",
+    "gun_basarili": "DAY #{} DONE",
+    "altin": "GOLD",
+    "musteri": "{} customers left happy",
+    "ilerleme": "GRILL MASTER PROGRESS",
+    "xp": "{} / {} XP",
+    "reklam_alt": "Double the takings with a short video",
+    "hazir": "The orders are in — get back to the counter!"
   },
   "duraklat": {
     "baslik": "Paused",

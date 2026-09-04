@@ -35,6 +35,7 @@ void main() {
       'kola_sise_grup',
       'mangal_govde',
       'duvar_saati',
+      'cop_kovasi',
       'takvim',
       ...Altin.tipler,
       'back_scene.jpg',

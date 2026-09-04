@@ -174,7 +174,6 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     _renderDurum(canvas);
     _renderTabak(canvas);
     _renderShelves(canvas);
-    _renderTrash(canvas);
     _renderSeated(canvas);
     _renderGold(canvas);
     _renderCarried(canvas);
@@ -219,6 +218,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     'malzeme_kiyma' => run.mangalCagiriyor,
     'lavas_kaynak' => run.lavasCagiriyor,
     'kagit_kaynak' => run.kagitCagiriyor > 0,
+    'cop_alani' => run.copCagiriyor,
     _ => false,
   };
 
@@ -398,62 +398,6 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     }
   }
 
-  /// Drawn rather than loaded: the bin is mandatory in the design and the art
-  /// repository has no asset for it. Swap in `cop_kovasi.png` and this
-  /// becomes one `drawInQuad` plus the shared nudge.
-  void _renderTrash(Canvas canvas) {
-    final quad = scene['cop_alani'].quad;
-    if (run.copCagiriyor) {
-      _breathing(canvas, quad.center, () => _trash(canvas, quad, glow: true));
-      return;
-    }
-    _trash(canvas, quad);
-  }
-
-  void _trash(Canvas canvas, Quad quad, {bool glow = false}) {
-    final bounds = quad.bounds.deflate(6);
-    final body = Rect.fromLTRB(
-      bounds.left + 6,
-      bounds.top + 14,
-      bounds.right - 2,
-      bounds.bottom,
-    );
-    final shape = RRect.fromRectAndCorners(
-      body,
-      topLeft: const Radius.circular(6),
-      topRight: const Radius.circular(6),
-    );
-    final lid = RRect.fromRectAndRadius(
-      Rect.fromLTWH(bounds.left, bounds.top + 4, bounds.width, 12),
-      const Radius.circular(6),
-    );
-
-    // A burnt skewer holds a grill slot until somebody bins it, so after a
-    // while the bin says so — the same halo every other hint uses.
-    if (glow) {
-      final halo = Paint()
-        ..color = _hint.withValues(alpha: _pulse)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6);
-      canvas
-        ..drawRRect(shape, halo)
-        ..drawRRect(lid, halo);
-    }
-
-    canvas
-      ..drawRRect(shape, Paint()..color = const Color(0xFF8E959C))
-      ..drawRRect(lid, Paint()..color = const Color(0xFFB4BBC2));
-    for (var i = 1; i < 4; i++) {
-      final x = body.left + body.width * i / 4;
-      canvas.drawLine(
-        Offset(x, body.top + 8),
-        Offset(x, body.bottom - 6),
-        Paint()
-          ..color = const Color(0x33202428)
-          ..strokeWidth = 2,
-      );
-    }
-  }
-
   /// A short glow where a touch landed: warm when it took, red when the drop
   /// had nowhere to go.
   void _renderFlashes(Canvas canvas) {
@@ -626,11 +570,12 @@ class CounterComponent extends PositionComponent with DragCallbacks {
 
     for (final leaving in run.ayrilanlar) {
       final home = scene['musteri_slot_${leaving.slot + 1}'].quad;
-      // Out to the left, picking up speed as they go.
+      // Out the way they came in, picking up speed as they go.
       final gone = leaving.gidis * leaving.gidis;
+      final door = scene.size.width - home.bounds.left + 40;
       _renderBody(
         canvas,
-        home.shift(Offset(-(home.bounds.right + 40) * gone, 0)),
+        home.shift(Offset(door * gone, 0)),
         null,
         hal: leaving.hal,
       );

@@ -119,6 +119,7 @@ class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
 
     progress.sonOturum = RunSummary(
       kazanc: current.kazanc,
+      musteri: current.memnunMusteri,
       xpOnce: progress.xp - current.kazanc,
       gunOnce: progress.gun,
       atlananGun: progress.seviyeleriIsle(),
