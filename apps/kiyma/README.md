@@ -70,10 +70,11 @@ so progress reads as levelling rather than as a bank balance. The counter
 itself shows only the till and the clock; the level belongs to the screens
 either side of it.
 
-Wrap ingredients go on **before or after the meat**. Requiring the meat
-first made the grill a lock on the whole wrap line: with nothing to do but
+Ingredients go on **before or after the meat**, on both lines. Requiring the
+meat first made the grill a lock on everything else: with nothing to do but
 wait for a skewer, six seconds of cooking were six seconds of standing still.
-Meat is still what closes the wrap — no skewer, no roll.
+What has to come first still does — bread starts a wrap, bread starts a plate
+— and meat is still what makes either one servable.
 
 Each line carries **four** ingredients, not five. A fifth is more than an
 order card shows well and more than a player scans mid-rush; parsley came off

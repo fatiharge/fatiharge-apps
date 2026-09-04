@@ -88,7 +88,11 @@ class Porsiyon {
 
   /// Flatbread first and mandatory; nothing else lands on a bare plate.
   bool get lavasBekliyor => !lavasli;
-  bool bilesenKabul(Bilesen bilesen) => etli && !bilesenler.contains(bilesen);
+
+  /// After the bread, in any order — the same rule as the wrap, and for the
+  /// same reason: waiting on the grill is not a decision.
+  bool bilesenKabul(Bilesen bilesen) =>
+      lavasli && !bilesenler.contains(bilesen);
 
   /// No rolling and no paper: a plate is servable as soon as it has meat on
   /// bread. Components are the optional part.

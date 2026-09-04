@@ -475,6 +475,20 @@ void main() {
       expect(run.tabakIstasyonu!.bilesenler, {Bilesen.ezme});
     });
 
+    test('takes components while the meat is still on the grill', () {
+      final run = build(unlock: ['porsiyon_hatti', 'bilesen_ezme'])
+        ..tap(at('tabak_kaynak'));
+
+      // Bread is still first: a bare plate takes nothing.
+      drag(run, at('malzeme_ezme'), at('tabak_hazirlama'));
+      expect(run.tabakIstasyonu!.bilesenler, isEmpty);
+
+      drag(run, at('lavas_kaynak'), at('tabak_hazirlama'));
+      expect(drag(run, at('malzeme_ezme'), at('tabak_hazirlama')), isTrue);
+      expect(run.tabakIstasyonu!.bilesenler, {Bilesen.ezme});
+      expect(run.tabakIstasyonu!.hazir, isFalse, reason: 'still no meat');
+    });
+
     test('wrap ingredients do not go on a plate, and the reverse', () {
       final run = build(unlock: ['porsiyon_hatti', 'bilesen_ezme'])
         ..tap(at('tabak_kaynak'));
