@@ -93,7 +93,16 @@ void main() {
       ..altin[2] = (Altin(7, tip: 2)..kalan = 1)
       // Every grill badge at once: raw, cooking, ready, burnt.
       ..mangal[1].tick(3, 1)
-      ..mangal[2].tick(6.5, 1);
+      ..mangal[2].tick(6.5, 1)
+      // Somebody on the way out, in each of the three moods.
+      ..ayrilanlar.addAll([
+        for (final hal in [
+          MusteriHali.gidiyorMutlu,
+          MusteriHali.gidiyorStabil,
+          MusteriHali.gidiyorKizgin,
+        ])
+          Ayrilan(slot: 0, hal: hal, hiz: 1)..gidis = 0.4,
+      ]);
 
     await tester.pumpWidget(
       MaterialApp(
@@ -116,13 +125,17 @@ void main() {
   testWidgets('draws a locked day-one counter without throwing', (
     tester,
   ) async {
-    final run = DayRun(
-      scene: scene,
-      progress: Progress(),
-      onEvent: (_) {},
-      onChanged: () {},
-      random: math.Random(12),
-    )..bosMangal = Balance.idleGrill;
+    final run =
+        DayRun(
+            scene: scene,
+            progress: Progress(),
+            onEvent: (_) {},
+            onChanged: () {},
+            random: math.Random(12),
+          )
+          ..bosMangal = Balance.idleGrill
+          ..bosDurum = Balance.idleWrap
+          ..kagitCagiriyor = Balance.hintFor;
     await tester.pumpWidget(
       MaterialApp(
         home: GameWidget(

@@ -63,6 +63,22 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     dark: Color(0xFF3D2E05),
     icon: Icons.check_rounded,
   );
+
+  /// Placeholder for art nobody has drawn: the customer's state as a flat
+  /// colour. Green is patient, red is not, and the three leaving colours say
+  /// how the visit went.
+  static const Map<MusteriHali, Color> _mood = {
+    MusteriHali.yuruyor: Color(0xFF7C8794),
+    MusteriHali.bekliyorCokSakin: Color(0xFF3E8F52),
+    MusteriHali.bekliyorSakin: Color(0xFF7FB86A),
+    MusteriHali.bekliyorStabil: Color(0xFFE0B341),
+    MusteriHali.bekliyorSupheli: Color(0xFFE07C2E),
+    MusteriHali.bekliyorKizgin: Color(0xFFC93B2B),
+    MusteriHali.gidiyorMutlu: Color(0xFF35C46E),
+    MusteriHali.gidiyorStabil: Color(0xFF5E7FA8),
+    MusteriHali.gidiyorKizgin: Color(0xFF7A1F16),
+  };
+
   static const _hint = Color(0xFFFFD24A);
   static const _want = Color(0xFF6FCF7C);
   static const _avoid = Color(0xFFE0574A);
@@ -150,14 +166,14 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     // Somebody still crossing the shop passes behind what is standing on the
     // counter; by the time they are at their place nothing is in front of
     // them anyway, so the two passes never disagree about one customer.
-    _renderCustomers(canvas, arriving: true);
+    _renderMovers(canvas);
     _renderSources(canvas);
     _renderMangal(canvas);
     _renderDurum(canvas);
     _renderTabak(canvas);
     _renderShelves(canvas);
     _renderTrash(canvas);
-    _renderCustomers(canvas, arriving: false);
+    _renderSeated(canvas);
     _renderGold(canvas);
     _renderCarried(canvas);
     _renderFlashes(canvas);
@@ -191,13 +207,15 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     }
   }
 
-  /// The two places the counter points at, and why.
+  /// The three places the counter points at, and why.
   ///
-  /// An empty grill stalls both product lines and costs nothing to notice.
-  /// Reaching for a rolled wrap says the player has not seen that the paper
-  /// is a step. Neither is a rule change — only the counter answering.
+  /// An empty grill or an empty wrap station stalls a line and costs nothing
+  /// to notice. Reaching for a rolled wrap says the player has not seen that
+  /// the paper is a step. None of it is a rule change — only the counter
+  /// answering.
   bool _nudging(String region) => switch (region) {
     'malzeme_kiyma' => run.mangalCagiriyor,
+    'lavas_kaynak' => run.lavasCagiriyor,
     'kagit_kaynak' => run.kagitCagiriyor > 0,
     _ => false,
   };
@@ -566,40 +584,68 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     }
   }
 
-  void _renderCustomers(Canvas canvas, {required bool arriving}) {
+  /// Everybody crossing the shop, in or out.
+  ///
+  /// Drawn before what stands on the counter, because that is where they are
+  /// walking: behind it. By the time somebody is at their place nothing is in
+  /// front of them anyway, so the two passes never disagree about one person.
+  void _renderMovers(Canvas canvas) {
     for (var i = 0; i < run.musteriler.length; i++) {
       final customer = run.musteriler[i];
-      if (customer == null || customer.yerinde == arriving) continue;
+      if (customer == null || customer.yerinde) continue;
       final home = scene['musteri_slot_${i + 1}'].quad;
-      _renderCustomer(canvas, home.shift(_walkIn(home, customer)), customer);
+      // In from the right, decelerating into the slot.
+      final left = 1 - customer.varis;
+      final from = scene.size.width - home.bounds.left + 40;
+      _renderBody(canvas, home.shift(Offset(from * left * left, 0)), customer);
+    }
+
+    for (final leaving in run.ayrilanlar) {
+      final home = scene['musteri_slot_${leaving.slot + 1}'].quad;
+      // Out to the left, picking up speed as they go.
+      final gone = leaving.gidis * leaving.gidis;
+      _renderBody(
+        canvas,
+        home.shift(Offset(-(home.bounds.right + 40) * gone, 0)),
+        null,
+        hal: leaving.hal,
+      );
     }
   }
 
-  /// How far a customer still on their way is from their place.
-  ///
-  /// They come in from the right of the shop and slow into the slot. Nothing
-  /// about them counts until they arrive — no patience, no card, nothing to
-  /// hand over — because they have not asked for anything yet.
-  Offset _walkIn(Quad home, Customer customer) {
-    if (customer.yerinde) return Offset.zero;
-    final from = scene.size.width - home.bounds.left + 40;
-    final left = 1 - customer.varis;
-    return Offset(from * left * left, 0);
+  /// The ones standing at the counter, with everything they came with.
+  void _renderSeated(Canvas canvas) {
+    for (var i = 0; i < run.musteriler.length; i++) {
+      final customer = run.musteriler[i];
+      if (customer == null || !customer.yerinde) continue;
+      final quad = scene['musteri_slot_${i + 1}'].quad;
+      _renderBody(canvas, quad, customer);
+      final head = Offset(quad.bounds.center.dx, quad.bounds.top + 26);
+      _renderPatience(canvas, head, customer);
+      _renderOrder(canvas, head, customer);
+    }
   }
 
-  /// A stand-in body, a patience meter on one side and the order on the
-  /// other.
+  /// A stand-in body in the colour of whatever the person is doing.
   ///
   /// The characters are the one part of the art that was never drawn — they
-  /// are meant to be animated. What the player actually has to read is the
-  /// order and how long it has, so those get the pixels, and they sit apart
-  /// so that neither has to be found inside the other.
-  void _renderCustomer(Canvas canvas, Quad quad, Customer customer) {
+  /// are meant to be animated — so until they are, the nine states of a visit
+  /// are nine colours. What the player actually has to read is the order and
+  /// how long it has, and those are drawn beside the body rather than on it.
+  void _renderBody(
+    Canvas canvas,
+    Quad quad,
+    Customer? customer, {
+    MusteriHali? hal,
+  }) {
     final bounds = quad.bounds;
-    final head = Offset(bounds.center.dx, bounds.top + 26);
-    final skin = Paint()..color = const Color(0xFF6B5344);
+    final colour = _mood[hal ?? customer!.hal]!;
     canvas
-      ..drawCircle(head, 19, skin)
+      ..drawCircle(
+        Offset(bounds.center.dx, bounds.top + 26),
+        19,
+        Paint()..color = Color.lerp(colour, const Color(0xFF2E2A26), 0.35)!,
+      )
       ..drawRRect(
         RRect.fromRectAndRadius(
           Rect.fromLTWH(
@@ -610,12 +656,8 @@ class CounterComponent extends PositionComponent with DragCallbacks {
           ),
           const Radius.circular(14),
         ),
-        skin,
+        Paint()..color = colour,
       );
-
-    if (!customer.yerinde) return;
-    _renderPatience(canvas, head, customer);
-    _renderOrder(canvas, head, customer);
   }
 
   /// Upright, on the left of the head: a bar lying across the order card was

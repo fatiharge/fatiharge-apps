@@ -748,7 +748,8 @@ void main() {
       expect(customer.anaUrunVerildi, isFalse);
       expect(run.bekleme.first, isNotNull, reason: 'refused, so it shelved');
 
-      run.tick(Balance.arrivalWalk);
+      // Long enough for even the slowest walker.
+      run.tick(Balance.arrivalWalk / Balance.slowestWalk);
       expect(customer.yerinde, isTrue);
     });
 
@@ -764,6 +765,67 @@ void main() {
       drag(run, at('kagit_kaynak'), at('durum_hazirlama'));
       run.tick(Balance.hintFor + 0.1);
       expect(run.kagitCagiriyor, lessThanOrEqualTo(0));
+    });
+
+    test('a customer who leaves walks off and frees the seat at once', () {
+      final run = build();
+      final customer = waiting(run, wrapFor(const {}))..sabirKalan = 0.05;
+      run.tick(0.1);
+
+      expect(run.musteriler[0], isNull, reason: 'the seat is free now');
+      expect(run.ayrilanlar, hasLength(1));
+      expect(run.ayrilanlar.first.hal, MusteriHali.gidiyorKizgin);
+      expect(run.ayrilanlar.first.slot, 0);
+      expect(customer.hicAlmadi, isTrue);
+
+      run.tick(Balance.arrivalWalk / Balance.slowestWalk);
+      expect(run.ayrilanlar, isEmpty, reason: 'off the screen, off the list');
+    });
+
+    test('how the visit went is what they leave as', () {
+      final run = build();
+      waiting(run, wrapFor(const {}))
+        ..odenen = 12
+        ..sabirKalan = 0.05;
+      run.tick(0.1);
+      expect(run.ayrilanlar.single.hal, MusteriHali.gidiyorStabil);
+
+      waiting(run, wrapFor(const {}), slot: 1)
+        ..anaUrunVerildi = true
+        ..sabirKalan = 0.05;
+      run.tick(0.1);
+      expect(
+        run.ayrilanlar.map((a) => a.hal),
+        contains(MusteriHali.gidiyorMutlu),
+      );
+    });
+
+    test('patience shows on the body long before it runs out', () {
+      final run = build();
+      final customer = waiting(run, wrapFor(const {}));
+      expect(customer.hal, MusteriHali.bekliyorCokSakin);
+
+      customer.sabirKalan = customer.sabirToplam * 0.5;
+      expect(customer.hal, MusteriHali.bekliyorStabil);
+
+      customer.sabirKalan = customer.sabirToplam * 0.1;
+      expect(customer.hal, MusteriHali.bekliyorKizgin);
+
+      customer.varis = 0;
+      expect(customer.hal, MusteriHali.yuruyor, reason: 'not there yet');
+    });
+
+    test('an empty wrap station starts asking for bread', () {
+      final run = build()..tick(Balance.idleWrap - 0.2);
+      expect(run.lavasCagiriyor, isFalse);
+
+      run.tick(0.3);
+      expect(run.lavasCagiriyor, isTrue);
+
+      run
+        ..tap(at('lavas_kaynak'))
+        ..tick(0.1);
+      expect(run.lavasCagiriyor, isFalse);
     });
 
     test('an empty grill starts asking for meat', () {

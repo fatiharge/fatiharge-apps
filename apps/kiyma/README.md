@@ -96,12 +96,21 @@ the pause button and the till, both moved to the top left because the right
 wall is the clock's, and both sized for a phone at arm's length rather than
 for the 1024-wide space they are measured in.
 
-**Three** customers at most, and each one **walks in** from one side or the
-other before they order — until they are standing at the counter there is no
-card, no patience and nothing that can be handed to them. Their order sits to
-the right of their head and their patience runs up a bar on the left, so
-neither has to be found inside the other. A fourth place did not fit that
-layout on the same stretch of counter.
+**Three** customers at most, and each one **walks in from the right** before
+they order and **out to the left** when they are done — until they are
+standing at the counter there is no card, no patience and nothing that can be
+handed to them, and the seat frees the moment they turn to go. Everyone walks
+at their own speed, somewhere between the quickest and 40 % of it, so a queue
+does not move as one body. Their order sits to the right of their head and
+their patience runs up a bar on the left, so neither has to be found inside
+the other. A fourth place did not fit that layout on the same stretch of
+counter.
+
+A customer is drawn as **one colour**, from a nine-value state: walking,
+five degrees of waiting from calm to angry, and three ways of leaving —
+served in full, in part, or not at all. The characters were never drawn, so
+until they are the state is the art; when a model arrives it hangs off the
+same enum.
 
 Customers pay in **gold, onto the ledge they stood at**, in one of three
 random piles, and it only reaches the till when the player touches it. After
@@ -109,8 +118,9 @@ ten seconds the counter sweeps it up on its own and keeps 70 % — what a touch
 buys is the tip, not the sale, and the tag goes red for the last three
 seconds. The counter also points at a step being skipped: the region's own art
 breathes under a warm glow. Three seconds with an empty grill and the mince
-tray asks; reaching for a rolled wrap that has no paper on it and the paper
-answers for two and a half. Neither changes a rule. The pause button stops everything — asked for, so not the free breather that
+tray asks, four with an empty wrap station and the bread does, and reaching
+for a rolled wrap that has no paper on it makes the paper answer for two and
+a half seconds. None of it changes a rule. The pause button stops everything — asked for, so not the free breather that
 walking out would have been. In a debug build, holding the menu's language
 button for three seconds grants ₺1000; XP is untouched, so the level stays
 whatever was actually played.

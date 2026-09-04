@@ -71,6 +71,10 @@ class DayRun {
   late final List<Bardak?> bardakBekletme;
   late final List<Customer?> musteriler;
 
+  /// Still walking off. Nothing here affects a rule; the seat was freed the
+  /// moment they turned to go.
+  final List<Ayrilan> ayrilanlar = [];
+
   Durum? durumIstasyonu;
   Porsiyon? tabakIstasyonu;
 
@@ -115,6 +119,12 @@ class DayRun {
 
   bool get mangalCagiriyor => bosMangal >= Balance.idleGrill;
 
+  /// The same, for a wrap station with nothing on it: the bread is what
+  /// starts a wrap, so the bread is what asks.
+  double bosDurum = 0;
+
+  bool get lavasCagiriyor => bosDurum >= Balance.idleWrap;
+
   /// Seconds left on the paper's answer to somebody reaching for a wrap that
   /// has not been papered yet.
   double kagitCagiriyor = 0;
@@ -132,6 +142,7 @@ class DayRun {
     bosMangal = mangal.any((slot) => slot.unlocked && !slot.bos)
         ? 0
         : bosMangal + dt;
+    bosDurum = durumIstasyonu == null ? bosDurum + dt : 0;
     if (kagitCagiriyor > 0) kagitCagiriyor -= dt;
 
     for (final slot in mangal) {
@@ -167,7 +178,10 @@ class DayRun {
       final customer = musteriler[i];
       if (customer == null) continue;
       if (!customer.yerinde) {
-        customer.varis = math.min(1, customer.varis + dt / Balance.arrivalWalk);
+        customer.varis = math.min(
+          1,
+          customer.varis + dt * customer.hiz / Balance.arrivalWalk,
+        );
         continue;
       }
       customer.sabirKalan -= dt;
@@ -176,11 +190,22 @@ class DayRun {
       }
     }
 
+    for (final leaving in ayrilanlar) {
+      leaving.gidis += dt * leaving.hiz / Balance.arrivalWalk;
+    }
+    ayrilanlar.removeWhere((leaving) => leaving.gitti);
+
     _sonrakiGelis -= dt;
     if (_sonrakiGelis <= 0) {
       final free = _bosMusteriSlotu();
       if (free != null) {
-        musteriler[free] = Customer(order: _maker.make(), day: day);
+        musteriler[free] = Customer(
+          order: _maker.make(),
+          day: day,
+          hiz:
+              Balance.slowestWalk +
+              _random.nextDouble() * (1 - Balance.slowestWalk),
+        );
         _sonrakiGelis = Balance.arrivalGap;
         onEvent(DayEvent.musteriGeldi);
         onChanged();
@@ -733,6 +758,9 @@ class DayRun {
     final customer = musteriler[index];
     if (customer == null) return;
     musteriler[index] = null;
+    ayrilanlar.add(
+      Ayrilan(slot: index, hal: customer.cikisHali, hiz: customer.hiz),
+    );
 
     // They pay on the way out, onto the ledge they were standing at. Nothing
     // reaches the till until somebody picks it up — and the clock on it

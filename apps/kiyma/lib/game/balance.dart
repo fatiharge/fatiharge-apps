@@ -68,23 +68,27 @@ abstract final class Balance {
   static Duration runLength(int day) => Duration(seconds: 180 + day * 5);
 
   /// Gap between one customer leaving and the next taking the place.
-  /// How long a customer takes to walk in and settle at the counter.
+  /// How long the quickest customer takes to walk in and settle, and how
+  /// slow the slowest one is as a fraction of that. Everybody gets a speed
+  /// somewhere in between, so a queue does not move as one body.
   static const arrivalWalk = 2.0;
+  static const slowestWalk = 0.4;
 
   /// How long the counter keeps pointing at the step a player just tried to
   /// skip.
   static const hintFor = 2.5;
 
-  /// How long the grill may sit completely empty before the mince tray starts
-  /// asking for attention.
+  /// How long the grill and the wrap station may sit empty before the source
+  /// that fills them starts asking for attention.
   static const idleGrill = 3.0;
+  static const idleWrap = 4.0;
 
   /// Gold left on the ledge is swept into the till after this long, and only
   /// this much of it survives. Touching it is worth the difference.
   static const sweptAfter = 10.0;
   static const sweptKeeps = 0.7;
 
-  static const arrivalGap = 1.5;
+  static const arrivalGap = 3.0;
 
   /// XP needed to reach each day. Earned money is what feeds it, but the
   /// player is never shown that link — they see a level bar.
