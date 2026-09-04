@@ -137,6 +137,77 @@ void drawPanel(
     );
 }
 
+/// A segmented ring with an icon in the middle: what a grill slot is doing.
+///
+/// A straight bar lying along a skewer came out as four coloured specks on a
+/// leaning grill — indistinguishable from each other and from the coals. A
+/// dial reads as one object in one state, which is what a slot is.
+void drawDial(
+  Canvas canvas,
+  Offset center,
+  double radius,
+  double value, {
+  required Color lit,
+  required Color dark,
+  required m.IconData icon,
+  int segments = 8,
+}) {
+  final band = radius * 0.36;
+  final ring = Rect.fromCircle(center: center, radius: radius - band / 2);
+
+  canvas
+    ..drawCircle(center, radius, Paint()..color = dark)
+    ..drawArc(
+      ring,
+      -math.pi / 2,
+      math.pi * 2 * value.clamp(0, 1),
+      false,
+      Paint()
+        ..color = lit
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = band,
+    );
+
+  // The gaps are cut out of the ring rather than drawn as segments: one arc
+  // and a handful of lines, whatever the value is.
+  for (var i = 0; i < segments; i++) {
+    final angle = -math.pi / 2 + math.pi * 2 * i / segments;
+    final unit = Offset(math.cos(angle), math.sin(angle));
+    canvas.drawLine(
+      center + unit * (radius - band),
+      center + unit * radius,
+      Paint()
+        ..color = dark
+        ..strokeWidth = radius * 0.14,
+    );
+  }
+
+  canvas
+    ..drawCircle(
+      center,
+      radius - 0.75,
+      Paint()
+        ..color = lit
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.5,
+    )
+    ..drawCircle(center, radius - band - 1, Paint()..color = dark);
+
+  final glyph = m.TextPainter(
+    text: m.TextSpan(
+      text: String.fromCharCode(icon.codePoint),
+      style: m.TextStyle(
+        fontSize: radius * 1.15,
+        fontFamily: icon.fontFamily,
+        package: icon.fontPackage,
+        color: lit,
+      ),
+    ),
+    textDirection: TextDirection.ltr,
+  )..layout();
+  glyph.paint(canvas, center - Offset(glyph.width / 2, glyph.height / 2));
+}
+
 /// A rounded meter. Used for cooking progress and for patience, which are the
 /// two clocks the player has to read at a glance.
 void drawBar(

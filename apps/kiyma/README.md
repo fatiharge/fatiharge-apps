@@ -131,6 +131,13 @@ is why the design doc's half-finished day (11.5) and its reputation system
 (9) are both gone. What losing a customer costs is the seat they occupy for
 the length of their patience bar.
 
+Each grill slot carries a **dial**, not a bar: a segmented ring with a flame
+while the meat cooks and a draining green ring with a clock while it is worth
+taking. Raw and cooking fill one meter between them — they are the same wait
+from the player's side, and a bar that emptied and started again read as a
+fault. Four thin bars on a leaning grill were indistinguishable from each
+other and from the coals.
+
 The grill is aimed at as one area, not as four slots. Meat dropped anywhere
 on it fills the slot under the finger or the nearest free one; a drag off it
 takes whatever is under the finger, and failing that the most urgent skewer —

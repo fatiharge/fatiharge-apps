@@ -3,6 +3,8 @@ import 'dart:ui';
 // `Quad` collides with vector_math's, which Flame re-exports everywhere.
 import 'package:flame/components.dart' hide Quad;
 import 'package:flame/events.dart';
+// Only for the two glyphs the grill badges carry.
+import 'package:flutter/material.dart' show IconData, Icons;
 import 'package:kiyma/core/quad.dart';
 import 'package:kiyma/data/scene.dart';
 import 'package:kiyma/game/assets.dart';
@@ -47,12 +49,17 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     'durum_hazirlama',
   };
 
-  static const Map<Pisme, Color> _cookColors = {
-    Pisme.cig: Color(0xFFE0574A),
-    Pisme.pisiyor: Color(0xFFE9A13B),
-    Pisme.pismis: Color(0xFF5FBF6A),
-    Pisme.yanmis: Color(0xFF4A3430),
-  };
+  // Two states worth a badge: on the fire, and ready but burning down.
+  static const ({Color lit, Color dark, IconData icon}) _cooking = (
+    lit: Color(0xFFF3A431),
+    dark: Color(0xFF4A1712),
+    icon: Icons.local_fire_department_rounded,
+  );
+  static const ({Color lit, Color dark, IconData icon}) _ready = (
+    lit: Color(0xFF7BD154),
+    dark: Color(0xFF1B3A18),
+    icon: Icons.schedule_rounded,
+  );
 
   Offset _last = Offset.zero;
   Offset _start = Offset.zero;
@@ -184,18 +191,19 @@ class CounterComponent extends PositionComponent with DragCallbacks {
         drawInQuad(canvas, image, slots[i], AssetFit.orta);
       }
       // Burnt is the end of the clock and the charred skewer says so on its
-      // own; a full bar there just reads as another rod on the grill.
+      // own; a badge there just reads as another thing to attend to.
       if (durum == Pisme.yanmis) continue;
-      drawBar(
+      final ready = durum == Pisme.pismis;
+      final dial = ready ? _ready : _cooking;
+      drawDial(
         canvas,
-        Rect.fromCenter(
-          center: slots[i].center - const Offset(0, 15),
-          width: slots[i].width * 0.5,
-          height: 4,
-        ),
-        slot.ilerleme(run.day),
-        color: _cookColors[durum]!,
-        angle: slots[i].angle,
+        slots[i].center,
+        13,
+        // Filling while it cooks, draining while it is worth taking.
+        ready ? 1 - slot.ilerleme(run.day) : slot.pismeOrani,
+        lit: dial.lit,
+        dark: dial.dark,
+        icon: dial.icon,
       );
     }
   }

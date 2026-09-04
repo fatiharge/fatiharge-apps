@@ -33,11 +33,14 @@ void main() {
   setUpAll(() async {
     scene = await SceneData.load();
     assets = await GameAssets.load();
-    // Without this the HUD's numbers come out as boxes: a golden that cannot
-    // show the text is not much of a check on the text.
+    // Without these the numbers and the grill badges come out as boxes: a
+    // golden that cannot show its glyphs is not much of a check on them.
     await (FontLoader(
       'Rubik',
     )..addFont(rootBundle.load('assets/fonts/Rubik.ttf'))).load();
+    await (FontLoader(
+      'MaterialIcons',
+    )..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'))).load();
   });
 
   testWidgets('the counter, with everything open and in use', (tester) async {

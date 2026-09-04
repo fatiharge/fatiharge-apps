@@ -21,6 +21,13 @@ class MangalSlot {
   bool get alinabilir => durum == Pisme.pismis;
   bool get yanmis => durum == Pisme.yanmis;
 
+  /// `0..1` over raw *and* cooking together.
+  ///
+  /// The two states are the same wait from the player's side, and a meter
+  /// that empties and starts again between them reads as a fault.
+  double get pismeOrani =>
+      (_gecen / (Balance.rawSeconds + Balance.cookingSeconds)).clamp(0, 1);
+
   /// `0..1` through the current state, for the progress the player reads.
   double ilerleme(int day) => switch (durum) {
     Pisme.cig => _gecen / Balance.rawSeconds,
