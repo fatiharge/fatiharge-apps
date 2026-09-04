@@ -1,15 +1,18 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kiyma/data/scene.dart';
 import 'package:kiyma/game/balance.dart';
 import 'package:kiyma/game/day_run.dart';
 import 'package:kiyma/game/kiyma_cubit.dart';
 import 'package:kiyma/game/unlocks.dart';
+import 'package:kiyma/game/world.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  late SceneData scene;
-  setUpAll(() async => scene = await SceneData.load());
+  late GameWorld world;
+  setUpAll(() async {
+    world = GameWorld();
+    await world.loadScene();
+  });
 
   /// Opens the counter and closes it again with nobody left to serve.
   void playEmptyDay(KiymaCubit cubit) {
@@ -21,14 +24,14 @@ void main() {
 
   group('KiymaCubit', () {
     test('opens on the day-start card', () {
-      final cubit = KiymaCubit(scene);
+      final cubit = KiymaCubit(world);
       expect(cubit.state.phase, GamePhase.gunBasi);
       expect(cubit.state.gun, 1);
       expect(cubit.state.hedef, Balance.target(1));
     });
 
     test('a finished day shows the day-end card', () async {
-      final cubit = KiymaCubit(scene);
+      final cubit = KiymaCubit(world);
       final effects = <DayEvent>[];
       cubit.effects.listen(effects.add);
 
@@ -39,7 +42,7 @@ void main() {
     });
 
     test('a missed target replays the day and restores reputation', () {
-      final cubit = KiymaCubit(scene)..startDay();
+      final cubit = KiymaCubit(world)..startDay();
       cubit.progress.itibar = 42;
       cubit.run!
         ..kuyruk = 0
@@ -54,7 +57,7 @@ void main() {
     });
 
     test('a missed target keeps the money that was made', () {
-      final cubit = KiymaCubit(scene)..startDay();
+      final cubit = KiymaCubit(world)..startDay();
       cubit.progress.kazan(30);
       cubit.run!
         ..kuyruk = 0
@@ -65,7 +68,7 @@ void main() {
     });
 
     test('a met target advances the day and opens the shop', () {
-      final cubit = KiymaCubit(scene)..startDay();
+      final cubit = KiymaCubit(world)..startDay();
       cubit.progress
         ..itibar = 88
         ..kazan(Balance.target(1));
@@ -85,7 +88,7 @@ void main() {
     });
 
     test('buying takes the money and opens the lock', () {
-      final cubit = KiymaCubit(scene);
+      final cubit = KiymaCubit(world);
       cubit.progress.kazan(200);
       const biber = Unlock('malzeme_biber', 150);
 
@@ -98,7 +101,7 @@ void main() {
     });
 
     test('the day the second time starts from that day reputation', () {
-      final cubit = KiymaCubit(scene);
+      final cubit = KiymaCubit(world);
       playEmptyDay(cubit);
       cubit
         ..continueFromEnd()

@@ -22,6 +22,24 @@ width along the top edge, height along the left edge, and rotates by the top
 edge's slope. Slots inside a region are interpolated from its four corners, so
 a slot in a leaning area leans with it.
 
+## Startup
+
+`main` registers two things by hand — the navigator and the `BootstrapPort` —
+and then hands the port to `BootstrapPage`. Everything else comes out of the
+container, because `configureDependencies` is itself the first bootstrap job:
+nothing registered before it can depend on it.
+
+The three jobs are `dependencies`, `scene`, `art`, in that order, all under
+the `restart` policy. There is no reduced game to fall back to, and a scene
+file that will not parse is not something a retry fixes. They are three jobs
+rather than one so the splash bar moves and a failure names the step.
+
+`GameWorld` is the `@lazySingleton` the last two jobs fill; its getters throw
+rather than return null, because no screen exists before bootstrap finishes.
+When the jobs are done the port calls `AppNavigator.openGame()`, which
+replaces the splash. Nothing watches a flag for that — what startup opens is
+the port's business, which is the point of the boundary.
+
 ## Where the rules live
 
 `DayRun` is the whole game: the grill, the two prep stations, the shelves, the

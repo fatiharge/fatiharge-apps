@@ -1,8 +1,9 @@
-import 'package:kiyma/data/scene.dart';
+import 'package:injectable/injectable.dart';
 import 'package:kiyma/game/balance.dart';
 import 'package:kiyma/game/day_run.dart';
 import 'package:kiyma/game/progress.dart';
 import 'package:kiyma/game/unlocks.dart';
+import 'package:kiyma/game/world.dart';
 import 'package:utility_kit/utility_kit.dart';
 
 /// Which screen the player is on. Upgrades sit between days on purpose: a
@@ -40,8 +41,9 @@ class KiymaState {
   double get hedefOrani => hedef == 0 ? 1 : (toplamKazanc / hedef).clamp(0, 1);
 }
 
+@injectable
 class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
-  KiymaCubit(this.scene) : super(_initial);
+  KiymaCubit(this._world) : super(_initial);
 
   static const _initial = KiymaState(
     phase: GamePhase.gunBasi,
@@ -54,7 +56,7 @@ class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
     gunGecildi: false,
   );
 
-  final SceneData scene;
+  final GameWorld _world;
   final Progress progress = Progress();
 
   DayRun? run;
@@ -74,7 +76,7 @@ class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
   void startDay() {
     _itibarGunBasi = progress.itibar;
     run = DayRun(
-      scene: scene,
+      scene: _world.scene,
       progress: progress,
       onChanged: _emit,
       onEvent: _onEvent,

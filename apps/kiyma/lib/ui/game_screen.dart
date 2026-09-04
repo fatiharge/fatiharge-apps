@@ -4,11 +4,13 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kiyma/config/injectable.dart';
 import 'package:kiyma/data/scene.dart';
 import 'package:kiyma/game/assets.dart';
 import 'package:kiyma/game/day_run.dart';
 import 'package:kiyma/game/kiyma_cubit.dart';
 import 'package:kiyma/game/kiyma_game.dart';
+import 'package:kiyma/game/world.dart';
 import 'package:kiyma/ui/hud.dart';
 import 'package:kiyma/ui/palette.dart';
 import 'package:kiyma/ui/panels.dart';
@@ -18,26 +20,23 @@ import 'package:utility_kit/utility_kit.dart';
 /// open. Everything that moves every frame is inside the canvas; everything
 /// here rebuilds a handful of times a second at most.
 class GameScreen extends StatelessWidget {
-  const GameScreen({required this.scene, required this.assets, super.key});
-
-  final SceneData scene;
-  final GameAssets assets;
+  const GameScreen({super.key});
 
   @override
   Widget build(BuildContext context) => BlocProvider(
-    create: (_) => KiymaCubit(scene),
-    child: _GameView(scene: scene, assets: assets),
+    create: (_) => getIt<KiymaCubit>(),
+    child: const _GameView(),
   );
 }
 
 class _GameView extends StatelessWidget {
-  const _GameView({required this.scene, required this.assets});
-
-  final SceneData scene;
-  final GameAssets assets;
+  const _GameView();
 
   @override
   Widget build(BuildContext context) {
+    final world = getIt<GameWorld>();
+    final scene = world.scene;
+    final assets = world.art;
     final cubit = context.read<KiymaCubit>();
     return Scaffold(
       backgroundColor: KiymaPalette.zemin,

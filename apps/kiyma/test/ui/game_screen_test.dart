@@ -2,11 +2,11 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kiyma/data/scene.dart';
-import 'package:kiyma/game/assets.dart';
+import 'package:kiyma/config/injectable.dart';
 import 'package:kiyma/game/balance.dart';
 import 'package:kiyma/game/kiyma_cubit.dart';
 import 'package:kiyma/game/kiyma_game.dart';
+import 'package:kiyma/game/world.dart';
 import 'package:kiyma/ui/game_screen.dart';
 import 'package:kiyma/ui/hud.dart';
 import 'package:kiyma/ui/panels.dart';
@@ -14,20 +14,19 @@ import 'package:kiyma/ui/panels.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  late SceneData scene;
-  late GameAssets assets;
-
+  // The screen resolves what it draws from the container, so the test brings
+  // the container up the way bootstrap does rather than handing it fakes.
   setUpAll(() async {
-    scene = await SceneData.load();
-    assets = await GameAssets.load();
+    await getIt.reset();
+    await configureDependencies();
+    await getIt<GameWorld>().loadScene();
+    await getIt<GameWorld>().loadArt();
   });
 
+  tearDownAll(() async => getIt.reset());
+
   Future<KiymaCubit> open(WidgetTester tester) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        home: GameScreen(scene: scene, assets: assets),
-      ),
-    );
+    await tester.pumpWidget(const MaterialApp(home: GameScreen()));
     return tester.element(find.byType(Scaffold)).read<KiymaCubit>();
   }
 
