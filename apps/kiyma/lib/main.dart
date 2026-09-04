@@ -29,7 +29,7 @@ Future<void> startApp() async {
   // job, so nothing registered here can come out of it.
   getIt
     ..registerSingleton<AppRouter>(AppRouter())
-    ..registerSingleton<BootstrapPort>(const BootstrapAdapter());
+    ..registerSingleton<BootstrapPort>(BootstrapAdapter());
 
   runApp(
     EasyLocalization(
