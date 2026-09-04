@@ -61,16 +61,27 @@ class Quad {
     (topLeft.dy + topRight.dy + bottomRight.dy + bottomLeft.dy) / 4,
   );
 
-  Rect get bounds {
-    final xs = corners.map((c) => c.dx);
-    final ys = corners.map((c) => c.dy);
-    return Rect.fromLTRB(
-      xs.reduce(math.min),
-      ys.reduce(math.min),
-      xs.reduce(math.max),
-      ys.reduce(math.max),
-    );
-  }
+  // Read straight off the four fields: `bounds` is asked ~20 times a frame
+  // and `corners` builds a list. Not cached in a `late final`, because Quad
+  // has a const constructor and a class with a late field cannot.
+  Rect get bounds => Rect.fromLTRB(
+    math.min(
+      math.min(topLeft.dx, topRight.dx),
+      math.min(bottomRight.dx, bottomLeft.dx),
+    ),
+    math.min(
+      math.min(topLeft.dy, topRight.dy),
+      math.min(bottomRight.dy, bottomLeft.dy),
+    ),
+    math.max(
+      math.max(topLeft.dx, topRight.dx),
+      math.max(bottomRight.dx, bottomLeft.dx),
+    ),
+    math.max(
+      math.max(topLeft.dy, topRight.dy),
+      math.max(bottomRight.dy, bottomLeft.dy),
+    ),
+  );
 
   /// Bilinear interpolation across the quad. `u` runs left to right, `v` top
   /// to bottom, both `0..1`.
@@ -88,11 +99,12 @@ class Quad {
   /// Whether [point] is inside, by winding across the four edges. Convex or
   /// not, every region here is a simple quad, so the sign test holds.
   bool contains(Offset point) {
+    final edge = corners;
     var positive = false;
     var negative = false;
     for (var i = 0; i < 4; i++) {
-      final a = corners[i];
-      final b = corners[(i + 1) % 4];
+      final a = edge[i];
+      final b = edge[(i + 1) % 4];
       final cross =
           (b.dx - a.dx) * (point.dy - a.dy) - (b.dy - a.dy) * (point.dx - a.dx);
       if (cross > 0) positive = true;

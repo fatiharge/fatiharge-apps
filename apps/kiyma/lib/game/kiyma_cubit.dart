@@ -1,4 +1,5 @@
 import 'package:injectable/injectable.dart';
+import 'package:kiyma/game/balance.dart';
 import 'package:kiyma/game/day_run.dart';
 import 'package:kiyma/game/progress.dart';
 import 'package:kiyma/game/run_summary.dart';
@@ -37,10 +38,7 @@ class KiymaState {
 
   final bool duraklatildi;
 
-  double get seviyeOrani {
-    final span = hedef - seviyeTabani;
-    return span <= 0 ? 1 : ((xp - seviyeTabani) / span).clamp(0, 1);
-  }
+  double get seviyeOrani => Balance.ratio(xp, gun);
 }
 
 /// One per screen. What outlives a screen is [Progress]; a run does not —
@@ -49,6 +47,7 @@ class KiymaState {
 @injectable
 class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
   KiymaCubit(this._world, this.progress) : super(_initial) {
+    progress.listen(_emit);
     _emit();
   }
 
@@ -94,19 +93,15 @@ class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
   /// Debug only: enough money to reach the far end of the shop without
   /// playing twenty runs to get there. XP is untouched, so the level is
   /// still whatever was actually played.
-  void bagisla(int miktar) {
-    progress.para += miktar;
-    _emit();
-  }
+  void bagisla(int miktar) => progress.bagisla(miktar);
 
-  void buy(Unlock unlock) {
-    if (progress.satinAl(unlock)) _emit();
-  }
+  void buy(Unlock unlock) => progress.satinAl(unlock);
 
   /// Closing the page closes the run with it. Nothing is lost: money banks as
   /// it is earned, and what the run was worth is recorded on [Progress].
   @override
   Future<void> close() async {
+    progress.unlisten(_emit);
     _bank(emitAfter: false);
     return super.close();
   }
@@ -117,14 +112,21 @@ class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
     final current = run;
     if (current == null) return;
 
-    progress.sonOturum = RunSummary(
-      kazanc: current.kazanc,
-      musteri: current.memnunMusteri,
-      xpOnce: progress.xp - current.kazanc,
-      gunOnce: progress.gun,
-      atlananGun: progress.seviyeleriIsle(),
-    );
+    // Levelling first and on its own line: inside the constructor call a
+    // listener would see a Progress that had already turned the day over but
+    // not yet recorded what did it.
+    final kazanc = current.kazanc;
+    final xpOnce = progress.xp - kazanc;
+    final gunOnce = progress.gun;
+    final atlanan = progress.seviyeleriIsle();
     run = null;
+    progress.sonOturum = RunSummary(
+      kazanc: kazanc,
+      musteri: current.memnunMusteri,
+      xpOnce: xpOnce,
+      gunOnce: gunOnce,
+      atlananGun: atlanan,
+    );
     if (emitAfter) _emit();
   }
 

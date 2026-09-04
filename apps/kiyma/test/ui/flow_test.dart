@@ -19,6 +19,7 @@ import 'package:kiyma/ui/level_bar.dart';
 import 'package:kiyma/ui/menu_page.dart';
 import 'package:kiyma/ui/shop_page.dart';
 import 'package:kiyma/ui/summary_page.dart';
+import '../support/app_harness.dart';
 
 /// The screens as they are actually reached: through the router, off the same
 /// container bootstrap fills. A page tested on its own would not catch a
@@ -42,15 +43,7 @@ void main() {
 
   Future<void> open(WidgetTester tester, PageRouteInfo<dynamic> route) async {
     await router.replaceAll([route]);
-    await tester.pumpWidget(
-      EasyLocalization(
-        supportedLocales: const [Locale('tr'), Locale('en')],
-        path: 'assets/translations',
-        fallbackLocale: const Locale('tr'),
-        useOnlyLangCode: true,
-        child: MaterialApp.router(routerConfig: router.config()),
-      ),
-    );
+    await pumpApp(tester, router: router);
     await tester.pumpAndSettle();
   }
 
@@ -87,6 +80,9 @@ void main() {
       expect(find.byType(MenuPage), findsOneWidget);
       // Replaced, not pushed: there is nothing to go back to.
       expect(router.stack, hasLength(1));
+      // And the choice reached the words. Without the real app's delegates
+      // this passed while every screen stayed Turkish.
+      expect(find.text('Play'), findsOneWidget);
     });
   });
 
@@ -171,6 +167,26 @@ void main() {
         find.ancestor(of: find.text('₺250'), matching: find.byType(InkWell)),
       );
       expect(pickles.onTap, isNull);
+    });
+
+    testWidgets('a purchase reaches the menu underneath it', (tester) async {
+      // The shop is pushed, so the menu stays mounted behind it with its own
+      // cubit. Progress is what both read, so Progress is what has to say it
+      // moved — otherwise the hub's money chip shows the old balance for the
+      // rest of the session.
+      earn(200);
+      await open(tester, const MenuRoute());
+      expect(find.text('₺200'), findsOneWidget);
+
+      await tester.tap(find.text('Yükselt'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('₺150'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.arrow_back_rounded));
+      await tester.pumpAndSettle();
+      expect(find.byType(MenuPage), findsOneWidget);
+      expect(find.text('₺50'), findsOneWidget);
     });
   });
 }

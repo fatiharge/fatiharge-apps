@@ -12,6 +12,8 @@ import 'package:kiyma/game/world.dart';
 import 'package:kiyma/route/app_router.dart';
 import 'package:kiyma/route/app_router.gr.dart';
 
+import '../support/app_harness.dart';
+
 /// The summary at the size it is actually read: a phone held sideways.
 ///
 /// The design it follows was drawn for a tablet, where everything fits with
@@ -58,15 +60,7 @@ void main() {
 
     final router = AppRouter();
     await router.replaceAll([const SummaryRoute()]);
-    await tester.pumpWidget(
-      EasyLocalization(
-        supportedLocales: const [Locale('tr'), Locale('en')],
-        path: 'assets/translations',
-        fallbackLocale: const Locale('tr'),
-        useOnlyLangCode: true,
-        child: MaterialApp.router(routerConfig: router.config()),
-      ),
-    );
+    await pumpApp(tester, router: router);
     await tester.pumpAndSettle();
 
     await expectLater(

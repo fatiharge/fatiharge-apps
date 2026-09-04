@@ -30,19 +30,54 @@ class _GamePageState extends State<GamePage> {
   // back gesture included.
   late final KiymaCubit _cubit = getIt<KiymaCubit>()..startDay();
 
+  /// Scoped to the page, not to the process. As a static it survived the run
+  /// that raised it: a toast fired in the last second of a day was still on
+  /// screen when the next one opened, because the timer that would have
+  /// cleared it was cancelled with the page.
+  final ValueNotifier<String?> _toast = ValueNotifier(null);
+  Timer? _toastTimer;
+
+  void _say(DayEvent event) {
+    final key = _toastKey(event);
+    if (key == null) return;
+    _toast.value = key.tr();
+    _toastTimer?.cancel();
+    _toastTimer = Timer(
+      const Duration(milliseconds: 1100),
+      () => _toast.value = null,
+    );
+  }
+
   @override
   void dispose() {
+    _toastTimer?.cancel();
+    _toast.dispose();
     unawaited(_cubit.close());
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) =>
-      BlocProvider.value(value: _cubit, child: const _GameView());
+  Widget build(BuildContext context) => BlocProvider.value(
+    value: _cubit,
+    child: _GameView(toast: _toast, onEvent: _say),
+  );
 }
 
+String? _toastKey(DayEvent event) => switch (event) {
+  DayEvent.reddedildi => 'olay.reddedildi',
+  DayEvent.yandi => 'olay.yandi',
+  DayEvent.mangalDolu => 'olay.mangal_dolu',
+  DayEvent.altinSupuruldu => 'olay.altin_supuruldu',
+  DayEvent.gecersiz => 'olay.gecersiz',
+  DayEvent.musteriKizgin => 'olay.musteri_kizgin',
+  _ => null,
+};
+
 class _GameView extends StatelessWidget {
-  const _GameView();
+  const _GameView({required this.toast, required this.onEvent});
+
+  final ValueNotifier<String?> toast;
+  final void Function(DayEvent event) onEvent;
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +91,7 @@ class _GameView extends StatelessWidget {
             unawaited(context.router.replace(const SummaryRoute()));
             return;
           }
-          _Toast.show(context, event);
+          onEvent(event);
         },
         child: BlocBuilder<KiymaCubit, KiymaState>(
           builder: (context, state) {
@@ -71,7 +106,7 @@ class _GameView extends StatelessWidget {
                   ),
                 if (state.duraklatildi)
                   _PauseOverlay(onResume: () => cubit.duraklat(durdur: false)),
-                const _Toast(),
+                _Toast(message: toast),
               ],
             );
           },
@@ -170,49 +205,17 @@ class _GameHostState extends State<_GameHost> {
 
 /// A one-line note that fades out. The player is mid-drag; anything louder
 /// would be worse than nothing.
-class _Toast extends StatefulWidget {
-  const _Toast();
+class _Toast extends StatelessWidget {
+  const _Toast({required this.message});
 
-  static final _message = ValueNotifier<String?>(null);
-  static Timer? _timer;
-
-  static void show(BuildContext context, DayEvent event) {
-    final key = switch (event) {
-      DayEvent.reddedildi => 'olay.reddedildi',
-      DayEvent.yandi => 'olay.yandi',
-      DayEvent.mangalDolu => 'olay.mangal_dolu',
-      DayEvent.altinSupuruldu => 'olay.altin_supuruldu',
-      DayEvent.gecersiz => 'olay.gecersiz',
-      DayEvent.musteriKizgin => 'olay.musteri_kizgin',
-      _ => null,
-    };
-    if (key == null) return;
-    _message.value = key.tr();
-    _timer?.cancel();
-    _timer = Timer(
-      const Duration(milliseconds: 1100),
-      () => _message.value = null,
-    );
-  }
-
-  @override
-  State<_Toast> createState() => _ToastState();
-}
-
-class _ToastState extends State<_Toast> {
-  @override
-  void dispose() {
-    _Toast._timer?.cancel();
-    _Toast._timer = null;
-    super.dispose();
-  }
+  final ValueNotifier<String?> message;
 
   @override
   Widget build(BuildContext context) => ValueListenableBuilder<String?>(
-    valueListenable: _Toast._message,
-    builder: (context, message, _) => IgnorePointer(
+    valueListenable: message,
+    builder: (context, shown, _) => IgnorePointer(
       child: AnimatedOpacity(
-        opacity: message == null ? 0 : 1,
+        opacity: shown == null ? 0 : 1,
         duration: const Duration(milliseconds: 160),
         child: Align(
           alignment: const Alignment(0, -0.55),
@@ -222,7 +225,7 @@ class _ToastState extends State<_Toast> {
               color: KiymaPalette.panel,
               borderRadius: BorderRadius.circular(14),
             ),
-            child: Text(message ?? '', style: const TextStyle(fontSize: 13)),
+            child: Text(shown ?? '', style: const TextStyle(fontSize: 13)),
           ),
         ),
       ),

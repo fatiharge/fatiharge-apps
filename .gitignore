@@ -33,3 +33,6 @@ contracts/*.yaml
 # The admin token, pasted in to run a content push. Never committed:
 # this repository is public.
 .adminenv
+
+# flutter_test writes golden diffs here on a failure; scratch, never committed.
+**/failures/

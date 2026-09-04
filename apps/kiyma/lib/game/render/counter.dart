@@ -10,6 +10,7 @@ import 'package:kiyma/core/quad.dart';
 import 'package:kiyma/data/scene.dart';
 import 'package:kiyma/game/assets.dart';
 import 'package:kiyma/game/day_run.dart';
+import 'package:kiyma/game/gesture.dart';
 import 'package:kiyma/game/model/items.dart';
 import 'package:kiyma/game/model/order.dart';
 import 'package:kiyma/game/model/products.dart';
@@ -82,6 +83,11 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   // Orange rather than yellow: half of what asks sits on cream or on pale
   // bread, and yellow disappears into both.
   static const _hint = Color(0xFFFF8A1F);
+
+  /// An order line already handed over.
+  static final _faded = Paint()
+    ..filterQuality = FilterQuality.medium
+    ..color = const Color(0xFFFFFFFF).withValues(alpha: 0.3);
   static const _want = Color(0xFF6FCF7C);
   static const _avoid = Color(0xFFE0574A);
 
@@ -94,7 +100,9 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   Offset _last = Offset.zero;
   Offset _start = Offset.zero;
   double _elapsed = 0;
-  double _dragTime = 0;
+
+  /// How far this drag has ever got from where it started.
+  double _travel = 0;
 
   @override
   void update(double dt) {
@@ -116,47 +124,58 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   void onDragStart(DragStartEvent event) {
     super.onDragStart(event);
     _start = _last = _scene(event.canvasPosition);
-    _dragTime = _elapsed;
+    _travel = 0;
     run.beginDrag(_start);
   }
 
   @override
   void onDragUpdate(DragUpdateEvent event) {
     _last = _scene(event.canvasEndPosition);
+    _travel = furthest(_travel, _start, _last);
     run.carriedAt = _last;
   }
 
   @override
   void onDragEnd(DragEndEvent event) {
     super.onDragEnd(event);
-    final travel = _last - _start;
-    final duration = _elapsed - _dragTime;
-
-    // A tap reaches here as a drag that never moved, so by now the source has
-    // already been picked up. Put it back before treating it as a tap, or
-    // every touch on a tray reads as a drop onto itself.
-    if (travel.distance < 12 && duration < 0.35) {
-      run.cancelDrag();
-      if (_pause.contains(_start)) {
-        onPause();
-        return;
-      }
-      run.tap(_start);
-      return;
-    }
-    if (run.carried != null) {
-      run.endDrag(_last);
-      return;
-    }
-    if (travel.dy < -30 && travel.dy.abs() > travel.dx.abs()) {
-      run.flickUp(_start);
+    switch (classifyTouch(start: _start, end: _last, maxTravel: _travel)) {
+      case TouchKind.tap:
+        // A tap arrives as a drag that never moved, so by now the source has
+        // already been picked up. Put it back before treating it as a tap, or
+        // every touch on a tray reads as a drop onto itself.
+        run.cancelDrag();
+        if (_pause.contains(_start)) {
+          onPause();
+          return;
+        }
+        run.tap(_start);
+      case TouchKind.drag:
+        if (run.carried != null) run.endDrag(_last);
+      case TouchKind.flick:
+        if (run.carried != null) {
+          run.endDrag(_last);
+          return;
+        }
+        run.flickUp(_start);
+      case TouchKind.none:
+        run.cancelDrag();
     }
   }
 
+  /// A cancelled pointer is not a finished drag.
+  ///
+  /// Flame's default body for this is `onDragEnd(event.toDragEnd())`, so the
+  /// notification shade coming down mid-touch would run the whole
+  /// classification on wherever the finger happened to be: binning a wrap,
+  /// opening the pause menu, rolling a durum. Only the mixin's own bookkeeping
+  /// is wanted from `super`.
   @override
+  // The super call this asks for is the thing being avoided; the half of it
+  // that matters is made by hand above.
+  // ignore: must_call_super
   void onDragCancel(DragCancelEvent event) {
-    super.onDragCancel(event);
-    if (run.carried != null) run.endDrag(_last);
+    super.onDragEnd(event.toDragEnd());
+    run.cancelDrag();
   }
 
   // --- Drawing ---
@@ -742,13 +761,16 @@ class CounterComponent extends PositionComponent with DragCallbacks {
           ..strokeWidth = 1.5,
       );
     }
-    canvas.saveLayer(
-      Rect.fromCircle(center: center, radius: size),
-      Paint()
-        ..color = const Color(0xFFFFFFFF).withValues(alpha: done ? 0.3 : 1),
+    // No saveLayer: drawImageRect modulates by the paint's alpha on its own,
+    // and for `done: false` — every constraint icon on every card — the layer
+    // was a render-target switch applying alpha 1.
+    drawCentered(
+      canvas,
+      image,
+      center,
+      size,
+      paint: done ? _faded : null,
     );
-    drawCentered(canvas, image, center, size);
-    canvas.restore();
     if (crossed) {
       final r = size * 0.5;
       canvas.drawLine(

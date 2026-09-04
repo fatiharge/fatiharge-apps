@@ -623,6 +623,17 @@ void main() {
       expect(run.parlama['mangal_alani']!.ok, isFalse);
     });
 
+    test('a cancelled pointer puts back what it lifted, silently', () {
+      // The notification shade coming down mid-drag is not a drop.
+      final run = build();
+      expect(run.beginDrag(at('malzeme_domates')), isTrue);
+      run.cancelDrag();
+
+      expect(run.carried, isNull);
+      expect(run.durumIstasyonu, isNull, reason: 'nothing was placed');
+      expect(events, isEmpty, reason: 'and nothing was reported');
+    });
+
     test('a touch that picked something up puts it back', () {
       final run = build();
       expect(run.beginDrag(at('malzeme_domates')), isTrue);
@@ -640,6 +651,100 @@ void main() {
       expect(run.parlama, isNotEmpty);
       run.tick(1);
       expect(run.parlama, isEmpty);
+    });
+  });
+
+  group('the shelf', () {
+    test('a wrap is taken back off it and served', () {
+      final run = build();
+      final customer = waiting(run, wrapFor(const {}));
+      buildWrap(run);
+      run.flickUp(at('durum_hazirlama'));
+      drag(run, at('kagit_kaynak'), at('durum_hazirlama'));
+      expect(
+        drag(run, at('durum_hazirlama'), slot('bekleme_alani', 0)),
+        isTrue,
+      );
+      expect(run.bekleme[0], isNotNull);
+
+      expect(
+        drag(run, slot('bekleme_alani', 0), at('musteri_slot_1')),
+        isTrue,
+      );
+      expect(run.bekleme[0], isNull, reason: 'the slot it came from cleared');
+      expect(customer.anaUrunVerildi, isTrue);
+      expect(run.altin[0]!.miktar, greaterThan(0));
+    });
+
+    test('a full slot pushes the next product to the first free one', () {
+      // Only reachable once a second shelf slot is open; with one slot the
+      // preferred index is always the empty one and the fallback never runs.
+      final run = build(unlock: ['bekleme_2'])
+        ..bekleme[0] = DurumUrun(Durum()..kagitli = true)
+        ..durumIstasyonu = (Durum()
+          ..etli = true
+          ..sarili = true
+          ..kagitli = true);
+
+      final first = run.bekleme[0];
+      expect(
+        drag(run, at('durum_hazirlama'), slot('bekleme_alani', 0)),
+        isTrue,
+      );
+      expect(run.bekleme[0], same(first), reason: 'the occupant stayed put');
+      expect(run.bekleme[1], isNotNull);
+    });
+  });
+
+  group('the plate, end to end', () {
+    test('is built, shelved, taken back and paid for', () {
+      final run = build(unlock: ['porsiyon_hatti', 'bilesen_ezme']);
+      final customer = Customer(
+        order: Order(
+          tip: UrunTipi.porsiyon,
+          ister: {Bilesen.ezme.id},
+          istemez: const {},
+        ),
+        day: run.day,
+      )..varis = 1;
+      run.musteriler[0] = customer;
+
+      run.tap(at('tabak_kaynak'));
+      drag(run, at('lavas_kaynak'), at('tabak_hazirlama'));
+      drag(run, at('malzeme_kiyma'), slot('mangal_alani', 0));
+      cook(run, Balance.rawSeconds + Balance.cookingSeconds + 0.2);
+      drag(run, slot('mangal_alani', 0), at('tabak_hazirlama'));
+      drag(run, at('malzeme_ezme'), at('tabak_hazirlama'));
+      expect(run.tabakIstasyonu!.hazir, isTrue);
+
+      expect(
+        drag(run, at('tabak_hazirlama'), slot('bekleme_alani', 0)),
+        isTrue,
+      );
+      expect(run.tabakIstasyonu, isNull, reason: 'the station cleared');
+      expect(run.bekleme[0], isA<PorsiyonUrun>());
+
+      expect(
+        drag(run, slot('bekleme_alani', 0), at('musteri_slot_1')),
+        isTrue,
+      );
+      expect(customer.anaUrunVerildi, isTrue);
+      expect(
+        customer.odenen,
+        Balance.income(Balance.porsiyonBase, run.day, ingredients: 1),
+      );
+    });
+
+    test('a wrap does not settle a plate order', () {
+      final run = build(unlock: ['porsiyon_hatti']);
+      final order = Order(
+        tip: UrunTipi.porsiyon,
+        ister: const {},
+        istemez: const {},
+      );
+      expect(order.anaUrunKabul(DurumUrun(Durum()..etli = true)), isFalse);
+      expect(order.anaUrunKabul(PorsiyonUrun(Porsiyon())), isTrue);
+      expect(run.progress.unlocks.porsiyonHatti, isTrue);
     });
   });
 

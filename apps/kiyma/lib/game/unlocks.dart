@@ -72,8 +72,10 @@ class Unlocks {
   /// in the same stretch of counter.
   int get musteriSlots => has('musteri_3') ? 3 : 2;
 
+  static const _shelfLocks = ['bekleme_2', 'bekleme_3'];
+
   /// One shelf for both lines, one to three deep.
-  int get bekleme => [2, 3].where((n) => has('bekleme_$n')).length + 1;
+  int get bekleme => _shelfLocks.where(has).length + 1;
 
   bool get porsiyonHatti => has('porsiyon_hatti');
 

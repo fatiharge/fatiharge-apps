@@ -18,21 +18,42 @@ class Progress {
 
   final Unlocks unlocks = Unlocks();
 
+  RunSummary? _sonOturum;
+
   /// The run that just ended. Held here rather than on the cubit because the
   /// summary is a different screen from the counter, and each screen builds
   /// its own.
-  RunSummary? sonOturum;
+  RunSummary? get sonOturum => _sonOturum;
+
+  set sonOturum(RunSummary? value) {
+    _sonOturum = value;
+    _duyur();
+  }
+
+  /// Screens that want to know when any of this moved.
+  ///
+  /// Every screen builds its own cubit over this one object, so a cubit only
+  /// ever emitted for what it did itself: buying in the shop left the menu
+  /// underneath showing the money it had before, which reads as a purchase
+  /// that did not go through. Plain callbacks rather than `ChangeNotifier`
+  /// because this file has no Flutter import and the rules must not gain one.
+  final List<void Function()> _listeners = [];
+
+  void listen(void Function() onChanged) => _listeners.add(onChanged);
+
+  void unlisten(void Function() onChanged) => _listeners.remove(onChanged);
+
+  void _duyur() {
+    for (final listener in List.of(_listeners)) {
+      listener();
+    }
+  }
 
   int get hedef => Balance.target(gun);
 
   /// XP the current level started at, so a bar can be drawn between levels
   /// rather than from zero.
-  int get seviyeTabani => gun <= 1 ? 0 : Balance.target(gun - 1);
-
-  double get seviyeOrani {
-    final span = hedef - seviyeTabani;
-    return span <= 0 ? 1 : ((xp - seviyeTabani) / span).clamp(0, 1);
-  }
+  int get seviyeTabani => Balance.floor(gun);
 
   bool get seviyeAtlandi => xp >= hedef;
 
@@ -43,12 +64,21 @@ class Progress {
       gun++;
       gained++;
     }
+    if (gained > 0) _duyur();
     return gained;
   }
 
   void kazan(int miktar) {
     para += miktar;
     xp += miktar;
+    _duyur();
+  }
+
+  /// Debug only: money with no XP behind it, so the level stays whatever was
+  /// actually played.
+  void bagisla(int miktar) {
+    para += miktar;
+    _duyur();
   }
 
   /// A burn costs money now and slows the cumulative target as well, which is
@@ -56,12 +86,14 @@ class Progress {
   void cezalandir(int miktar) {
     para = math.max(0, para - miktar);
     xp = math.max(0, xp - miktar);
+    _duyur();
   }
 
   bool satinAl(Unlock unlock) {
     if (para < unlock.price || unlocks.has(unlock.id)) return false;
     para -= unlock.price;
     unlocks.open(unlock.id);
+    _duyur();
     return true;
   }
 }

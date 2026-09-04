@@ -53,7 +53,7 @@
   },
   "ozet": {
     "baslik": "OTURUM BİTTİ",
-    "kazanc": "+{}",
+    "kazanc": "{}",
     "reklam": "Reklam izle, x2 kazan",
     "yeniden": "Yeni oyun",
     "menu": "Ana menü",
@@ -64,7 +64,8 @@
     "ilerleme": "OCAKBAŞI İLERLEMESİ",
     "xp": "{} / {} XP",
     "reklam_alt": "Kısa video ile hasılatı ikiye katla!",
-    "hazir": "Siparişler hazır, servise başla!"
+    "hazir": "Siparişler hazır, servise başla!",
+    "gun_rozet": "GÜN"
   },
   "duraklat": {
     "baslik": "Duraklatıldı",

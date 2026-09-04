@@ -82,4 +82,34 @@ void main() {
       expect(entry.value.trim(), isNotEmpty, reason: entry.key);
     }
   });
+
+  /// The one that escaped: a `const Text('GÜN')` sat on the summary beside a
+  /// translated heading for a week. Turkish letters in a Dart string literal
+  /// are the cheap signature of a sentence that never reached the JSON.
+  test('no Turkish words are hard-coded in lib', () {
+    const allowed = {
+      'lib/app.dart': ['Kıyma'],
+      'lib/ui/language_page.dart': ['Türkçe'],
+    };
+    final literal = RegExp(r"'([^'\n]*[ğüşıİöçĞÜŞÖÇ][^'\n]*)'");
+    final offenders = <String>[];
+
+    for (final file
+        in Directory('lib')
+            .listSync(recursive: true)
+            .whereType<File>()
+            .where((f) => f.path.endsWith('.dart'))) {
+      if (file.path.endsWith('.g.dart') || file.path.endsWith('.gr.dart')) {
+        continue;
+      }
+      if (file.path.endsWith('.config.dart')) continue;
+      for (final match in literal.allMatches(file.readAsStringSync())) {
+        final word = match.group(1)!;
+        if ((allowed[file.path] ?? const []).contains(word)) continue;
+        offenders.add('${file.path}: "$word"');
+      }
+    }
+
+    expect(offenders, isEmpty);
+  });
 }

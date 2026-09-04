@@ -49,6 +49,22 @@ void main() {
       expect(effects, contains(DayEvent.gunBitti));
     });
 
+    test('a run that burned more than it sold reports a loss', () {
+      // Reachable from the second run on: the burn penalty comes off the same
+      // xp the run's take is differenced from.
+      final progress = Progress()..kazan(200);
+      final cubit = KiymaCubit(world, progress)..startDay();
+      progress.cezalandir(36);
+      cubit.run!.tick(Balance.runLength(1).inSeconds + 1);
+
+      expect(cubit.state.oturum!.kazanc, -36);
+      expect(
+        cubit.state.oturum!.xpOnce,
+        200,
+        reason: 'the bar starts from where the run actually began',
+      );
+    });
+
     test('crossing the level takes the day with it', () {
       final cubit = KiymaCubit(world, Progress())..startDay();
       cubit.progress.kazan(Balance.target(1));

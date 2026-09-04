@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:bootstrap_kit/bootstrap_kit.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:kiyma/config/injectable.dart';
 import 'package:kiyma/ui/palette.dart';
@@ -57,12 +58,19 @@ class _StartupError extends StatelessWidget {
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 13, color: KiymaPalette.soluk),
             ),
-            const SizedBox(height: 10),
-            Text(
-              '${state.jobName}: ${state.error}',
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 11, color: KiymaPalette.soluk),
-            ),
+            // Nothing technical reaches a player (architecture/app-layers.md):
+            // on the scene and art jobs there is no retry either, so a corrupt
+            // install would leave somebody staring at an untranslated
+            // FormatException under two lines that already said the useful
+            // thing.
+            if (kDebugMode) ...[
+              const SizedBox(height: 10),
+              Text(
+                '${state.jobName}: ${state.error}',
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 11, color: KiymaPalette.soluk),
+              ),
+            ],
             if (onRetry != null) ...[
               const SizedBox(height: 20),
               FilledButton(

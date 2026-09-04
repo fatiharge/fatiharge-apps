@@ -17,6 +17,7 @@ import 'package:kiyma/data/scene.dart';
 import 'package:kiyma/game/assets.dart';
 import 'package:kiyma/game/balance.dart';
 import 'package:kiyma/game/day_run.dart';
+import 'package:kiyma/game/gesture.dart';
 import 'package:kiyma/game/kiyma_cubit.dart';
 import 'package:kiyma/game/kiyma_game.dart';
 import 'package:kiyma/game/model/carried.dart';

@@ -38,17 +38,10 @@ class _SummaryPageState extends State<SummaryPage> {
   late final RunSummary? _run = _progress.sonOturum;
 
   late int _shownDay = _run?.gunOnce ?? _progress.gun;
-  late double _from = _ratio(_run?.xpOnce ?? 0, _shownDay);
+  late double _from = Balance.ratio(_run?.xpOnce ?? 0, _shownDay);
   late double _to = (_run?.seviyeAtladi ?? false)
       ? 1
-      : _ratio(_progress.xp, _shownDay);
-
-  int _floor(int day) => day <= 1 ? 0 : Balance.target(day - 1);
-
-  double _ratio(int xp, int day) {
-    final span = Balance.target(day) - _floor(day);
-    return span <= 0 ? 1 : ((xp - _floor(day)) / span).clamp(0, 1);
-  }
+      : Balance.ratio(_progress.xp, _shownDay);
 
   /// The bar tops out, the day turns over, and the rest fills the new level.
   void _levelUp() {
@@ -56,13 +49,15 @@ class _SummaryPageState extends State<SummaryPage> {
     setState(() {
       _shownDay++;
       _from = 0;
-      _to = _shownDay >= _progress.gun ? _ratio(_progress.xp, _shownDay) : 1;
+      _to = _shownDay >= _progress.gun
+          ? Balance.ratio(_progress.xp, _shownDay)
+          : 1;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final floor = _floor(_shownDay);
+    final floor = Balance.floor(_shownDay);
     return Scaffold(
       backgroundColor: KiymaPalette.zemin,
       body: Stack(
@@ -138,6 +133,12 @@ class _Fitted extends StatelessWidget {
     ),
   );
 }
+
+/// A day that burned more than it sold really did lose gold, and the summary
+/// says so. Printing "+0" instead would have been the other honest option;
+/// this one keeps the level bar, which tweens backwards, telling the same
+/// story as the number above it.
+String _signed(int amount) => amount < 0 ? '$amount' : '+$amount';
 
 /// The counter the run happened on, dimmed. The result belongs to the
 /// kitchen, not to a card floating over nothing.
@@ -329,7 +330,7 @@ class _Takings extends StatelessWidget {
                       textBaseline: TextBaseline.alphabetic,
                       children: [
                         Text(
-                          'ozet.kazanc'.tr(args: ['${shown.round()}']),
+                          'ozet.kazanc'.tr(args: [_signed(shown.round())]),
                           style: const TextStyle(
                             fontFamily: 'Rubik',
                             fontVariations: [FontVariation('wght', 900)],
@@ -490,9 +491,9 @@ class _DayBadge extends StatelessWidget {
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text(
-          'GÜN',
-          style: TextStyle(
+        Text(
+          'ozet.gun_rozet'.tr(),
+          style: const TextStyle(
             fontFamily: 'Rubik',
             fontVariations: [FontVariation('wght', 700)],
             fontSize: 6,
@@ -652,7 +653,7 @@ class _AdOffer extends StatelessWidget {
             border: Border.all(color: KiymaPalette.komur, width: 2),
           ),
           child: Text(
-            'ozet.kazanc'.tr(args: ['${amount * 2}']),
+            'ozet.kazanc'.tr(args: [_signed(amount * 2)]),
             style: const TextStyle(
               fontFamily: 'Rubik',
               fontVariations: [FontVariation('wght', 900)],

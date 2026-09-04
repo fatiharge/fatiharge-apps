@@ -85,7 +85,7 @@ void main() {
         ..kazan(Balance.target(1))
         ..seviyeleriIsle();
       expect(progress.seviyeTabani, Balance.target(1));
-      expect(progress.seviyeOrani, 0);
+      expect(Balance.ratio(progress.xp, progress.gun), 0);
     });
   });
 }

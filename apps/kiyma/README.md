@@ -60,8 +60,12 @@ Startup ─ no language stored? ─ Language ─┐
                                                      Summary ─ new run / menu
 ```
 
-Seven routes, one game. `KiymaCubit` is a `@lazySingleton` because it outlives
-every screen; each page provides the same instance rather than making one.
+Seven routes, one game. `KiymaCubit` is `@injectable` — **one per screen**,
+because a run ends when its page goes away and a closed cubit is no use to the
+next screen. What outlives a screen is `Progress`, the `@lazySingleton` they
+all read. Progress therefore publishes its own changes to plain callbacks:
+buying in the shop, which is pushed over a still-mounted menu, otherwise left
+the menu's money chip showing the balance from before the purchase.
 
 A run is a **clock**: `180s + day * 5s`, with customers arriving as seats
 free until it stops. What it pays feeds **XP**, and XP is what turns the day
@@ -177,6 +181,16 @@ player mid-rush.
 Leaving the counter **ends** the run rather than suspending it. Off screen the
 clocks stop, so a run you can step out of and back into is a pause button the
 design does not have (10.4). Nothing is lost: money banks as it is earned.
+
+**A touch is classified in `game/gesture.dart`**, not in the Flame callback.
+That callback needs a live game loop and a real pointer, so nothing could test
+it, and two bugs lived there: a finger held still past 350 ms fell through to
+the drop path — which killed the pause button and answered a tap on a tray
+with "Olmaz" — and Flame's default `onDragCancel` body *is* `onDragEnd`, so
+the notification shade coming down mid-touch ran the whole classification on
+wherever the finger was. `classifyTouch` is arithmetic over a start, an end
+and the furthest the finger ever got; net displacement alone would read a
+drag out and back as a tap.
 
 ## Where the rules live
 

@@ -106,13 +106,19 @@ double widthInQuad(Image image, Quad quad) =>
 
 /// Draws [image] centred on [center] at [width], keeping its aspect. Used for
 /// the thing under the finger and for the icons on an order card.
-void drawCentered(Canvas canvas, Image image, Offset center, double width) {
+void drawCentered(
+  Canvas canvas,
+  Image image,
+  Offset center,
+  double width, {
+  Paint? paint,
+}) {
   final height = width * image.height / image.width;
   canvas.drawImageRect(
     image,
     _whole(image),
     Rect.fromCenter(center: center, width: width, height: height),
-    _paint,
+    paint ?? _paint,
   );
 }
 

@@ -36,5 +36,18 @@ void main() {
         greaterThan(Balance.target(11) - Balance.target(10)),
       );
     });
+
+    test('the level curve is measured from the level it is in', () {
+      // One curve, three readers: the day card, the summary and Progress. It
+      // was written out three times before it lived here.
+      expect(Balance.floor(1), 0);
+      expect(Balance.floor(3), Balance.target(2));
+
+      expect(Balance.ratio(0, 1), 0);
+      expect(Balance.ratio(Balance.target(1), 1), 1);
+      expect(Balance.ratio(Balance.target(2), 3), 0, reason: 'a fresh level');
+      expect(Balance.ratio(-50, 1), 0, reason: 'a losing run cannot go under');
+      expect(Balance.ratio(1 << 20, 1), 1, reason: 'nor over');
+    });
   });
 }

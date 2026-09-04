@@ -53,7 +53,7 @@
   },
   "ozet": {
     "baslik": "TIME IS UP",
-    "kazanc": "+{}",
+    "kazanc": "{}",
     "reklam": "Watch an ad for x2",
     "yeniden": "New run",
     "menu": "Main menu",
@@ -64,7 +64,8 @@
     "ilerleme": "GRILL MASTER PROGRESS",
     "xp": "{} / {} XP",
     "reklam_alt": "Double the takings with a short video",
-    "hazir": "The orders are in — get back to the counter!"
+    "hazir": "The orders are in — get back to the counter!",
+    "gun_rozet": "DAY"
   },
   "duraklat": {
     "baslik": "Paused",

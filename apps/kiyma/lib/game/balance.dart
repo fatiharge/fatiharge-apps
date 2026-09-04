@@ -111,4 +111,18 @@ abstract final class Balance {
     }
     return value;
   }
+
+  /// Where the level [day] starts, in XP.
+  static int floor(int day) => day <= 1 ? 0 : target(day - 1);
+
+  /// How far through level [day] an XP total is, `0..1`.
+  ///
+  /// Here rather than on Progress or on a state object because the summary
+  /// animates across days: it needs the curve as a function of an arbitrary
+  /// day, not two scalars for the current one. It was written out three times
+  /// before this, and only one copy was ever asserted.
+  static double ratio(int xp, int day) {
+    final span = target(day) - floor(day);
+    return span <= 0 ? 1 : ((xp - floor(day)) / span).clamp(0, 1);
+  }
 }
