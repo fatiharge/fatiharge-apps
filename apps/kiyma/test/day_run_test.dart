@@ -141,11 +141,11 @@ void main() {
       expect(run.durumIstasyonu, same(stuck), reason: 'no room for the next');
 
       expect(
-        drag(run, at('durum_hazirlama'), slot('durum_bekleme', 0)),
+        drag(run, at('durum_hazirlama'), slot('bekleme_alani', 0)),
         isTrue,
       );
       expect(run.durumIstasyonu, isNull);
-      expect(run.durumBekleme.first, isNotNull);
+      expect(run.bekleme.first, isNotNull);
     });
 
     test('takes the same ingredient only once', () {
@@ -321,7 +321,7 @@ void main() {
       );
       // And the wrap is on its shelf, not lost.
       expect(run.durumIstasyonu, isNull);
-      expect(run.durumBekleme.first, isNotNull);
+      expect(run.bekleme.first, isNotNull);
     });
 
     test('a refused wrap blocks the prep area when the shelf is full', () {
@@ -332,7 +332,7 @@ void main() {
       drag(run, at('kagit_kaynak'), at('durum_hazirlama'));
 
       // One shelf slot is open on day one, and something is already on it.
-      run.durumBekleme[0] = DurumUrun(Durum());
+      run.bekleme[0] = DurumUrun(Durum());
       drag(run, at('durum_hazirlama'), at('musteri_slot_1'));
       expect(run.durumIstasyonu, isNotNull, reason: 'stuck in the prep area');
     });

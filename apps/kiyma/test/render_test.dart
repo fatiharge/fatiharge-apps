@@ -72,8 +72,8 @@ void main() {
         ..lavasli = true
         ..etli = true
         ..bilesenler.addAll(Bilesen.values))
-      ..durumBekleme[0] = DurumUrun(Durum()..sarili = true)
-      ..tabakBirakma[0] = PorsiyonUrun(Porsiyon())
+      ..bekleme[0] = DurumUrun(Durum()..sarili = true)
+      ..bekleme[0] = PorsiyonUrun(Porsiyon())
       ..bardakBekletme[0] = (Bardak()..doldur(Icecek.ayran))
       ..bardakBekletme[1] = (Bardak()..icerik = Icecek.kola);
 

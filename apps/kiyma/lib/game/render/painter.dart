@@ -67,6 +67,11 @@ void drawCompositionLayer(
     ..restore();
 }
 
+/// How wide [image] comes out when fitted into [quad].
+double widthInQuad(Image image, Quad quad) =>
+    image.width *
+    math.min(quad.width / image.width, quad.height / image.height);
+
 /// Draws [image] centred on [center] at [width], keeping its aspect. Used for
 /// the thing under the finger and for the icons on an order card.
 void drawCentered(Canvas canvas, Image image, Offset center, double width) {

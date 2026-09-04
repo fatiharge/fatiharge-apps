@@ -64,8 +64,7 @@ void main() {
       final unlocks = Unlocks();
       expect(unlocks.mangalSlots, 2);
       expect(unlocks.musteriSlots, 2);
-      expect(unlocks.durumBekleme, 1);
-      expect(unlocks.porsiyonBekleme, 0);
+      expect(unlocks.bekleme, 1, reason: 'one shelf slot to start');
       expect(unlocks.malzemeler, {Malzeme.domates, Malzeme.sogan});
       expect(unlocks.porsiyonHatti, isFalse);
       expect(unlocks.icecekHatti, isFalse);
@@ -92,7 +91,7 @@ void main() {
     });
 
     test('every lock has a name to show', () {
-      expect(Unlocks.catalogue.map((u) => u.id).toSet(), hasLength(24));
+      expect(Unlocks.catalogue.map((u) => u.id).toSet(), hasLength(23));
     });
   });
 }

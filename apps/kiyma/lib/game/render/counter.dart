@@ -7,7 +7,6 @@ import 'package:kiyma/core/quad.dart';
 import 'package:kiyma/data/scene.dart';
 import 'package:kiyma/game/assets.dart';
 import 'package:kiyma/game/day_run.dart';
-import 'package:kiyma/game/model/carried.dart';
 import 'package:kiyma/game/model/items.dart';
 import 'package:kiyma/game/model/order.dart';
 import 'package:kiyma/game/model/products.dart';
@@ -247,20 +246,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   }
 
   void _renderShelves(Canvas canvas) {
-    _renderShelf(
-      canvas,
-      scene['durum_bekleme'],
-      run.durumBekleme,
-      run.progress.unlocks.durumBekleme,
-      (_) => 'doner_bekleme',
-    );
-    _renderShelf(
-      canvas,
-      scene['tabak_birakma'],
-      run.tabakBirakma,
-      run.progress.unlocks.porsiyonBekleme,
-      (_) => 'porsiyon_hazirlama',
-    );
+    _renderShelf(canvas);
 
     final region = scene['bardak_bekletme'];
     final slots = region.slots;
@@ -295,22 +281,26 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     }
   }
 
-  void _renderShelf(
-    Canvas canvas,
-    SceneRegion region,
-    List<Urun?> shelf,
-    int capacity,
-    String Function(Urun urun) asset,
-  ) {
+  /// The one shelf, front to back. Later slots overlap earlier ones, so they
+  /// are drawn in order and the newest sits in front.
+  void _renderShelf(Canvas canvas) {
+    final region = scene['bekleme_alani'];
     final slots = region.slots;
+    final capacity = run.progress.unlocks.bekleme;
+
     for (var i = 0; i < slots.length; i++) {
       if (i >= capacity) {
         drawLock(canvas, slots[i], size: 13);
         continue;
       }
-      final urun = shelf[i];
+      final urun = run.bekleme[i];
       if (urun == null || run.lifted(region.name, i)) continue;
-      final image = assets[asset(urun)];
+      final image =
+          assets[switch (urun) {
+            DurumUrun() => 'doner_bekleme',
+            PorsiyonUrun() => 'porsiyon_hazirlama',
+            _ => '',
+          }];
       if (image != null) drawInQuad(canvas, image, slots[i], AssetFit.alt);
     }
   }
@@ -577,12 +567,14 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     if (held == null) return;
     final image = assets[held.asset];
     if (image == null) return;
-    final width = switch (held) {
-      HazirUrun(urun: DurumUrun()) || HazirUrun(urun: PorsiyonUrun()) => 90.0,
-      PismisEt() || Lavas() => 80.0,
-      Surahi() => 70.0,
-      _ => 52.0,
-    };
+
+    // The size it is at home, and a little more for having been lifted. Hard
+    // numbers here had six of the eight carryables shrinking the moment they
+    // were picked up.
+    final home = scene.maybe(held.evi);
+    final width = home == null
+        ? 60.0
+        : widthInQuad(image, home.slots.first) * 1.15;
     canvas
       ..save()
       ..translate(run.carriedAt.dx, run.carriedAt.dy - 12)

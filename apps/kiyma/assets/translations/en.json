@@ -38,11 +38,7 @@
     "mangal_4": "4th grill slot",
     "musteri_3": "3rd customer place",
     "musteri_4": "4th customer place",
-    "durum_bekleme_2": "2nd wrap shelf",
-    "durum_bekleme_3": "3rd wrap shelf",
-    "durum_bekleme_4": "4th wrap shelf",
     "porsiyon_hatti": "Plate line",
-    "porsiyon_bekleme": "Plate shelf",
     "icecek_hatti": "Drinks line",
     "icecek_salgam": "Turnip juice",
     "icecek_ayran": "Ayran",
@@ -54,7 +50,10 @@
     "bilesen_ezme": "Ezme",
     "tatli_baklava": "Baklava",
     "tatli_sutlac": "Rice pudding",
-    "tatli_kunefe": "Kunefe"
+    "tatli_kunefe": "Kunefe",
+    "bekleme_2": "2nd shelf slot",
+    "bekleme_3": "3rd shelf slot",
+    "bekleme_4": "4th shelf slot"
   },
   "ozet": {
     "baslik": "Time is up",

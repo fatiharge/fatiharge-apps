@@ -76,6 +76,11 @@ glass. Dragging is still the vocabulary and still the only way to say *who*
 something is for, but requiring it where there is no choice is friction with
 no decision behind it.
 
+Wraps and plates share **one** shelf. Two half-depth ones drew everything at
+half size; merged, the items lean on each other so four fit at the size the
+prep area draws them. Nothing shrinks when it is picked up either — a carried
+thing is sized from the region that draws it at home, not from a constant.
+
 A finished wrap holds the prep area until it is carried off, which is the
 whole of the pressure in the wrap line: one at a time, and each one a choice
 between serving it now and shelving it. The grill is aimed at as an **area**

@@ -23,10 +23,9 @@ void main() {
         'kagit_kaynak',
         'mangal_alani',
         'durum_hazirlama',
-        'durum_bekleme',
+        'bekleme_alani',
         'tabak_kaynak',
         'tabak_hazirlama',
-        'tabak_birakma',
         'bardak_kaynak',
         'bardak_bekletme',
         'cop_alani',
@@ -78,8 +77,7 @@ void main() {
 
     test('capacities match what the design doc asks for', () {
       expect(scene['mangal_alani'].capacity, 4);
-      expect(scene['durum_bekleme'].capacity, 4);
-      expect(scene['tabak_birakma'].capacity, 2);
+      expect(scene['bekleme_alani'].capacity, 4);
       expect(scene['bardak_bekletme'].capacity, 3);
     });
 

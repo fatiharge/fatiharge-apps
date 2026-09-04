@@ -137,6 +137,7 @@ class SceneRegion {
     this.capacity,
     this.asset,
     this.horizontalSlots,
+    this.stackRatio,
     this.composition,
   });
 
@@ -159,6 +160,7 @@ class SceneRegion {
       fit: AssetFit.parse(json['asset_fit'] as String?),
       capacity: json['kapasite'] as int?,
       asset: json['asset'] as String?,
+      stackRatio: (json['istif'] as num?)?.toDouble(),
       horizontalSlots: switch (json['slot_yon'] as String?) {
         'yatay' => true,
         'dikey' => false,
@@ -184,10 +186,15 @@ class SceneRegion {
   /// Overrides the long-axis rule in [Quad.slots].
   final bool? horizontalSlots;
 
+  /// Set where the slots overlap rather than divide: how tall each one is as
+  /// a fraction of the region.
+  final double? stackRatio;
+
   final Composition? composition;
 
-  List<Quad> get slots =>
-      quad.slots(capacity ?? 1, horizontal: horizontalSlots);
+  List<Quad> get slots => stackRatio == null
+      ? quad.slots(capacity ?? 1, horizontal: horizontalSlots)
+      : quad.stack(capacity ?? 1, stackRatio!);
 }
 
 /// Everything `assets/data/scene.json` says: the painted layers and the

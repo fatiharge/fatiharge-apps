@@ -129,8 +129,12 @@ class Bardak {
 sealed class Urun {
   const Urun();
 
-  /// Which shelf it goes back to when a customer refuses it.
+  /// The shelf it goes back to when a customer refuses it. One shelf for both
+  /// lines: two half-depth ones drew everything at half size.
   String? get beklemeBolgesi;
+
+  /// Where it is drawn at its natural size, so carrying it never shrinks it.
+  String get evi;
 }
 
 class DurumUrun extends Urun {
@@ -139,7 +143,10 @@ class DurumUrun extends Urun {
   final Durum durum;
 
   @override
-  String get beklemeBolgesi => 'durum_bekleme';
+  String get beklemeBolgesi => 'bekleme_alani';
+
+  @override
+  String get evi => 'durum_hazirlama';
 }
 
 class PorsiyonUrun extends Urun {
@@ -148,7 +155,10 @@ class PorsiyonUrun extends Urun {
   final Porsiyon porsiyon;
 
   @override
-  String get beklemeBolgesi => 'tabak_birakma';
+  String get beklemeBolgesi => 'bekleme_alani';
+
+  @override
+  String get evi => 'tabak_hazirlama';
 }
 
 class TatliUrun extends Urun {
@@ -158,6 +168,9 @@ class TatliUrun extends Urun {
 
   @override
   String? get beklemeBolgesi => null;
+
+  @override
+  String get evi => tatli.region;
 }
 
 class IcecekUrun extends Urun {
@@ -167,4 +180,7 @@ class IcecekUrun extends Urun {
 
   @override
   String? get beklemeBolgesi => icecek.poured ? 'bardak_bekletme' : null;
+
+  @override
+  String get evi => icecek.poured ? 'bardak_bekletme' : icecek.sourceRegion;
 }

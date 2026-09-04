@@ -558,34 +558,6 @@
       "asset": "kagit_alani"
     },
     {
-      "name": "durum_bekleme",
-      "x": 745,
-      "y": 410,
-      "w": 77,
-      "h": 134,
-      "quad": [
-        [
-          745.5,
-          410.7
-        ],
-        [
-          811.0,
-          411.8
-        ],
-        [
-          821.6,
-          542.7
-        ],
-        [
-          745.5,
-          543.7
-        ]
-      ],
-      "category": "hazirlik",
-      "kapasite": 4,
-      "asset": "doner_bekleme"
-    },
-    {
       "name": "tabak_hazirlama",
       "x": 532,
       "y": 450,
@@ -674,34 +646,6 @@
           }
         ]
       }
-    },
-    {
-      "name": "tabak_birakma",
-      "x": 654,
-      "y": 411,
-      "w": 83,
-      "h": 131,
-      "quad": [
-        [
-          654.5,
-          412.0
-        ],
-        [
-          736.2,
-          411.5
-        ],
-        [
-          737.5,
-          540.8
-        ],
-        [
-          658.1,
-          541.7
-        ]
-      ],
-      "category": "hazirlik",
-      "kapasite": 2,
-      "asset_fit": "orta"
     },
     {
       "name": "bardak_bekletme",
@@ -1081,6 +1025,35 @@
         ]
       ],
       "category": "musteri"
+    },
+    {
+      "name": "bekleme_alani",
+      "category": "hazirlik",
+      "kapasite": 4,
+      "istif": 0.45,
+      "asset_fit": "alt",
+      "x": 654,
+      "y": 412,
+      "w": 167,
+      "h": 131,
+      "quad": [
+        [
+          654.5,
+          412.0
+        ],
+        [
+          811.0,
+          411.8
+        ],
+        [
+          821.6,
+          542.7
+        ],
+        [
+          658.1,
+          541.7
+        ]
+      ]
     },
     {
       "name": "cop_alani",

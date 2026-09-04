@@ -40,8 +40,7 @@ class DayRun {
     mangal = [
       for (var i = 0; i < 4; i++) MangalSlot(unlocked: i < unlocks.mangalSlots),
     ];
-    durumBekleme = List<Urun?>.filled(4, null);
-    tabakBirakma = List<Urun?>.filled(2, null);
+    bekleme = List<Urun?>.filled(4, null);
     bardakBekletme = List<Bardak?>.filled(3, null);
     musteriler = List<Customer?>.filled(4, null);
     kalanSure = Balance.runLength(day).inSeconds.toDouble();
@@ -61,8 +60,9 @@ class DayRun {
   final OrderMaker _maker;
 
   late final List<MangalSlot> mangal;
-  late final List<Urun?> durumBekleme;
-  late final List<Urun?> tabakBirakma;
+
+  /// One shelf for both lines. Wraps and plates share it.
+  late final List<Urun?> bekleme;
   late final List<Bardak?> bardakBekletme;
   late final List<Customer?> musteriler;
 
@@ -179,7 +179,9 @@ class DayRun {
 
   int _slotAt(SceneRegion region, Offset point) {
     final slots = region.slots;
-    for (var i = 0; i < slots.length; i++) {
+    // Back to front: on a shelf where the items lean on each other, the one
+    // in front is the one being pointed at.
+    for (var i = slots.length - 1; i >= 0; i--) {
       if (slots[i].contains(point)) return i;
     }
     // Fall back to the nearest centre: leaning slots leave hairline gaps and
@@ -388,14 +390,9 @@ class DayRun {
           return HazirUrun(PorsiyonUrun(station), region.name);
         }
 
-      case 'durum_bekleme':
+      case 'bekleme_alani':
         final index = _slotAt(region, point);
-        final urun = durumBekleme[index];
-        if (urun != null) return HazirUrun(urun, region.name, slot: index);
-
-      case 'tabak_birakma':
-        final index = _slotAt(region, point);
-        final urun = tabakBirakma[index];
+        final urun = bekleme[index];
         if (urun != null) return HazirUrun(urun, region.name, slot: index);
 
       case 'bardak_bekletme':
@@ -444,23 +441,11 @@ class DayRun {
       case 'tabak_hazirlama':
         return _tabagaBirak(held);
 
-      case 'durum_bekleme':
-        if (held is! HazirUrun || held.urun is! DurumUrun) return false;
-        return _rafaKoy(
-          durumBekleme,
-          held,
-          progress.unlocks.durumBekleme,
-          _slotAt(region, point),
-        );
-
-      case 'tabak_birakma':
-        if (held is! HazirUrun || held.urun is! PorsiyonUrun) return false;
-        return _rafaKoy(
-          tabakBirakma,
-          held,
-          progress.unlocks.porsiyonBekleme,
-          _slotAt(region, point),
-        );
+      case 'bekleme_alani':
+        if (held is! HazirUrun || held.urun.beklemeBolgesi != region.name) {
+          return false;
+        }
+        return _rafaKoy(held, _slotAt(region, point));
 
       case 'bardak_bekletme':
         if (held is! Surahi) return false;
@@ -517,19 +502,20 @@ class DayRun {
     return true;
   }
 
-  bool _rafaKoy(List<Urun?> raf, HazirUrun held, int capacity, int preferred) {
-    final target = preferred < capacity && raf[preferred] == null
+  bool _rafaKoy(HazirUrun held, int preferred) {
+    final capacity = progress.unlocks.bekleme;
+    final target = preferred < capacity && bekleme[preferred] == null
         ? preferred
-        : _ilkBos(raf, capacity);
+        : _ilkBos();
     if (target == null) return false;
     _consume(held);
-    raf[target] = held.urun;
+    bekleme[target] = held.urun;
     return true;
   }
 
-  int? _ilkBos(List<Urun?> raf, int capacity) {
-    for (var i = 0; i < capacity; i++) {
-      if (raf[i] == null) return i;
+  int? _ilkBos() {
+    for (var i = 0; i < progress.unlocks.bekleme; i++) {
+      if (bekleme[i] == null) return i;
     }
     return null;
   }
@@ -666,10 +652,8 @@ class DayRun {
             durumIstasyonu = null;
           case 'tabak_hazirlama':
             tabakIstasyonu = null;
-          case 'durum_bekleme':
-            durumBekleme[slot!] = null;
-          case 'tabak_birakma':
-            tabakBirakma[slot!] = null;
+          case 'bekleme_alani':
+            bekleme[slot!] = null;
           case 'bardak_bekletme':
             bardakBekletme[slot!] = null;
         }
@@ -686,15 +670,10 @@ class DayRun {
     if (held.origin != 'durum_hazirlama' && held.origin != 'tabak_hazirlama') {
       return;
     }
-    final shelf = switch (held.urun) {
-      DurumUrun() => (durumBekleme, progress.unlocks.durumBekleme),
-      PorsiyonUrun() => (tabakBirakma, progress.unlocks.porsiyonBekleme),
-      _ => null,
-    };
-    if (shelf == null) return;
-    final target = _ilkBos(shelf.$1, shelf.$2);
+    if (held.urun.beklemeBolgesi != 'bekleme_alani') return;
+    final target = _ilkBos();
     if (target == null) return;
     _consume(held);
-    shelf.$1[target] = held.urun;
+    bekleme[target] = held.urun;
   }
 }

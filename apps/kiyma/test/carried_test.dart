@@ -36,14 +36,26 @@ void main() {
     });
 
     test('a finished product knows the shelf it belongs on', () {
-      expect(DurumUrun(Durum()).beklemeBolgesi, 'durum_bekleme');
-      expect(PorsiyonUrun(Porsiyon()).beklemeBolgesi, 'tabak_birakma');
+      // One shelf for both lines.
+      expect(DurumUrun(Durum()).beklemeBolgesi, 'bekleme_alani');
+      expect(PorsiyonUrun(Porsiyon()).beklemeBolgesi, 'bekleme_alani');
       expect(const TatliUrun(Tatli.kunefe).beklemeBolgesi, isNull);
       expect(
         const IcecekUrun(Icecek.salgam).beklemeBolgesi,
         'bardak_bekletme',
       );
       expect(const IcecekUrun(Icecek.kola).beklemeBolgesi, isNull);
+    });
+
+    test('everything knows the region that draws it full size', () {
+      expect(const CigKiyma().evi, 'mangal_alani');
+      expect(const PismisEt(0).evi, 'mangal_alani');
+      expect(const Lavas().evi, 'durum_hazirlama');
+      expect(const MalzemeTutami(Malzeme.tursu).evi, 'malzeme_tursu');
+      expect(DurumUrun(Durum()).evi, 'durum_hazirlama');
+      expect(PorsiyonUrun(Porsiyon()).evi, 'tabak_hazirlama');
+      expect(const IcecekUrun(Icecek.ayran).evi, 'bardak_bekletme');
+      expect(const IcecekUrun(Icecek.kola).evi, 'kola_kaynak');
     });
 
     test('what is drawn under the finger matches what is held', () {

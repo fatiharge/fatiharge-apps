@@ -49,8 +49,19 @@ COP_ALANI = {
 
 KEEP = (
     "name", "x", "y", "w", "h", "quad", "category",
-    "kapasite", "asset", "asset_fit", "slot_yon", "kompozisyon",
+    "kapasite", "asset", "asset_fit", "slot_yon", "istif", "kompozisyon",
 )
+
+# The two waiting shelves are adjacent and neither is deep enough on its own
+# to hold a wrap at the size the prep area draws it. Merged, with the items
+# leaning on each other, four fit at full size.
+MERGED_SHELF = {
+    "name": "bekleme_alani",
+    "category": "hazirlik",
+    "kapasite": 4,
+    "istif": 0.45,
+    "asset_fit": "alt",
+}
 
 FAMILY = re.compile(r"^(?P<family>.+?)_(?P<variant>\d+)\.png$")
 
@@ -98,6 +109,23 @@ def slim_composition(comp):
     if comp.get("son"):
         out["son"] = slim(comp["son"])
     return out
+
+
+def merged_shelf(regions):
+    """One area spanning the plate shelf and the wrap shelf."""
+    plate = next(r for r in regions if r["name"] == "tabak_birakma")["quad"]
+    wrap = next(r for r in regions if r["name"] == "durum_bekleme")["quad"]
+    quad = [plate[0], wrap[1], wrap[2], plate[3]]
+    xs = [p[0] for p in quad]
+    ys = [p[1] for p in quad]
+    return {
+        **MERGED_SHELF,
+        "x": round(min(xs)),
+        "y": round(min(ys)),
+        "w": round(max(xs) - min(xs)),
+        "h": round(max(ys) - min(ys)),
+        "quad": quad,
+    }
 
 
 def slim_region(region):
@@ -160,7 +188,12 @@ def main():
     scene = {
         "coordinate_space": regions["coordinate_space"],
         "layers": [slim_layer(layer) for layer in regions["layers"]],
-        "regions": [slim_region(r) for r in regions["regions"]] + [COP_ALANI],
+        "regions": [
+            slim_region(r)
+            for r in regions["regions"]
+            if r["name"] not in ("tabak_birakma", "durum_bekleme")
+        ]
+        + [merged_shelf(regions["regions"]), COP_ALANI],
     }
     with open(f"{DST}/data/scene.json", "w") as out:
         json.dump(scene, out, ensure_ascii=False, indent=2)

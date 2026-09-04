@@ -13,6 +13,11 @@ sealed class Carried {
 
   /// The asset drawn under the finger.
   String get asset;
+
+  /// The region that draws this at its natural size. Picking something up
+  /// should never shrink it, and where the drag started is not the answer —
+  /// a wrap lifted off the shelf is still a wrap.
+  String get evi;
 }
 
 class CigKiyma extends Carried {
@@ -23,6 +28,9 @@ class CigKiyma extends Carried {
 
   @override
   String get asset => 'sis_cig';
+
+  @override
+  String get evi => 'mangal_alani';
 }
 
 /// Meat lifted off a grill slot. [yanik] meat is carried too — the bin is the
@@ -38,6 +46,9 @@ class PismisEt extends Carried {
 
   @override
   String get asset => yanik ? 'sis_yanmis' : 'adana_pismis';
+
+  @override
+  String get evi => 'mangal_alani';
 }
 
 class Lavas extends Carried {
@@ -48,6 +59,9 @@ class Lavas extends Carried {
 
   @override
   String get asset => 'lavas_tek';
+
+  @override
+  String get evi => 'durum_hazirlama';
 }
 
 /// Greaseproof paper, applied to a rolled wrap on the shelf.
@@ -59,6 +73,9 @@ class Kagit extends Carried {
 
   @override
   String get asset => 'kagit_alani';
+
+  @override
+  String get evi => 'kagit_kaynak';
 }
 
 class MalzemeTutami extends Carried {
@@ -68,6 +85,9 @@ class MalzemeTutami extends Carried {
 
   @override
   String get origin => malzeme.region;
+
+  @override
+  String get evi => malzeme.region;
 
   @override
   String get asset => malzeme.portionAsset;
@@ -82,6 +102,9 @@ class BilesenTutami extends Carried {
   String get origin => bilesen.region;
 
   @override
+  String get evi => bilesen.region;
+
+  @override
   String get asset => bilesen.portionAsset;
 }
 
@@ -93,6 +116,9 @@ class Surahi extends Carried {
 
   @override
   String get origin => icecek.sourceRegion;
+
+  @override
+  String get evi => icecek.sourceRegion;
 
   @override
   String get asset => icecek.sourceAsset;
@@ -114,6 +140,9 @@ class HazirUrun extends Carried {
 
   @override
   final String origin;
+
+  @override
+  String get evi => urun.evi;
 
   @override
   String get asset => switch (urun) {

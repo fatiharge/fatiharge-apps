@@ -22,7 +22,7 @@ class Unlocks {
     'musteri_2',
     'malzeme_domates',
     'malzeme_sogan',
-    'durum_bekleme_1',
+    'bekleme_1',
   };
 
   /// Design doc 10.3. Order matters: this is the list the upgrade screen
@@ -30,19 +30,18 @@ class Unlocks {
   static const catalogue = [
     Unlock('malzeme_biber', 150),
     Unlock('malzeme_tursu', 250),
-    Unlock('durum_bekleme_2', 300),
+    Unlock('bekleme_2', 300),
     Unlock('mangal_3', 600),
     Unlock('icecek_hatti', 600),
-    Unlock('durum_bekleme_3', 700),
+    Unlock('bekleme_3', 700),
     Unlock('porsiyon_hatti', 800),
     Unlock('musteri_3', 1000),
     Unlock('mangal_4', 1200),
-    Unlock('durum_bekleme_4', 1400),
+    Unlock('bekleme_4', 1400),
     Unlock('malzeme_maydanoz', 400),
     Unlock('icecek_salgam', 200),
     Unlock('icecek_ayran', 300),
     Unlock('icecek_kola', 400),
-    Unlock('porsiyon_bekleme', 500),
     Unlock('bilesen_icli_kofte', 200),
     Unlock('bilesen_pilav', 250),
     Unlock('bilesen_patates', 300),
@@ -65,10 +64,9 @@ class Unlocks {
   bool available(Unlock unlock) => switch (unlock.id) {
     'mangal_4' => has('mangal_3'),
     'musteri_4' => has('musteri_3'),
-    'durum_bekleme_3' => has('durum_bekleme_2'),
-    'durum_bekleme_4' => has('durum_bekleme_3'),
+    'bekleme_3' => has('bekleme_2'),
+    'bekleme_4' => has('bekleme_3'),
     final id when id.startsWith('bilesen_') => has('porsiyon_hatti'),
-    'porsiyon_bekleme' => has('porsiyon_hatti'),
     final id when id.startsWith('icecek_') => has('icecek_hatti'),
     _ => true,
   };
@@ -84,10 +82,8 @@ class Unlocks {
   int get musteriSlots =>
       2 + (has('musteri_3') ? 1 : 0) + (has('musteri_4') ? 1 : 0);
 
-  int get durumBekleme =>
-      [2, 3, 4].where((n) => has('durum_bekleme_$n')).length + 1;
-
-  int get porsiyonBekleme => has('porsiyon_bekleme') ? 2 : 0;
+  /// One shelf for both lines, one to four deep.
+  int get bekleme => [2, 3, 4].where((n) => has('bekleme_$n')).length + 1;
 
   bool get porsiyonHatti => has('porsiyon_hatti');
 

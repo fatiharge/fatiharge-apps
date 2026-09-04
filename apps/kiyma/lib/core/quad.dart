@@ -116,6 +116,20 @@ class Quad {
     ..lineTo(bottomLeft.dx, bottomLeft.dy)
     ..close();
 
+  /// Bands that overlap, each [ratio] of the region tall.
+  ///
+  /// A shelf deep enough to hold four wraps at a legible size does not exist
+  /// on this counter, so they lean on each other the way they would in a real
+  /// warmer: full size, offset, the front one whole and the rest showing
+  /// their top edge.
+  List<Quad> stack(int count, double ratio) {
+    if (count <= 1) return [sub(0, 1 - ratio, 1, 1)];
+    final step = (1 - ratio) / (count - 1);
+    return [
+      for (var i = 0; i < count; i++) sub(0, i * step, 1, i * step + ratio),
+    ];
+  }
+
   /// Splits the region into [count] slots.
   ///
   /// The direction follows the long axis — a wide area seats items side by
