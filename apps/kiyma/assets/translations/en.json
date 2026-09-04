@@ -5,6 +5,13 @@
     "musteri": "{} customers",
     "itibar": "Reputation {}"
   },
+  "baslangic": {
+    "rozet": "GRILL HOUSE SIMULATOR",
+    "slogan": "MASTER OF FIRE, ART OF KEBAB",
+    "hata": "The counter would not open",
+    "aciklama": "Close the app and open it again.",
+    "yeniden": "Try again"
+  },
   "gun_basi": {
     "baslik": "Day {}",
     "hedef": "Cumulative target ₺{}",
@@ -56,6 +63,5 @@
     "yandi": "The meat burned",
     "gecersiz": "Not there",
     "musteri_kizgin": "A customer left"
-  },
-  "yukleniyor": "Setting up the counter"
+  }
 }

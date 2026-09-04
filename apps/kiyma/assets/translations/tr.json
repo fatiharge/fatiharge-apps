@@ -5,6 +5,13 @@
     "musteri": "{} müşteri",
     "itibar": "İtibar {}"
   },
+  "baslangic": {
+    "rozet": "OCAKBAŞI SİMÜLATÖRÜ",
+    "slogan": "ATEŞ USTASI, KEBAP SANATI",
+    "hata": "Tezgah kurulamadı",
+    "aciklama": "Uygulamayı kapatıp yeniden aç.",
+    "yeniden": "Yeniden dene"
+  },
   "gun_basi": {
     "baslik": "Gün {}",
     "hedef": "Kümülatif hedef ₺{}",
@@ -56,6 +63,5 @@
     "yandi": "Kıyma yandı",
     "gecersiz": "Olmaz",
     "musteri_kizgin": "Müşteri gitti"
-  },
-  "yukleniyor": "Tezgah kuruluyor"
+  }
 }

@@ -30,12 +30,13 @@ import 'package:kiyma/game/unlocks.dart';
 import 'package:kiyma/game/world.dart';
 import 'package:kiyma/infrastructure/bootstrap/bootstrap_adapter.dart';
 import 'package:kiyma/main.dart';
-import 'package:kiyma/route/app_navigator.dart';
-import 'package:kiyma/ui/game_screen.dart';
+import 'package:kiyma/route/app_router.dart';
+import 'package:kiyma/ui/game_page.dart';
 import 'package:kiyma/ui/hud.dart';
 import 'package:kiyma/ui/palette.dart';
 import 'package:kiyma/ui/panels.dart';
 import 'package:kiyma/ui/splash.dart';
+import 'package:kiyma/ui/startup_page.dart';
 
 void main() {
   test('imports every library, so untested files count as 0%', () {

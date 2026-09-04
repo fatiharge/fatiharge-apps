@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kiyma/game/kiyma_cubit.dart';
 import 'package:kiyma/ui/hud.dart';
 import 'package:kiyma/ui/palette.dart';
-import 'package:kiyma/ui/splash.dart';
 
 void main() {
   testWidgets('the HUD shows money, the day, the target, standing and queue', (
@@ -61,17 +60,5 @@ void main() {
     );
     expect(bar.value, 1);
     expect(bar.valueColor!.value, KiymaPalette.yesil);
-  });
-
-  testWidgets('the splash shows how far startup has got', (tester) async {
-    await tester.pumpWidget(const MaterialApp(home: SplashView(progress: 0.5)));
-    expect(find.text('Kıyma'), findsOneWidget);
-    expect(find.text('Tezgah kuruluyor'), findsOneWidget);
-    expect(
-      tester
-          .widget<LinearProgressIndicator>(find.byType(LinearProgressIndicator))
-          .value,
-      0.5,
-    );
   });
 }
