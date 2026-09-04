@@ -79,6 +79,9 @@ no decision behind it.
 The HUD is drawn **in** the scene rather than over it: gold, a digital
 countdown, the day on a hanging calendar, and a pause button, all in one
 coordinate space and one art style, with no widget rebuilding at frame rate.
+It is sized for a phone at arm's length, not for the 1024-wide space it is
+measured in — every panel, glyph and stroke is twice what the arithmetic
+would suggest.
 
 Customers pay in **gold, onto the ledge they stood at**, and it only reaches
 the till when the player touches it; what is left when the clock runs out is

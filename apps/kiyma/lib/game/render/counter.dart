@@ -33,10 +33,12 @@ class CounterComponent extends PositionComponent with DragCallbacks {
 
   // The HUD lives in the scene, not over it: one coordinate space, the same
   // art, and a clock that can tick every frame without rebuilding a widget.
-  static const _gold = Rect.fromLTWH(14, 8, 156, 46);
-  static const _clock = Rect.fromLTWH(444, 8, 136, 46);
-  static const _day = Rect.fromLTWH(880, 4, 62, 54);
-  static const _pause = Rect.fromLTWH(956, 8, 54, 46);
+  // Sized for a phone held at arm's length rather than for the 1024-wide
+  // reference space it is measured in.
+  static const _gold = Rect.fromLTWH(14, 10, 312, 92);
+  static const _clock = Rect.fromLTWH(376, 10, 272, 92);
+  static const _day = Rect.fromLTWH(764, 6, 124, 108);
+  static const _pause = Rect.fromLTWH(902, 10, 108, 92);
 
   /// Areas whose contents change during play, so their idle art is never the
   /// whole story and is drawn by the passes further down.
@@ -417,13 +419,13 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     drawPanel(canvas, _gold);
     final coins = assets['altin'];
     if (coins != null) {
-      drawCentered(canvas, coins, Offset(_gold.left + 34, _gold.center.dy), 46);
+      drawCentered(canvas, coins, Offset(_gold.left + 68, _gold.center.dy), 92);
     }
     drawText(
       canvas,
       '${run.progress.para}',
-      Offset(_gold.left + 66, _gold.top + 11),
-      size: 22,
+      Offset(_gold.left + 132, _gold.top + 22),
+      size: 44,
       weight: 800,
       family: 'Rubik',
       color: const Color(0xFF2E2A26),
@@ -434,8 +436,8 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     drawText(
       canvas,
       '${left ~/ 60}:${(left % 60).toString().padLeft(2, '0')}',
-      Offset(_clock.center.dx, _clock.top + 8),
-      size: 26,
+      Offset(_clock.center.dx, _clock.top + 16),
+      size: 52,
       weight: 900,
       family: 'Rubik',
       center: true,
@@ -450,8 +452,8 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       drawText(
         canvas,
         '${run.day}',
-        Offset(_day.center.dx, _day.top + 22),
-        size: 24,
+        Offset(_day.center.dx, _day.top + 44),
+        size: 48,
         weight: 900,
         family: 'Rubik',
         center: true,
@@ -460,15 +462,15 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     }
 
     drawPanel(canvas, _pause);
-    for (final dx in [-6.0, 6.0]) {
+    for (final dx in [-12.0, 12.0]) {
       canvas.drawRRect(
         RRect.fromRectAndRadius(
           Rect.fromCenter(
             center: _pause.center + Offset(dx, 0),
-            width: 7,
-            height: 22,
+            width: 14,
+            height: 44,
           ),
-          const Radius.circular(2),
+          const Radius.circular(4),
         ),
         Paint()..color = const Color(0xFF2E2A26),
       );

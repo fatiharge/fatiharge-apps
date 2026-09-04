@@ -121,19 +121,19 @@ void drawPanel(
   Rect rect, {
   Color fill = const Color(0xFFF5E9D7),
 }) {
-  final shape = RRect.fromRectAndRadius(rect, const Radius.circular(9));
+  final shape = RRect.fromRectAndRadius(rect, const Radius.circular(18));
   canvas
     ..drawRRect(
-      shape.shift(const Offset(0, 3)),
+      shape.shift(const Offset(0, 6)),
       Paint()..color = const Color(0xFF2E2A26),
     )
     ..drawRRect(shape, Paint()..color = fill)
     ..drawRRect(
-      shape.deflate(1),
+      shape.deflate(2),
       Paint()
         ..color = const Color(0xFF2E2A26)
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 2,
+        ..strokeWidth = 4,
     );
 }
 
