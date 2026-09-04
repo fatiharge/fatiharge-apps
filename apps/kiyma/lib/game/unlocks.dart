@@ -42,7 +42,6 @@ class Unlocks {
     Unlock('bilesen_patates', 300),
     Unlock('bilesen_ezme', 600),
     Unlock('tatli_baklava', 400),
-    Unlock('musteri_4', 2200),
   ];
 
   final Set<String> _open;
@@ -55,7 +54,6 @@ class Unlocks {
   /// grill slot is not for sale before the third.
   bool available(Unlock unlock) => switch (unlock.id) {
     'mangal_4' => has('mangal_3'),
-    'musteri_4' => has('musteri_3'),
     'bekleme_3' => has('bekleme_2'),
     final id when id.startsWith('bilesen_') => has('porsiyon_hatti'),
     final id when id.startsWith('icecek_') => has('icecek_hatti'),
@@ -70,8 +68,9 @@ class Unlocks {
   int get mangalSlots =>
       2 + (has('mangal_3') ? 1 : 0) + (has('mangal_4') ? 1 : 0);
 
-  int get musteriSlots =>
-      2 + (has('musteri_3') ? 1 : 0) + (has('musteri_4') ? 1 : 0);
+  /// Two, then three. A fourth needed a fourth order card and patience meter
+  /// in the same stretch of counter.
+  int get musteriSlots => has('musteri_3') ? 3 : 2;
 
   /// One shelf for both lines, one to three deep.
   int get bekleme => [2, 3].where((n) => has('bekleme_$n')).length + 1;
@@ -116,7 +115,6 @@ class Unlocks {
       'tabak_kaynak' || 'tabak_hazirlama' => porsiyonHatti,
       'bardak_kaynak' || 'bardak_bekletme' => icecekHatti,
       'musteri_slot_3' => musteriSlots >= 3,
-      'musteri_slot_4' => musteriSlots >= 4,
       _ => true,
     };
   }

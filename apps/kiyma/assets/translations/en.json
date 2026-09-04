@@ -28,6 +28,7 @@
     "reddedildi": "Not what they ordered",
     "yandi": "The meat burned",
     "mangal_dolu": "No room on the grill",
+    "altin_supuruldu": "30% of the gold got swept up",
     "gecersiz": "Not there",
     "musteri_kizgin": "A customer left"
   },
@@ -37,7 +38,6 @@
     "mangal_3": "3rd grill slot",
     "mangal_4": "4th grill slot",
     "musteri_3": "3rd customer place",
-    "musteri_4": "4th customer place",
     "porsiyon_hatti": "Plate line",
     "icecek_hatti": "Drinks line",
     "icecek_salgam": "Turnip juice",

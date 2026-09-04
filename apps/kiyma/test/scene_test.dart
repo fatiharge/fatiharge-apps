@@ -30,7 +30,7 @@ void main() {
         'bardak_bekletme',
         'cop_alani',
         'musteri_slot_1',
-        'musteri_slot_4',
+        'musteri_slot_3',
       ];
       for (final name in named) {
         expect(scene.maybe(name), isNotNull, reason: name);

@@ -65,7 +65,6 @@ void main() {
         'bardak_kaynak',
         'bardak_bekletme',
         'musteri_slot_3',
-        'musteri_slot_4',
       ]) {
         expect(unlocks.shows(region), isFalse, reason: region);
       }
@@ -77,10 +76,8 @@ void main() {
       expect(unlocks.shows('surahi_ayran'), isTrue);
       expect(unlocks.shows('bardak_bekletme'), isTrue);
 
-      unlocks
-        ..open('musteri_3')
-        ..open('musteri_4');
-      expect(unlocks.shows('musteri_slot_4'), isTrue);
+      unlocks.open('musteri_3');
+      expect(unlocks.shows('musteri_slot_3'), isTrue);
     });
 
     test('the bar is drawn between levels, not from zero', () {

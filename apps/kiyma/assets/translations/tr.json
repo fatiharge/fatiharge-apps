@@ -28,6 +28,7 @@
     "reddedildi": "Sipariş tutmadı",
     "yandi": "Kıyma yandı",
     "mangal_dolu": "Mangalda yer yok",
+    "altin_supuruldu": "Altının %30'u gitti",
     "gecersiz": "Olmaz",
     "musteri_kizgin": "Müşteri gitti"
   },
@@ -37,7 +38,6 @@
     "mangal_3": "3. mangal slotu",
     "mangal_4": "4. mangal slotu",
     "musteri_3": "3. müşteri yeri",
-    "musteri_4": "4. müşteri yeri",
     "porsiyon_hatti": "Porsiyon hattı",
     "icecek_hatti": "İçecek hattı",
     "icecek_salgam": "Şalgam",

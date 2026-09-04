@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kiyma/data/scene.dart';
 import 'package:kiyma/game/assets.dart';
 import 'package:kiyma/game/model/items.dart';
+import 'package:kiyma/game/model/products.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -33,6 +34,9 @@ void main() {
       'kola_sise',
       'kola_sise_grup',
       'mangal_govde',
+      'duvar_saati',
+      'takvim',
+      ...Altin.tipler,
       'back_scene.jpg',
       'base_table.png',
       for (final malzeme in Malzeme.values) ...[
@@ -65,7 +69,12 @@ void main() {
 
   test('nothing unused is shipped', () {
     // The art repository still holds these; the prep script drops them.
-    for (final dropped in ['kesme_tahtasi', 'dereotu_tepsi']) {
+    for (final dropped in [
+      'kesme_tahtasi',
+      'dereotu_tepsi',
+      'maydanoz_tepsi',
+      'patlican_tepsi',
+    ]) {
       expect(assets[dropped], isNull, reason: dropped);
     }
   });

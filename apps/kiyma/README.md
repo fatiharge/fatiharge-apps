@@ -96,9 +96,19 @@ the pause button and the till, both moved to the top left because the right
 wall is the clock's, and both sized for a phone at arm's length rather than
 for the 1024-wide space they are measured in.
 
-Customers pay in **gold, onto the ledge they stood at**, and it only reaches
-the till when the player touches it; what is left when the clock runs out is
-gone. The pause button stops everything — asked for, so not the free breather that
+**Three** customers at most, and each one **walks in** from one side or the
+other before they order — until they are standing at the counter there is no
+card, no patience and nothing that can be handed to them. Their order sits to
+the right of their head and their patience runs up a bar on the left, so
+neither has to be found inside the other. A fourth place did not fit that
+layout on the same stretch of counter.
+
+Customers pay in **gold, onto the ledge they stood at**, in one of three
+random piles, and it only reaches the till when the player touches it. After
+ten seconds the counter sweeps it up on its own and keeps 70 % — what a touch
+buys is the tip, not the sale, and the tag goes red for the last three
+seconds. An empty grill is the other thing the counter nags about: three
+seconds with nothing on it and the mince tray starts blinking. The pause button stops everything — asked for, so not the free breather that
 walking out would have been. In a debug build, holding the menu's language
 button for three seconds grants ₺1000; XP is untouched, so the level stays
 whatever was actually played.
@@ -177,6 +187,17 @@ python3 tool/prepare_assets.py [~/kiyma_asset]
 The renderer skips an image it cannot find, so a missing one looks like an
 empty grill rather than an error. `test/assets_test.dart` is what turns that
 into a failing test — add any new name the code asks for by hand to its list.
+
+## Running it in a browser
+
+`web/` is here so the counter can be opened without a phone:
+
+```bash
+fvm flutter build web --release
+python3 -m http.server 8765 --directory build/web
+```
+
+Landscape and touch, so a browser window is a compromise, not the target.
 
 ## Verifying
 

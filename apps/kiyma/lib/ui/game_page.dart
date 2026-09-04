@@ -181,6 +181,7 @@ class _Toast extends StatefulWidget {
       DayEvent.reddedildi => 'olay.reddedildi',
       DayEvent.yandi => 'olay.yandi',
       DayEvent.mangalDolu => 'olay.mangal_dolu',
+      DayEvent.altinSupuruldu => 'olay.altin_supuruldu',
       DayEvent.gecersiz => 'olay.gecersiz',
       DayEvent.musteriKizgin => 'olay.musteri_kizgin',
       _ => null,

@@ -57,7 +57,7 @@ void main() {
             onChanged: () {},
             random: math.Random(11),
           )
-          ..musteriler[0] = Customer(
+          ..musteriler[0] = (Customer(
             order: Order(
               tip: UrunTipi.durum,
               ister: {Malzeme.domates.id, Malzeme.biber.id},
@@ -66,15 +66,24 @@ void main() {
               icecek: Icecek.ayran,
             ),
             day: 1,
-          )
-          ..musteriler[2] = Customer(
+          )..varis = 1)
+          ..musteriler[1] = (Customer(
+            order: Order(
+              tip: UrunTipi.durum,
+              ister: {Malzeme.tursu.id},
+              istemez: const {},
+              icecek: Icecek.kola,
+            ),
+            day: 1,
+          )..varis = 1)
+          ..musteriler[2] = (Customer(
             order: Order(
               tip: UrunTipi.porsiyon,
               ister: {Bilesen.ezme.id},
               istemez: const {},
             ),
             day: 1,
-          );
+          )..varis = 1);
 
     // One skewer in each cooking state.
     for (final slot in run.mangal) {
@@ -98,8 +107,8 @@ void main() {
       ..bardakBekletme[0] = (Bardak()..doldur(Icecek.ayran))
       ..bardakBekletme[1] = (Bardak()..icerik = Icecek.kola)
       ..bardakBekletme[2] = Bardak()
-      ..altin[0] = 24
-      ..altin[2] = 8;
+      ..altin[0] = Altin(24)
+      ..altin[2] = Altin(8, tip: 1);
 
     late Image frame;
     await tester.runAsync(() async {
@@ -132,7 +141,7 @@ void main() {
       onEvent: (_) {},
       onChanged: () {},
       random: math.Random(11),
-    )..musteriler[0] = Customer(order: wrapOrder, day: 1);
+    )..musteriler[0] = (Customer(order: wrapOrder, day: 1)..varis = 1);
     run.mangal[0].koy();
 
     late Image frame;

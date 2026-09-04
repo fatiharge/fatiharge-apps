@@ -51,8 +51,10 @@ void main() {
     }
   }
 
+  /// A customer already standing at the counter. Tests that want the walk
+  /// itself drive [DayRun.tick] instead.
   Customer waiting(DayRun run, Order order, {int slot = 0}) {
-    final customer = Customer(order: order, day: run.day);
+    final customer = Customer(order: order, day: run.day)..varis = 1;
     run.musteriler[slot] = customer;
     return customer;
   }
@@ -107,7 +109,7 @@ void main() {
 
       // 10 * 1.08 rounded, plus one ingredient at the flat bonus — left on
       // the ledge, not in the till.
-      expect(run.altin[0], 13);
+      expect(run.altin[0]!.miktar, 13);
       run.tap(slot('altin_alani', 0));
       expect(run.progress.para, 13);
     });
@@ -318,8 +320,8 @@ void main() {
 
       expect(run.musteriler[0], isNull, reason: 'they left happy');
       expect(run.progress.para, 0, reason: 'nothing is banked yet');
-      expect(run.altin[0], customer.odenen);
-      expect(run.altin[0], greaterThan(0));
+      expect(run.altin[0]!.miktar, customer.odenen);
+      expect(run.altin[0]!.miktar, greaterThan(0));
     });
 
     test('it lands where the customer stood', () {
@@ -330,16 +332,16 @@ void main() {
       run.tick(0.1);
 
       expect(run.altin[0], isNull);
-      expect(run.altin[1], 25);
+      expect(run.altin[1]!.miktar, 25);
     });
 
     test('a touch anywhere on the ledge takes the nearest pile', () {
       final run = build()
-        ..altin[3] = 40
+        ..altin[2] = Altin(40)
         ..tap(slot('altin_alani', 0));
 
       expect(run.progress.para, 40);
-      expect(run.altin[3], isNull);
+      expect(run.altin[2], isNull);
     });
 
     test('two customers at the same place stack up', () {
@@ -353,7 +355,32 @@ void main() {
         ..sabirKalan = 0.05;
       run.tick(0.1);
 
-      expect(run.altin[0], 25);
+      expect(run.altin[0]!.miktar, 25);
+    });
+
+    test('left alone it is swept up, most of it', () {
+      final run = build()..altin[0] = Altin(100);
+      run.tick(Balance.sweptAfter - 0.2);
+      expect(run.altin[0], isNotNull, reason: 'still there to be had');
+      expect(run.progress.para, 0);
+
+      run.tick(0.3);
+      expect(run.altin[0], isNull);
+      expect(run.progress.para, 70, reason: 'the tip is what touching buys');
+      expect(events, contains(DayEvent.altinSupuruldu));
+    });
+
+    test('a second payment restarts the clock on the pile', () {
+      final run = build()..altin[0] = Altin(10);
+      run.tick(Balance.sweptAfter - 1);
+      waiting(run, wrapFor(const {}))
+        ..odenen = 15
+        ..sabirKalan = 0.05;
+      run
+        ..tick(0.1)
+        ..tick(1.5);
+
+      expect(run.altin[0]!.miktar, 25, reason: 'not half-swept');
     });
 
     test('an empty ledge does nothing', () {
@@ -424,7 +451,7 @@ void main() {
       run.tick(0.1);
       expect(run.musteriler[0], isNull);
       // They pay for what they did get, on the way out.
-      expect(run.altin[0], customer.odenen);
+      expect(run.altin[0]!.miktar, customer.odenen);
     });
 
     test('a customer nobody serves holds the seat until they give up', () {
@@ -694,7 +721,48 @@ void main() {
       expect(run.musteriler[0], isNotNull);
       expect(run.musteriler[1], isNotNull);
       expect(run.musteriler[2], isNull);
-      expect(run.musteriler[3], isNull);
+    });
+
+    test('an arriving customer walks in before they order', () {
+      final run = build();
+      run.tick(0.1);
+      final customer = run.musteriler[0]!;
+      expect(customer.yerinde, isFalse);
+      expect(
+        customer.sabirKalan,
+        customer.sabirToplam,
+        reason: 'patience does not run while they are still walking',
+      );
+
+      // Nothing can be handed to somebody who has not asked yet.
+      waiting(run, wrapFor(const {}), slot: 1);
+      buildWrap(run);
+      run.flickUp(at('durum_hazirlama'));
+      drag(run, at('kagit_kaynak'), at('durum_hazirlama'));
+      expect(
+        drag(run, at('durum_hazirlama'), at('musteri_slot_1')),
+        isTrue,
+        reason: 'the drag happens; the drop is what is refused',
+      );
+      expect(customer.anaUrunVerildi, isFalse);
+      expect(run.bekleme.first, isNotNull, reason: 'refused, so it shelved');
+
+      run.tick(Balance.arrivalWalk);
+      expect(customer.yerinde, isTrue);
+    });
+
+    test('an empty grill starts asking for meat', () {
+      final run = build();
+      run.tick(Balance.idleGrill - 0.2);
+      expect(run.mangalCagiriyor, isFalse);
+
+      run.tick(0.3);
+      expect(run.mangalCagiriyor, isTrue);
+
+      run
+        ..tap(at('malzeme_kiyma'))
+        ..tick(0.1);
+      expect(run.mangalCagiriyor, isFalse, reason: 'a skewer is enough');
     });
 
     test('does nothing once it is over', () {

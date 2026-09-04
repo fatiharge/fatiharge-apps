@@ -801,9 +801,10 @@
     },
     {
       "name": "musteri_slot_1",
-      "x": 327,
+      "category": "musteri",
+      "x": 328,
       "y": 94,
-      "w": 103,
+      "w": 102,
       "h": 128,
       "quad": [
         [
@@ -822,66 +823,40 @@
           327.9,
           222.2
         ]
-      ],
-      "category": "musteri"
+      ]
     },
     {
       "name": "musteri_slot_2",
-      "x": 440,
-      "y": 94,
-      "w": 103,
+      "category": "musteri",
+      "x": 496,
+      "y": 95,
+      "w": 102,
       "h": 128,
       "quad": [
         [
-          440.0,
-          94.7
+          496.0,
+          94.9
         ],
         [
-          542.4,
-          94.7
+          598.4,
+          94.9
         ],
         [
-          542.4,
-          222.6
+          598.4,
+          222.8
         ],
         [
-          440.0,
-          222.6
+          496.0,
+          222.8
         ]
-      ],
-      "category": "musteri"
+      ]
     },
     {
       "name": "musteri_slot_3",
-      "x": 552,
-      "y": 95,
-      "w": 103,
-      "h": 128,
-      "quad": [
-        [
-          552.9,
-          95.6
-        ],
-        [
-          655.3,
-          95.5
-        ],
-        [
-          655.3,
-          223.4
-        ],
-        [
-          552.9,
-          223.5
-        ]
-      ],
-      "category": "musteri"
-    },
-    {
-      "name": "musteri_slot_4",
+      "category": "musteri",
       "x": 664,
-      "y": 95,
-      "w": 103,
+      "y": 96,
+      "w": 102,
       "h": 128,
       "quad": [
         [
@@ -900,8 +875,7 @@
           664.1,
           223.4
         ]
-      ],
-      "category": "musteri"
+      ]
     },
     {
       "name": "bekleme_alani",
@@ -935,7 +909,7 @@
     {
       "name": "altin_alani",
       "category": "altin",
-      "kapasite": 4,
+      "kapasite": 3,
       "asset_fit": "alt",
       "x": 324,
       "y": 238,
@@ -988,10 +962,10 @@
     },
     {
       "name": "duvar_saati",
-      "x": 782,
-      "y": 32,
-      "w": 230,
-      "h": 103,
+      "x": 806,
+      "y": 2,
+      "w": 206,
+      "h": 92,
       "category": "dekor",
       "asset": "duvar_saati",
       "asset_fit": "orta"

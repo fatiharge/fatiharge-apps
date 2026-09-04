@@ -16,6 +16,7 @@ enum DayEvent {
   gecersiz,
   yandi,
   mangalDolu,
+  altinSupuruldu,
   musteriGeldi,
   musteriMemnun,
   musteriKizgin,
@@ -36,15 +37,16 @@ class DayRun {
     required this.onChanged,
     math.Random? random,
   }) : day = progress.gun,
+       _random = random ?? math.Random(),
        _maker = OrderMaker(progress.unlocks, random: random) {
     final unlocks = progress.unlocks;
     mangal = [
       for (var i = 0; i < 4; i++) MangalSlot(unlocked: i < unlocks.mangalSlots),
     ];
     bekleme = List<Urun?>.filled(3, null);
-    altin = List<int?>.filled(4, null);
+    altin = List<Altin?>.filled(3, null);
     bardakBekletme = List<Bardak?>.filled(3, null);
-    musteriler = List<Customer?>.filled(4, null);
+    musteriler = List<Customer?>.filled(3, null);
     kalanSure = Balance.runLength(day).inSeconds.toDouble();
     _acilis = progress.xp;
   }
@@ -60,6 +62,7 @@ class DayRun {
   final void Function() onChanged;
 
   final OrderMaker _maker;
+  final math.Random _random;
 
   late final List<MangalSlot> mangal;
 
@@ -88,7 +91,7 @@ class DayRun {
 
   /// What each customer left on the ledge, waiting to be picked up. One pile
   /// per place, so the gold sits where the person who paid it stood.
-  late final List<int?> altin;
+  late final List<Altin?> altin;
 
   /// Seconds left on the counter. A run is a clock: customers keep arriving
   /// as seats free until it runs out.
@@ -104,6 +107,14 @@ class DayRun {
   double _sonrakiGelis = 0;
   bool bitti = false;
 
+  /// How long every open grill slot has been empty. Past
+  /// [Balance.idleGrill] the mince tray starts blinking: an empty grill is
+  /// the one mistake that costs nothing to make and everything to keep
+  /// making, because the whole counter waits on it.
+  double bosMangal = 0;
+
+  bool get mangalCagiriyor => bosMangal >= Balance.idleGrill;
+
   /// Everything stops: the clock, the grill, the patience bars. The player
   /// asked for it, so it is not the free breather that stepping out of the
   /// counter would have been.
@@ -113,6 +124,10 @@ class DayRun {
 
   void tick(double dt) {
     if (bitti || duraklatildi) return;
+
+    bosMangal = mangal.any((slot) => slot.unlocked && !slot.bos)
+        ? 0
+        : bosMangal + dt;
 
     for (final slot in mangal) {
       if (slot.tick(dt, day)) {
@@ -130,9 +145,26 @@ class DayRun {
       ..updateAll((_, flash) => (left: flash.left - dt, ok: flash.ok))
       ..removeWhere((_, flash) => flash.left <= 0);
 
+    for (var i = 0; i < altin.length; i++) {
+      final pile = altin[i];
+      if (pile == null) continue;
+      pile.kalan -= dt;
+      if (pile.kalan <= 0) {
+        // Swept up rather than lost: leaving it costs the tip, not the sale.
+        progress.kazan((pile.miktar * Balance.sweptKeeps).round());
+        altin[i] = null;
+        onEvent(DayEvent.altinSupuruldu);
+        onChanged();
+      }
+    }
+
     for (var i = 0; i < musteriler.length; i++) {
       final customer = musteriler[i];
       if (customer == null) continue;
+      if (!customer.yerinde) {
+        customer.varis = math.min(1, customer.varis + dt / Balance.arrivalWalk);
+        continue;
+      }
       customer.sabirKalan -= dt;
       if (customer.sabirKalan <= 0) {
         _ayril(i, memnun: false);
@@ -143,7 +175,11 @@ class DayRun {
     if (_sonrakiGelis <= 0) {
       final free = _bosMusteriSlotu();
       if (free != null) {
-        musteriler[free] = Customer(order: _maker.make(), day: day);
+        musteriler[free] = Customer(
+          order: _maker.make(),
+          day: day,
+          soldan: _random.nextBool(),
+        );
         _sonrakiGelis = Balance.arrivalGap;
         onEvent(DayEvent.musteriGeldi);
         onChanged();
@@ -312,7 +348,7 @@ class DayRun {
       }
     }
     if (pick < 0) return false;
-    progress.kazan(altin[pick]!);
+    progress.kazan(altin[pick]!.miktar);
     altin[pick] = null;
     onChanged();
     return true;
@@ -481,7 +517,9 @@ class DayRun {
     if (region.name.startsWith('musteri_slot_')) {
       final index = int.parse(region.name.split('_').last) - 1;
       final customer = musteriler[index];
-      if (customer == null || held is! HazirUrun) return false;
+      if (customer == null || !customer.yerinde || held is! HazirUrun) {
+        return false;
+      }
       return _servis(index, customer, held);
     }
 
@@ -691,9 +729,13 @@ class DayRun {
     musteriler[index] = null;
 
     // They pay on the way out, onto the ledge they were standing at. Nothing
-    // reaches the till until somebody picks it up.
+    // reaches the till until somebody picks it up — and the clock on it
+    // restarts, so a second payment onto the same spot is not half-swept.
     if (customer.odenen > 0) {
-      altin[index] = (altin[index] ?? 0) + customer.odenen;
+      altin[index] = Altin(
+        (altin[index]?.miktar ?? 0) + customer.odenen,
+        tip: _random.nextInt(Altin.tipler.length),
+      );
     }
 
     onEvent(memnun ? DayEvent.musteriMemnun : DayEvent.musteriKizgin);

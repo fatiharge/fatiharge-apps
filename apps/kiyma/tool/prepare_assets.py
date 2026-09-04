@@ -72,7 +72,7 @@ COP_ALANI = {
 ALTIN_ALANI = {
     "name": "altin_alani",
     "category": "altin",
-    "kapasite": 4,
+    "kapasite": 3,
     "asset_fit": "alt",
 }
 
@@ -87,7 +87,8 @@ DEKOR = [
         "category": "dekor",
         "asset": "duvar_saati_2.png",
         "asset_fit": "orta",
-        "x": 782, "y": 32, "w": 230, "h": 103,
+        # Above the rightmost order card, which reaches y95.
+        "x": 806, "y": 2, "w": 206, "h": 92,
     },
     {
         "name": "duvar_takvimi",
@@ -97,6 +98,10 @@ DEKOR = [
         "x": 20, "y": 152, "w": 92, "h": 128,
     },
 ]
+
+# Variants for assets no region points at, so the pipeline does not fall back
+# to `_1` on something that was picked by eye.
+PICKED = {"altin_kese": 2}
 
 KEEP = (
     "name", "x", "y", "w", "h", "quad", "category",
@@ -123,6 +128,11 @@ DROPPED = {
     "tatli_kunefe",
     "malzeme_maydanoz",
     "malzeme_patlican",
+    # Rebuilt as three, spread over the same frontage.
+    "musteri_slot_1",
+    "musteri_slot_2",
+    "musteri_slot_3",
+    "musteri_slot_4",
 }
 
 FAMILY = re.compile(r"^(?P<family>.+?)_(?P<variant>\d+)\.png$")
@@ -215,6 +225,36 @@ def gold_area(regions):
     }
 
 
+def customer_slots(regions):
+    """Three places where four used to stand.
+
+    A fourth customer needed a fourth order card in the same frontage, and
+    each card now has a patience meter beside it. The two measured extremes
+    stay put and the middle one is interpolated, so the counter stays even.
+    """
+    first = next(r for r in regions if r["name"] == "musteri_slot_1")["quad"]
+    last = next(r for r in regions if r["name"] == "musteri_slot_4")["quad"]
+    out = []
+    for i in range(3):
+        t = i / 2
+        quad = [
+            [round(a[k] + (b[k] - a[k]) * t, 1) for k in (0, 1)]
+            for a, b in zip(first, last)
+        ]
+        xs = [p[0] for p in quad]
+        ys = [p[1] for p in quad]
+        out.append({
+            "name": f"musteri_slot_{i + 1}",
+            "category": "musteri",
+            "x": round(min(xs)),
+            "y": round(min(ys)),
+            "w": round(max(xs) - min(xs)),
+            "h": round(max(ys) - min(ys)),
+            "quad": quad,
+        })
+    return out
+
+
 def slim_region(region):
     out = {k: region[k] for k in KEEP if k in region}
     if "asset" in out:
@@ -246,6 +286,8 @@ def main():
             note(entry.get("yol"))
         note((comp.get("son") or {}).get("yol"))
 
+    picked.update(PICKED)
+
     families = {}
     for name in sorted(os.listdir(f"{SRC}/assets")):
         parts = family_of(name)
@@ -267,6 +309,12 @@ def main():
         )
         shipped.append(family)
 
+    # `assets/items` is generated, so it is also pruned: dropping an asset
+    # from the game has to take the file with it, or it keeps shipping.
+    for name in os.listdir(f"{DST}/items"):
+        if name.endswith(".png") and name[:-4] not in shipped:
+            os.remove(f"{DST}/items/{name}")
+
     run("magick", f"{SRC}/back_scene.jpg",
         "-resize", f"{SCENE[0]}x{SCENE[1]}!", "-strip", f"{DST}/scene/back_scene.jpg")
     run("magick", f"{SRC}/base_table.png",
@@ -280,6 +328,7 @@ def main():
             for r in regions["regions"]
             if r["name"] not in DROPPED
         ]
+        + customer_slots(regions["regions"])
         + [
             merged_shelf(regions["regions"]),
             gold_area(regions["regions"]),

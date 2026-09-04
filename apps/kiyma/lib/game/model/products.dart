@@ -66,6 +66,28 @@ class MangalSlot {
   }
 }
 
+/// Gold on the ledge, waiting to be picked up.
+///
+/// Left alone it is swept into the till after [Balance.sweptAfter] seconds,
+/// minus the part that goes missing — the point of touching it is the tip,
+/// not the sale.
+class Altin {
+  Altin(this.miktar, {this.tip = 0}) : kalan = Balance.sweptAfter;
+
+  /// The art each pile is drawn with. Chosen at random so a counter of four
+  /// payments does not read as one repeated sprite.
+  static const tipler = ['altin', 'altin_kese', 'altin_kule'];
+
+  final int miktar;
+  final int tip;
+  double kalan;
+
+  String get asset => tipler[tip % tipler.length];
+
+  /// The last stretch, where the tag turns red.
+  bool get aceleli => kalan <= 3;
+}
+
 /// A wrap being built, then carried.
 class Durum {
   bool etli = false;

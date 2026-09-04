@@ -41,12 +41,22 @@ class Order {
 /// A customer at the counter: an order, a patience bar, and a record of which
 /// line items have already been handed over.
 class Customer {
-  Customer({required this.order, required this.day})
+  Customer({required this.order, required this.day, this.soldan = true})
     : sabirToplam = Balance.patience(day),
       sabirKalan = Balance.patience(day);
 
   final Order order;
   final int day;
+
+  /// Which side they walk in from.
+  final bool soldan;
+
+  /// `0..1` of the walk to the counter. Nothing about them counts until it
+  /// is over: no patience, no order card, and nothing can be handed over —
+  /// they have not asked for anything yet.
+  double varis = 0;
+
+  bool get yerinde => varis >= 1;
 
   final double sabirToplam;
   double sabirKalan;

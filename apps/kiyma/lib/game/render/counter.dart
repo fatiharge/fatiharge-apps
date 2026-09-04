@@ -63,6 +63,9 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     dark: Color(0xFF3D2E05),
     icon: Icons.check_rounded,
   );
+  static const _want = Color(0xFF6FCF7C);
+  static const _avoid = Color(0xFFE0574A);
+
   static const ({Color lit, Color dark, IconData icon}) _burnt = (
     lit: Color(0xFFD93B2B),
     dark: Color(0xFF2A1310),
@@ -176,6 +179,26 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       }
       final image = assets[asset];
       if (image != null) drawInQuad(canvas, image, region.quad, region.fit);
+
+      // An empty grill stalls everything downstream and costs nothing to
+      // notice, so the tray that fixes it asks rather than waits.
+      if (region.name == 'malzeme_kiyma' && run.mangalCagiriyor) {
+        final glow = 0.18 + 0.18 * math.sin(_elapsed * 6);
+        canvas
+          ..drawPath(
+            region.quad.toPath(),
+            Paint()..color = const Color(0xFFFFD24A).withValues(alpha: glow),
+          )
+          ..drawPath(
+            region.quad.toPath(),
+            Paint()
+              ..color = const Color(
+                0xFFFFD24A,
+              ).withValues(alpha: glow * 3.2)
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = 3,
+          );
+      }
     }
   }
 
@@ -401,14 +424,14 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   void _renderGold(Canvas canvas) {
     final region = scene['altin_alani'];
     final slots = region.slots;
-    final coins = assets['altin'];
-    if (coins == null) return;
 
     for (var i = 0; i < slots.length; i++) {
-      final amount = run.altin[i];
-      if (amount == null) continue;
-      drawInQuad(canvas, coins, slots[i], AssetFit.alt);
-      // Above the pile on its own dark tag: gold on gold cannot be read.
+      final pile = run.altin[i];
+      if (pile == null) continue;
+      final image = assets[pile.asset];
+      if (image != null) drawInQuad(canvas, image, slots[i], AssetFit.alt);
+      // Above the pile on its own dark tag: gold on gold cannot be read. It
+      // goes red for the last seconds before the counter sweeps it up.
       final tag = Offset(slots[i].center.dx, slots[i].bounds.top - 15);
       canvas.drawRRect(
         RRect.fromRectAndRadius(
@@ -419,11 +442,14 @@ class CounterComponent extends PositionComponent with DragCallbacks {
           ),
           const Radius.circular(6),
         ),
-        Paint()..color = const Color(0xE62E2A26),
+        Paint()
+          ..color = pile.aceleli
+              ? const Color(0xE6A32718)
+              : const Color(0xE62E2A26),
       );
       drawText(
         canvas,
-        '$amount',
+        '${pile.miktar}',
         tag,
         size: 14,
         weight: 800,
@@ -515,29 +541,42 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   }
 
   void _renderCustomers(Canvas canvas) {
-    for (var i = 0; i < 4; i++) {
-      final quad = scene['musteri_slot_${i + 1}'].quad;
-      if (i >= run.progress.unlocks.musteriSlots) continue;
+    for (var i = 0; i < run.musteriler.length; i++) {
       final customer = run.musteriler[i];
       if (customer == null) continue;
-      _renderCustomer(canvas, quad, customer);
+      final home = scene['musteri_slot_${i + 1}'].quad;
+      _renderCustomer(canvas, home.shift(_walkIn(home, customer)), customer);
     }
   }
 
-  /// A stand-in body and a real order card.
+  /// How far a customer still on their way is from their place.
+  ///
+  /// They come in from whichever side they were sent in on and slow into the
+  /// slot. Nothing about them counts until they arrive — no patience, no
+  /// card, nothing to hand over — because they have not asked yet.
+  Offset _walkIn(Quad home, Customer customer) {
+    if (customer.yerinde) return Offset.zero;
+    final bounds = home.bounds;
+    final from = customer.soldan
+        ? -(bounds.right + 40)
+        : scene.size.width - bounds.left + 40;
+    final left = 1 - customer.varis;
+    return Offset(from * left * left, 0);
+  }
+
+  /// A stand-in body, a patience meter on one side and the order on the
+  /// other.
   ///
   /// The characters are the one part of the art that was never drawn — they
   /// are meant to be animated. What the player actually has to read is the
-  /// card, so that is what gets the pixels.
+  /// order and how long it has, so those get the pixels, and they sit apart
+  /// so that neither has to be found inside the other.
   void _renderCustomer(Canvas canvas, Quad quad, Customer customer) {
     final bounds = quad.bounds;
+    final head = Offset(bounds.center.dx, bounds.top + 26);
     final skin = Paint()..color = const Color(0xFF6B5344);
     canvas
-      ..drawCircle(
-        Offset(bounds.center.dx, bounds.top + 26),
-        19,
-        skin,
-      )
+      ..drawCircle(head, 19, skin)
       ..drawRRect(
         RRect.fromRectAndRadius(
           Rect.fromLTWH(
@@ -551,12 +590,30 @@ class CounterComponent extends PositionComponent with DragCallbacks {
         skin,
       );
 
-    final card = Rect.fromLTWH(
-      bounds.left - 13,
-      bounds.top + 58,
-      bounds.width + 26,
-      76,
+    if (!customer.yerinde) return;
+    _renderPatience(canvas, head, customer);
+    _renderOrder(canvas, head, customer);
+  }
+
+  /// Upright, on the left of the head: a bar lying across the order card was
+  /// one more thing to find inside it.
+  void _renderPatience(Canvas canvas, Offset head, Customer customer) {
+    drawBar(
+      canvas,
+      Rect.fromCenter(
+        center: Offset(head.dx - 30, head.dy + 12),
+        width: 62,
+        height: 11,
+      ),
+      customer.sabirOrani,
+      color: Color.lerp(_avoid, _want, customer.sabirOrani)!,
+      background: const Color(0xCC141A20),
+      angle: -math.pi / 2,
     );
+  }
+
+  void _renderOrder(Canvas canvas, Offset head, Customer customer) {
+    final card = Rect.fromLTWH(head.dx + 22, head.dy - 26, 88, 74);
     canvas
       ..drawRRect(
         RRect.fromRectAndRadius(card, const Radius.circular(8)),
@@ -570,53 +627,49 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       );
 
     final order = customer.order;
-    const wantColor = Color(0xFF6FCF7C);
-    const avoidColor = Color(0xFFE0574A);
-
     _icon(
       canvas,
       order.tip == UrunTipi.durum ? 'doner_bekleme' : 'porsiyon_hazirlama',
-      Offset(card.left + 20, card.top + 20),
-      26,
+      Offset(card.left + 17, card.top + 18),
+      24,
       done: customer.anaUrunVerildi,
     );
 
     // Three constraints at most, so one row is always enough.
-    var x = card.left + 44;
-
+    var x = card.left + 38;
     for (final id in order.ister) {
       _icon(
         canvas,
         _iconAsset(order.tip, id),
-        Offset(x, card.top + 20),
-        17,
-        ring: wantColor,
+        Offset(x, card.top + 18),
+        15,
+        ring: _want,
       );
-      x += 19;
+      x += 17;
     }
     for (final id in order.istemez) {
       _icon(
         canvas,
         _iconAsset(order.tip, id),
-        Offset(x, card.top + 20),
-        17,
-        ring: avoidColor,
+        Offset(x, card.top + 18),
+        15,
+        ring: _avoid,
         crossed: true,
       );
-      x += 19;
+      x += 17;
     }
 
-    var side = card.right - 18;
+    var side = card.right - 16;
     final icecek = order.icecek;
     if (icecek != null) {
       _icon(
         canvas,
         icecek.servedAsset,
         Offset(side, card.top + 50),
-        18,
+        17,
         done: customer.icecekVerildi,
       );
-      side -= 22;
+      side -= 21;
     }
     final tatli = order.tatli;
     if (tatli != null) {
@@ -624,17 +677,10 @@ class CounterComponent extends PositionComponent with DragCallbacks {
         canvas,
         tatli.asset,
         Offset(side, card.top + 50),
-        20,
+        19,
         done: customer.tatliVerildi,
       );
     }
-
-    drawBar(
-      canvas,
-      Rect.fromLTWH(card.left + 9, card.bottom - 10, card.width - 18, 5),
-      customer.sabirOrani,
-      color: Color.lerp(avoidColor, wantColor, customer.sabirOrani)!,
-    );
   }
 
   String _iconAsset(UrunTipi tip, String id) => tip == UrunTipi.durum

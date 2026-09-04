@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kiyma/data/scene.dart';
 import 'package:kiyma/game/assets.dart';
+import 'package:kiyma/game/balance.dart';
 import 'package:kiyma/game/day_run.dart';
 import 'package:kiyma/game/kiyma_game.dart';
 import 'package:kiyma/game/model/items.dart';
@@ -42,7 +43,9 @@ void main() {
             onChanged: () {},
             random: math.Random(11),
           )
-          ..musteriler[0] = Customer(
+          // One standing at the counter, one still walking in from each
+          // side: the card and the meter only exist for the first.
+          ..musteriler[0] = (Customer(
             order: Order(
               tip: UrunTipi.durum,
               ister: {Malzeme.domates.id},
@@ -51,11 +54,20 @@ void main() {
               icecek: Icecek.ayran,
             ),
             day: 1,
-          )
+          )..varis = 1)
           ..musteriler[1] = Customer(
             order: Order(
               tip: UrunTipi.porsiyon,
               ister: {Bilesen.ezme.id},
+              istemez: const {},
+            ),
+            day: 1,
+            soldan: false,
+          )
+          ..musteriler[2] = Customer(
+            order: Order(
+              tip: UrunTipi.durum,
+              ister: const {},
               istemez: const {},
             ),
             day: 1,
@@ -75,7 +87,14 @@ void main() {
       ..bekleme[0] = DurumUrun(Durum()..sarili = true)
       ..bekleme[0] = PorsiyonUrun(Porsiyon())
       ..bardakBekletme[0] = (Bardak()..doldur(Icecek.ayran))
-      ..bardakBekletme[1] = (Bardak()..icerik = Icecek.kola);
+      ..bardakBekletme[1] = (Bardak()..icerik = Icecek.kola)
+      // A pile of each kind, and one about to be swept.
+      ..altin[0] = Altin(12)
+      ..altin[1] = Altin(30, tip: 1)
+      ..altin[2] = (Altin(7, tip: 2)..kalan = 1)
+      // Every grill badge at once: raw, cooking, ready, burnt.
+      ..mangal[1].tick(3, 1)
+      ..mangal[2].tick(6.5, 1);
 
     await tester.pumpWidget(
       MaterialApp(
@@ -104,7 +123,7 @@ void main() {
       onEvent: (_) {},
       onChanged: () {},
       random: math.Random(12),
-    );
+    )..bosMangal = Balance.idleGrill;
     await tester.pumpWidget(
       MaterialApp(
         home: GameWidget(
