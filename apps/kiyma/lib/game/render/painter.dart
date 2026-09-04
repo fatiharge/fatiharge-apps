@@ -49,30 +49,31 @@ void drawInQuad(
     ..restore();
 }
 
-/// A halo in [color] hugging [image]'s own silhouette, drawn behind it.
+/// A baked halo, laid where its asset sits.
 ///
-/// The glow follows the art rather than the region box, because a region is
-/// a hit target: a rectangle of light around a tray of parsley reads as an
-/// overlay laid on the scene, where a halo reads as the thing itself asking.
-/// Laid down three times — once is too faint to find on a busy counter.
-void drawGlow(
+/// `Halos` renders these once at startup: the shape never changes, and the
+/// mask blur that makes one is far too expensive to repeat every frame for
+/// every lit hint. [strength] is the pulse.
+void drawHalo(
   Canvas canvas,
-  Image image,
-  Quad quad,
-  AssetFit fit,
-  Color color,
+  Image halo,
+  Rect bounds,
+  double pad,
   double strength,
 ) {
-  final paint = Paint()
-    ..colorFilter = ColorFilter.mode(
-      color.withValues(alpha: strength.clamp(0, 1)),
-      BlendMode.srcIn,
-    )
-    ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10)
-    ..filterQuality = FilterQuality.medium;
-  for (var i = 0; i < 3; i++) {
-    drawInQuad(canvas, image, quad, fit, paint: paint);
-  }
+  canvas.drawImageRect(
+    halo,
+    _whole(halo),
+    Rect.fromLTWH(
+      bounds.left - pad,
+      bounds.top - pad,
+      bounds.width + pad * 2,
+      bounds.height + pad * 2,
+    ),
+    Paint()
+      ..color = const Color(0xFFFFFFFF).withValues(alpha: strength.clamp(0, 1))
+      ..filterQuality = FilterQuality.medium,
+  );
 }
 
 /// Draws one layer of a built-up product: sized as a fraction of the region's

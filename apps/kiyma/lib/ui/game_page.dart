@@ -188,6 +188,7 @@ class _GameHostState extends State<_GameHost> {
     return KiymaGame(
       scene: world.scene,
       art: world.art,
+      halos: world.halos,
       run: widget.run,
       onPause: widget.onPause,
     );

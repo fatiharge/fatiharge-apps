@@ -10,6 +10,7 @@ import 'package:kiyma/data/scene.dart';
 import 'package:kiyma/game/assets.dart';
 import 'package:kiyma/game/balance.dart';
 import 'package:kiyma/game/day_run.dart';
+import 'package:kiyma/game/halo.dart';
 import 'package:kiyma/game/model/items.dart';
 import 'package:kiyma/game/model/order.dart';
 import 'package:kiyma/game/model/products.dart';
@@ -30,10 +31,12 @@ void main() {
 
   late SceneData scene;
   late GameAssets assets;
+  late Halos halos;
 
   setUpAll(() async {
     scene = await SceneData.load();
     assets = await GameAssets.load();
+    halos = await Halos.bake(scene, assets);
     // Without these the numbers and the grill badges come out as boxes: a
     // golden that cannot show its glyphs is not much of a check on them.
     await (FontLoader(
@@ -121,6 +124,7 @@ void main() {
       CounterComponent(
         scene: scene,
         assets: assets,
+        halos: halos,
         run: run,
         onPause: () {},
       ).render(canvas);
@@ -159,6 +163,7 @@ void main() {
       CounterComponent(
         scene: scene,
         assets: assets,
+        halos: halos,
         run: run,
         onPause: () {},
       ).render(canvas);

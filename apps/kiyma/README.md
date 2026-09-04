@@ -123,7 +123,11 @@ buys is the tip, not the sale, and the tag goes red for the last three
 seconds. The counter also points at a step being skipped: the thing that unblocks it
 breathes inside an orange halo of **its own silhouette**, not of its region
 box — a region is a hit target, and a lit rectangle around a tray of parsley
-reads as an overlay where a halo reads as the object asking. Three seconds
+reads as an overlay where a halo reads as the object asking. The silhouettes
+are blurred **once, during the art bootstrap job** (`game/halo.dart`) and the
+frame only blits one: doing the mask blur live cost three blurred draws per
+lit hint per frame, up to six hints at once, and every one of them is on at
+the moment the player has stalled. Three seconds
 with an empty grill and the mince tray asks, four with an empty wrap station
 and the bread does, five with a burnt skewer on the grill and the bin does,
 and reaching for a rolled wrap with no paper on it makes the paper answer for
@@ -268,6 +272,14 @@ Stages 6 to 8 of the plan. Named so nobody has to rediscover them:
   run.
 - **No settings screen, no ads, no IAP.** The menu reaches the language
   screen directly, which is the whole of the settings that exists.
+- **A release build reports no crash anywhere.** All three apps implement
+  `bootstrap_kit`'s `onCrash` with `developer.log`, which writes to the VM
+  service and is compiled out in product mode. Framework errors still print;
+  what vanishes is the zone-fatal path — a throw before `runApp`, and every
+  `unawaited(context.router…)`. The one-line fix is
+  `FlutterError.dumpErrorToConsole` on the fatal branch of `runGuarded`, which
+  belongs in the kit so wallet and motto get it too, so it is a separate PR
+  against `packages/` rather than app work.
 - **The chef and the customers were never drawn.** They are meant to be
   animated, so for now a customer is a coloured silhouette — see the nine
   states above — and the chef is not drawn at all.

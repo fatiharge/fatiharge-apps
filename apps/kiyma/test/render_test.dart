@@ -7,6 +7,7 @@ import 'package:kiyma/data/scene.dart';
 import 'package:kiyma/game/assets.dart';
 import 'package:kiyma/game/balance.dart';
 import 'package:kiyma/game/day_run.dart';
+import 'package:kiyma/game/halo.dart';
 import 'package:kiyma/game/kiyma_game.dart';
 import 'package:kiyma/game/model/items.dart';
 import 'package:kiyma/game/model/order.dart';
@@ -19,10 +20,12 @@ void main() {
 
   late SceneData scene;
   late GameAssets assets;
+  late Halos halos;
 
   setUpAll(() async {
     scene = await SceneData.load();
     assets = await GameAssets.load();
+    halos = await Halos.bake(scene, assets);
   });
 
   /// One frame of the counter with everything on it at once. It is a smoke
@@ -110,6 +113,7 @@ void main() {
           game: KiymaGame(
             scene: scene,
             art: assets,
+            halos: halos,
             run: run,
             onPause: () {},
           ),
@@ -143,6 +147,7 @@ void main() {
           game: KiymaGame(
             scene: scene,
             art: assets,
+            halos: halos,
             run: run,
             onPause: () {},
           ),

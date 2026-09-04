@@ -5,6 +5,7 @@ import 'package:flame/game.dart';
 import 'package:kiyma/data/scene.dart';
 import 'package:kiyma/game/assets.dart';
 import 'package:kiyma/game/day_run.dart';
+import 'package:kiyma/game/halo.dart';
 import 'package:kiyma/game/render/counter.dart';
 
 /// The engine's share of the work: a clock, a gesture stream, and a viewport
@@ -16,6 +17,7 @@ class KiymaGame extends FlameGame {
   KiymaGame({
     required this.scene,
     required this.art,
+    required this.halos,
     required this.run,
     required this.onPause,
   });
@@ -24,6 +26,10 @@ class KiymaGame extends FlameGame {
 
   /// Not named `assets`: [FlameGame] already has a field by that name.
   final GameAssets art;
+
+  /// The hint glows, blurred once at startup rather than every frame.
+  final Halos halos;
+
   final DayRun run;
 
   /// The HUD is drawn in the scene, so its buttons are hit-tested there too.
@@ -45,6 +51,7 @@ class KiymaGame extends FlameGame {
       CounterComponent(
         scene: scene,
         assets: art,
+        halos: halos,
         run: run,
         onPause: onPause,
       ),

@@ -11,6 +11,7 @@ import 'package:kiyma/data/scene.dart';
 import 'package:kiyma/game/assets.dart';
 import 'package:kiyma/game/day_run.dart';
 import 'package:kiyma/game/gesture.dart';
+import 'package:kiyma/game/halo.dart';
 import 'package:kiyma/game/model/items.dart';
 import 'package:kiyma/game/model/order.dart';
 import 'package:kiyma/game/model/products.dart';
@@ -26,12 +27,14 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   CounterComponent({
     required this.scene,
     required this.assets,
+    required this.halos,
     required this.run,
     required this.onPause,
   }) : super(size: Vector2(scene.size.width, scene.size.height));
 
   final SceneData scene;
   final GameAssets assets;
+  final Halos halos;
   final DayRun run;
   final VoidCallback onPause;
 
@@ -79,10 +82,6 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     MusteriHali.gidiyorStabil: Color(0xFF5E7FA8),
     MusteriHali.gidiyorKizgin: Color(0xFF7A1F16),
   };
-
-  // Orange rather than yellow: half of what asks sits on cream or on pale
-  // bread, and yellow disappears into both.
-  static const _hint = Color(0xFFFF8A1F);
 
   /// An order line already handed over.
   static final _faded = Paint()
@@ -245,9 +244,15 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   void _renderNudge(Canvas canvas, SceneRegion region, Image? image) {
     if (image == null) return;
     _breathing(canvas, region.quad.center, () {
-      drawGlow(canvas, image, region.quad, region.fit, _hint, _pulse);
+      _halo(canvas, region.name, region.quad);
       drawInQuad(canvas, image, region.quad, region.fit);
     });
+  }
+
+  void _halo(Canvas canvas, String key, Quad quad) {
+    final baked = halos[key];
+    if (baked == null) return;
+    drawHalo(canvas, baked, quad.bounds, Halos.pad, _pulse);
   }
 
   /// `0..1`, twice a second or so: the beat everything that asks shares.
@@ -454,7 +459,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       if (image != null) {
         if (pile.aceleli) {
           _breathing(canvas, slots[i].center, () {
-            drawGlow(canvas, image, slots[i], AssetFit.alt, _hint, _pulse);
+            _halo(canvas, Halos.goldKey(pile.asset, i), slots[i]);
             drawInQuad(canvas, image, slots[i], AssetFit.alt);
           });
         } else {
