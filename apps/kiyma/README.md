@@ -132,8 +132,10 @@ is why the design doc's half-finished day (11.5) and its reputation system
 the length of their patience bar.
 
 Each grill slot carries a **dial**, not a bar: a segmented ring with a flame
-while the meat cooks, a draining green ring with a tick while it is worth
-taking, and a full red one with an exclamation once it is burnt. Raw and
+while the meat cooks, a draining yellow ring with a tick while it is worth
+taking, and a full red one with an exclamation once it is burnt. The ready
+one breathes — of four badges the one that moves is the one there is
+something to do about. Raw and
 cooking fill one meter between them — they are the same wait from the
 player's side, and a bar that emptied and started again read as a fault. Four
 thin bars on a leaning grill were indistinguishable from each other and from

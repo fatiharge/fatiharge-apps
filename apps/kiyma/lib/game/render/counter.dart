@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:ui';
 
 // `Quad` collides with vector_math's, which Flame re-exports everywhere.
@@ -53,17 +54,17 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   // ready one: green and a clock reads as "waiting", and what the player has
   // to know is that this skewer is done and the ring is running out.
   static const ({Color lit, Color dark, IconData icon}) _cooking = (
-    lit: Color(0xFFF3A431),
+    lit: Color(0xFFE87A28),
     dark: Color(0xFF4A1712),
     icon: Icons.local_fire_department_rounded,
   );
   static const ({Color lit, Color dark, IconData icon}) _ready = (
-    lit: Color(0xFF7BD154),
-    dark: Color(0xFF1B3A18),
+    lit: Color(0xFFFFD32B),
+    dark: Color(0xFF3D2E05),
     icon: Icons.check_rounded,
   );
   static const ({Color lit, Color dark, IconData icon}) _burnt = (
-    lit: Color(0xFFE0574A),
+    lit: Color(0xFFD93B2B),
     dark: Color(0xFF2A1310),
     icon: Icons.priority_high_rounded,
   );
@@ -204,10 +205,15 @@ class CounterComponent extends PositionComponent with DragCallbacks {
         Pisme.yanmis => (_burnt, 1.0),
         _ => (_cooking, slot.pismeOrani),
       };
+      // Only the ready one breathes. On a grill of four badges the one that
+      // moves should be the one there is something to do about.
+      final radius = durum == Pisme.pismis
+          ? 13 * (1 + 0.13 * math.sin(_elapsed * 8))
+          : 13.0;
       drawDial(
         canvas,
         slots[i].center,
-        13,
+        radius,
         value,
         lit: dial.lit,
         dark: dial.dark,
