@@ -70,7 +70,7 @@ so progress reads as levelling rather than as a bank balance. The counter
 itself shows only the till and the clock; the level belongs to the screens
 either side of it.
 
-Rolling a wrap sends it straight to the shelf, where the paper goes on: the
+Rolling a wrap sends it flying to the shelf, where the paper goes on: the
 prep area used to be held by a finished wrap while the player fetched paper,
 and nothing else could be started meanwhile. Both the grill and the paper are
 aimed at the **area**, not at a slot — whatever is under the finger if it

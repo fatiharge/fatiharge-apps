@@ -124,6 +124,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     _renderShelves(canvas);
     _renderTrash(canvas);
     _renderCustomers(canvas);
+    _renderFlights(canvas);
     _renderCarried(canvas);
     _renderFlashes(canvas);
     _renderClock(canvas);
@@ -303,7 +304,11 @@ class CounterComponent extends PositionComponent with DragCallbacks {
         continue;
       }
       final urun = shelf[i];
-      if (urun == null || run.lifted(region.name, i)) continue;
+      if (urun == null ||
+          run.lifted(region.name, i) ||
+          run.ucuyor(region.name, i)) {
+        continue;
+      }
       final image = assets[asset(urun)];
       if (image != null) drawInQuad(canvas, image, slots[i], AssetFit.alt);
     }
@@ -346,6 +351,15 @@ class CounterComponent extends PositionComponent with DragCallbacks {
           ..color = const Color(0x33202428)
           ..strokeWidth = 2,
       );
+    }
+  }
+
+  void _renderFlights(Canvas canvas) {
+    for (final flight in run.ucuslar) {
+      final image = assets[flight.asset];
+      if (image != null) {
+        drawInQuad(canvas, image, flight.quad, AssetFit.orta);
+      }
     }
   }
 

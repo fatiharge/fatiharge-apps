@@ -21,6 +21,14 @@ class Quad {
     return Quad(at(0), at(1), at(2), at(3));
   }
 
+  /// Part of the way from [a] to [b], corner by corner.
+  factory Quad.between(Quad a, Quad b, double t) => Quad(
+    Offset.lerp(a.topLeft, b.topLeft, t)!,
+    Offset.lerp(a.topRight, b.topRight, t)!,
+    Offset.lerp(a.bottomRight, b.bottomRight, t)!,
+    Offset.lerp(a.bottomLeft, b.bottomLeft, t)!,
+  );
+
   /// An axis-aligned quad, for regions that were never measured as one.
   factory Quad.fromRect(Rect rect) => Quad(
     rect.topLeft,
@@ -93,6 +101,13 @@ class Quad {
     }
     return true;
   }
+
+  Quad shift(Offset by) => Quad(
+    topLeft + by,
+    topRight + by,
+    bottomRight + by,
+    bottomLeft + by,
+  );
 
   Path toPath() => Path()
     ..moveTo(topLeft.dx, topLeft.dy)

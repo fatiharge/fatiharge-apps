@@ -58,6 +58,19 @@ void main() {
       expect(slots.first.angle, closeTo(leaning.angle, 0.001));
     });
 
+    test('travels corner by corner between two places', () {
+      final half = Quad.between(square, leaning, 0.5);
+      expect(half.topLeft, Offset.lerp(square.topLeft, leaning.topLeft, 0.5));
+      expect(Quad.between(square, leaning, 0).center, square.center);
+      expect(Quad.between(square, leaning, 1).center, leaning.center);
+    });
+
+    test('shifts without changing shape', () {
+      final moved = leaning.shift(const Offset(10, -20));
+      expect(moved.width, closeTo(leaning.width, 0.001));
+      expect(moved.center, leaning.center + const Offset(10, -20));
+    });
+
     test('a single slot is the area itself', () {
       expect(square.slots(1).single.center, square.center);
     });

@@ -85,11 +85,15 @@ void main() {
       expect(station.etli, isTrue);
       expect(station.malzemeler, {Malzeme.domates});
 
-      // Rolling parks it, freeing the prep area at once.
+      // Rolling parks it, freeing the prep area at once — and it is drawn
+      // flying there rather than appearing.
       run.flickUp(at('durum_hazirlama'));
       expect(station.sarili, isTrue);
       expect(run.durumIstasyonu, isNull);
       expect(run.durumBekleme.first, isNotNull);
+      expect(run.ucuyor('durum_bekleme', 0), isTrue);
+      run.tick(1);
+      expect(run.ucuyor('durum_bekleme', 0), isFalse, reason: 'it landed');
 
       // Paper is mandatory and goes on at the shelf.
       expect(station.kagitBekliyor, isTrue);

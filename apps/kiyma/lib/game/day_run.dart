@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:kiyma/data/scene.dart';
 import 'package:kiyma/game/balance.dart';
 import 'package:kiyma/game/model/carried.dart';
+import 'package:kiyma/game/model/flight.dart';
 import 'package:kiyma/game/model/order.dart';
 import 'package:kiyma/game/model/products.dart';
 import 'package:kiyma/game/order_maker.dart';
@@ -77,6 +78,13 @@ class DayRun {
   /// finger, which reads as a dropped input.
   final Map<String, ({double left, bool ok})> parlama = {};
 
+  /// Things mid-way between two places. Rendered instead of the slot they
+  /// are headed for, so nothing appears where it was not put.
+  final List<Flight> ucuslar = [];
+
+  bool ucuyor(String region, int slot) =>
+      ucuslar.any((f) => f.region == region && f.slot == slot);
+
   static const _flashFor = 0.28;
 
   void _flash(String region, {bool ok = true}) =>
@@ -118,6 +126,17 @@ class DayRun {
     parlama
       ..updateAll((_, flash) => (left: flash.left - dt, ok: flash.ok))
       ..removeWhere((_, flash) => flash.left <= 0);
+
+    for (final flight in ucuslar) {
+      flight.tick(dt);
+    }
+    if (ucuslar.any((f) => f.landed)) {
+      for (final landed in ucuslar.where((f) => f.landed)) {
+        _flash(landed.region);
+      }
+      ucuslar.removeWhere((f) => f.landed);
+      onChanged();
+    }
 
     for (var i = 0; i < musteriler.length; i++) {
       final customer = musteriler[i];
@@ -261,7 +280,15 @@ class DayRun {
       if (shelf != null) {
         durumBekleme[shelf] = DurumUrun(station);
         durumIstasyonu = null;
-        _flash('durum_bekleme');
+        ucuslar.add(
+          Flight(
+            asset: 'durum_sarili',
+            from: scene['durum_hazirlama'].quad,
+            to: scene['durum_bekleme'].slots[shelf],
+            region: 'durum_bekleme',
+            slot: shelf,
+          ),
+        );
       }
       _flash('durum_hazirlama');
       onChanged();

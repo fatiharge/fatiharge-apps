@@ -19,6 +19,7 @@ import 'package:kiyma/game/day_run.dart';
 import 'package:kiyma/game/kiyma_cubit.dart';
 import 'package:kiyma/game/kiyma_game.dart';
 import 'package:kiyma/game/model/carried.dart';
+import 'package:kiyma/game/model/flight.dart';
 import 'package:kiyma/game/model/items.dart';
 import 'package:kiyma/game/model/order.dart';
 import 'package:kiyma/game/model/products.dart';
