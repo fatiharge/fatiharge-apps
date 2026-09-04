@@ -9,9 +9,6 @@ class Unlock {
 }
 
 /// What the shop has open, and what money opens next.
-///
-/// Locked things are never hidden from the counter — they are dimmed with a
-/// padlock, so the player can see what the next purchase buys.
 class Unlocks {
   Unlocks() : _open = {..._startOpen};
 
@@ -98,4 +95,31 @@ class Unlocks {
   Set<Icecek> get icecekler => icecekHatti
       ? Icecek.values.where((i) => has('icecek_${i.id}')).toSet()
       : const {};
+
+  /// Whether the counter carries [region] yet.
+  ///
+  /// A locked area is not on the counter at all — it arrives with the
+  /// purchase that opens it. Dimming them instead turned day one into a
+  /// counter of padlocks with a shop behind it.
+  bool shows(String region) {
+    for (final malzeme in Malzeme.values) {
+      if (region == malzeme.region) return malzemeler.contains(malzeme);
+    }
+    for (final bilesen in Bilesen.values) {
+      if (region == bilesen.region) return bilesenler.contains(bilesen);
+    }
+    for (final tatli in Tatli.values) {
+      if (region == tatli.region) return tatlilar.contains(tatli);
+    }
+    for (final icecek in Icecek.values) {
+      if (region == icecek.sourceRegion) return icecekler.contains(icecek);
+    }
+    return switch (region) {
+      'tabak_kaynak' || 'tabak_hazirlama' => porsiyonHatti,
+      'bardak_kaynak' || 'bardak_bekletme' => icecekHatti,
+      'musteri_slot_3' => musteriSlots >= 3,
+      'musteri_slot_4' => musteriSlots >= 4,
+      _ => true,
+    };
+  }
 }

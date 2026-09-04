@@ -246,7 +246,10 @@ void main() {
         drag(run, at('malzeme_kiyma'), slot('mangal_alani', 0));
       }
       expect(run.mangal.where((slot) => !slot.bos), hasLength(2));
-      expect(events, contains(DayEvent.gecersiz));
+      // Named, not the generic refusal: the grill is the one area whose
+      // "no" is invisible on the counter.
+      expect(events, contains(DayEvent.mangalDolu));
+      expect(run.parlama['mangal_alani']!.ok, isFalse);
     });
 
     test(
@@ -486,7 +489,8 @@ void main() {
     test('is not there before it is bought', () {
       final run = build()..tap(at('tabak_kaynak'));
       expect(run.tabakIstasyonu, isNull);
-      expect(events, contains(DayEvent.gecersiz));
+      expect(run.regionAt(at('tabak_kaynak'))?.name, isNot('tabak_kaynak'));
+      expect(events, isEmpty);
     });
   });
 
@@ -558,10 +562,21 @@ void main() {
       expect(events, isNot(contains(DayEvent.gecersiz)));
     });
 
-    test('touching something locked says so', () {
+    test('a locked area is not on the counter at all', () {
       final run = build()..tap(at('malzeme_biber'));
-      expect(run.parlama['malzeme_biber']!.ok, isFalse);
-      expect(events, contains(DayEvent.gecersiz));
+      expect(run.parlama, isEmpty);
+      expect(events, isEmpty);
+      expect(run.regionAt(at('malzeme_biber'))?.name, isNot('malzeme_biber'));
+    });
+
+    test('a full grill says so where a tap would be silent', () {
+      final run = build();
+      for (var i = 0; i < 3; i++) {
+        run.tap(at('malzeme_kiyma'));
+      }
+      expect(run.mangal.where((slot) => !slot.bos), hasLength(2));
+      expect(events, contains(DayEvent.mangalDolu));
+      expect(run.parlama['mangal_alani']!.ok, isFalse);
     });
 
     test('a touch that picked something up puts it back', () {

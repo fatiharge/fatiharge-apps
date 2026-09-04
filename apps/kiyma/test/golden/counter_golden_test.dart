@@ -116,4 +116,44 @@ void main() {
 
     await expectLater(frame, matchesGoldenFile('goldens/counter.png'));
   });
+
+  // The other half of the same check: what is *not* on the counter on day one.
+  // Locked areas are absent rather than dimmed, and no rule test can see a
+  // tray that got drawn anyway.
+  testWidgets('the counter on day one, with nothing bought yet', (
+    tester,
+  ) async {
+    final run = DayRun(
+      scene: scene,
+      progress: Progress(),
+      onEvent: (_) {},
+      onChanged: () {},
+      random: math.Random(11),
+    )..musteriler[0] = Customer(order: wrapOrder, day: 1);
+    run.mangal[0].koy();
+
+    late Image frame;
+    await tester.runAsync(() async {
+      final recorder = PictureRecorder();
+      final canvas = Canvas(recorder);
+      CounterComponent(
+        scene: scene,
+        assets: assets,
+        run: run,
+        onPause: () {},
+      ).render(canvas);
+      frame = await recorder.endRecording().toImage(
+        scene.size.width.toInt(),
+        scene.size.height.toInt(),
+      );
+    });
+
+    await expectLater(frame, matchesGoldenFile('goldens/counter_day_one.png'));
+  });
 }
+
+final wrapOrder = Order(
+  tip: UrunTipi.durum,
+  ister: {Malzeme.domates.id},
+  istemez: {Malzeme.sogan.id},
+);

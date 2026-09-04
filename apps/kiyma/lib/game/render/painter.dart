@@ -137,39 +137,6 @@ void drawPanel(
     );
 }
 
-/// A padlock, drawn over anything money has not opened yet.
-///
-/// Locked areas stay on the counter rather than disappearing: the player
-/// should be able to see what the next purchase buys. That is also why the
-/// veil is thin — day one locks nearly the whole counter, and an opaque one
-/// turns the shop into a wall of black rectangles instead of a shop with
-/// things in it. The padlock rides its own disc so it stays readable over
-/// both the bright steel and the dark grill.
-void drawLock(Canvas canvas, Quad quad, {double size = 16}) {
-  canvas.drawPath(quad.toPath(), Paint()..color = const Color(0x4D0E1114));
-  final painter = m.TextPainter(
-    text: m.TextSpan(
-      text: String.fromCharCode(m.Icons.lock.codePoint),
-      style: m.TextStyle(
-        fontSize: size,
-        fontFamily: m.Icons.lock.fontFamily,
-        package: m.Icons.lock.fontPackage,
-        color: const Color(0xF2FFFFFF),
-      ),
-    ),
-    textDirection: TextDirection.ltr,
-  )..layout();
-  canvas.drawCircle(
-    quad.center,
-    size * 0.72,
-    Paint()..color = const Color(0xB3121417),
-  );
-  painter.paint(
-    canvas,
-    quad.center - Offset(painter.width / 2, painter.height / 2),
-  );
-}
-
 /// A rounded meter. Used for cooking progress and for patience, which are the
 /// two clocks the player has to read at a glance.
 void drawBar(

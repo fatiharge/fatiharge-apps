@@ -27,6 +27,7 @@
   "olay": {
     "reddedildi": "Sipariş tutmadı",
     "yandi": "Kıyma yandı",
+    "mangal_dolu": "Mangalda yer yok",
     "gecersiz": "Olmaz",
     "musteri_kizgin": "Müşteri gitti"
   },

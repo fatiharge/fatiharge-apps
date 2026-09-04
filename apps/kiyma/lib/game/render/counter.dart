@@ -153,10 +153,13 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   void _renderSources(Canvas canvas) {
     for (final region in scene.regions) {
       final asset = region.asset;
-      if (asset == null || _dynamic.contains(region.name)) continue;
+      if (asset == null ||
+          _dynamic.contains(region.name) ||
+          !run.progress.unlocks.shows(region.name)) {
+        continue;
+      }
       final image = assets[asset];
       if (image != null) drawInQuad(canvas, image, region.quad, region.fit);
-      if (!_open(region.name)) drawLock(canvas, region.quad);
     }
   }
 
@@ -165,10 +168,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     final slots = region.slots;
     for (var i = 0; i < slots.length; i++) {
       final slot = run.mangal[i];
-      if (!slot.unlocked) {
-        drawLock(canvas, slots[i], size: 13);
-        continue;
-      }
+      if (!slot.unlocked) continue;
       final durum = slot.durum;
       if (durum == null || run.lifted('mangal_alani', i)) continue;
 
@@ -230,10 +230,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
 
   void _renderTabak(Canvas canvas) {
     final region = scene['tabak_hazirlama'];
-    if (!run.progress.unlocks.porsiyonHatti) {
-      drawLock(canvas, region.quad);
-      return;
-    }
+    if (!run.progress.unlocks.shows(region.name)) return;
     final station = run.tabakIstasyonu;
     if (station == null || run.lifted('tabak_hazirlama')) return;
     final composition = region.composition!;
@@ -262,12 +259,9 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     _renderShelf(canvas);
 
     final region = scene['bardak_bekletme'];
+    if (!run.progress.unlocks.shows(region.name)) return;
     final slots = region.slots;
     for (var i = 0; i < slots.length; i++) {
-      if (!run.progress.unlocks.icecekHatti) {
-        drawLock(canvas, slots[i], size: 13);
-        continue;
-      }
       final bardak = run.bardakBekletme[i];
       if (bardak == null || run.lifted('bardak_bekletme', i)) continue;
 
@@ -302,10 +296,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     final capacity = run.progress.unlocks.bekleme;
 
     for (var i = 0; i < slots.length; i++) {
-      if (i >= capacity) {
-        drawLock(canvas, slots[i], size: 13);
-        continue;
-      }
+      if (i >= capacity) continue;
       final urun = run.bekleme[i];
       if (urun == null || run.lifted(region.name, i)) continue;
       final image =
@@ -487,10 +478,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   void _renderCustomers(Canvas canvas) {
     for (var i = 0; i < 4; i++) {
       final quad = scene['musteri_slot_${i + 1}'].quad;
-      if (i >= run.progress.unlocks.musteriSlots) {
-        drawLock(canvas, quad);
-        continue;
-      }
+      if (i >= run.progress.unlocks.musteriSlots) continue;
       final customer = run.musteriler[i];
       if (customer == null) continue;
       _renderCustomer(canvas, quad, customer);
@@ -681,30 +669,5 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       ..translate(-run.carriedAt.dx, -(run.carriedAt.dy - 12));
     drawCentered(canvas, image, run.carriedAt - const Offset(0, 12), width);
     canvas.restore();
-  }
-
-  /// Whether the region's own content is available. Locked areas are drawn
-  /// dimmed rather than removed, so what money buys next stays visible.
-  bool _open(String region) {
-    final unlocks = run.progress.unlocks;
-    for (final malzeme in Malzeme.values) {
-      if (region == malzeme.region) return unlocks.malzemeler.contains(malzeme);
-    }
-    for (final bilesen in Bilesen.values) {
-      if (region == bilesen.region) return unlocks.bilesenler.contains(bilesen);
-    }
-    for (final tatli in Tatli.values) {
-      if (region == tatli.region) return unlocks.tatlilar.contains(tatli);
-    }
-    for (final icecek in Icecek.values) {
-      if (region == icecek.sourceRegion) {
-        return unlocks.icecekler.contains(icecek);
-      }
-    }
-    return switch (region) {
-      'tabak_kaynak' => unlocks.porsiyonHatti,
-      'bardak_kaynak' => unlocks.icecekHatti,
-      _ => true,
-    };
   }
 }

@@ -15,6 +15,7 @@ enum DayEvent {
   reddedildi,
   gecersiz,
   yandi,
+  mangalDolu,
   musteriGeldi,
   musteriMemnun,
   musteriKizgin,
@@ -172,11 +173,15 @@ class DayRun {
   /// The counter's own surface is a region too and it covers half the scene,
   /// so a first-match search would swallow everything on it. Area order makes
   /// the specific area win without any z ordering to maintain.
+  ///
+  /// Areas money has not opened are skipped: nothing is drawn there, so a
+  /// touch that hit one would light up a patch of bare counter.
   SceneRegion? regionAt(Offset point) {
     SceneRegion? best;
     var bestArea = double.infinity;
     for (final region in scene.interactive) {
       if (!region.quad.contains(point)) continue;
+      if (!progress.unlocks.shows(region.name)) continue;
       final bounds = region.quad.bounds;
       final area = bounds.width * bounds.height;
       if (area < bestArea) {
@@ -240,25 +245,27 @@ class DayRun {
           return;
         }
       case 'tabak_kaynak':
-        if (progress.unlocks.porsiyonHatti && tabakIstasyonu == null) {
+        if (tabakIstasyonu == null) {
           tabakIstasyonu = Porsiyon();
           _flash('tabak_kaynak');
           return;
         }
       case 'bardak_kaynak':
-        if (progress.unlocks.icecekHatti) {
-          final free = bardakBekletme.indexWhere((b) => b == null);
-          if (free >= 0) {
-            bardakBekletme[free] = Bardak();
-            _flash('bardak_kaynak');
-            return;
-          }
+        final free = bardakBekletme.indexWhere((b) => b == null);
+        if (free >= 0) {
+          bardakBekletme[free] = Bardak();
+          _flash('bardak_kaynak');
+          return;
         }
     }
     if (region == null) return;
 
     final held = _pickUp(region, point);
     if (held == null) {
+      // Bare counter has nothing to refuse. Now that locked areas are not
+      // drawn at all, a touch on one lands here, and lighting the surface
+      // they sit on would flash half the scene red.
+      if (region.category == 'yapi') return;
       _flash(region.name, ok: false);
       onEvent(DayEvent.gecersiz);
       return;
@@ -276,7 +283,7 @@ class DayRun {
     }
 
     return switch (held) {
-      CigKiyma() => at('mangal_alani', _mangalaKoy),
+      CigKiyma() => at('mangal_alani', _mangalaKoy) || _mangalDolu(),
       // Bread goes to the wrap while that is free, and to the plate after —
       // the plate cannot start without it either.
       Lavas() =>
@@ -309,6 +316,18 @@ class DayRun {
     altin[pick] = null;
     onChanged();
     return true;
+  }
+
+  /// The one refusal that gets said out loud.
+  ///
+  /// Everywhere else a drop that will not take is obvious from the counter —
+  /// the wrap already has onion on it, the shelf is visibly full. The grill
+  /// is four small slots on a dark surface at the edge of the scene, and a
+  /// skewer that quietly does not appear reads as a lost input.
+  bool _mangalDolu() {
+    _flash('mangal_alani', ok: false);
+    onEvent(DayEvent.mangalDolu);
+    return false;
   }
 
   bool _mangalaKoy() {
@@ -375,8 +394,14 @@ class DayRun {
       if (landed != null) _flash(landed.name);
     } else {
       final landed = regionAt(point);
-      if (landed != null) _flash(landed.name, ok: false);
-      onEvent(DayEvent.gecersiz);
+      // Raw meat is the only thing the grill takes, so a refusal there is
+      // always a full grill.
+      if (landed?.name == 'mangal_alani' && held is CigKiyma) {
+        _mangalDolu();
+      } else {
+        if (landed != null) _flash(landed.name, ok: false);
+        onEvent(DayEvent.gecersiz);
+      }
       _putBack(held);
     }
     onChanged();

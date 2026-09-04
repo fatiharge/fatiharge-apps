@@ -87,6 +87,18 @@ walking out would have been. In a debug build, holding the menu's language
 button for three seconds grants ₺1000; XP is untouched, so the level stays
 whatever was actually played.
 
+**Locked is not dimmed, it is absent.** A tray, an area or a place at the
+counter that money has not opened is not drawn and cannot be touched —
+`Unlocks.shows` answers for both the renderer and the hit test, so the two
+can never disagree. Day one was otherwise a wall of padlocks with a shop
+behind it, and the upgrade screen already says what the locks are.
+
+The grill is the one refusal said out loud: raw meat aimed at a full grill
+flashes it red and reports `mangalDolu`. Everywhere else a drop that will not
+take is visible on the counter; four small slots on a dark surface at the
+edge of the scene are not, and a skewer that quietly fails to appear reads as
+a lost input.
+
 Wraps and plates share **one** shelf. Two half-depth ones drew everything at
 half size; merged, the items lean on each other so four fit at the size the
 prep area draws them. Nothing shrinks when it is picked up either — a carried

@@ -51,6 +51,38 @@ void main() {
       expect(progress.seviyeleriIsle(), 0, reason: 'nothing left to take');
     });
 
+    test('the counter only shows what has been bought', () {
+      final unlocks = Unlocks();
+      expect(unlocks.shows('malzeme_domates'), isTrue);
+      for (final region in [
+        'malzeme_biber',
+        'malzeme_ezme',
+        'tatli_baklava',
+        'surahi_ayran',
+        'kola_kaynak',
+        'tabak_kaynak',
+        'tabak_hazirlama',
+        'bardak_kaynak',
+        'bardak_bekletme',
+        'musteri_slot_3',
+        'musteri_slot_4',
+      ]) {
+        expect(unlocks.shows(region), isFalse, reason: region);
+      }
+
+      // A drink is not on the counter until the line it pours into is.
+      unlocks.open('icecek_ayran');
+      expect(unlocks.shows('surahi_ayran'), isFalse);
+      unlocks.open('icecek_hatti');
+      expect(unlocks.shows('surahi_ayran'), isTrue);
+      expect(unlocks.shows('bardak_bekletme'), isTrue);
+
+      unlocks
+        ..open('musteri_3')
+        ..open('musteri_4');
+      expect(unlocks.shows('musteri_slot_4'), isTrue);
+    });
+
     test('the bar is drawn between levels, not from zero', () {
       final progress = Progress()
         ..kazan(Balance.target(1))
