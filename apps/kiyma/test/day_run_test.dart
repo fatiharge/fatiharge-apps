@@ -828,6 +828,23 @@ void main() {
       expect(run.lavasCagiriyor, isFalse);
     });
 
+    test('a burnt skewer left on the grill starts asking for the bin', () {
+      final run = build();
+      run.mangal[0]
+        ..koy()
+        ..tick(60, run.day);
+      expect(run.mangal[0].yanmis, isTrue);
+
+      run.tick(Balance.idleBurnt - 0.2);
+      expect(run.copCagiriyor, isFalse);
+      run.tick(0.3);
+      expect(run.copCagiriyor, isTrue);
+
+      expect(drag(run, slot('mangal_alani', 0), at('cop_alani')), isTrue);
+      run.tick(0.1);
+      expect(run.copCagiriyor, isFalse);
+    });
+
     test('an empty grill starts asking for meat', () {
       final run = build()..tick(Balance.idleGrill - 0.2);
       expect(run.mangalCagiriyor, isFalse);

@@ -83,6 +83,12 @@ abstract final class Balance {
   static const idleGrill = 3.0;
   static const idleWrap = 4.0;
 
+  /// How long a burnt skewer may sit on the grill before the bin asks for it.
+  static const idleBurnt = 5.0;
+
+  /// How long before the counter sweeps a pile up it starts flashing.
+  static const sweptWarning = 3.0;
+
   /// Gold left on the ledge is swept into the till after this long, and only
   /// this much of it survives. Touching it is worth the difference.
   static const sweptAfter = 10.0;

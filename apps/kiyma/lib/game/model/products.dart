@@ -84,8 +84,8 @@ class Altin {
 
   String get asset => tipler[tip % tipler.length];
 
-  /// The last stretch, where the tag turns red.
-  bool get aceleli => kalan <= 3;
+  /// The last stretch, where the pile flashes and the tag turns red.
+  bool get aceleli => kalan <= Balance.sweptWarning;
 }
 
 /// A wrap being built, then carried.

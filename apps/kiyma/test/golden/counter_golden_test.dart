@@ -8,6 +8,7 @@ import 'package:flutter/services.dart' show FontLoader, rootBundle;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kiyma/data/scene.dart';
 import 'package:kiyma/game/assets.dart';
+import 'package:kiyma/game/balance.dart';
 import 'package:kiyma/game/day_run.dart';
 import 'package:kiyma/game/model/items.dart';
 import 'package:kiyma/game/model/order.dart';
@@ -108,7 +109,10 @@ void main() {
       ..bardakBekletme[1] = (Bardak()..icerik = Icecek.kola)
       ..bardakBekletme[2] = Bardak()
       ..altin[0] = Altin(24)
-      ..altin[2] = Altin(8, tip: 1);
+      // The second pile is in its last seconds, so it flashes.
+      ..altin[2] = (Altin(8, tip: 1)..kalan = 1)
+      // The burnt skewer has been sitting long enough for the bin to ask.
+      ..bekleyenYanik = Balance.idleBurnt;
 
     late Image frame;
     await tester.runAsync(() async {
@@ -135,14 +139,18 @@ void main() {
   testWidgets('the counter on day one, with nothing bought yet', (
     tester,
   ) async {
-    final run = DayRun(
-      scene: scene,
-      progress: Progress(),
-      onEvent: (_) {},
-      onChanged: () {},
-      random: math.Random(11),
-    )..musteriler[0] = (Customer(order: wrapOrder, day: 1)..varis = 1);
-    run.mangal[0].koy();
+    final run =
+        DayRun(
+            scene: scene,
+            progress: Progress(),
+            onEvent: (_) {},
+            onChanged: () {},
+            random: math.Random(11),
+          )
+          ..musteriler[0] = (Customer(order: wrapOrder, day: 1)..varis = 1)
+          // An idle counter: the two sources that unblock it are asking.
+          ..bosMangal = Balance.idleGrill
+          ..bosDurum = Balance.idleWrap;
 
     late Image frame;
     await tester.runAsync(() async {

@@ -125,6 +125,12 @@ class DayRun {
 
   bool get lavasCagiriyor => bosDurum >= Balance.idleWrap;
 
+  /// How long a burnt skewer has been holding a slot. The bin is the only
+  /// way out of that, so the bin is what asks.
+  double bekleyenYanik = 0;
+
+  bool get copCagiriyor => bekleyenYanik >= Balance.idleBurnt;
+
   /// Seconds left on the paper's answer to somebody reaching for a wrap that
   /// has not been papered yet.
   double kagitCagiriyor = 0;
@@ -143,6 +149,7 @@ class DayRun {
         ? 0
         : bosMangal + dt;
     bosDurum = durumIstasyonu == null ? bosDurum + dt : 0;
+    bekleyenYanik = mangal.any((slot) => slot.yanmis) ? bekleyenYanik + dt : 0;
     if (kagitCagiriyor > 0) kagitCagiriyor -= dt;
 
     for (final slot in mangal) {

@@ -18,7 +18,13 @@ Rect _whole(Image image) =>
 /// thing is rotated by the top edge's slope. Fitting to the bounding box
 /// instead puts food visibly off the surface it is supposed to rest on,
 /// because the counter leans.
-void drawInQuad(Canvas canvas, Image image, Quad quad, AssetFit fit) {
+void drawInQuad(
+  Canvas canvas,
+  Image image,
+  Quad quad,
+  AssetFit fit, {
+  Paint? paint,
+}) {
   final w = quad.width;
   final h = quad.height;
   canvas
@@ -39,8 +45,34 @@ void drawInQuad(Canvas canvas, Image image, Quad quad, AssetFit fit) {
   };
 
   canvas
-    ..drawImageRect(image, _whole(image), dest, _paint)
+    ..drawImageRect(image, _whole(image), dest, paint ?? _paint)
     ..restore();
+}
+
+/// A halo in [color] hugging [image]'s own silhouette, drawn behind it.
+///
+/// The glow follows the art rather than the region box, because a region is
+/// a hit target: a rectangle of light around a tray of parsley reads as an
+/// overlay laid on the scene, where a halo reads as the thing itself asking.
+/// Laid down three times — once is too faint to find on a busy counter.
+void drawGlow(
+  Canvas canvas,
+  Image image,
+  Quad quad,
+  AssetFit fit,
+  Color color,
+  double strength,
+) {
+  final paint = Paint()
+    ..colorFilter = ColorFilter.mode(
+      color.withValues(alpha: strength.clamp(0, 1)),
+      BlendMode.srcIn,
+    )
+    ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10)
+    ..filterQuality = FilterQuality.medium;
+  for (var i = 0; i < 3; i++) {
+    drawInQuad(canvas, image, quad, fit, paint: paint);
+  }
 }
 
 /// Draws one layer of a built-up product: sized as a fraction of the region's

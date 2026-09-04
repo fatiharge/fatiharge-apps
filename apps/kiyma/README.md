@@ -116,11 +116,15 @@ Customers pay in **gold, onto the ledge they stood at**, in one of three
 random piles, and it only reaches the till when the player touches it. After
 ten seconds the counter sweeps it up on its own and keeps 70 % — what a touch
 buys is the tip, not the sale, and the tag goes red for the last three
-seconds. The counter also points at a step being skipped: the region's own art
-breathes under a warm glow. Three seconds with an empty grill and the mince
-tray asks, four with an empty wrap station and the bread does, and reaching
-for a rolled wrap that has no paper on it makes the paper answer for two and
-a half seconds. None of it changes a rule. The pause button stops everything — asked for, so not the free breather that
+seconds. The counter also points at a step being skipped: the thing that unblocks it
+breathes inside an orange halo of **its own silhouette**, not of its region
+box — a region is a hit target, and a lit rectangle around a tray of parsley
+reads as an overlay where a halo reads as the object asking. Three seconds
+with an empty grill and the mince tray asks, four with an empty wrap station
+and the bread does, five with a burnt skewer on the grill and the bin does,
+and reaching for a rolled wrap with no paper on it makes the paper answer for
+two and a half. A gold pile flashes the same way for its last three seconds.
+None of it changes a rule. The pause button stops everything — asked for, so not the free breather that
 walking out would have been. In a debug build, holding the menu's language
 button for three seconds grants ₺1000; XP is untouched, so the level stays
 whatever was actually played.

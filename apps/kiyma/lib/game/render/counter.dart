@@ -79,7 +79,9 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     MusteriHali.gidiyorKizgin: Color(0xFF7A1F16),
   };
 
-  static const _hint = Color(0xFFFFD24A);
+  // Orange rather than yellow: half of what asks sits on cream or on pale
+  // bread, and yellow disappears into both.
+  static const _hint = Color(0xFFFF8A1F);
   static const _want = Color(0xFF6FCF7C);
   static const _avoid = Color(0xFFE0574A);
 
@@ -220,30 +222,27 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     _ => false,
   };
 
-  /// The region's own art, breathing under a glow.
+  /// The region's own art, breathing inside a halo of its own shape.
   void _renderNudge(Canvas canvas, SceneRegion region, Image? image) {
-    final beat = math.sin(_elapsed * 6);
-    final centre = region.quad.center;
+    if (image == null) return;
+    _breathing(canvas, region.quad.center, () {
+      drawGlow(canvas, image, region.quad, region.fit, _hint, _pulse);
+      drawInQuad(canvas, image, region.quad, region.fit);
+    });
+  }
+
+  /// `0..1`, twice a second or so: the beat everything that asks shares.
+  double get _pulse => 0.55 + 0.45 * math.sin(_elapsed * 6);
+
+  /// Runs [draw] scaled about [centre] on that same beat.
+  void _breathing(Canvas canvas, Offset centre, void Function() draw) {
     canvas
       ..save()
       ..translate(centre.dx, centre.dy)
-      ..scale(1 + 0.09 * beat)
+      ..scale(0.96 + 0.09 * _pulse)
       ..translate(-centre.dx, -centre.dy);
-    if (image != null) drawInQuad(canvas, image, region.quad, region.fit);
-    final glow = 0.18 + 0.18 * beat;
-    canvas
-      ..drawPath(
-        region.quad.toPath(),
-        Paint()..color = _hint.withValues(alpha: glow),
-      )
-      ..drawPath(
-        region.quad.toPath(),
-        Paint()
-          ..color = _hint.withValues(alpha: (glow * 3).clamp(0, 1))
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 3,
-      )
-      ..restore();
+    draw();
+    canvas.restore();
   }
 
   void _renderMangal(Canvas canvas) {
@@ -401,9 +400,17 @@ class CounterComponent extends PositionComponent with DragCallbacks {
 
   /// Drawn rather than loaded: the bin is mandatory in the design and the art
   /// repository has no asset for it. Swap in `cop_kovasi.png` and this
-  /// becomes one `drawInQuad`.
+  /// becomes one `drawInQuad` plus the shared nudge.
   void _renderTrash(Canvas canvas) {
     final quad = scene['cop_alani'].quad;
+    if (run.copCagiriyor) {
+      _breathing(canvas, quad.center, () => _trash(canvas, quad, glow: true));
+      return;
+    }
+    _trash(canvas, quad);
+  }
+
+  void _trash(Canvas canvas, Quad quad, {bool glow = false}) {
     final bounds = quad.bounds.deflate(6);
     final body = Rect.fromLTRB(
       bounds.left + 6,
@@ -411,22 +418,30 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       bounds.right - 2,
       bounds.bottom,
     );
+    final shape = RRect.fromRectAndCorners(
+      body,
+      topLeft: const Radius.circular(6),
+      topRight: const Radius.circular(6),
+    );
+    final lid = RRect.fromRectAndRadius(
+      Rect.fromLTWH(bounds.left, bounds.top + 4, bounds.width, 12),
+      const Radius.circular(6),
+    );
+
+    // A burnt skewer holds a grill slot until somebody bins it, so after a
+    // while the bin says so — the same halo every other hint uses.
+    if (glow) {
+      final halo = Paint()
+        ..color = _hint.withValues(alpha: _pulse)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6);
+      canvas
+        ..drawRRect(shape, halo)
+        ..drawRRect(lid, halo);
+    }
+
     canvas
-      ..drawRRect(
-        RRect.fromRectAndCorners(
-          body,
-          topLeft: const Radius.circular(6),
-          topRight: const Radius.circular(6),
-        ),
-        Paint()..color = const Color(0xFF8E959C),
-      )
-      ..drawRRect(
-        RRect.fromRectAndRadius(
-          Rect.fromLTWH(bounds.left, bounds.top + 4, bounds.width, 12),
-          const Radius.circular(6),
-        ),
-        Paint()..color = const Color(0xFFB4BBC2),
-      );
+      ..drawRRect(shape, Paint()..color = const Color(0xFF8E959C))
+      ..drawRRect(lid, Paint()..color = const Color(0xFFB4BBC2));
     for (var i = 1; i < 4; i++) {
       final x = body.left + body.width * i / 4;
       canvas.drawLine(
@@ -473,7 +488,16 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       final pile = run.altin[i];
       if (pile == null) continue;
       final image = assets[pile.asset];
-      if (image != null) drawInQuad(canvas, image, slots[i], AssetFit.alt);
+      if (image != null) {
+        if (pile.aceleli) {
+          _breathing(canvas, slots[i].center, () {
+            drawGlow(canvas, image, slots[i], AssetFit.alt, _hint, _pulse);
+            drawInQuad(canvas, image, slots[i], AssetFit.alt);
+          });
+        } else {
+          drawInQuad(canvas, image, slots[i], AssetFit.alt);
+        }
+      }
       // Above the pile on its own dark tag: gold on gold cannot be read. It
       // goes red for the last seconds before the counter sweeps it up.
       final tag = Offset(slots[i].center.dx, slots[i].bounds.top - 15);

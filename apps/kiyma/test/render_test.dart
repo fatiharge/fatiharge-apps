@@ -135,6 +135,7 @@ void main() {
           )
           ..bosMangal = Balance.idleGrill
           ..bosDurum = Balance.idleWrap
+          ..bekleyenYanik = Balance.idleBurnt
           ..kagitCagiriyor = Balance.hintFor;
     await tester.pumpWidget(
       MaterialApp(
