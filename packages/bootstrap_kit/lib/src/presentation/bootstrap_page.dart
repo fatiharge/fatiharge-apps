@@ -49,6 +49,7 @@ class BootstrapPage extends StatefulWidget {
     required this.port,
     required this.splash,
     this.errorBuilder,
+    this.minDuration = const Duration(seconds: 1),
     super.key,
   }) : runningBuilder = null;
 
@@ -57,10 +58,15 @@ class BootstrapPage extends StatefulWidget {
     required this.port,
     required this.runningBuilder,
     this.errorBuilder,
+    this.minDuration = const Duration(seconds: 1),
     super.key,
   }) : splash = null;
 
   final BootstrapPort port;
+
+  /// How long the running view is held even when the jobs finish sooner.
+  /// See [BootstrapCubit.minDuration].
+  final Duration minDuration;
 
   /// Renders a failure. Defaults to a minimal message + retry screen.
   final BootstrapErrorBuilder? errorBuilder;
@@ -77,7 +83,10 @@ class BootstrapPage extends StatefulWidget {
 }
 
 class _BootstrapPageState extends State<BootstrapPage> {
-  late final BootstrapCubit _cubit = BootstrapCubit(widget.port);
+  late final BootstrapCubit _cubit = BootstrapCubit(
+    widget.port,
+    minDuration: widget.minDuration,
+  );
 
   @override
   void initState() {

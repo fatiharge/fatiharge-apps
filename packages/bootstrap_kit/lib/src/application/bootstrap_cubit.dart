@@ -9,13 +9,18 @@ import 'package:bootstrap_kit/src/domain/bootstrap_port.dart';
 /// error policy, and emits progress until the flow finishes or stops on a
 /// failure that can be retried from where it left off.
 class BootstrapCubit extends Cubit<BootstrapState> {
-  BootstrapCubit(this._port)
+  BootstrapCubit(this._port, {this.minDuration = const Duration(seconds: 1)})
     : super(const BootstrapRunning(completed: 0, total: 0));
 
   final BootstrapPort _port;
 
   /// Minimum time the running state stays visible, so the view does not flash.
-  static const _minDuration = Duration(seconds: 1);
+  ///
+  /// A second is enough to stop a fast start reading as a glitch. An app whose
+  /// splash is a brand screen worth looking at passes a longer one. Only the
+  /// *remainder* is ever waited out, so raising this never adds to a slow
+  /// start — it only puts a floor under a fast one.
+  final Duration minDuration;
 
   List<BootstrapJob>? _jobs;
   int _resumeFrom = 0;
@@ -40,7 +45,7 @@ class BootstrapCubit extends Cubit<BootstrapState> {
 
     // Only pad the *remaining* time, and only once the flow has succeeded.
     // Starting the timer up front would leave it pending on the failure path.
-    final remaining = _minDuration - elapsed.elapsed;
+    final remaining = minDuration - elapsed.elapsed;
     if (remaining > Duration.zero) {
       await Future<void>.delayed(remaining);
     }
