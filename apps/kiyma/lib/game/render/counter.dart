@@ -63,6 +63,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     dark: Color(0xFF3D2E05),
     icon: Icons.check_rounded,
   );
+  static const _hint = Color(0xFFFFD24A);
   static const _want = Color(0xFF6FCF7C);
   static const _avoid = Color(0xFFE0574A);
 
@@ -146,13 +147,17 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   void render(Canvas canvas) {
     _renderScene(canvas);
     _renderWall(canvas);
+    // Somebody still crossing the shop passes behind what is standing on the
+    // counter; by the time they are at their place nothing is in front of
+    // them anyway, so the two passes never disagree about one customer.
+    _renderCustomers(canvas, arriving: true);
     _renderSources(canvas);
     _renderMangal(canvas);
     _renderDurum(canvas);
     _renderTabak(canvas);
     _renderShelves(canvas);
     _renderTrash(canvas);
-    _renderCustomers(canvas);
+    _renderCustomers(canvas, arriving: false);
     _renderGold(canvas);
     _renderCarried(canvas);
     _renderFlashes(canvas);
@@ -178,28 +183,49 @@ class CounterComponent extends PositionComponent with DragCallbacks {
         continue;
       }
       final image = assets[asset];
-      if (image != null) drawInQuad(canvas, image, region.quad, region.fit);
-
-      // An empty grill stalls everything downstream and costs nothing to
-      // notice, so the tray that fixes it asks rather than waits.
-      if (region.name == 'malzeme_kiyma' && run.mangalCagiriyor) {
-        final glow = 0.18 + 0.18 * math.sin(_elapsed * 6);
-        canvas
-          ..drawPath(
-            region.quad.toPath(),
-            Paint()..color = const Color(0xFFFFD24A).withValues(alpha: glow),
-          )
-          ..drawPath(
-            region.quad.toPath(),
-            Paint()
-              ..color = const Color(
-                0xFFFFD24A,
-              ).withValues(alpha: glow * 3.2)
-              ..style = PaintingStyle.stroke
-              ..strokeWidth = 3,
-          );
+      if (_nudging(region.name)) {
+        _renderNudge(canvas, region, image);
+        continue;
       }
+      if (image != null) drawInQuad(canvas, image, region.quad, region.fit);
     }
+  }
+
+  /// The two places the counter points at, and why.
+  ///
+  /// An empty grill stalls both product lines and costs nothing to notice.
+  /// Reaching for a rolled wrap says the player has not seen that the paper
+  /// is a step. Neither is a rule change — only the counter answering.
+  bool _nudging(String region) => switch (region) {
+    'malzeme_kiyma' => run.mangalCagiriyor,
+    'kagit_kaynak' => run.kagitCagiriyor > 0,
+    _ => false,
+  };
+
+  /// The region's own art, breathing under a glow.
+  void _renderNudge(Canvas canvas, SceneRegion region, Image? image) {
+    final beat = math.sin(_elapsed * 6);
+    final centre = region.quad.center;
+    canvas
+      ..save()
+      ..translate(centre.dx, centre.dy)
+      ..scale(1 + 0.09 * beat)
+      ..translate(-centre.dx, -centre.dy);
+    if (image != null) drawInQuad(canvas, image, region.quad, region.fit);
+    final glow = 0.18 + 0.18 * beat;
+    canvas
+      ..drawPath(
+        region.quad.toPath(),
+        Paint()..color = _hint.withValues(alpha: glow),
+      )
+      ..drawPath(
+        region.quad.toPath(),
+        Paint()
+          ..color = _hint.withValues(alpha: (glow * 3).clamp(0, 1))
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 3,
+      )
+      ..restore();
   }
 
   void _renderMangal(Canvas canvas) {
@@ -540,10 +566,10 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     }
   }
 
-  void _renderCustomers(Canvas canvas) {
+  void _renderCustomers(Canvas canvas, {required bool arriving}) {
     for (var i = 0; i < run.musteriler.length; i++) {
       final customer = run.musteriler[i];
-      if (customer == null) continue;
+      if (customer == null || customer.yerinde == arriving) continue;
       final home = scene['musteri_slot_${i + 1}'].quad;
       _renderCustomer(canvas, home.shift(_walkIn(home, customer)), customer);
     }
@@ -551,15 +577,12 @@ class CounterComponent extends PositionComponent with DragCallbacks {
 
   /// How far a customer still on their way is from their place.
   ///
-  /// They come in from whichever side they were sent in on and slow into the
-  /// slot. Nothing about them counts until they arrive — no patience, no
-  /// card, nothing to hand over — because they have not asked yet.
+  /// They come in from the right of the shop and slow into the slot. Nothing
+  /// about them counts until they arrive — no patience, no card, nothing to
+  /// hand over — because they have not asked for anything yet.
   Offset _walkIn(Quad home, Customer customer) {
     if (customer.yerinde) return Offset.zero;
-    final bounds = home.bounds;
-    final from = customer.soldan
-        ? -(bounds.right + 40)
-        : scene.size.width - bounds.left + 40;
+    final from = scene.size.width - home.bounds.left + 40;
     final left = 1 - customer.varis;
     return Offset(from * left * left, 0);
   }

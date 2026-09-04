@@ -62,7 +62,6 @@ void main() {
               istemez: const {},
             ),
             day: 1,
-            soldan: false,
           )
           ..musteriler[2] = Customer(
             order: Order(

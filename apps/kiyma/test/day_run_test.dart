@@ -359,8 +359,9 @@ void main() {
     });
 
     test('left alone it is swept up, most of it', () {
-      final run = build()..altin[0] = Altin(100);
-      run.tick(Balance.sweptAfter - 0.2);
+      final run = build()
+        ..altin[0] = Altin(100)
+        ..tick(Balance.sweptAfter - 0.2);
       expect(run.altin[0], isNotNull, reason: 'still there to be had');
       expect(run.progress.para, 0);
 
@@ -371,8 +372,9 @@ void main() {
     });
 
     test('a second payment restarts the clock on the pile', () {
-      final run = build()..altin[0] = Altin(10);
-      run.tick(Balance.sweptAfter - 1);
+      final run = build()
+        ..altin[0] = Altin(10)
+        ..tick(Balance.sweptAfter - 1);
       waiting(run, wrapFor(const {}))
         ..odenen = 15
         ..sabirKalan = 0.05;
@@ -724,8 +726,7 @@ void main() {
     });
 
     test('an arriving customer walks in before they order', () {
-      final run = build();
-      run.tick(0.1);
+      final run = build()..tick(0.1);
       final customer = run.musteriler[0]!;
       expect(customer.yerinde, isFalse);
       expect(
@@ -751,9 +752,22 @@ void main() {
       expect(customer.yerinde, isTrue);
     });
 
-    test('an empty grill starts asking for meat', () {
+    test('reaching for an unpapered wrap lights the paper', () {
       final run = build();
-      run.tick(Balance.idleGrill - 0.2);
+      buildWrap(run);
+      run.flickUp(at('durum_hazirlama'));
+      expect(run.kagitCagiriyor, 0);
+
+      expect(run.beginDrag(at('durum_hazirlama')), isFalse);
+      expect(run.kagitCagiriyor, Balance.hintFor);
+
+      drag(run, at('kagit_kaynak'), at('durum_hazirlama'));
+      run.tick(Balance.hintFor + 0.1);
+      expect(run.kagitCagiriyor, lessThanOrEqualTo(0));
+    });
+
+    test('an empty grill starts asking for meat', () {
+      final run = build()..tick(Balance.idleGrill - 0.2);
       expect(run.mangalCagiriyor, isFalse);
 
       run.tick(0.3);

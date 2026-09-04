@@ -69,7 +69,11 @@ abstract final class Balance {
 
   /// Gap between one customer leaving and the next taking the place.
   /// How long a customer takes to walk in and settle at the counter.
-  static const arrivalWalk = 1.1;
+  static const arrivalWalk = 2.0;
+
+  /// How long the counter keeps pointing at the step a player just tried to
+  /// skip.
+  static const hintFor = 2.5;
 
   /// How long the grill may sit completely empty before the mince tray starts
   /// asking for attention.

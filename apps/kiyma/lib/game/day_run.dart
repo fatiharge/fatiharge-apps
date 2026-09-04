@@ -115,6 +115,10 @@ class DayRun {
 
   bool get mangalCagiriyor => bosMangal >= Balance.idleGrill;
 
+  /// Seconds left on the paper's answer to somebody reaching for a wrap that
+  /// has not been papered yet.
+  double kagitCagiriyor = 0;
+
   /// Everything stops: the clock, the grill, the patience bars. The player
   /// asked for it, so it is not the free breather that stepping out of the
   /// counter would have been.
@@ -128,6 +132,7 @@ class DayRun {
     bosMangal = mangal.any((slot) => slot.unlocked && !slot.bos)
         ? 0
         : bosMangal + dt;
+    if (kagitCagiriyor > 0) kagitCagiriyor -= dt;
 
     for (final slot in mangal) {
       if (slot.tick(dt, day)) {
@@ -175,11 +180,7 @@ class DayRun {
     if (_sonrakiGelis <= 0) {
       final free = _bosMusteriSlotu();
       if (free != null) {
-        musteriler[free] = Customer(
-          order: _maker.make(),
-          day: day,
-          soldan: _random.nextBool(),
-        );
+        musteriler[free] = Customer(order: _maker.make(), day: day);
         _sonrakiGelis = Balance.arrivalGap;
         onEvent(DayEvent.musteriGeldi);
         onChanged();
@@ -476,6 +477,11 @@ class DayRun {
         final station = durumIstasyonu;
         if (station != null && station.hazir) {
           return HazirUrun(DurumUrun(station), region.name);
+        }
+        // Reaching for a rolled wrap with no paper on it: the paper is the
+        // step being skipped, so the paper is what answers.
+        if (station != null && station.kagitBekliyor) {
+          kagitCagiriyor = Balance.hintFor;
         }
 
       case 'tabak_hazirlama':

@@ -107,8 +107,10 @@ Customers pay in **gold, onto the ledge they stood at**, in one of three
 random piles, and it only reaches the till when the player touches it. After
 ten seconds the counter sweeps it up on its own and keeps 70 % — what a touch
 buys is the tip, not the sale, and the tag goes red for the last three
-seconds. An empty grill is the other thing the counter nags about: three
-seconds with nothing on it and the mince tray starts blinking. The pause button stops everything — asked for, so not the free breather that
+seconds. The counter also points at a step being skipped: the region's own art
+breathes under a warm glow. Three seconds with an empty grill and the mince
+tray asks; reaching for a rolled wrap that has no paper on it and the paper
+answers for two and a half. Neither changes a rule. The pause button stops everything — asked for, so not the free breather that
 walking out would have been. In a debug build, holding the menu's language
 button for three seconds grants ₺1000; XP is untouched, so the level stays
 whatever was actually played.
