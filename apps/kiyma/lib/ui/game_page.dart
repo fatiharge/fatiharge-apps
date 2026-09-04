@@ -26,25 +26,19 @@ class GamePage extends StatefulWidget {
 }
 
 class _GamePageState extends State<GamePage> {
-  @override
-  void initState() {
-    super.initState();
-    final cubit = getIt<KiymaCubit>();
-    if (cubit.run == null || cubit.run!.bitti) cubit.startDay();
-  }
+  // Built here and closed with the page, which is what ends the run — the
+  // back gesture included.
+  late final KiymaCubit _cubit = getIt<KiymaCubit>()..startDay();
 
   @override
   void dispose() {
-    // Also covers the back gesture: stepping out ends the run.
-    getIt<KiymaCubit>().abandonRun();
+    unawaited(_cubit.close());
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) => BlocProvider.value(
-    value: getIt<KiymaCubit>(),
-    child: const _GameView(),
-  );
+  Widget build(BuildContext context) =>
+      BlocProvider.value(value: _cubit, child: const _GameView());
 }
 
 class _GameView extends StatelessWidget {

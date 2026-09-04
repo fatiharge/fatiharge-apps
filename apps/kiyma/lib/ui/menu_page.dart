@@ -16,8 +16,8 @@ class MenuPage extends StatelessWidget {
   const MenuPage({super.key});
 
   @override
-  Widget build(BuildContext context) => BlocProvider.value(
-    value: getIt<KiymaCubit>(),
+  Widget build(BuildContext context) => BlocProvider(
+    create: (_) => getIt<KiymaCubit>(),
     child: BrandBackground(
       child: BlocBuilder<KiymaCubit, KiymaState>(
         builder: (context, state) => Stack(

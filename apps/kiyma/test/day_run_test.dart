@@ -85,17 +85,22 @@ void main() {
       expect(station.etli, isTrue);
       expect(station.malzemeler, {Malzeme.domates});
 
-      // Paper before the roll is not a step (design doc 3.1).
-      expect(drag(run, at('kagit_kaynak'), at('durum_hazirlama')), isTrue);
-      expect(station.kagitli, isFalse);
-
+      // Rolling parks it, freeing the prep area at once.
       run.flickUp(at('durum_hazirlama'));
       expect(station.sarili, isTrue);
-      expect(drag(run, at('kagit_kaynak'), at('durum_hazirlama')), isTrue);
+      expect(run.durumIstasyonu, isNull);
+      expect(run.durumBekleme.first, isNotNull);
+
+      // Paper is mandatory and goes on at the shelf.
+      expect(station.kagitBekliyor, isTrue);
+      drag(run, slot('durum_bekleme', 0), at('musteri_slot_1'));
+      expect(customer.anaUrunVerildi, isFalse, reason: 'no paper, no sale');
+
+      expect(drag(run, at('kagit_kaynak'), slot('durum_bekleme', 0)), isTrue);
       expect(station.kagitli, isTrue);
 
-      expect(drag(run, at('durum_hazirlama'), at('musteri_slot_1')), isTrue);
-      expect(run.durumIstasyonu, isNull);
+      expect(drag(run, slot('durum_bekleme', 0), at('musteri_slot_1')), isTrue);
+      expect(run.durumBekleme.first, isNull);
       expect(run.musteriler[0], isNull, reason: 'the customer left happy');
       expect(customer.anaUrunVerildi, isTrue);
 
@@ -115,12 +120,28 @@ void main() {
       expect(events, contains(DayEvent.gecersiz));
     });
 
-    test('will not take an ingredient after the roll', () {
+    test('the roll takes the wrap with it, so nothing follows it', () {
       final run = build();
       buildWrap(run);
       run.flickUp(at('durum_hazirlama'));
+
+      expect(run.durumIstasyonu, isNull, reason: 'it left for the shelf');
       drag(run, at('malzeme_domates'), at('durum_hazirlama'));
-      expect(run.durumIstasyonu!.malzemeler, isEmpty);
+      expect(events, contains(DayEvent.gecersiz));
+    });
+
+    test('a wrap the shelf cannot take stays rolled in the prep area', () {
+      final run = build();
+      run.durumBekleme[0] = DurumUrun(Durum());
+      buildWrap(run);
+      run.flickUp(at('durum_hazirlama'));
+
+      final stuck = run.durumIstasyonu!;
+      expect(stuck.sarili, isTrue);
+      expect(stuck.kagitBekliyor, isTrue, reason: 'paper waits for the shelf');
+      // And nothing new can be started until it is moved.
+      drag(run, at('lavas_kaynak'), at('durum_hazirlama'));
+      expect(run.durumIstasyonu, same(stuck));
     });
 
     test('takes the same ingredient only once', () {
@@ -284,9 +305,7 @@ void main() {
       );
       buildWrap(run, malzemeler: {Malzeme.domates, Malzeme.sogan});
       run.flickUp(at('durum_hazirlama'));
-      drag(run, at('kagit_kaynak'), at('durum_hazirlama'));
-
-      drag(run, at('durum_hazirlama'), at('musteri_slot_1'));
+      drag(run, slot('durum_bekleme', 0), at('musteri_slot_1'));
       expect(events, contains(DayEvent.reddedildi));
       expect(run.progress.para, 0);
       // A fifth of what was left, not of the maximum (design doc 8.4).
@@ -303,13 +322,11 @@ void main() {
       final run = build();
       waiting(run, wrapFor({'sogan'}));
       buildWrap(run, malzemeler: {Malzeme.domates});
-      run.flickUp(at('durum_hazirlama'));
-      drag(run, at('kagit_kaynak'), at('durum_hazirlama'));
-
       // One shelf slot is open on day one, and something is already on it.
       run.durumBekleme[0] = DurumUrun(Durum());
-      drag(run, at('durum_hazirlama'), at('musteri_slot_1'));
+      run.flickUp(at('durum_hazirlama'));
       expect(run.durumIstasyonu, isNotNull, reason: 'stuck in the prep area');
+      expect(run.durumIstasyonu!.sarili, isTrue);
     });
 
     test('pays for each item as it is handed over', () {
@@ -403,6 +420,40 @@ void main() {
       final run = build()..tap(at('tabak_kaynak'));
       expect(run.tabakIstasyonu, isNull);
       expect(events, contains(DayEvent.gecersiz));
+    });
+  });
+
+  group('touch feedback', () {
+    test('touching a live source lights it up rather than refusing', () {
+      final run = build()..tap(at('malzeme_domates'));
+      expect(run.flashAt('malzeme_domates'), greaterThan(0));
+      expect(run.parlama['malzeme_domates']!.ok, isTrue);
+      expect(events, isNot(contains(DayEvent.gecersiz)));
+    });
+
+    test('touching something locked says so', () {
+      final run = build()..tap(at('malzeme_biber'));
+      expect(run.parlama['malzeme_biber']!.ok, isFalse);
+      expect(events, contains(DayEvent.gecersiz));
+    });
+
+    test('a touch that picked something up puts it back', () {
+      final run = build();
+      expect(run.beginDrag(at('malzeme_domates')), isTrue);
+      run
+        ..cancelDrag()
+        ..tap(at('malzeme_domates'));
+
+      expect(run.carried, isNull);
+      expect(run.parlama['malzeme_domates']!.ok, isTrue);
+      expect(events, isNot(contains(DayEvent.gecersiz)));
+    });
+
+    test('a glow fades on its own', () {
+      final run = build()..tap(at('malzeme_domates'));
+      expect(run.parlama, isNotEmpty);
+      run.tick(1);
+      expect(run.parlama, isEmpty);
     });
   });
 
@@ -503,9 +554,26 @@ void main() {
       waiting(run, wrapFor(const {}));
       buildWrap(run);
       run.flickUp(at('durum_hazirlama'));
-      drag(run, at('kagit_kaynak'), at('durum_hazirlama'));
-      expect(drag(run, at('durum_hazirlama'), at('cop_alani')), isTrue);
-      expect(run.durumIstasyonu, isNull);
+      expect(drag(run, slot('durum_bekleme', 0), at('cop_alani')), isTrue);
+      expect(run.durumBekleme.first, isNull);
+    });
+  });
+
+  group('the paper', () {
+    test('goes on the wrap nearest the finger, wherever it lands', () {
+      final run = build(unlock: ['durum_bekleme_2', 'durum_bekleme_3'])
+        ..durumBekleme[0] = DurumUrun(Durum()..kagitli = true)
+        ..durumBekleme[2] = DurumUrun(Durum()..sarili = true);
+
+      // Aimed at slot 1, which is empty; slot 2 is the one waiting.
+      expect(drag(run, at('kagit_kaynak'), slot('durum_bekleme', 1)), isTrue);
+      expect((run.durumBekleme[2]! as DurumUrun).durum.kagitli, isTrue);
+    });
+
+    test('does nothing when nothing is waiting for it', () {
+      final run = build()..durumBekleme[0] = DurumUrun(Durum()..kagitli = true);
+      drag(run, at('kagit_kaynak'), slot('durum_bekleme', 0));
+      expect(events, contains(DayEvent.gecersiz));
     });
   });
 }

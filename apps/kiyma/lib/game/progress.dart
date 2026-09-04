@@ -1,6 +1,8 @@
 import 'dart:math' as math;
 
+import 'package:injectable/injectable.dart';
 import 'package:kiyma/game/balance.dart';
+import 'package:kiyma/game/run_summary.dart';
 import 'package:kiyma/game/unlocks.dart';
 
 /// What survives a run: money, the level reached, and what is open.
@@ -8,12 +10,18 @@ import 'package:kiyma/game/unlocks.dart';
 /// [para] is spent; [xp] is not. Levelling is measured against the figure
 /// nothing subtracts from, so buying an upgrade never costs progress — which
 /// is also why the player is shown a level bar and not a bank balance.
+@lazySingleton
 class Progress {
   int para = 0;
   int xp = 0;
   int gun = 1;
 
   final Unlocks unlocks = Unlocks();
+
+  /// The run that just ended. Held here rather than on the cubit because the
+  /// summary is a different screen from the counter, and each screen builds
+  /// its own.
+  RunSummary? sonOturum;
 
   int get hedef => Balance.target(gun);
 

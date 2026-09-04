@@ -85,18 +85,23 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   @override
   void onDragEnd(DragEndEvent event) {
     super.onDragEnd(event);
+    final travel = _last - _start;
+    final duration = _elapsed - _dragTime;
+
+    // A tap reaches here as a drag that never moved, so by now the source has
+    // already been picked up. Put it back before treating it as a tap, or
+    // every touch on a tray reads as a drop onto itself.
+    if (travel.distance < 12 && duration < 0.35) {
+      run
+        ..cancelDrag()
+        ..tap(_start);
+      return;
+    }
     if (run.carried != null) {
       run.endDrag(_last);
       return;
     }
-    // Nothing was picked up, so the gesture was never a carry. Reading tap
-    // and flick out of the same stream is what keeps them from firing
-    // together — a separate TapCallbacks would see both.
-    final travel = _last - _start;
-    final duration = _elapsed - _dragTime;
-    if (travel.distance < 12 && duration < 0.35) {
-      run.tap(_start);
-    } else if (travel.dy < -30 && travel.dy.abs() > travel.dx.abs()) {
+    if (travel.dy < -30 && travel.dy.abs() > travel.dx.abs()) {
       run.flickUp(_start);
     }
   }
@@ -120,6 +125,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     _renderTrash(canvas);
     _renderCustomers(canvas);
     _renderCarried(canvas);
+    _renderFlashes(canvas);
     _renderClock(canvas);
   }
 
@@ -187,15 +193,11 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     if (station == null || run.lifted('durum_hazirlama')) return;
     final composition = region.composition!;
 
-    // Once it is rolled the layers stop being visible, so a single drawing
-    // replaces the whole stack — and once it is wrapped, the paper does.
-    if (station.kagitli) {
+    // A rolled wrap normally leaves for the shelf at once; it only stays
+    // here when the shelf is full, and then it is drawn wrapped.
+    if (station.sarili) {
       final paper = assets['doner_bekleme'];
       if (paper != null) drawInQuad(canvas, paper, region.quad, AssetFit.orta);
-      return;
-    }
-    if (station.sarili) {
-      _layer(canvas, region.quad, composition.finished);
       return;
     }
 
@@ -246,14 +248,18 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       scene['durum_bekleme'],
       run.durumBekleme,
       run.progress.unlocks.durumBekleme,
-      'doner_bekleme',
+      // Rolled but unwrapped reads as unfinished, which it is: the paper goes
+      // on here, and a customer will not take one without it.
+      (urun) => urun is DurumUrun && urun.durum.kagitBekliyor
+          ? 'durum_sarili'
+          : 'doner_bekleme',
     );
     _renderShelf(
       canvas,
       scene['tabak_birakma'],
       run.tabakBirakma,
       run.progress.unlocks.porsiyonBekleme,
-      'porsiyon_hazirlama',
+      (_) => 'porsiyon_hazirlama',
     );
 
     final region = scene['bardak_bekletme'];
@@ -288,7 +294,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     SceneRegion region,
     List<Urun?> shelf,
     int capacity,
-    String asset,
+    String Function(Urun urun) asset,
   ) {
     final slots = region.slots;
     for (var i = 0; i < slots.length; i++) {
@@ -296,8 +302,9 @@ class CounterComponent extends PositionComponent with DragCallbacks {
         drawLock(canvas, slots[i], size: 13);
         continue;
       }
-      if (shelf[i] == null || run.lifted(region.name, i)) continue;
-      final image = assets[asset];
+      final urun = shelf[i];
+      if (urun == null || run.lifted(region.name, i)) continue;
+      final image = assets[asset(urun)];
       if (image != null) drawInQuad(canvas, image, slots[i], AssetFit.alt);
     }
   }
@@ -339,6 +346,31 @@ class CounterComponent extends PositionComponent with DragCallbacks {
           ..color = const Color(0x33202428)
           ..strokeWidth = 2,
       );
+    }
+  }
+
+  /// A short glow where a touch landed: warm when it took, red when the drop
+  /// had nowhere to go.
+  void _renderFlashes(Canvas canvas) {
+    for (final entry in run.parlama.entries) {
+      final region = scene.maybe(entry.key);
+      if (region == null) continue;
+      final alpha = run.flashAt(entry.key).clamp(0.0, 1.0);
+      final colour = entry.value.ok
+          ? const Color(0xFFFFE9B0)
+          : const Color(0xFFE0574A);
+      canvas
+        ..drawPath(
+          region.quad.toPath(),
+          Paint()..color = colour.withValues(alpha: alpha * 0.45),
+        )
+        ..drawPath(
+          region.quad.toPath(),
+          Paint()
+            ..color = colour.withValues(alpha: alpha)
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 2.5,
+        );
     }
   }
 

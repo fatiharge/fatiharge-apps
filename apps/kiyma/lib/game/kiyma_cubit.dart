@@ -1,6 +1,7 @@
 import 'package:injectable/injectable.dart';
 import 'package:kiyma/game/day_run.dart';
 import 'package:kiyma/game/progress.dart';
+import 'package:kiyma/game/run_summary.dart';
 import 'package:kiyma/game/unlocks.dart';
 import 'package:kiyma/game/world.dart';
 import 'package:utility_kit/utility_kit.dart';
@@ -39,31 +40,14 @@ class KiymaState {
   }
 }
 
-/// What a finished run is worth, held so the summary can animate from before
-/// it to after it.
-class RunSummary {
-  const RunSummary({
-    required this.kazanc,
-    required this.xpOnce,
-    required this.gunOnce,
-    required this.atlananGun,
-  });
-
-  final int kazanc;
-  final int xpOnce;
-  final int gunOnce;
-
-  /// How many levels the run crossed.
-  final int atlananGun;
-
-  bool get seviyeAtladi => atlananGun > 0;
-}
-
-/// A singleton because it outlives every screen: the menu, the start card,
-/// the counter and the summary are four routes over one game.
-@lazySingleton
+/// One per screen. What outlives a screen is [Progress]; a run does not —
+/// leaving the counter ends it, so the run belongs to the page that shows it
+/// and dies with the cubit that page built.
+@injectable
 class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
-  KiymaCubit(this._world) : super(_initial);
+  KiymaCubit(this._world, this.progress) : super(_initial) {
+    _emit();
+  }
 
   static const _initial = KiymaState(
     gun: 1,
@@ -76,13 +60,12 @@ class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
   );
 
   final GameWorld _world;
-  final Progress progress = Progress();
+  final Progress progress;
 
   DayRun? run;
-  RunSummary? _oturum;
 
   void startDay() {
-    _oturum = null;
+    progress.sonOturum = null;
     run = DayRun(
       scene: _world.scene,
       progress: progress,
@@ -94,36 +77,35 @@ class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
 
   void _onEvent(DayEvent event) {
     emitEffect(event);
-    if (event == DayEvent.gunBitti) _close();
-  }
-
-  /// Leaving the counter ends the run rather than suspending it: off screen
-  /// the clocks stop, and a run you can step out of is a pause the design
-  /// does not have (10.4).
-  void abandonRun() {
-    if (run != null) _close();
-  }
-
-  /// Banks the run and levels up as far as its XP reaches. Money is what
-  /// feeds XP, but the two are only ever shown apart.
-  void _close() {
-    final current = run;
-    if (current == null) return;
-
-    final xpOnce = progress.xp - current.kazanc;
-    final gunOnce = progress.gun;
-    _oturum = RunSummary(
-      kazanc: current.kazanc,
-      xpOnce: xpOnce,
-      gunOnce: gunOnce,
-      atlananGun: progress.seviyeleriIsle(),
-    );
-    run = null;
-    _emit();
+    if (event == DayEvent.gunBitti) _bank(emitAfter: true);
   }
 
   void buy(Unlock unlock) {
     if (progress.satinAl(unlock)) _emit();
+  }
+
+  /// Closing the page closes the run with it. Nothing is lost: money banks as
+  /// it is earned, and what the run was worth is recorded on [Progress].
+  @override
+  Future<void> close() async {
+    _bank(emitAfter: false);
+    return super.close();
+  }
+
+  /// Banks the run and levels up as far as its XP reaches. Money is what
+  /// feeds XP, but the two are only ever shown apart.
+  void _bank({required bool emitAfter}) {
+    final current = run;
+    if (current == null) return;
+
+    progress.sonOturum = RunSummary(
+      kazanc: current.kazanc,
+      xpOnce: progress.xp - current.kazanc,
+      gunOnce: progress.gun,
+      atlananGun: progress.seviyeleriIsle(),
+    );
+    run = null;
+    if (emitAfter) _emit();
   }
 
   void _emit() => emit(
@@ -133,8 +115,8 @@ class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
       xp: progress.xp,
       seviyeTabani: progress.seviyeTabani,
       hedef: progress.hedef,
-      oturum: _oturum,
-      gunBitti: run == null && _oturum != null,
+      oturum: progress.sonOturum,
+      gunBitti: run == null && progress.sonOturum != null,
     ),
   );
 }

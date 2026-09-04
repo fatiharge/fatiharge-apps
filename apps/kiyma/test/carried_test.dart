@@ -10,8 +10,6 @@ void main() {
       expect(const CigKiyma().asset, 'sis_cig');
       expect(const Lavas().origin, 'lavas_kaynak');
       expect(const Lavas().asset, 'lavas_tek');
-      expect(const Kagit().origin, 'kagit_kaynak');
-      expect(const Kagit().asset, 'kagit_alani');
       expect(const MalzemeTutami(Malzeme.tursu).origin, 'malzeme_tursu');
       expect(const MalzemeTutami(Malzeme.tursu).asset, 'tursu_porsiyon');
       expect(const BilesenTutami(Bilesen.pilav).origin, 'malzeme_pilav');

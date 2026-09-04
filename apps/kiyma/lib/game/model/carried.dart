@@ -50,6 +50,7 @@ class Lavas extends Carried {
   String get asset => 'lavas_tek';
 }
 
+/// Greaseproof paper, applied to a rolled wrap on the shelf.
 class Kagit extends Carried {
   const Kagit();
 

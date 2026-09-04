@@ -2,11 +2,13 @@ import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kiyma/config/injectable.dart';
 import 'package:kiyma/game/balance.dart';
 import 'package:kiyma/game/kiyma_cubit.dart';
 import 'package:kiyma/game/kiyma_game.dart';
+import 'package:kiyma/game/progress.dart';
 import 'package:kiyma/game/world.dart';
 import 'package:kiyma/infrastructure/bootstrap/bootstrap_adapter.dart';
 import 'package:kiyma/route/app_router.dart';
@@ -57,13 +59,12 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  /// Money only ever arrives through a run, so the cubit is the one that
-  /// announces it. Reaching into `progress` alone leaves the screens stale.
-  void earn(int amount) {
-    getIt<KiymaCubit>()
-      ..progress.kazan(amount)
-      ..startDay();
-  }
+  /// Progress is the singleton; every screen builds its own cubit over it.
+  void earn(int amount) => getIt<Progress>().kazan(amount);
+
+  /// The cubit the page under test built, not a fresh one out of get_it.
+  KiymaCubit shownCubit(WidgetTester tester) =>
+      BlocProvider.of<KiymaCubit>(tester.element(find.byType(Hud)));
 
   group('the first run', () {
     test('opens the language question, and only once', () {
@@ -137,7 +138,7 @@ void main() {
 
       expect(find.byType(GameWidget<KiymaGame>), findsOneWidget);
       expect(find.byType(Hud), findsOneWidget);
-      expect(getIt<KiymaCubit>().run, isNotNull);
+      expect(shownCubit(tester).run, isNotNull);
     });
 
     testWidgets('a finished clock hands over to the summary', (tester) async {
@@ -146,7 +147,7 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 400));
 
-      getIt<KiymaCubit>().run!.tick(
+      shownCubit(tester).run!.tick(
         Balance.runLength(1).inSeconds.toDouble() + 1,
       );
       await tester.pump();
@@ -168,7 +169,7 @@ void main() {
       await tester.tap(find.text('₺150'));
       await tester.pumpAndSettle();
 
-      expect(getIt<KiymaCubit>().progress.unlocks.has('malzeme_biber'), isTrue);
+      expect(getIt<Progress>().unlocks.has('malzeme_biber'), isTrue);
       expect(find.text('₺50'), findsOneWidget);
       // Pickles cost 250; the button is there but dead.
       final pickles = tester.widget<InkWell>(

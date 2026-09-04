@@ -72,6 +72,18 @@ class DayRun {
   Carried? carried;
   Offset carriedAt = Offset.zero;
 
+  /// Regions lit up by a touch, and how long they have left. Taking something
+  /// off a tray is otherwise invisible until the thing is already under the
+  /// finger, which reads as a dropped input.
+  final Map<String, ({double left, bool ok})> parlama = {};
+
+  static const _flashFor = 0.28;
+
+  void _flash(String region, {bool ok = true}) =>
+      parlama[region] = (left: _flashFor, ok: ok);
+
+  double flashAt(String region) => (parlama[region]?.left ?? 0) / _flashFor;
+
   /// Seconds left on the counter. A run is a clock: customers keep arriving
   /// as seats free until it runs out.
   late double kalanSure;
@@ -102,6 +114,10 @@ class DayRun {
     for (final bardak in bardakBekletme) {
       bardak?.tick(dt);
     }
+
+    parlama
+      ..updateAll((_, flash) => (left: flash.left - dt, ok: flash.ok))
+      ..removeWhere((_, flash) => flash.left <= 0);
 
     for (var i = 0; i < musteriler.length; i++) {
       final customer = musteriler[i];
@@ -202,6 +218,7 @@ class DayRun {
       case 'tabak_kaynak':
         if (progress.unlocks.porsiyonHatti && tabakIstasyonu == null) {
           tabakIstasyonu = Porsiyon();
+          _flash('tabak_kaynak');
           return;
         }
       case 'bardak_kaynak':
@@ -209,15 +226,30 @@ class DayRun {
           final free = bardakBekletme.indexWhere((b) => b == null);
           if (free >= 0) {
             bardakBekletme[free] = Bardak();
+            _flash('bardak_kaynak');
             return;
           }
         }
     }
+    if (region == null) return;
+    // Touching a source is not a mistake, it is the wrong verb: light it up
+    // so the player sees there is something here to drag.
+    if (_pickUp(region, point) != null) {
+      _flash(region.name);
+      return;
+    }
+    _flash(region.name, ok: false);
     onEvent(DayEvent.gecersiz);
   }
 
   // --- Upward flick: rolling, and nothing else ---
 
+  /// Rolling sends the wrap to the shelf, where the paper goes on.
+  ///
+  /// The prep area was the bottleneck: a rolled wrap sat in it while the
+  /// player fetched paper, and nothing else could be started meanwhile. It
+  /// now leaves as soon as it is rolled. If the shelf is full it stays and
+  /// blocks, which is the shelf's job.
   void flickUp(Offset point) {
     if (bitti) return;
     final station = durumIstasyonu;
@@ -225,8 +257,17 @@ class DayRun {
         station != null &&
         station.sarilabilir) {
       station.sarili = true;
+      final shelf = _ilkBos(durumBekleme, progress.unlocks.durumBekleme);
+      if (shelf != null) {
+        durumBekleme[shelf] = DurumUrun(station);
+        durumIstasyonu = null;
+        _flash('durum_bekleme');
+      }
+      _flash('durum_hazirlama');
+      onChanged();
       return;
     }
+    _flash('durum_hazirlama', ok: false);
     onEvent(DayEvent.gecersiz);
   }
 
@@ -238,14 +279,27 @@ class DayRun {
     if (region == null) return false;
     carried = _pickUp(region, point);
     carriedAt = point;
+    if (carried != null) _flash(region.name);
     return carried != null;
   }
+
+  /// Puts down what a gesture picked up without applying it anywhere.
+  ///
+  /// A tap arrives as a drag that never moved, so the pickup has already
+  /// happened by the time anyone knows it was a tap. Nothing was taken off
+  /// the counter on pickup, so this is only forgetting.
+  void cancelDrag() => carried = null;
 
   void endDrag(Offset point) {
     final held = carried;
     carried = null;
     if (held == null) return;
-    if (!_drop(held, point)) {
+    if (_drop(held, point)) {
+      final landed = regionAt(point);
+      if (landed != null) _flash(landed.name);
+    } else {
+      final landed = regionAt(point);
+      if (landed != null) _flash(landed.name, ok: false);
       onEvent(DayEvent.gecersiz);
       _putBack(held);
     }
@@ -350,6 +404,7 @@ class DayRun {
         return _tabagaBirak(held);
 
       case 'durum_bekleme':
+        if (held is Kagit) return _kagitSar(_slotAt(region, point));
         if (held is! HazirUrun || held.urun is! DurumUrun) return false;
         return _rafaKoy(
           durumBekleme,
@@ -392,9 +447,6 @@ class DayRun {
       case MalzemeTutami(:final malzeme):
         if (!station.malzemeKabul(malzeme)) return false;
         station.malzemeler.add(malzeme);
-      case Kagit():
-        if (!station.kagitBekliyor) return false;
-        station.kagitli = true;
       case _:
         return false;
     }
@@ -429,6 +481,31 @@ class DayRun {
     if (target == null) return false;
     _consume(held);
     raf[target] = held.urun;
+    return true;
+  }
+
+  /// Papers the wrap under the finger, or the nearest one still waiting.
+  ///
+  /// Aimed at the shelf rather than at a slot, for the same reason the grill
+  /// is: picking one of four leaning boxes mid-rush is not a skill worth
+  /// testing.
+  bool _kagitSar(int preferred) {
+    Durum? waiting(int index) {
+      final urun = durumBekleme[index];
+      return urun is DurumUrun && urun.durum.kagitBekliyor ? urun.durum : null;
+    }
+
+    var pick = waiting(preferred) == null ? -1 : preferred;
+    if (pick < 0) {
+      var distance = durumBekleme.length;
+      for (var i = 0; i < durumBekleme.length; i++) {
+        if (waiting(i) == null || (i - preferred).abs() >= distance) continue;
+        distance = (i - preferred).abs();
+        pick = i;
+      }
+    }
+    if (pick < 0) return false;
+    waiting(pick)!.kagitli = true;
     return true;
   }
 
@@ -500,6 +577,10 @@ class DayRun {
       IcecekUrun(:final icecek)
           when order.icecek == icecek && !customer.icecekVerildi =>
         Balance.income(Balance.icecekBase[icecek]!, day),
+      // Paper is mandatory before service (design doc 3.1); it goes on at
+      // the shelf, and a wrap that skipped it is refused like any other
+      // mistake.
+      DurumUrun(:final durum) when durum.kagitBekliyor => null,
       final urun when !customer.anaUrunVerildi && order.anaUrunKabul(urun) =>
         _anaUrunGeliri(urun),
       _ => null,

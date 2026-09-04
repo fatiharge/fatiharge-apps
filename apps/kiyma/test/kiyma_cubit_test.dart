@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kiyma/game/balance.dart';
 import 'package:kiyma/game/day_run.dart';
 import 'package:kiyma/game/kiyma_cubit.dart';
+import 'package:kiyma/game/progress.dart';
 import 'package:kiyma/game/unlocks.dart';
 import 'package:kiyma/game/world.dart';
 
@@ -22,7 +23,7 @@ void main() {
 
   group('KiymaCubit', () {
     test('opens on day one with nothing behind it', () {
-      final cubit = KiymaCubit(world);
+      final cubit = KiymaCubit(world, Progress());
       expect(cubit.state.gun, 1);
       expect(cubit.state.xp, 0);
       expect(cubit.state.hedef, Balance.target(1));
@@ -31,7 +32,7 @@ void main() {
     });
 
     test('a finished run is banked and reported', () async {
-      final cubit = KiymaCubit(world);
+      final cubit = KiymaCubit(world, Progress());
       final effects = <DayEvent>[];
       cubit.effects.listen(effects.add);
 
@@ -49,7 +50,7 @@ void main() {
     });
 
     test('crossing the level takes the day with it', () {
-      final cubit = KiymaCubit(world)..startDay();
+      final cubit = KiymaCubit(world, Progress())..startDay();
       cubit.progress.kazan(Balance.target(1));
       cubit.run!.tick(Balance.runLength(1).inSeconds + 1);
 
@@ -62,7 +63,7 @@ void main() {
     });
 
     test('a run big enough crosses more than one level', () {
-      final cubit = KiymaCubit(world)..startDay();
+      final cubit = KiymaCubit(world, Progress())..startDay();
       cubit.progress.kazan(Balance.target(3));
       cubit.run!.tick(Balance.runLength(1).inSeconds + 1);
 
@@ -71,7 +72,7 @@ void main() {
     });
 
     test('spending never costs a level', () {
-      final cubit = KiymaCubit(world)..startDay();
+      final cubit = KiymaCubit(world, Progress())..startDay();
       cubit.progress.kazan(300);
       cubit.run!.tick(Balance.runLength(1).inSeconds + 1);
       expect(cubit.state.gun, 4, reason: '300 clears the first three');
@@ -82,18 +83,19 @@ void main() {
       expect(cubit.state.para, 150);
     });
 
-    test('leaving the counter ends the run and reports what it took', () {
-      final cubit = KiymaCubit(world)..startDay();
-      cubit.progress.kazan(26);
+    test('closing the page ends the run and records what it took', () async {
+      final progress = Progress();
+      final cubit = KiymaCubit(world, progress)..startDay();
+      progress.kazan(26);
 
-      cubit.abandonRun();
+      await cubit.close();
       expect(cubit.run, isNull, reason: 'stepping out is not a pause');
-      expect(cubit.state.oturum!.kazanc, 26);
-      expect(cubit.state.para, 26, reason: 'money banks as it is earned');
+      expect(progress.sonOturum!.kazanc, 26);
+      expect(progress.para, 26, reason: 'money banks as it is earned');
     });
 
     test('a new run clears the last summary', () {
-      final cubit = KiymaCubit(world);
+      final cubit = KiymaCubit(world, Progress());
       playOut(cubit);
       expect(cubit.state.oturum, isNotNull);
 
@@ -102,14 +104,14 @@ void main() {
       expect(cubit.state.gunBitti, isFalse);
     });
 
-    test('abandoning nothing does nothing', () {
-      final cubit = KiymaCubit(world)..abandonRun();
-      expect(cubit.run, isNull);
-      expect(cubit.state.oturum, isNull);
+    test('closing without a run records nothing', () async {
+      final progress = Progress();
+      await KiymaCubit(world, progress).close();
+      expect(progress.sonOturum, isNull);
     });
 
     test('buying takes the money and opens the lock', () {
-      final cubit = KiymaCubit(world);
+      final cubit = KiymaCubit(world, Progress());
       cubit.progress.kazan(200);
 
       cubit.buy(const Unlock('malzeme_biber', 150));

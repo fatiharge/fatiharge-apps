@@ -63,11 +63,14 @@ class MangalSlot {
 class Durum {
   bool etli = false;
   final Set<Malzeme> malzemeler = {};
+
   bool sarili = false;
+
+  /// Paper goes on after it is rolled, and on the shelf rather than in the
+  /// prep area — rolling sends it there in the same gesture.
   bool kagitli = false;
 
-  /// Ingredients go on after the meat and before the roll — the two rules
-  /// that keep the layer stack meaningful.
+  /// Ingredients go on after the meat and before the roll.
   bool malzemeKabul(Malzeme malzeme) =>
       etli && !sarili && !malzemeler.contains(malzeme);
 
