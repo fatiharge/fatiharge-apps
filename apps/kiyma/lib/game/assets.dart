@@ -47,4 +47,23 @@ class GameAssets {
   Iterable<String> get names => _images.keys;
 
   Image? operator [](String name) => _images[name];
+
+  /// Draws every image once, offscreen, so the GPU has them before the
+  /// counter does.
+  ///
+  /// Decoding happens above; the upload does not, and it lands on whichever
+  /// frame first draws each image — which is the first frame of a day, all
+  /// 54 of them at once, 38 MB including a 2048x1152 background. Here it
+  /// happens behind the brand screen, which is otherwise sitting idle.
+  Future<void> warm() async {
+    final recorder = PictureRecorder();
+    final canvas = Canvas(recorder);
+    const speck = Rect.fromLTWH(0, 0, 1, 1);
+    for (final image in _images.values) {
+      canvas.drawImageRect(image, speck, speck, Paint());
+    }
+    final picture = recorder.endRecording();
+    (await picture.toImage(1, 1)).dispose();
+    picture.dispose();
+  }
 }

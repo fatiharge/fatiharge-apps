@@ -79,4 +79,11 @@ void main() {
       expect(assets[dropped], isNull, reason: dropped);
     }
   });
+
+  test('warming up touches every image and throws for none', () async {
+    // The upload it forces cannot be observed from a test; that it runs over
+    // the whole set without falling over can be.
+    await expectLater(assets.warm(), completes);
+    expect(assets.names, hasLength(greaterThan(50)));
+  });
 }

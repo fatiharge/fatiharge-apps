@@ -129,7 +129,7 @@ class Composition {
 /// A named area of the scene: a source to take from, a station to build on,
 /// a shelf to park on, or a customer's place at the counter.
 class SceneRegion {
-  const SceneRegion({
+  SceneRegion({
     required this.name,
     required this.quad,
     required this.category,
@@ -192,7 +192,11 @@ class SceneRegion {
 
   final Composition? composition;
 
-  List<Quad> get slots => stackRatio == null
+  /// Worked out once. The renderer asks four regions for their slots on
+  /// every frame and none of them ever move; rebuilding the list each time
+  /// was a thousand small allocations a second for an answer that is fixed
+  /// when `scene.json` is parsed.
+  late final List<Quad> slots = stackRatio == null
       ? quad.slots(capacity ?? 1, horizontal: horizontalSlots)
       : quad.stack(capacity ?? 1, stackRatio!);
 }

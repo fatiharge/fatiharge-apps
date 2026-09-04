@@ -25,6 +25,7 @@ class GameWorld {
   Future<void> loadArt() async {
     final art = _art = await GameAssets.load();
     _halos = await Halos.bake(scene, art);
+    await art.warm();
   }
 
   Never _missing(String what) =>
