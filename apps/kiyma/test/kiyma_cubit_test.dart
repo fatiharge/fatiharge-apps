@@ -87,6 +87,26 @@ void main() {
       expect(cubit.state.ilerleyebilir, isTrue);
     });
 
+    test('leaving the counter ends the run and reports what it took', () {
+      final cubit = KiymaCubit(world)..startDay();
+      cubit.progress.kazan(26);
+
+      cubit.abandonRun();
+      expect(cubit.run, isNull, reason: 'stepping out is not a pause');
+      expect(cubit.state.sonOturum, 26);
+      expect(cubit.state.para, 26, reason: 'money banks as it is earned');
+
+      // A fresh run starts its own count.
+      cubit.startDay();
+      expect(cubit.state.sonOturum, 0);
+    });
+
+    test('abandoning nothing does nothing', () {
+      final cubit = KiymaCubit(world)..abandonRun();
+      expect(cubit.run, isNull);
+      expect(cubit.state.sonOturum, 0);
+    });
+
     test('buying takes the money and opens the lock', () {
       final cubit = KiymaCubit(world);
       cubit.progress.kazan(200);

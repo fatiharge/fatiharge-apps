@@ -14,6 +14,7 @@ class KiymaState {
     required this.toplamKazanc,
     required this.hedef,
     required this.kalanMusteri,
+    required this.sonOturum,
     required this.ilerleyebilir,
     required this.gunBitti,
   });
@@ -25,6 +26,9 @@ class KiymaState {
 
   /// Customers still to come, waiting ones included.
   final int kalanMusteri;
+
+  /// What the last run took, for the card that comes after it.
+  final int sonOturum;
 
   final bool ilerleyebilir;
   final bool gunBitti;
@@ -44,6 +48,7 @@ class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
     toplamKazanc: 0,
     hedef: 70,
     kalanMusteri: 0,
+    sonOturum: 0,
     ilerleyebilir: false,
     gunBitti: false,
   );
@@ -53,8 +58,11 @@ class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
 
   DayRun? run;
 
+  int _sonOturum = 0;
+
   /// The day is a counter, not a gate: every run adds to the same total.
   void startDay() {
+    _sonOturum = 0;
     run = DayRun(
       scene: _world.scene,
       progress: progress,
@@ -66,13 +74,29 @@ class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
 
   void _onEvent(DayEvent event) {
     emitEffect(event);
-    if (event == DayEvent.gunBitti) _emit();
+    if (event == DayEvent.gunBitti) {
+      _sonOturum = run?.kazanc ?? 0;
+      _emit();
+    }
+  }
+
+  /// Leaving the counter ends the run rather than suspending it: off screen
+  /// the clocks stop, and a run you can step out of is a pause button the
+  /// design does not have (10.4). Nothing is lost — money banks as it is
+  /// earned.
+  void abandonRun() {
+    final current = run;
+    if (current == null) return;
+    if (!current.bitti) _sonOturum = current.kazanc;
+    run = null;
+    _emit();
   }
 
   /// The player's own choice, and only once the target is behind them.
   void advanceDay() {
     if (progress.gunuIlerlet()) {
       run = null;
+      _sonOturum = 0;
       _emit();
     }
   }
@@ -88,6 +112,7 @@ class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
       toplamKazanc: progress.toplamKazanc,
       hedef: progress.hedef,
       kalanMusteri: run?.kalanMusteri ?? 0,
+      sonOturum: _sonOturum,
       ilerleyebilir: progress.hedefTutturuldu,
       gunBitti: run?.bitti ?? false,
     ),

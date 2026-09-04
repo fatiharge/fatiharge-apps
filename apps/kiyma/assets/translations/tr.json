@@ -1,8 +1,7 @@
 {
   "hud": {
     "para": "₺{}",
-    "gun": "Gün {}",
-    "musteri": "{} müşteri"
+    "gun": "Gün {}"
   },
   "baslangic": {
     "hata": "Tezgah kurulamadı",
@@ -22,7 +21,8 @@
     "hedef": "₺{} / ₺{}",
     "ac": "Tezgahı aç",
     "ilerlet": "Günü ilerlet",
-    "kilitli": "Hedefi tutturunca gün ilerler."
+    "kilitli": "Hedefi tutturunca gün ilerler.",
+    "oturum": "Bu oturumda ₺{} kazandın"
   },
   "magaza": {
     "baslik": "Dükkanı büyüt",

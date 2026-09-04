@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kiyma/data/scene.dart';
 import 'package:kiyma/game/balance.dart';
 import 'package:kiyma/game/day_run.dart';
+import 'package:kiyma/game/model/carried.dart';
 import 'package:kiyma/game/model/items.dart';
 import 'package:kiyma/game/model/order.dart';
 import 'package:kiyma/game/model/products.dart';
@@ -158,7 +159,7 @@ void main() {
       expect(slot.tick(1, 1), isFalse, reason: 'and never again');
     });
 
-    test('burning costs money and blocks the slot until it is binned', () {
+    test('burning costs money and holds the slot until it is binned', () {
       final run = build();
       run.progress.kazan(100);
       waiting(run, wrapFor(const {}));
@@ -172,7 +173,7 @@ void main() {
       expect(events, contains(DayEvent.yandi));
       expect(run.progress.para, 100 - Balance.burnPenalty(1).round());
 
-      // Blocked: no fresh meat goes in while the burnt skewer is there.
+      // The burnt skewer keeps its slot; fresh meat goes to another one.
       drag(run, at('malzeme_kiyma'), slot('mangal_alani', 0));
       expect(run.mangal[0].yanmis, isTrue);
 
@@ -193,10 +194,86 @@ void main() {
       expect(run.mangal[0].yanmis, isTrue);
     });
 
-    test('locked slots refuse meat', () {
+    test('a locked slot passes the meat to an open one', () {
       final run = build();
       drag(run, at('malzeme_kiyma'), slot('mangal_alani', 3));
-      expect(run.mangal[3].bos, isTrue);
+      expect(run.mangal[3].bos, isTrue, reason: 'slot 3 is not bought yet');
+      expect(
+        run.mangal[1].bos,
+        isFalse,
+        reason: 'the nearest open one took it',
+      );
+    });
+
+    test('meat dropped on a full slot slides to the nearest free one', () {
+      final run = build();
+      drag(run, at('malzeme_kiyma'), slot('mangal_alani', 0));
+      expect(run.mangal[0].bos, isFalse);
+
+      drag(run, at('malzeme_kiyma'), slot('mangal_alani', 0));
+      expect(run.mangal[1].bos, isFalse);
+    });
+
+    test('a full grill refuses more meat', () {
+      final run = build();
+      for (var i = 0; i < 3; i++) {
+        drag(run, at('malzeme_kiyma'), slot('mangal_alani', 0));
+      }
+      expect(run.mangal.where((slot) => !slot.bos), hasLength(2));
+      expect(events, contains(DayEvent.gecersiz));
+    });
+
+    test(
+      'aiming anywhere on the grill picks the skewer nearest to burning',
+      () {
+        final run = build(unlock: ['mangal_3', 'mangal_4']);
+        waiting(run, wrapFor(const {}));
+        for (final index in [0, 1, 2]) {
+          run.mangal[index].koy();
+        }
+        // Slot 1 went on first, so it is furthest through the cooked window.
+        cook(run, Balance.rawSeconds + Balance.cookingSeconds + 0.2);
+        run.mangal[1].tick(1.5, run.day);
+
+        expect(run.mangal[3].bos, isTrue);
+        final held = run.beginDrag(slot('mangal_alani', 3));
+        expect(held, isTrue);
+        expect((run.carried! as PismisEt).slot, 1);
+      },
+    );
+
+    test('cooked is handed over before burnt', () {
+      final run = build(unlock: ['mangal_3']);
+      waiting(run, wrapFor(const {}));
+      run.mangal[0].koy();
+      cook(run, 30);
+      expect(run.mangal[0].yanmis, isTrue);
+
+      run.mangal[2].koy();
+      cook(run, Balance.rawSeconds + Balance.cookingSeconds + 0.2);
+      expect(run.mangal[2].durum, Pisme.pismis);
+
+      run.beginDrag(slot('mangal_alani', 1));
+      final held = run.carried! as PismisEt;
+      expect(held.slot, 2);
+      expect(held.yanik, isFalse);
+    });
+
+    test('with nothing cooked, a burnt skewer comes off instead', () {
+      final run = build();
+      waiting(run, wrapFor(const {}));
+      run.mangal[0].koy();
+      cook(run, 30);
+
+      run.beginDrag(slot('mangal_alani', 1));
+      final held = run.carried! as PismisEt;
+      expect(held.slot, 0);
+      expect(held.yanik, isTrue);
+    });
+
+    test('an empty grill hands over nothing', () {
+      final run = build();
+      expect(run.beginDrag(slot('mangal_alani', 0)), isFalse);
     });
   });
 

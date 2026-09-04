@@ -56,6 +56,17 @@ class DayPage extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 14),
+                        if (state.sonOturum > 0) ...[
+                          Text(
+                            'gun.oturum'.tr(args: ['${state.sonOturum}']),
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              color: KiymaPalette.yesil,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                        ],
                         _Target(state: state),
                         const SizedBox(height: 18),
                         ChunkyButton(

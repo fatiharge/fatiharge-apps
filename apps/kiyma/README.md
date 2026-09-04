@@ -71,6 +71,17 @@ half-finished day (11.5) and its reputation system (9) are both gone. What
 losing a customer costs is the seat they occupy for the length of their
 patience bar.
 
+The grill is aimed at as one area, not as four slots. Meat dropped anywhere
+on it fills the slot under the finger or the nearest free one; a drag off it
+takes whatever is under the finger, and failing that the most urgent skewer —
+cooked before burnt, and of the cooked ones the one nearest to burning.
+Hitting an exact slot on a leaning grill was the wrong thing to ask of a
+player mid-rush.
+
+Leaving the counter **ends** the run rather than suspending it. Off screen the
+clocks stop, so a run you can step out of and back into is a pause button the
+design does not have (10.4). Nothing is lost: money banks as it is earned.
+
 ## Where the rules live
 
 `DayRun` is the whole game: the grill, the two prep stations, the shelves, the

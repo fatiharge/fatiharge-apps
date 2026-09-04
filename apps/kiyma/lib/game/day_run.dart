@@ -45,6 +45,7 @@ class DayRun {
     bardakBekletme = List<Bardak?>.filled(3, null);
     musteriler = List<Customer?>.filled(4, null);
     kuyruk = Balance.baseCustomers(day);
+    _acilis = progress.toplamKazanc;
   }
 
   final SceneData scene;
@@ -74,6 +75,11 @@ class DayRun {
   /// Customers still to walk in today. The day is over when this and the
   /// counter are both empty.
   late int kuyruk;
+
+  late final int _acilis;
+
+  /// What this run has taken, as opposed to the cumulative total.
+  int get kazanc => progress.toplamKazanc - _acilis;
   double _sonrakiGelis = 0;
   bool bitti = false;
 
@@ -271,10 +277,7 @@ class DayRun {
 
     switch (region.name) {
       case 'mangal_alani':
-        final index = _slotAt(region, point);
-        final slot = mangal[index];
-        if (slot.alinabilir) return PismisEt(index);
-        if (slot.yanmis) return PismisEt(index, yanik: true);
+        return _mangaldanAl(_slotAt(region, point));
 
       case 'durum_hazirlama':
         final station = durumIstasyonu;
@@ -333,9 +336,9 @@ class DayRun {
     switch (region.name) {
       case 'mangal_alani':
         if (held is! CigKiyma) return false;
-        final slot = mangal[_slotAt(region, point)];
-        if (!slot.unlocked || !slot.bos) return false;
-        slot.koy();
+        final target = _bosSlot(_slotAt(region, point));
+        if (target == null) return false;
+        mangal[target].koy();
         return true;
 
       case 'durum_hazirlama':
@@ -432,6 +435,56 @@ class DayRun {
       if (raf[i] == null) return i;
     }
     return null;
+  }
+
+  // --- The grill, aimed at as one area ---
+
+  /// The skewer a drag starting at [index] picks up.
+  ///
+  /// Hitting an exact slot on a leaning grill is the wrong thing to ask of a
+  /// player mid-rush, so the whole grill is the target: whatever is under the
+  /// finger wins, and failing that the grill hands over its most urgent
+  /// skewer. Cooked before burnt, and of the cooked ones the one nearest to
+  /// burning — that is the one about to cost money.
+  Carried? _mangaldanAl(int index) {
+    final under = mangal[index];
+    if (under.alinabilir) return PismisEt(index);
+    if (under.yanmis) return PismisEt(index, yanik: true);
+
+    var pick = -1;
+    var urgency = -1.0;
+    for (var i = 0; i < mangal.length; i++) {
+      if (!mangal[i].unlocked || !mangal[i].alinabilir) continue;
+      final left = mangal[i].ilerleme(day);
+      if (left > urgency) {
+        urgency = left;
+        pick = i;
+      }
+    }
+    if (pick >= 0) return PismisEt(pick);
+
+    final burnt = _nearest(index, (slot) => slot.yanmis);
+    return burnt == null ? null : PismisEt(burnt, yanik: true);
+  }
+
+  /// [preferred] when it is free, otherwise the closest slot that is.
+  int? _bosSlot(int preferred) {
+    final slot = mangal[preferred];
+    if (slot.unlocked && slot.bos) return preferred;
+    return _nearest(preferred, (slot) => slot.bos);
+  }
+
+  int? _nearest(int from, bool Function(MangalSlot slot) matches) {
+    int? best;
+    var distance = mangal.length;
+    for (var i = 0; i < mangal.length; i++) {
+      if (!mangal[i].unlocked || !matches(mangal[i])) continue;
+      if ((i - from).abs() < distance) {
+        distance = (i - from).abs();
+        best = i;
+      }
+    }
+    return best;
   }
 
   // --- Serving ---

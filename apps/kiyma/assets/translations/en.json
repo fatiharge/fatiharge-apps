@@ -1,8 +1,7 @@
 {
   "hud": {
     "para": "₺{}",
-    "gun": "Day {}",
-    "musteri": "{} customers"
+    "gun": "Day {}"
   },
   "baslangic": {
     "hata": "The counter would not open",
@@ -22,7 +21,8 @@
     "hedef": "₺{} / ₺{}",
     "ac": "Open the counter",
     "ilerlet": "Move on a day",
-    "kilitli": "Meet the target to move on."
+    "kilitli": "Meet the target to move on.",
+    "oturum": "This run brought in ₺{}"
   },
   "magaza": {
     "baslik": "Grow the shop",

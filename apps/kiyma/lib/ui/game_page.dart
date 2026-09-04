@@ -33,6 +33,12 @@ class _GamePageState extends State<GamePage> {
   }
 
   @override
+  void dispose() {
+    getIt<KiymaCubit>().abandonRun();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) => BlocProvider.value(
     value: getIt<KiymaCubit>(),
     child: const _GameView(),
