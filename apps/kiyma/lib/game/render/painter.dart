@@ -91,7 +91,8 @@ void drawText(
   double size = 11,
   Color color = const Color(0xFFFFFFFF),
   bool center = false,
-  bool bold = false,
+  int weight = 500,
+  String? family,
 }) {
   final painter = m.TextPainter(
     text: m.TextSpan(
@@ -99,13 +100,41 @@ void drawText(
       style: m.TextStyle(
         fontSize: size,
         color: color,
-        fontWeight: bold ? FontWeight.w700 : FontWeight.w500,
+        fontFamily: family,
+        fontVariations: family == null
+            ? null
+            : [FontVariation('wght', weight.toDouble())],
+        fontWeight: FontWeight.values[(weight ~/ 100) - 1],
         height: 1.1,
       ),
     ),
     textDirection: TextDirection.ltr,
   )..layout();
   painter.paint(canvas, center ? at - Offset(painter.width / 2, 0) : at);
+}
+
+/// A cream panel with the design's dark outline and hard offset shadow — the
+/// screens' chunky button, drawn into the scene so the HUD belongs to the
+/// game rather than floating over it.
+void drawPanel(
+  Canvas canvas,
+  Rect rect, {
+  Color fill = const Color(0xFFF5E9D7),
+}) {
+  final shape = RRect.fromRectAndRadius(rect, const Radius.circular(9));
+  canvas
+    ..drawRRect(
+      shape.shift(const Offset(0, 3)),
+      Paint()..color = const Color(0xFF2E2A26),
+    )
+    ..drawRRect(shape, Paint()..color = fill)
+    ..drawRRect(
+      shape.deflate(1),
+      Paint()
+        ..color = const Color(0xFF2E2A26)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2,
+    );
 }
 
 /// A padlock, drawn over anything money has not opened yet.

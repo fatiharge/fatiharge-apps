@@ -14,13 +14,11 @@ import 'package:kiyma/infrastructure/bootstrap/bootstrap_adapter.dart';
 import 'package:kiyma/route/app_router.dart';
 import 'package:kiyma/route/app_router.gr.dart';
 import 'package:kiyma/ui/day_page.dart';
-import 'package:kiyma/ui/hud.dart';
 import 'package:kiyma/ui/language_page.dart';
 import 'package:kiyma/ui/level_bar.dart';
 import 'package:kiyma/ui/menu_page.dart';
 import 'package:kiyma/ui/shop_page.dart';
 import 'package:kiyma/ui/summary_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 /// The screens as they are actually reached: through the router, off the same
 /// container bootstrap fills. A page tested on its own would not catch a
@@ -30,10 +28,7 @@ void main() {
 
   late AppRouter router;
 
-  setUpAll(() async {
-    SharedPreferences.setMockInitialValues({});
-    await EasyLocalization.ensureInitialized();
-  });
+  setUpAll(() async => EasyLocalization.ensureInitialized());
 
   setUp(() async {
     await getIt.reset();
@@ -63,8 +58,9 @@ void main() {
   void earn(int amount) => getIt<Progress>().kazan(amount);
 
   /// The cubit the page under test built, not a fresh one out of get_it.
-  KiymaCubit shownCubit(WidgetTester tester) =>
-      BlocProvider.of<KiymaCubit>(tester.element(find.byType(Hud)));
+  KiymaCubit shownCubit(WidgetTester tester) => BlocProvider.of<KiymaCubit>(
+    tester.element(find.byType(GameWidget<KiymaGame>)),
+  );
 
   group('the first run', () {
     test('opens the language question, and only once', () {
@@ -125,7 +121,7 @@ void main() {
       expect(find.byType(ShopPage), findsOneWidget);
     });
 
-    testWidgets('opening the counter starts a run and shows the HUD', (
+    testWidgets('opening the counter starts a run', (
       tester,
     ) async {
       await open(tester, const DayRoute());
@@ -137,7 +133,6 @@ void main() {
       await tester.pump(const Duration(milliseconds: 400));
 
       expect(find.byType(GameWidget<KiymaGame>), findsOneWidget);
-      expect(find.byType(Hud), findsOneWidget);
       expect(shownCubit(tester).run, isNotNull);
     });
 

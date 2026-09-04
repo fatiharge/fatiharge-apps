@@ -23,11 +23,20 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     required this.scene,
     required this.assets,
     required this.run,
+    required this.onPause,
   }) : super(size: Vector2(scene.size.width, scene.size.height));
 
   final SceneData scene;
   final GameAssets assets;
   final DayRun run;
+  final VoidCallback onPause;
+
+  // The HUD lives in the scene, not over it: one coordinate space, the same
+  // art, and a clock that can tick every frame without rebuilding a widget.
+  static const _gold = Rect.fromLTWH(14, 8, 156, 46);
+  static const _clock = Rect.fromLTWH(444, 8, 136, 46);
+  static const _day = Rect.fromLTWH(880, 4, 62, 54);
+  static const _pause = Rect.fromLTWH(956, 8, 54, 46);
 
   /// Areas whose contents change during play, so their idle art is never the
   /// whole story and is drawn by the passes further down.
@@ -91,9 +100,12 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     // already been picked up. Put it back before treating it as a tap, or
     // every touch on a tray reads as a drop onto itself.
     if (travel.distance < 12 && duration < 0.35) {
-      run
-        ..cancelDrag()
-        ..tap(_start);
+      run.cancelDrag();
+      if (_pause.contains(_start)) {
+        onPause();
+        return;
+      }
+      run.tap(_start);
       return;
     }
     if (run.carried != null) {
@@ -123,9 +135,10 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     _renderShelves(canvas);
     _renderTrash(canvas);
     _renderCustomers(canvas);
+    _renderGold(canvas);
     _renderCarried(canvas);
     _renderFlashes(canvas);
-    _renderClock(canvas);
+    _renderHud(canvas);
   }
 
   void _renderScene(Canvas canvas) {
@@ -370,35 +383,105 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     }
   }
 
-  /// The run's clock. Here rather than in the Flutter HUD because it moves
-  /// every frame.
-  void _renderClock(Canvas canvas) {
-    final left = run.kalanSure.ceil();
-    final label = '${left ~/ 60}:${(left % 60).toString().padLeft(2, '0')}';
-    final centre = Offset(scene.size.width / 2, 6);
+  /// What a customer left behind, on the ledge they stood at.
+  void _renderGold(Canvas canvas) {
+    final region = scene['altin_alani'];
+    final slots = region.slots;
+    final coins = assets['altin'];
+    if (coins == null) return;
 
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromCenter(
-          center: centre + const Offset(0, 13),
-          width: 74,
-          height: 30,
+    for (var i = 0; i < slots.length; i++) {
+      final amount = run.altin[i];
+      if (amount == null) continue;
+      drawInQuad(canvas, coins, slots[i], AssetFit.alt);
+      // Above the pile on its own dark tag: gold on gold cannot be read.
+      final tag = Offset(slots[i].center.dx, slots[i].bounds.top - 15);
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromCenter(
+            center: tag + const Offset(0, 8),
+            width: 40,
+            height: 19,
+          ),
+          const Radius.circular(6),
         ),
-        const Radius.circular(9),
-      ),
-      Paint()..color = const Color(0xCC14100F),
-    );
+        Paint()..color = const Color(0xE62E2A26),
+      );
+      drawText(
+        canvas,
+        '$amount',
+        tag,
+        size: 14,
+        weight: 800,
+        family: 'Rubik',
+        center: true,
+        color: const Color(0xFFFFE9B0),
+      );
+    }
+  }
+
+  /// The till, the clock, the day and the pause button, drawn as counter
+  /// signage rather than as an overlay.
+  void _renderHud(Canvas canvas) {
+    drawPanel(canvas, _gold);
+    final coins = assets['altin'];
+    if (coins != null) {
+      drawCentered(canvas, coins, Offset(_gold.left + 34, _gold.center.dy), 46);
+    }
     drawText(
       canvas,
-      label,
-      centre + const Offset(0, 3),
-      size: 21,
-      bold: true,
+      '${run.progress.para}',
+      Offset(_gold.left + 66, _gold.top + 11),
+      size: 22,
+      weight: 800,
+      family: 'Rubik',
+      color: const Color(0xFF2E2A26),
+    );
+
+    final left = run.kalanSure.ceil();
+    drawPanel(canvas, _clock);
+    drawText(
+      canvas,
+      '${left ~/ 60}:${(left % 60).toString().padLeft(2, '0')}',
+      Offset(_clock.center.dx, _clock.top + 8),
+      size: 26,
+      weight: 900,
+      family: 'Rubik',
       center: true,
       color: run.kalanSure < 20
-          ? const Color(0xFFE0574A)
-          : const Color(0xFFF6EFE6),
+          ? const Color(0xFFC4321F)
+          : const Color(0xFF2E2A26),
     );
+
+    final calendar = assets['takvim'];
+    if (calendar != null) {
+      drawInQuad(canvas, calendar, Quad.fromRect(_day), AssetFit.orta);
+      drawText(
+        canvas,
+        '${run.day}',
+        Offset(_day.center.dx, _day.top + 22),
+        size: 24,
+        weight: 900,
+        family: 'Rubik',
+        center: true,
+        color: const Color(0xFF2E2A26),
+      );
+    }
+
+    drawPanel(canvas, _pause);
+    for (final dx in [-6.0, 6.0]) {
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromCenter(
+            center: _pause.center + Offset(dx, 0),
+            width: 7,
+            height: 22,
+          ),
+          const Radius.circular(2),
+        ),
+        Paint()..color = const Color(0xFF2E2A26),
+      );
+    }
   }
 
   void _renderCustomers(Canvas canvas) {

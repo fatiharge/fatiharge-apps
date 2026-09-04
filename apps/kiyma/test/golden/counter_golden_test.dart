@@ -4,6 +4,7 @@ library;
 import 'dart:math' as math;
 import 'dart:ui';
 
+import 'package:flutter/services.dart' show FontLoader, rootBundle;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kiyma/data/scene.dart';
 import 'package:kiyma/game/assets.dart';
@@ -32,6 +33,11 @@ void main() {
   setUpAll(() async {
     scene = await SceneData.load();
     assets = await GameAssets.load();
+    // Without this the HUD's numbers come out as boxes: a golden that cannot
+    // show the text is not much of a check on the text.
+    await (FontLoader(
+      'Rubik',
+    )..addFont(rootBundle.load('assets/fonts/Rubik.ttf'))).load();
   });
 
   testWidgets('the counter, with everything open and in use', (tester) async {
@@ -88,13 +94,20 @@ void main() {
       ..bekleme[2] = PorsiyonUrun(Porsiyon())
       ..bardakBekletme[0] = (Bardak()..doldur(Icecek.ayran))
       ..bardakBekletme[1] = (Bardak()..icerik = Icecek.kola)
-      ..bardakBekletme[2] = Bardak();
+      ..bardakBekletme[2] = Bardak()
+      ..altin[0] = 24
+      ..altin[2] = 8;
 
     late Image frame;
     await tester.runAsync(() async {
       final recorder = PictureRecorder();
       final canvas = Canvas(recorder);
-      CounterComponent(scene: scene, assets: assets, run: run).render(canvas);
+      CounterComponent(
+        scene: scene,
+        assets: assets,
+        run: run,
+        onPause: () {},
+      ).render(canvas);
       frame = await recorder.endRecording().toImage(
         scene.size.width.toInt(),
         scene.size.height.toInt(),

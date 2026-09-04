@@ -41,6 +41,7 @@ class DayRun {
       for (var i = 0; i < 4; i++) MangalSlot(unlocked: i < unlocks.mangalSlots),
     ];
     bekleme = List<Urun?>.filled(3, null);
+    altin = List<int?>.filled(4, null);
     bardakBekletme = List<Bardak?>.filled(3, null);
     musteriler = List<Customer?>.filled(4, null);
     kalanSure = Balance.runLength(day).inSeconds.toDouble();
@@ -83,6 +84,10 @@ class DayRun {
       parlama[region] = (left: _flashFor, ok: ok);
 
   double flashAt(String region) => (parlama[region]?.left ?? 0) / _flashFor;
+
+  /// What each customer left on the ledge, waiting to be picked up. One pile
+  /// per place, so the gold sits where the person who paid it stood.
+  late final List<int?> altin;
 
   /// Seconds left on the counter. A run is a clock: customers keep arriving
   /// as seats free until it runs out.
@@ -229,6 +234,11 @@ class DayRun {
     if (bitti || duraklatildi) return;
     final region = regionAt(point);
     switch (region?.name) {
+      case 'altin_alani':
+        if (_altinTopla(_slotAt(region!, point))) {
+          _flash('altin_alani');
+          return;
+        }
       case 'tabak_kaynak':
         if (progress.unlocks.porsiyonHatti && tabakIstasyonu == null) {
           tabakIstasyonu = Porsiyon();
@@ -281,6 +291,24 @@ class DayRun {
       Surahi() => at('bardak_bekletme', () => _surahiyiDok(held)),
       _ => false,
     };
+  }
+
+  /// Takes the pile under the finger, or the nearest one there is.
+  bool _altinTopla(int preferred) {
+    var pick = altin[preferred] == null ? -1 : preferred;
+    if (pick < 0) {
+      var distance = altin.length;
+      for (var i = 0; i < altin.length; i++) {
+        if (altin[i] == null || (i - preferred).abs() >= distance) continue;
+        distance = (i - preferred).abs();
+        pick = i;
+      }
+    }
+    if (pick < 0) return false;
+    progress.kazan(altin[pick]!);
+    altin[pick] = null;
+    onChanged();
+    return true;
   }
 
   bool _mangalaKoy() {
@@ -612,7 +640,6 @@ class DayRun {
 
     _consume(held);
     customer.odenen += kazanc;
-    progress.kazan(kazanc);
     onEvent(DayEvent.kabul);
 
     if (customer.tamamlandi) _ayril(index, memnun: true);
@@ -637,6 +664,12 @@ class DayRun {
     final customer = musteriler[index];
     if (customer == null) return;
     musteriler[index] = null;
+
+    // They pay on the way out, onto the ledge they were standing at. Nothing
+    // reaches the till until somebody picks it up.
+    if (customer.odenen > 0) {
+      altin[index] = (altin[index] ?? 0) + customer.odenen;
+    }
 
     onEvent(memnun ? DayEvent.musteriMemnun : DayEvent.musteriKizgin);
     _sonrakiGelis = math.max(_sonrakiGelis, Balance.arrivalGap);

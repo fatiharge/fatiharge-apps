@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kiyma/config/injectable.dart';
 import 'package:kiyma/game/world.dart';
 import 'package:kiyma/infrastructure/bootstrap/bootstrap_adapter.dart';
+import 'package:kiyma/infrastructure/language_choice.dart';
 import 'package:kiyma/route/app_router.dart';
 
 void main() {
@@ -44,6 +45,14 @@ void main() {
     final world = getIt<GameWorld>();
     expect(world.scene.regions, isNotEmpty);
     expect(world.art['sis_cig'], isNotNull);
+  });
+
+  test('the first run is decided by a flag of our own', () async {
+    await configureDependencies();
+    expect(BootstrapAdapter.firstRoute().routeName, 'LanguageRoute');
+
+    await getIt<LanguageChoice>().record();
+    expect(BootstrapAdapter.firstRoute().routeName, 'MenuRoute');
   });
 
   test('a locked orientation is nice to have, not a reason to fail', () {

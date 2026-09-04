@@ -1,13 +1,12 @@
 import 'dart:async';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:bootstrap_kit/bootstrap_kit.dart';
 import 'package:flutter/services.dart';
 import 'package:kiyma/config/injectable.dart';
 import 'package:kiyma/game/world.dart';
+import 'package:kiyma/infrastructure/language_choice.dart';
 import 'package:kiyma/route/app_router.dart';
 import 'package:kiyma/route/app_router.gr.dart';
-import 'package:kiyma/route/first_run.dart';
 import 'package:meta/meta.dart';
 
 /// The orientation, then the container, then the scene, then the art.
@@ -52,5 +51,7 @@ class BootstrapAdapter implements BootstrapPort {
   /// until somebody installs the app fresh.
   @visibleForTesting
   static PageRouteInfo<dynamic> firstRoute({bool? chosen}) =>
-      (chosen ?? languageChosen) ? const MenuRoute() : LanguageRoute();
+      (chosen ?? getIt<LanguageChoice>().made)
+      ? const MenuRoute()
+      : LanguageRoute();
 }

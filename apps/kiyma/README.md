@@ -76,8 +76,13 @@ glass. Dragging is still the vocabulary and still the only way to say *who*
 something is for, but requiring it where there is no choice is friction with
 no decision behind it.
 
-The counter's clock is a digital countdown drawn on the canvas, and the pause
-button beside it stops everything — asked for, so not the free breather that
+The HUD is drawn **in** the scene rather than over it: gold, a digital
+countdown, the day on a hanging calendar, and a pause button, all in one
+coordinate space and one art style, with no widget rebuilding at frame rate.
+
+Customers pay in **gold, onto the ledge they stood at**, and it only reaches
+the till when the player touches it; what is left when the clock runs out is
+gone. The pause button stops everything — asked for, so not the free breather that
 walking out would have been. In a debug build, holding the menu's language
 button for three seconds grants ₺1000; XP is untouched, so the level stays
 whatever was actually played.

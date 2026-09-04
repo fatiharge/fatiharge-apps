@@ -1,6 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:kiyma/config/injectable.dart';
+import 'package:kiyma/infrastructure/language_choice.dart';
 import 'package:kiyma/route/app_router.gr.dart';
 import 'package:kiyma/ui/brand.dart';
 import 'package:kiyma/ui/palette.dart';
@@ -26,6 +28,7 @@ class _LanguagePageState extends State<LanguagePage> {
 
   Future<void> _confirm() async {
     await context.setLocale(Locale(_picked));
+    await getIt<LanguageChoice>().record();
     if (!mounted) return;
     if (widget.firstRun) {
       await context.router.replaceAll([const MenuRoute()]);

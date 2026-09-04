@@ -1,3 +1,5 @@
+import 'dart:ui' show VoidCallback;
+
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:kiyma/data/scene.dart';
@@ -11,13 +13,21 @@ import 'package:kiyma/game/render/counter.dart';
 /// One game object per day. Restarting a day builds a new one, which costs
 /// nothing — the images live in [GameAssets] and are never reloaded.
 class KiymaGame extends FlameGame {
-  KiymaGame({required this.scene, required this.art, required this.run});
+  KiymaGame({
+    required this.scene,
+    required this.art,
+    required this.run,
+    required this.onPause,
+  });
 
   final SceneData scene;
 
   /// Not named `assets`: [FlameGame] already has a field by that name.
   final GameAssets art;
   final DayRun run;
+
+  /// The HUD is drawn in the scene, so its buttons are hit-tested there too.
+  final VoidCallback onPause;
 
   @override
   Future<void> onLoad() async {
@@ -31,6 +41,13 @@ class KiymaGame extends FlameGame {
     )..viewfinder.anchor = Anchor.topLeft;
     camera.viewfinder.position = Vector2.zero();
 
-    world.add(CounterComponent(scene: scene, assets: art, run: run));
+    world.add(
+      CounterComponent(
+        scene: scene,
+        assets: art,
+        run: run,
+        onPause: onPause,
+      ),
+    );
   }
 }

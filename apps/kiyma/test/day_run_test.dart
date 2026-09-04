@@ -105,7 +105,10 @@ void main() {
       expect(run.musteriler[0], isNull, reason: 'the customer left happy');
       expect(customer.anaUrunVerildi, isTrue);
 
-      // 10 * 1.08 rounded, plus one ingredient at the flat bonus.
+      // 10 * 1.08 rounded, plus one ingredient at the flat bonus — left on
+      // the ledge, not in the till.
+      expect(run.altin[0], 13);
+      run.tap(slot('altin_alani', 0));
       expect(run.progress.para, 13);
     });
 
@@ -300,6 +303,62 @@ void main() {
     });
   });
 
+  group('the gold', () {
+    test('a served customer leaves it on the ledge, not in the till', () {
+      final run = build();
+      final customer = waiting(run, wrapFor(const {}));
+      buildWrap(run);
+      run.flickUp(at('durum_hazirlama'));
+      drag(run, at('kagit_kaynak'), at('durum_hazirlama'));
+      drag(run, at('durum_hazirlama'), at('musteri_slot_1'));
+
+      expect(run.musteriler[0], isNull, reason: 'they left happy');
+      expect(run.progress.para, 0, reason: 'nothing is banked yet');
+      expect(run.altin[0], customer.odenen);
+      expect(run.altin[0], greaterThan(0));
+    });
+
+    test('it lands where the customer stood', () {
+      final run = build();
+      waiting(run, wrapFor(const {}), slot: 1)
+        ..odenen = 25
+        ..sabirKalan = 0.05;
+      run.tick(0.1);
+
+      expect(run.altin[0], isNull);
+      expect(run.altin[1], 25);
+    });
+
+    test('a touch anywhere on the ledge takes the nearest pile', () {
+      final run = build()
+        ..altin[3] = 40
+        ..tap(slot('altin_alani', 0));
+
+      expect(run.progress.para, 40);
+      expect(run.altin[3], isNull);
+    });
+
+    test('two customers at the same place stack up', () {
+      final run = build();
+      waiting(run, wrapFor(const {}))
+        ..odenen = 10
+        ..sabirKalan = 0.05;
+      run.tick(0.1);
+      waiting(run, wrapFor(const {}))
+        ..odenen = 15
+        ..sabirKalan = 0.05;
+      run.tick(0.1);
+
+      expect(run.altin[0], 25);
+    });
+
+    test('an empty ledge does nothing', () {
+      final run = build()..tap(slot('altin_alani', 2));
+      expect(run.progress.para, 0);
+      expect(events, contains(DayEvent.gecersiz));
+    });
+  });
+
   group('the customer', () {
     test('refuses a wrap carrying something on the avoid list', () {
       final run = build();
@@ -313,7 +372,7 @@ void main() {
 
       drag(run, at('durum_hazirlama'), at('musteri_slot_1'));
       expect(events, contains(DayEvent.reddedildi));
-      expect(run.progress.para, 0);
+      expect(run.altin[0], isNull, reason: 'a refusal pays nothing');
       // A fifth of what was left, not of the maximum (design doc 8.4).
       expect(
         customer.sabirKalan,
@@ -352,7 +411,7 @@ void main() {
       expect(drag(run, at('tatli_baklava'), at('musteri_slot_1')), isTrue);
       expect(customer.tatliVerildi, isTrue);
       expect(
-        run.progress.para,
+        customer.odenen,
         Balance.income(Balance.tatliBase[Tatli.baklava]!, 1),
       );
       expect(run.musteriler[0], isNotNull, reason: 'the wrap is still owed');
@@ -360,8 +419,8 @@ void main() {
       customer.sabirKalan = 0.05;
       run.tick(0.1);
       expect(run.musteriler[0], isNull);
-      // The money for what they did get stays; there is nothing else to lose.
-      expect(run.progress.para, customer.odenen);
+      // They pay for what they did get, on the way out.
+      expect(run.altin[0], customer.odenen);
     });
 
     test('a customer nobody serves holds the seat until they give up', () {

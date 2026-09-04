@@ -12,7 +12,6 @@ import 'package:kiyma/game/kiyma_game.dart';
 import 'package:kiyma/game/world.dart';
 import 'package:kiyma/route/app_router.gr.dart';
 import 'package:kiyma/ui/brand.dart';
-import 'package:kiyma/ui/hud.dart';
 import 'package:kiyma/ui/palette.dart';
 import 'package:utility_kit/utility_kit.dart';
 
@@ -65,14 +64,11 @@ class _GameView extends StatelessWidget {
             return Stack(
               fit: StackFit.expand,
               children: [
-                if (run != null) _GameHost(run: run),
-                Align(
-                  alignment: Alignment.topCenter,
-                  child: Hud(
-                    state: state,
+                if (run != null)
+                  _GameHost(
+                    run: run,
                     onPause: () => cubit.duraklat(durdur: true),
                   ),
-                ),
                 if (state.duraklatildi)
                   _PauseOverlay(onResume: () => cubit.duraklat(durdur: false)),
                 const _Toast(),
@@ -140,9 +136,10 @@ class _PauseOverlay extends StatelessWidget {
 /// [GameWidget] restarts the engine when handed a new game object, and the
 /// parent rebuilds whenever money moves.
 class _GameHost extends StatefulWidget {
-  const _GameHost({required this.run});
+  const _GameHost({required this.run, required this.onPause});
 
   final DayRun run;
+  final VoidCallback onPause;
 
   @override
   State<_GameHost> createState() => _GameHostState();
@@ -153,7 +150,12 @@ class _GameHostState extends State<_GameHost> {
 
   KiymaGame _build() {
     final world = getIt<GameWorld>();
-    return KiymaGame(scene: world.scene, art: world.art, run: widget.run);
+    return KiymaGame(
+      scene: world.scene,
+      art: world.art,
+      run: widget.run,
+      onPause: widget.onPause,
+    );
   }
 
   @override

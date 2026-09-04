@@ -80,7 +80,12 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: GameWidget(
-          game: KiymaGame(scene: scene, art: assets, run: run),
+          game: KiymaGame(
+            scene: scene,
+            art: assets,
+            run: run,
+            onPause: () {},
+          ),
         ),
       ),
     );
@@ -103,7 +108,12 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: GameWidget(
-          game: KiymaGame(scene: scene, art: assets, run: run),
+          game: KiymaGame(
+            scene: scene,
+            art: assets,
+            run: run,
+            onPause: () {},
+          ),
         ),
       ),
     );

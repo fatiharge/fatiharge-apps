@@ -54,6 +54,16 @@ COP_ALANI = {
     "quad": [[0, 470], [92, 470], [104, 576], [0, 576]],
 }
 
+# Where a customer leaves what they paid: the wooden ledge they stand at,
+# one pile under each of the four places. Derived from `tezgah_ust_kenari` and
+# inset, so it wins the hit test against the ledge it sits on.
+ALTIN_ALANI = {
+    "name": "altin_alani",
+    "category": "altin",
+    "kapasite": 4,
+    "asset_fit": "alt",
+}
+
 KEEP = (
     "name", "x", "y", "w", "h", "quad", "category",
     "kapasite", "asset", "asset_fit", "slot_yon", "istif", "kompozisyon",
@@ -139,6 +149,27 @@ def merged_shelf(regions):
     }
 
 
+def gold_area(regions):
+    ledge = next(r for r in regions if r["name"] == "tezgah_ust_kenari")["quad"]
+
+    def at(u, v):
+        top = [ledge[0][i] + (ledge[1][i] - ledge[0][i]) * u for i in (0, 1)]
+        bottom = [ledge[3][i] + (ledge[2][i] - ledge[3][i]) * u for i in (0, 1)]
+        return [round(top[i] + (bottom[i] - top[i]) * v, 1) for i in (0, 1)]
+
+    quad = [at(0.04, 0.3), at(0.99, 0.3), at(0.99, 1), at(0.04, 1)]
+    xs = [p[0] for p in quad]
+    ys = [p[1] for p in quad]
+    return {
+        **ALTIN_ALANI,
+        "x": round(min(xs)),
+        "y": round(min(ys)),
+        "w": round(max(xs) - min(xs)),
+        "h": round(max(ys) - min(ys)),
+        "quad": quad,
+    }
+
+
 def slim_region(region):
     out = {k: region[k] for k in KEEP if k in region}
     if "asset" in out:
@@ -204,7 +235,11 @@ def main():
             for r in regions["regions"]
             if r["name"] not in DROPPED
         ]
-        + [merged_shelf(regions["regions"]), COP_ALANI],
+        + [
+            merged_shelf(regions["regions"]),
+            gold_area(regions["regions"]),
+            COP_ALANI,
+        ],
     }
     with open(f"{DST}/data/scene.json", "w") as out:
         json.dump(scene, out, ensure_ascii=False, indent=2)

@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:easy_localization/src/localization.dart';
 import 'package:easy_localization/src/translations.dart';
 import 'package:flutter/widgets.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Loads the words before any test runs.
 ///
@@ -13,6 +14,9 @@ import 'package:flutter/widgets.dart';
 /// on what the screen says. Flutter runs this once for the whole tree.
 Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   loadTranslations('tr');
+  // The container resolves SharedPreferences before anything else, so every
+  // test that brings it up needs a store to resolve against.
+  SharedPreferences.setMockInitialValues({});
   await testMain();
 }
 
