@@ -3,17 +3,19 @@ import 'dart:math' as math;
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kiyma/data/scene.dart';
-import 'package:kiyma/game/assets.dart';
-import 'package:kiyma/game/balance.dart';
-import 'package:kiyma/game/day_run.dart';
-import 'package:kiyma/game/halo.dart';
-import 'package:kiyma/game/kiyma_game.dart';
-import 'package:kiyma/game/model/items.dart';
-import 'package:kiyma/game/model/order.dart';
-import 'package:kiyma/game/model/products.dart';
-import 'package:kiyma/game/progress.dart';
-import 'package:kiyma/game/unlocks.dart';
+import 'package:kiyma/domain/balance.dart';
+import 'package:kiyma/domain/day_run.dart';
+import 'package:kiyma/domain/model/items.dart';
+import 'package:kiyma/domain/model/order.dart';
+import 'package:kiyma/domain/model/products.dart';
+import 'package:kiyma/domain/progress.dart';
+import 'package:kiyma/domain/scene.dart';
+import 'package:kiyma/domain/unlocks.dart';
+import 'package:kiyma/infrastructure/assets.dart';
+import 'package:kiyma/presentation/kiyma_game.dart';
+import 'package:kiyma/presentation/render/halo.dart';
+
+import 'support/scene_from_disk.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -23,7 +25,7 @@ void main() {
   late Halos halos;
 
   setUpAll(() async {
-    scene = await SceneData.load();
+    scene = sceneFromDisk();
     assets = await GameAssets.load();
     halos = await Halos.bake(scene, assets);
   });

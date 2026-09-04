@@ -6,9 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show FontLoader, rootBundle;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kiyma/config/injectable.dart';
-import 'package:kiyma/game/progress.dart';
-import 'package:kiyma/game/run_summary.dart';
-import 'package:kiyma/game/world.dart';
+import 'package:kiyma/domain/progress.dart';
+import 'package:kiyma/domain/run_summary.dart';
+import 'package:kiyma/infrastructure/world.dart';
 import 'package:kiyma/route/app_router.dart';
 import 'package:kiyma/route/app_router.gr.dart';
 

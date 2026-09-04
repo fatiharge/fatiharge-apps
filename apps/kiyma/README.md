@@ -8,6 +8,35 @@ The game design lives outside this repository, in the art project
 `app_plan/` is how it was to be built. This README covers only what a
 developer needs to work on the code.
 
+## The layers
+
+```
+domain/         the rules, and the value types they move: the run, the
+                counter's geometry, the balance numbers, the scene model.
+                Pure Dart. No Flutter, no Flame, no IO.
+application/    the cubit: state and flow for a screen.
+presentation/   the pages, the Flame game and everything that draws.
+infrastructure/ what bootstrap loads and what outlives a screen: the scene
+                and asset readers, the world they fill, the language flag.
+route/ config/  the composition root, reachable from anywhere.
+```
+
+`test/layers_test.dart` enforces it. Nothing in a tree says which side of a
+line a file is on — you have to open it and read its imports — and the whole
+test strategy rests on `DayRun` being engine-free. The only thing that used to
+stop somebody importing Flame into it was remembering.
+
+The app is **one feature**, so there is no `features/` directory: `Progress`
+and `Unlocks` are shared by the menu, the day card, the shop, the run and the
+summary, so any split would either be a single level carrying no information
+or several features that all depend on each other. The other two apps in the
+repo are feature-first because they have several features; this one has the
+counter.
+
+`infrastructure` may see `presentation` in exactly one place, and `world.dart`
+says why: it holds what bootstrap pre-renders, and a blurred silhouette is a
+drawing.
+
 ## One coordinate space
 
 Every position in the game — the painted layers, all 35 regions, the recipe
@@ -51,6 +80,11 @@ filled the bar in the first few frames and then left it sitting at 100 % for
 most of the time it was on screen. Four jobs is also four steps, and one of
 them (`art`, 54 images) is most of the work; the bar is honest about the wait
 rather than pretending to be a byte counter.
+
+The hold is **1.8 s**, not the three it started at. Startup is about 60 ms,
+so the rest is brand, paid on every launch: long enough to read the wordmark
+and see half a breath of it, short enough not to be a toll, and still three to
+six times the headroom the art job needs on a slow phone.
 
 `StartupPage` is the brand screen from the design: cream ground, tiled dots,
 the wordmark in its charcoal outline, and a skewer painted rather than loaded

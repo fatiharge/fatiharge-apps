@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kiyma/game/balance.dart';
-import 'package:kiyma/game/day_run.dart';
-import 'package:kiyma/game/kiyma_cubit.dart';
-import 'package:kiyma/game/progress.dart';
-import 'package:kiyma/game/unlocks.dart';
-import 'package:kiyma/game/world.dart';
+import 'package:kiyma/application/kiyma_cubit.dart';
+import 'package:kiyma/domain/balance.dart';
+import 'package:kiyma/domain/day_run.dart';
+import 'package:kiyma/domain/progress.dart';
+import 'package:kiyma/domain/unlocks.dart';
+import 'package:kiyma/infrastructure/world.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

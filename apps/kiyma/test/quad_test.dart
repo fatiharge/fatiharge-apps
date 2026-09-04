@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kiyma/core/quad.dart';
+import 'package:kiyma/domain/quad.dart';
 
 void main() {
   group('Quad', () {

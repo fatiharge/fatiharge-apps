@@ -1,14 +1,16 @@
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kiyma/data/scene.dart';
-import 'package:kiyma/game/model/items.dart';
+import 'package:kiyma/domain/model/items.dart';
+import 'package:kiyma/domain/scene.dart';
+
+import 'support/scene_from_disk.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late SceneData scene;
 
-  setUpAll(() async => scene = await SceneData.load());
+  setUp(() => scene = sceneFromDisk());
 
   group('scene.json', () {
     test('is in the 1024x576 space every coordinate was measured in', () {

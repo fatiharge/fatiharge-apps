@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kiyma/ui/palette.dart';
-import 'package:kiyma/ui/splash.dart';
+import 'package:kiyma/presentation/palette.dart';
+import 'package:kiyma/presentation/splash.dart';
 
 void main() {
   Future<void> show(

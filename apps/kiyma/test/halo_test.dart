@@ -1,8 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kiyma/data/scene.dart';
-import 'package:kiyma/game/assets.dart';
-import 'package:kiyma/game/halo.dart';
-import 'package:kiyma/game/model/products.dart';
+import 'package:kiyma/domain/model/products.dart';
+import 'package:kiyma/domain/scene.dart';
+import 'package:kiyma/infrastructure/assets.dart';
+import 'package:kiyma/presentation/render/halo.dart';
+
+import 'support/scene_from_disk.dart';
 
 /// The glows are baked at startup, so nothing checks them at runtime: a name
 /// that stopped matching a region would simply stop glowing, silently.
@@ -14,7 +16,7 @@ void main() {
   late Halos halos;
 
   setUpAll(() async {
-    scene = await SceneData.load();
+    scene = sceneFromDisk();
     art = await GameAssets.load();
     halos = await Halos.bake(scene, art);
   });

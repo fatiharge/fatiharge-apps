@@ -4,21 +4,22 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kiyma/application/kiyma_cubit.dart';
 import 'package:kiyma/config/injectable.dart';
-import 'package:kiyma/game/balance.dart';
-import 'package:kiyma/game/kiyma_cubit.dart';
-import 'package:kiyma/game/kiyma_game.dart';
-import 'package:kiyma/game/progress.dart';
-import 'package:kiyma/game/world.dart';
+import 'package:kiyma/domain/balance.dart';
+import 'package:kiyma/domain/progress.dart';
 import 'package:kiyma/infrastructure/bootstrap/bootstrap_adapter.dart';
+import 'package:kiyma/infrastructure/world.dart';
+import 'package:kiyma/presentation/day_page.dart';
+import 'package:kiyma/presentation/kiyma_game.dart';
+import 'package:kiyma/presentation/language_page.dart';
+import 'package:kiyma/presentation/level_bar.dart';
+import 'package:kiyma/presentation/menu_page.dart';
+import 'package:kiyma/presentation/shop_page.dart';
+import 'package:kiyma/presentation/summary_page.dart';
 import 'package:kiyma/route/app_router.dart';
 import 'package:kiyma/route/app_router.gr.dart';
-import 'package:kiyma/ui/day_page.dart';
-import 'package:kiyma/ui/language_page.dart';
-import 'package:kiyma/ui/level_bar.dart';
-import 'package:kiyma/ui/menu_page.dart';
-import 'package:kiyma/ui/shop_page.dart';
-import 'package:kiyma/ui/summary_page.dart';
+
 import '../support/app_harness.dart';
 
 /// The screens as they are actually reached: through the router, off the same

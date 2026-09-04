@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:kiyma/presentation/palette.dart';
 import 'package:kiyma/route/app_router.dart';
-import 'package:kiyma/ui/palette.dart';
 
 class KiymaApp extends StatelessWidget {
   const KiymaApp({required this.router, super.key});

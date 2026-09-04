@@ -11,13 +11,13 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:auto_route/auto_route.dart' as _i8;
 import 'package:flutter/material.dart' as _i9;
-import 'package:kiyma/ui/day_page.dart' as _i1;
-import 'package:kiyma/ui/game_page.dart' as _i2;
-import 'package:kiyma/ui/language_page.dart' as _i3;
-import 'package:kiyma/ui/menu_page.dart' as _i4;
-import 'package:kiyma/ui/shop_page.dart' as _i5;
-import 'package:kiyma/ui/startup_page.dart' as _i6;
-import 'package:kiyma/ui/summary_page.dart' as _i7;
+import 'package:kiyma/presentation/day_page.dart' as _i1;
+import 'package:kiyma/presentation/game_page.dart' as _i2;
+import 'package:kiyma/presentation/language_page.dart' as _i3;
+import 'package:kiyma/presentation/menu_page.dart' as _i4;
+import 'package:kiyma/presentation/shop_page.dart' as _i5;
+import 'package:kiyma/presentation/startup_page.dart' as _i6;
+import 'package:kiyma/presentation/summary_page.dart' as _i7;
 
 /// generated route for
 /// [_i1.DayPage]

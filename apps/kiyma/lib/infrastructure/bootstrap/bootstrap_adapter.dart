@@ -1,10 +1,11 @@
 import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:bootstrap_kit/bootstrap_kit.dart';
 import 'package:flutter/services.dart';
 import 'package:kiyma/config/injectable.dart';
-import 'package:kiyma/game/world.dart';
 import 'package:kiyma/infrastructure/language_choice.dart';
+import 'package:kiyma/infrastructure/world.dart';
 import 'package:kiyma/route/app_router.dart';
 import 'package:kiyma/route/app_router.gr.dart';
 import 'package:meta/meta.dart';

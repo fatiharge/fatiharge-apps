@@ -2,8 +2,8 @@ import 'package:bootstrap_kit/bootstrap_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kiyma/config/injectable.dart';
-import 'package:kiyma/ui/splash.dart';
-import 'package:kiyma/ui/startup_page.dart';
+import 'package:kiyma/presentation/splash.dart';
+import 'package:kiyma/presentation/startup_page.dart';
 
 /// A port with jobs the test controls, so the startup screen can be driven
 /// without loading the real scene.

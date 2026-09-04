@@ -1,20 +1,22 @@
 import 'dart:math' as math;
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kiyma/data/scene.dart';
-import 'package:kiyma/game/balance.dart';
-import 'package:kiyma/game/day_run.dart';
-import 'package:kiyma/game/model/carried.dart';
-import 'package:kiyma/game/model/items.dart';
-import 'package:kiyma/game/model/order.dart';
-import 'package:kiyma/game/model/products.dart';
-import 'package:kiyma/game/progress.dart';
+import 'package:kiyma/domain/balance.dart';
+import 'package:kiyma/domain/day_run.dart';
+import 'package:kiyma/domain/model/carried.dart';
+import 'package:kiyma/domain/model/items.dart';
+import 'package:kiyma/domain/model/order.dart';
+import 'package:kiyma/domain/model/products.dart';
+import 'package:kiyma/domain/progress.dart';
+import 'package:kiyma/domain/scene.dart';
+
+import 'support/scene_from_disk.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late SceneData scene;
-  setUpAll(() async => scene = await SceneData.load());
+  setUp(() => scene = sceneFromDisk());
 
   final events = <DayEvent>[];
 

@@ -1,8 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kiyma/data/scene.dart';
-import 'package:kiyma/game/assets.dart';
-import 'package:kiyma/game/model/items.dart';
-import 'package:kiyma/game/model/products.dart';
+import 'package:kiyma/domain/model/items.dart';
+import 'package:kiyma/domain/model/products.dart';
+import 'package:kiyma/infrastructure/assets.dart';
+
+import 'support/scene_from_disk.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -62,7 +63,7 @@ void main() {
   });
 
   test('every image the scene points at is loaded', () async {
-    final scene = await SceneData.load();
+    final scene = sceneFromDisk();
     for (final name in scene.itemAssets) {
       expect(assets[name], isNotNull, reason: name);
     }

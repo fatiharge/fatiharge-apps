@@ -1,9 +1,9 @@
 import 'dart:math' as math;
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kiyma/game/model/items.dart';
-import 'package:kiyma/game/order_maker.dart';
-import 'package:kiyma/game/unlocks.dart';
+import 'package:kiyma/domain/model/items.dart';
+import 'package:kiyma/domain/order_maker.dart';
+import 'package:kiyma/domain/unlocks.dart';
 
 void main() {
   group('OrderMaker', () {

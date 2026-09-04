@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kiyma/game/model/carried.dart';
-import 'package:kiyma/game/model/items.dart';
-import 'package:kiyma/game/model/products.dart';
+import 'package:kiyma/domain/model/carried.dart';
+import 'package:kiyma/domain/model/items.dart';
+import 'package:kiyma/domain/model/products.dart';
 
 void main() {
   group('what the hand can hold', () {

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kiyma/game/gesture.dart';
+import 'package:kiyma/domain/gesture.dart';
 
 /// The one part of the input path a widget test cannot reach — it needs a live
 /// game loop and a real pointer — so it is arithmetic here and tested here.

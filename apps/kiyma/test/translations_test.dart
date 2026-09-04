@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kiyma/game/unlocks.dart';
+import 'package:kiyma/domain/unlocks.dart';
 
 /// The two files, read as they ship.
 ///
@@ -89,7 +89,7 @@ void main() {
   test('no Turkish words are hard-coded in lib', () {
     const allowed = {
       'lib/app.dart': ['Kıyma'],
-      'lib/ui/language_page.dart': ['Türkçe'],
+      'lib/presentation/language_page.dart': ['Türkçe'],
     };
     final literal = RegExp(r"'([^'\n]*[ğüşıİöçĞÜŞÖÇ][^'\n]*)'");
     final offenders = <String>[];
