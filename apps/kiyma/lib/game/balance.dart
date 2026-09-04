@@ -15,8 +15,12 @@ abstract final class Balance {
   static const rawSeconds = 2.0;
   static const cookingSeconds = 4.0;
 
-  /// The window where meat can be taken off, narrowing until day 24.
-  static double cookedWindow(int day) => math.max(2.5, 6 - day * 0.15);
+  /// The window where meat can be taken off, narrowing with the day.
+  ///
+  /// Twice the design doc's figures. Six seconds on day one read as a trap
+  /// rather than as a window: by the time the player has noticed the skewer
+  /// is ready and moved to it, most of it is gone.
+  static double cookedWindow(int day) => math.max(5, 12 - day * 0.3);
 
   /// Charged the moment meat burns, not when it is binned. Money only —
   /// patience is untouched, which is what keeps the risk local and the third

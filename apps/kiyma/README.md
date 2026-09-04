@@ -70,6 +70,12 @@ so progress reads as levelling rather than as a bank balance. The counter
 itself shows only the till and the clock; the level belongs to the screens
 either side of it.
 
+**A touch places what has one place to go** — meat on the grill, an
+ingredient on the wrap, a component on the plate, a jug into the first empty
+glass. Dragging is still the vocabulary and still the only way to say *who*
+something is for, but requiring it where there is no choice is friction with
+no decision behind it.
+
 Rolling a wrap sends it flying to the shelf, where the paper goes on: the
 prep area used to be held by a finished wrap while the player fetched paper,
 and nothing else could be started meanwhile. Both the grill and the paper are

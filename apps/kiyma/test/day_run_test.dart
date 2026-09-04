@@ -427,6 +427,66 @@ void main() {
     });
   });
 
+  group('a touch places what has one place to go', () {
+    test('meat goes on the grill', () {
+      final run = build()..tap(at('malzeme_kiyma'));
+      expect(run.mangal[0].bos, isFalse);
+    });
+
+    test('bread starts the wrap, then the plate', () {
+      final run = build(unlock: ['porsiyon_hatti'])..tap(at('lavas_kaynak'));
+      expect(run.durumIstasyonu, isNotNull);
+
+      run
+        ..tap(at('tabak_kaynak'))
+        ..tap(at('lavas_kaynak'));
+      expect(run.tabakIstasyonu!.lavasli, isTrue, reason: 'the wrap is taken');
+    });
+
+    test('cooked meat finds the wrap waiting for it', () {
+      final run = build()
+        ..tap(at('lavas_kaynak'))
+        ..tap(at('malzeme_kiyma'));
+      cook(run, Balance.rawSeconds + Balance.cookingSeconds + 0.2);
+
+      run.tap(slot('mangal_alani', 0));
+      expect(run.durumIstasyonu!.etli, isTrue);
+      expect(run.mangal[0].bos, isTrue, reason: 'it came off the grill');
+    });
+
+    test('an ingredient lands on the wrap it belongs to', () {
+      final run = build()
+        ..tap(at('lavas_kaynak'))
+        ..tap(at('malzeme_kiyma'));
+      cook(run, Balance.rawSeconds + Balance.cookingSeconds + 0.2);
+      run
+        ..tap(slot('mangal_alani', 0))
+        ..tap(at('malzeme_domates'));
+      expect(run.durumIstasyonu!.malzemeler, {Malzeme.domates});
+    });
+
+    test('a plate component never lands on a wrap', () {
+      final run = build(unlock: ['porsiyon_hatti', 'bilesen_ezme'])
+        ..tap(at('lavas_kaynak'))
+        ..tap(at('malzeme_ezme'));
+      expect(run.durumIstasyonu!.malzemeler, isEmpty);
+      expect(run.tabakIstasyonu, isNull);
+    });
+
+    test('a jug fills the first empty glass', () {
+      final run = build(unlock: ['icecek_hatti', 'icecek_ayran'])
+        ..tap(at('bardak_kaynak'))
+        ..tap(at('surahi_ayran'));
+      expect(run.bardakBekletme[0]!.doluyor, isTrue);
+    });
+
+    test('a dessert still needs saying who it is for', () {
+      final run = build(unlock: ['tatli_baklava'])..tap(at('tatli_baklava'));
+      expect(run.carried, isNull);
+      expect(events, isNot(contains(DayEvent.gecersiz)));
+    });
+  });
+
   group('touch feedback', () {
     test('touching a live source lights it up rather than refusing', () {
       final run = build()..tap(at('malzeme_domates'));

@@ -230,6 +230,13 @@ class DayRun {
 
   // --- Tap: sources with exactly one destination (design doc 13) ---
 
+  /// A touch does what the obvious drag would have done.
+  ///
+  /// Dragging is still the vocabulary, but making it the *only* way to move
+  /// an ingredient is friction with no decision behind it: there is exactly
+  /// one place a pinch of onion can go. Where the destination is ambiguous —
+  /// a dessert, a bottle, a finished product — the touch only lights the
+  /// source up and the drag stays the way to say where.
   void tap(Offset point) {
     if (bitti) return;
     final region = regionAt(point);
@@ -251,14 +258,57 @@ class DayRun {
         }
     }
     if (region == null) return;
-    // Touching a source is not a mistake, it is the wrong verb: light it up
-    // so the player sees there is something here to drag.
-    if (_pickUp(region, point) != null) {
-      _flash(region.name);
+
+    final held = _pickUp(region, point);
+    if (held == null) {
+      _flash(region.name, ok: false);
+      onEvent(DayEvent.gecersiz);
       return;
     }
-    _flash(region.name, ok: false);
-    onEvent(DayEvent.gecersiz);
+    _flash(region.name);
+    if (_yerlestir(held)) onChanged();
+  }
+
+  /// The one place the thing in [held] can go, if there is only one.
+  bool _yerlestir(Carried held) {
+    bool at(String region, bool Function() place) {
+      if (!place()) return false;
+      _flash(region);
+      return true;
+    }
+
+    return switch (held) {
+      CigKiyma() => at('mangal_alani', _mangalaKoy),
+      // Bread goes to the wrap while that is free, and to the plate after —
+      // the plate cannot start without it either.
+      Lavas() =>
+        at('durum_hazirlama', () => _durumaBirak(held)) ||
+            at('tabak_hazirlama', () => _tabagaBirak(held)),
+      PismisEt(yanik: false) =>
+        at('durum_hazirlama', () => _durumaBirak(held)) ||
+            at('tabak_hazirlama', () => _tabagaBirak(held)),
+      MalzemeTutami() => at('durum_hazirlama', () => _durumaBirak(held)),
+      BilesenTutami() => at('tabak_hazirlama', () => _tabagaBirak(held)),
+      Surahi() => at('bardak_bekletme', () => _surahiyiDok(held)),
+      _ => false,
+    };
+  }
+
+  bool _mangalaKoy() {
+    final target = _bosSlot(0);
+    if (target == null) return false;
+    mangal[target].koy();
+    return true;
+  }
+
+  bool _surahiyiDok(Surahi held) {
+    for (final bardak in bardakBekletme) {
+      if (bardak != null && bardak.bos) {
+        bardak.doldur(held.icecek);
+        return true;
+      }
+    }
+    return false;
   }
 
   // --- Upward flick: rolling, and nothing else ---

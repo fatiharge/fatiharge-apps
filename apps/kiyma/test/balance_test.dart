@@ -3,10 +3,10 @@ import 'package:kiyma/game/balance.dart';
 
 void main() {
   group('Balance', () {
-    test('the cooked window narrows and then holds at 2.5s', () {
-      expect(Balance.cookedWindow(1), closeTo(5.85, 0.001));
-      expect(Balance.cookedWindow(24), closeTo(2.5, 0.001));
-      expect(Balance.cookedWindow(60), 2.5);
+    test('the cooked window narrows and then holds at 5s', () {
+      expect(Balance.cookedWindow(1), closeTo(11.7, 0.001));
+      expect(Balance.cookedWindow(24), closeTo(5, 0.001));
+      expect(Balance.cookedWindow(60), 5);
     });
 
     test('patience shortens and then holds at 12s', () {
