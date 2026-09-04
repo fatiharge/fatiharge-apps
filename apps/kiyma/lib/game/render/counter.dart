@@ -49,7 +49,9 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     'durum_hazirlama',
   };
 
-  // Two states worth a badge: on the fire, and ready but burning down.
+  // What a slot is doing, in one badge. A tick rather than a clock on the
+  // ready one: green and a clock reads as "waiting", and what the player has
+  // to know is that this skewer is done and the ring is running out.
   static const ({Color lit, Color dark, IconData icon}) _cooking = (
     lit: Color(0xFFF3A431),
     dark: Color(0xFF4A1712),
@@ -58,7 +60,12 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   static const ({Color lit, Color dark, IconData icon}) _ready = (
     lit: Color(0xFF7BD154),
     dark: Color(0xFF1B3A18),
-    icon: Icons.schedule_rounded,
+    icon: Icons.check_rounded,
+  );
+  static const ({Color lit, Color dark, IconData icon}) _burnt = (
+    lit: Color(0xFFE0574A),
+    dark: Color(0xFF2A1310),
+    icon: Icons.priority_high_rounded,
   );
 
   Offset _last = Offset.zero;
@@ -190,17 +197,18 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       if (image != null) {
         drawInQuad(canvas, image, slots[i], AssetFit.orta);
       }
-      // Burnt is the end of the clock and the charred skewer says so on its
-      // own; a badge there just reads as another thing to attend to.
-      if (durum == Pisme.yanmis) continue;
-      final ready = durum == Pisme.pismis;
-      final dial = ready ? _ready : _cooking;
+      // Filling while it cooks, draining while it is worth taking, and full
+      // red once it is only taking up a slot.
+      final (dial, value) = switch (durum) {
+        Pisme.pismis => (_ready, 1 - slot.ilerleme(run.day)),
+        Pisme.yanmis => (_burnt, 1.0),
+        _ => (_cooking, slot.pismeOrani),
+      };
       drawDial(
         canvas,
         slots[i].center,
         13,
-        // Filling while it cooks, draining while it is worth taking.
-        ready ? 1 - slot.ilerleme(run.day) : slot.pismeOrani,
+        value,
         lit: dial.lit,
         dark: dial.dark,
         icon: dial.icon,
