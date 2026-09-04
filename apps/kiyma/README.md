@@ -35,6 +35,14 @@ the `restart` policy. There is no reduced game to fall back to, and a scene
 file that will not parse is not something a retry fixes. They are three jobs
 rather than one so the splash bar moves and a failure names the step.
 
+The splash bar shows the **lower** of the two things the screen is waiting on
+— how far the jobs have got, and how much of the three-second brand hold has
+passed. Everything loads in under 100 ms, so taking the higher of the two
+filled the bar in the first few frames and then left it sitting at 100 % for
+most of the time it was on screen. Four jobs is also four steps, and one of
+them (`art`, 54 images) is most of the work; the bar is honest about the wait
+rather than pretending to be a byte counter.
+
 `StartupPage` is the brand screen from the design: cream ground, tiled dots,
 the wordmark in its charcoal outline, and a skewer painted rather than loaded
 — this is the screen the art is being loaded *behind*, so it cannot use any of

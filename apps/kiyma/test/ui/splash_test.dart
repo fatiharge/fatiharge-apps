@@ -44,30 +44,29 @@ void main() {
     expect(style.shadows, hasLength(10));
   });
 
-  testWidgets('shows how far startup has got', (tester) async {
-    await show(tester, 0.5);
-    expect(barValue(tester), 0.5);
-  });
-
-  testWidgets('the bar keeps moving after the jobs are done', (tester) async {
-    // Everything loaded at once; only the hold is left to wait out.
-    await show(tester, 1);
-    expect(barValue(tester), 1);
-
-    await show(tester, 0, hold: const Duration(seconds: 4));
-    expect(barValue(tester), 0);
-    await tester.pump(const Duration(seconds: 2));
-    expect(barValue(tester), greaterThan(0.3));
-    await tester.pump(const Duration(seconds: 2));
-    expect(barValue(tester), 1);
-  });
-
-  testWidgets('real progress wins when it is ahead of the clock', (
+  testWidgets('the bar measures the whole wait, not just the jobs', (
     tester,
   ) async {
-    await show(tester, 0.8, hold: const Duration(seconds: 10));
-    await tester.pump(const Duration(milliseconds: 100));
-    expect(barValue(tester), 0.8);
+    // What actually happens: everything loads in under 100 ms and the rest of
+    // the three seconds is the brand hold. The bar has to spend that time
+    // moving, or it fills in the first frames and then looks broken.
+    await show(tester, 1, hold: const Duration(seconds: 4));
+    expect(barValue(tester), 0);
+
+    await tester.pump(const Duration(seconds: 2));
+    expect(barValue(tester), closeTo(0.5, 0.05));
+    await tester.pump(const Duration(seconds: 2));
+    expect(barValue(tester), 1);
+  });
+
+  testWidgets('and it cannot finish while a job is still running', (
+    tester,
+  ) async {
+    // The other direction: a slow load holds the bar back however long the
+    // clock has been running.
+    await show(tester, 0.5, hold: const Duration(milliseconds: 200));
+    await tester.pump(const Duration(seconds: 1));
+    expect(barValue(tester), 0.5);
   });
 
   testWidgets('the animation stops with the screen', (tester) async {

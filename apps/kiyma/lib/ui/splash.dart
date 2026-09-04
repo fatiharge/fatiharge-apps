@@ -11,8 +11,10 @@ class SplashView extends StatefulWidget {
     super.key,
   });
 
+  /// How far the jobs have got, `0..1`.
   final double progress;
 
+  /// How long the brand screen is held for at minimum.
   final Duration hold;
 
   @override
@@ -74,7 +76,13 @@ class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
                 AnimatedBuilder(
                   animation: _held,
                   builder: (context, _) => _Progress(
-                    value: math.max(_held.value, widget.progress),
+                    // The lower of the two, because both have to be satisfied
+                    // before the screen goes: the jobs have to finish and the
+                    // hold has to pass. Taking the higher one filled the bar
+                    // in the first frames — everything loads in well under
+                    // 100 ms — and then sat at 100% for the rest of the three
+                    // seconds, which reads as a bar that has stopped working.
+                    value: math.min(_held.value, widget.progress),
                   ),
                 ),
               ],
