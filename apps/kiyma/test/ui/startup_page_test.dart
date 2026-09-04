@@ -40,10 +40,13 @@ void main() {
     ]);
 
     expect(find.byType(SplashView), findsOneWidget);
-    expect(port.finished, isFalse, reason: 'the minimum splash time holds');
+    expect(port.finished, isFalse, reason: 'the brand screen is held');
 
-    // The kit pads the running state to a second so it cannot flash.
-    await tester.pump(const Duration(seconds: 2));
+    // The jobs are instant; what is left is the floor under the splash.
+    await tester.pump(StartupPage.hold - const Duration(milliseconds: 500));
+    expect(port.finished, isFalse);
+
+    await tester.pump(const Duration(seconds: 1));
     expect(port.finished, isTrue);
   });
 

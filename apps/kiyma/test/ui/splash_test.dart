@@ -4,10 +4,22 @@ import 'package:kiyma/ui/palette.dart';
 import 'package:kiyma/ui/splash.dart';
 
 void main() {
-  Future<void> show(WidgetTester tester, double progress) async {
-    await tester.pumpWidget(MaterialApp(home: SplashView(progress: progress)));
+  Future<void> show(
+    WidgetTester tester,
+    double progress, {
+    Duration hold = const Duration(seconds: 3),
+  }) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: SplashView(progress: progress, hold: hold),
+      ),
+    );
     await tester.pump();
   }
+
+  double barValue(WidgetTester tester) => tester
+      .widget<LinearProgressIndicator>(find.byType(LinearProgressIndicator))
+      .value!;
 
   testWidgets('carries the wordmark, the badge and the studio line', (
     tester,
@@ -36,12 +48,28 @@ void main() {
 
   testWidgets('shows how far startup has got', (tester) async {
     await show(tester, 0.5);
-    expect(
-      tester
-          .widget<LinearProgressIndicator>(find.byType(LinearProgressIndicator))
-          .value,
-      0.5,
-    );
+    expect(barValue(tester), 0.5);
+  });
+
+  testWidgets('the bar keeps moving after the jobs are done', (tester) async {
+    // Everything loaded at once; only the hold is left to wait out.
+    await show(tester, 1);
+    expect(barValue(tester), 1);
+
+    await show(tester, 0, hold: const Duration(seconds: 4));
+    expect(barValue(tester), 0);
+    await tester.pump(const Duration(seconds: 2));
+    expect(barValue(tester), greaterThan(0.3));
+    await tester.pump(const Duration(seconds: 2));
+    expect(barValue(tester), 1);
+  });
+
+  testWidgets('real progress wins when it is ahead of the clock', (
+    tester,
+  ) async {
+    await show(tester, 0.8, hold: const Duration(seconds: 10));
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(barValue(tester), 0.8);
   });
 
   testWidgets('the animation stops with the screen', (tester) async {

@@ -6,18 +6,19 @@ import 'package:kiyma/config/injectable.dart';
 import 'package:kiyma/ui/palette.dart';
 import 'package:kiyma/ui/splash.dart';
 
-/// The first route, and the only place the container is built.
-///
-/// Everything downstream resolves out of get_it, so this page cannot be
-/// skipped: a route that renders before it finds an empty container.
+
 @RoutePage()
 class StartupPage extends StatelessWidget {
   const StartupPage({super.key});
 
+  static const hold = Duration(seconds: 3);
+
   @override
   Widget build(BuildContext context) => BootstrapPage.withProgress(
     port: getIt<BootstrapPort>(),
-    runningBuilder: (context, state) => SplashView(progress: state.progress),
+    minDuration: hold,
+    runningBuilder: (context, state) =>
+        SplashView(progress: state.progress, hold: hold),
     errorBuilder: (context, state, onRetry) =>
         _StartupError(state: state, onRetry: onRetry),
   );

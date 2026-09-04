@@ -16,16 +16,11 @@ void main() {
   tearDownAll(() async => getIt.reset());
 
   test('the container comes first, then the scene, then the art', () async {
-    final adapter = BootstrapAdapter();
+    const adapter = BootstrapAdapter();
     final jobs = adapter.jobs();
 
-    expect(jobs.map((job) => job.name), [
-      'dependencies',
-      'scene',
-      'art',
-      'splash',
-    ]);
-    for (final job in jobs.take(3)) {
+    expect(jobs.map((job) => job.name), ['dependencies', 'scene', 'art']);
+    for (final job in jobs) {
       expect(
         job.errorPolicy,
         BootstrapErrorPolicy.restart,
@@ -37,28 +32,13 @@ void main() {
     // resolved before the first one has run.
     expect(getIt.isRegistered<GameWorld>(), isFalse);
 
-    for (final job in jobs.take(3)) {
+    for (final job in jobs) {
       await job.run();
     }
 
     final world = getIt<GameWorld>();
     expect(world.scene.regions, isNotEmpty);
     expect(world.art['sis_cig'], isNotNull);
-  });
-
-  test('the splash waits out the remainder, not the whole floor', () async {
-    final adapter = BootstrapAdapter();
-    final jobs = adapter.jobs();
-
-    // Two of the three seconds have already gone on real work.
-    await Future<void>.delayed(const Duration(seconds: 2));
-
-    final waited = Stopwatch()..start();
-    await jobs.last.run();
-    waited.stop();
-
-    expect(waited.elapsed, lessThan(const Duration(milliseconds: 1600)));
-    expect(waited.elapsed, greaterThan(const Duration(milliseconds: 400)));
   });
 
   test('the world refuses to be read before its job has run', () async {

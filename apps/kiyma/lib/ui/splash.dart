@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:kiyma/ui/palette.dart';
@@ -9,16 +11,26 @@ import 'package:kiyma/ui/palette.dart';
 /// asset — this is the screen the art is being loaded *behind*, so the
 /// illustration is painted rather than drawn from `assets/items`.
 class SplashView extends StatefulWidget {
-  const SplashView({required this.progress, super.key});
+  const SplashView({
+    required this.progress,
+    this.hold = const Duration(seconds: 1),
+    super.key,
+  });
 
+  /// How far the startup jobs have got, `0..1`.
   final double progress;
+
+  /// The floor the page is held for. The bar is driven by whichever is
+  /// further along, this clock or [progress] — the jobs finish in a fraction
+  /// of the hold, so a bar that only tracked them would fill at once and then
+  /// sit full, which reads as a hang rather than as a wait.
+  final Duration hold;
 
   @override
   State<SplashView> createState() => _SplashViewState();
 }
 
-class _SplashViewState extends State<SplashView>
-    with SingleTickerProviderStateMixin {
+class _SplashViewState extends State<SplashView> with TickerProviderStateMixin {
   // The design's `softGlow`: a breath, not an animation anybody should
   // notice. Startup is usually over before it completes a cycle.
   late final AnimationController _breath = AnimationController(
@@ -26,9 +38,15 @@ class _SplashViewState extends State<SplashView>
     duration: const Duration(milliseconds: 3500),
   )..repeat(reverse: true);
 
+  late final AnimationController _held = AnimationController(
+    vsync: this,
+    duration: widget.hold,
+  )..forward();
+
   @override
   void dispose() {
     _breath.dispose();
+    _held.dispose();
     super.dispose();
   }
 
@@ -74,7 +92,12 @@ class _SplashViewState extends State<SplashView>
                       ),
                     ),
                     const SizedBox(height: 22),
-                    _Progress(value: widget.progress),
+                    AnimatedBuilder(
+                      animation: _held,
+                      builder: (context, _) => _Progress(
+                        value: math.max(_held.value, widget.progress),
+                      ),
+                    ),
                   ],
                 ),
               ),
