@@ -113,9 +113,15 @@ void main() {
       // the ledge, not in the till.
       // 10 * 1.08 rounded, one ingredient at the flat bonus, at neutral
       // tempo — a run opens with the multiplier at exactly one.
-      expect(run.altin[0]!.miktar, 11 + Balance.ingredientBonus);
+      expect(
+        run.altin[0]!.miktar,
+        Balance.income(Balance.durumBase, 1, ingredients: 1),
+      );
       run.tap(slot('altin_alani', 0));
-      expect(run.progress.para, 11 + Balance.ingredientBonus);
+      expect(
+        run.progress.para,
+        Balance.income(Balance.durumBase, 1, ingredients: 1),
+      );
     });
 
     test('takes ingredients while the meat is still on the grill', () {

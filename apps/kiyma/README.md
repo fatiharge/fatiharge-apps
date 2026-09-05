@@ -401,10 +401,17 @@ day  plodding  skilled  step
  10       940     2427  1450
 ```
 
-Day one is one unhurried run. By day ten a good player is worth two and a half
-times a plodding one, and that widening is the difficulty curve. It also found
-the two bugs above in the tempo meter, and that the old target table was out
-by a factor of twelve — a single day-one run cleared the first three days.
+Day one is one unhurried run, and the numbers **run away**: the day
+multiplier compounds at 1.55 rather than adding 8 %, so a plodding player
+takes 24 on day one, 97 on day three, 310 on day five and 2,497 on day ten,
+while a good one takes 7,384. The old curve added 8 % a day with the level
+targets fitted to cancel it out — a treadmill by construction, where day ten
+paid 2.6× day one and nothing ever felt like progress. The bases came down to
+1 and 2 to make room for it, so the first sale is worth 2 gold and watching
+that become four figures is the progression.
+
+The shop ladder compounds with the income: the first rung fits inside a
+day-one run and the last is most of a day-ten one.
 
 ## The art pipeline
 

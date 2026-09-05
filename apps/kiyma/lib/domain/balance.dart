@@ -25,7 +25,7 @@ abstract final class Balance {
   /// Charged the moment meat burns, not when it is binned. Money only —
   /// patience is untouched, which is what keeps the risk local and the third
   /// and fourth grill slots worth buying.
-  static double burnPenalty(int day) => 10 * dayMultiplier(day);
+  static double burnPenalty(int day) => dayMultiplier(day);
 
   // --- Drinks (design doc 5.2) ---
 
@@ -33,29 +33,36 @@ abstract final class Balance {
 
   // --- Income (design doc 10.2) ---
 
-  static double dayMultiplier(int day) => 1 + day * 0.08;
+  /// What a day is worth, compounding.
+  ///
+  /// It used to be `1 + day * 0.08`, and the level targets were fitted to
+  /// cancel it out — a treadmill by construction, where day ten paid 2.6x
+  /// day one and nothing ever felt like progress. Compounding is the whole
+  /// point of a progression: the numbers have to run away.
+  static double dayMultiplier(int day) => math.pow(1.55, day - 1).toDouble();
 
-  static const durumBase = 10;
-  static const porsiyonBase = 18;
+  static const durumBase = 1;
+  static const porsiyonBase = 2;
 
   /// Flat, unscaled by the day: otherwise "stuff everything in" becomes the
   /// dominant late strategy.
   ///
-  /// Big enough that a full wrap is worth roughly three bare ones. At the old
-  /// +2 an ingredient was close to a pure loss: `OrderMaker` only asks for
-  /// what is open, so buying one *created* orders that demanded it, and the
-  /// whole return was two gold on an eleven-gold wrap.
-  static const ingredientBonus = 5;
+  /// Rides the day with everything else, or the ingredients a player just
+  /// paid a compounding price for would be worth less every day.
+  ///
+  /// Still flat *within* a day, so "stuff everything in" never becomes the
+  /// dominant late strategy — the customer's `istemez` is what pushes back.
+  static const ingredientBonus = 0.7;
 
-  static const Map<Tatli, int> tatliBase = {Tatli.baklava: 8};
+  static const Map<Tatli, int> tatliBase = {Tatli.baklava: 1};
   static const Map<Icecek, int> icecekBase = {
-    Icecek.kola: 6,
-    Icecek.ayran: 5,
-    Icecek.salgam: 4,
+    Icecek.kola: 1,
+    Icecek.ayran: 1,
+    Icecek.salgam: 1,
   };
 
   static int income(int base, int day, {int ingredients = 0}) =>
-      (base * dayMultiplier(day)).round() + ingredients * ingredientBonus;
+      ((base + ingredients * ingredientBonus) * dayMultiplier(day)).round();
 
   // --- Patience (design doc 8.4) ---
 
@@ -122,16 +129,16 @@ abstract final class Balance {
   /// good one is faster. The old table was out by a factor of twelve — a
   /// single day-one run cleared the first three days at once.
   static const targets = [
-    240,
-    525,
-    870,
-    1290,
-    1800,
-    2390,
-    3070,
-    3850,
-    4730,
-    5710,
+    22,
+    80,
+    180,
+    355,
+    665,
+    1205,
+    1965,
+    2995,
+    4595,
+    7095,
   ];
 
   static int target(int day) {
@@ -140,7 +147,9 @@ abstract final class Balance {
     var value = targets.last;
     var step = targets.last - targets[targets.length - 2];
     for (var d = targets.length; d < day; d++) {
-      step += 100;
+      // Compounds past the table too: an additive tail would flatten the
+      // curve exactly where the income is steepest.
+      step = (step * 1.5).round();
       value += step;
     }
     return value;

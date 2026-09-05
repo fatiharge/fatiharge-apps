@@ -152,20 +152,20 @@ void main() {
     testWidgets('sells what there is money for and nothing else', (
       tester,
     ) async {
-      earn(150);
+      earn(50);
       await open(tester, const ShopRoute());
 
       expect(find.text('Biber'), findsOneWidget);
-      expect(find.text('150 altın'), findsOneWidget);
+      expect(find.text('50 altın'), findsOneWidget);
 
-      await tester.tap(find.text('100'));
+      await tester.tap(find.text('45'));
       await tester.pumpAndSettle();
 
       expect(getIt<Progress>().unlocks.has('malzeme_biber'), isTrue);
-      expect(find.text('50 altın'), findsOneWidget);
-      // Pickles cost 200; the button is there but dead.
+      expect(find.text('5 altın'), findsOneWidget);
+      // Pickles cost 120; the button is there but dead.
       final pickles = tester.widget<InkWell>(
-        find.ancestor(of: find.text('200'), matching: find.byType(InkWell)),
+        find.ancestor(of: find.text('120'), matching: find.byType(InkWell)),
       );
       expect(pickles.onTap, isNull);
     });
@@ -175,19 +175,19 @@ void main() {
       // cubit. Progress is what both read, so Progress is what has to say it
       // moved — otherwise the hub's money chip shows the old balance for the
       // rest of the session.
-      earn(150);
+      earn(50);
       await open(tester, const MenuRoute());
-      expect(find.text('150 altın'), findsOneWidget);
+      expect(find.text('50 altın'), findsOneWidget);
 
       await tester.tap(find.text('Yükselt'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('100'));
+      await tester.tap(find.text('45'));
       await tester.pumpAndSettle();
 
       await tester.tap(find.byIcon(Icons.arrow_back_rounded));
       await tester.pumpAndSettle();
       expect(find.byType(MenuPage), findsOneWidget);
-      expect(find.text('50 altın'), findsOneWidget);
+      expect(find.text('5 altın'), findsOneWidget);
     });
   });
 }

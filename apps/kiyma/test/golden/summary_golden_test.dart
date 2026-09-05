@@ -51,7 +51,7 @@ void main() {
     // three stars, and a run that did not quite turn the day over.
     const day = 5;
     final opening = Balance.floor(day);
-    const took = 500;
+    const took = 260;
     final progress = getIt<Progress>()
       ..gun = day
       ..xp = opening + took

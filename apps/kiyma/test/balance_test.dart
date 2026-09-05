@@ -15,12 +15,32 @@ void main() {
       expect(Balance.patience(100), 12);
     });
 
-    test('ingredient bonuses do not scale with the day', () {
-      final early = Balance.income(Balance.durumBase, 1, ingredients: 3);
-      final late = Balance.income(Balance.durumBase, 20, ingredients: 3);
-      const three = 3 * Balance.ingredientBonus;
-      expect(early - Balance.income(Balance.durumBase, 1), three);
-      expect(late - Balance.income(Balance.durumBase, 20), three);
+    test('everything a day is worth compounds together', () {
+      // The bonus rides the day with the base: an ingredient bought at a
+      // compounding price cannot be worth less every day. What keeps
+      // "stuff everything in" from dominating is the customer's `istemez`.
+      final bare = Balance.income(Balance.durumBase, 1);
+      final full = Balance.income(Balance.durumBase, 1, ingredients: 3);
+      expect(full, greaterThan(bare));
+
+      final lateBare = Balance.income(Balance.durumBase, 10);
+      final lateFull = Balance.income(Balance.durumBase, 10, ingredients: 3);
+      // Rounding at day one makes this approximate, not exact: the point is
+      // that the gap grows with the day rather than staying flat.
+      expect(
+        (lateFull - lateBare) / (full - bare),
+        closeTo(Balance.dayMultiplier(10), Balance.dayMultiplier(10) * 0.1),
+      );
+    });
+
+    test('a day is worth a great deal more than the one before it', () {
+      // The old curve was +8% a day and the targets cancelled it out: day ten
+      // paid 2.6x day one and nothing ever felt like progress.
+      expect(Balance.dayMultiplier(1), 1);
+      expect(
+        Balance.dayMultiplier(10) / Balance.dayMultiplier(1),
+        greaterThan(25),
+      );
     });
 
     test('a run is two minutes plus five seconds a day', () {

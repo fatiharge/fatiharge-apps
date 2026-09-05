@@ -37,12 +37,14 @@ void main() {
       cubit.effects.listen(effects.add);
 
       cubit.startDay();
-      cubit.progress.kazan(30);
+      // Short of the first day's target, so nothing turns over.
+      final under = Balance.target(1) - 5;
+      cubit.progress.kazan(under);
       cubit.run!.tick(Balance.runLength(1).inSeconds + 1);
 
       expect(cubit.run, isNull);
       expect(cubit.state.gunBitti, isTrue);
-      expect(cubit.state.oturum!.kazanc, 30);
+      expect(cubit.state.oturum!.kazanc, under);
       expect(cubit.state.oturum!.seviyeAtladi, isFalse);
       expect(cubit.state.gun, 1);
       await Future<void>.delayed(Duration.zero);
