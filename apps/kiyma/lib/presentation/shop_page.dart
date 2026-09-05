@@ -122,7 +122,10 @@ class _UnlockCard extends StatelessWidget {
         SizedBox(
           height: 34,
           child: ChunkyButton(
-            label: '₺${unlock.price}',
+            // No currency symbol anywhere: the game pays in gold, and Rubik
+            // has no lira glyph, so ₺ came out as an empty box.
+            label: '${unlock.price}',
+            icon: Icons.paid_rounded,
             onPressed: affordable ? onBuy : null,
           ),
         ),

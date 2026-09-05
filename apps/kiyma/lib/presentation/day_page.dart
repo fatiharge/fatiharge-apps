@@ -6,12 +6,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kiyma/application/kiyma_cubit.dart';
 import 'package:kiyma/config/injectable.dart';
+import 'package:kiyma/domain/balance.dart';
+import 'package:kiyma/domain/unlocks.dart';
 import 'package:kiyma/presentation/brand.dart';
 import 'package:kiyma/presentation/level_bar.dart';
 import 'package:kiyma/presentation/palette.dart';
 import 'package:kiyma/route/app_router.gr.dart';
 
 /// The card a run starts from.
+///
+/// Its job is to say what is different about today. Five numbers move with
+/// the day — the clock, how often people arrive, how long meat survives, how
+/// long they wait, and what everything pays — and until this card listed them
+/// the whole ramp was invisible: the game tightened five screws a day and
+/// never said so.
 @RoutePage()
 class DayPage extends StatelessWidget {
   const DayPage({super.key});
@@ -36,41 +44,18 @@ class DayPage extends StatelessWidget {
             ),
             Center(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(vertical: 20),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 44,
+                  vertical: 16,
+                ),
                 child: BrandCard(
-                  width: 400,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                  width: 720,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'gun.baslik'.tr(args: ['${state.gun}']),
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontFamily: 'Rubik',
-                          fontSize: 22,
-                          fontWeight: FontWeight.w800,
-                          color: KiymaPalette.komur,
-                        ),
-                      ),
-                      const SizedBox(height: 14),
-                      LevelBar(value: state.seviyeOrani),
-                      const SizedBox(height: 20),
-                      ChunkyButton(
-                        label: 'gun.ac'.tr(),
-                        icon: Icons.local_fire_department_rounded,
-                        big: true,
-                        onPressed: () =>
-                            unawaited(context.router.push(const GameRoute())),
-                      ),
-                      const SizedBox(height: 12),
-                      ChunkyButton(
-                        label: 'menu.yukselt'.tr(),
-                        icon: Icons.upgrade_rounded,
-                        color: KiymaPalette.ahsap,
-                        onPressed: () =>
-                            unawaited(context.router.push(const ShopRoute())),
-                      ),
+                      Expanded(flex: 5, child: _Today(day: state.gun)),
+                      const SizedBox(width: 20),
+                      Expanded(flex: 4, child: _Start(state: state)),
                     ],
                   ),
                 ),
@@ -79,6 +64,268 @@ class DayPage extends StatelessWidget {
           ],
         ),
       ),
+    ),
+  );
+}
+
+/// The five dials, with how far each moved since yesterday.
+class _Today extends StatelessWidget {
+  const _Today({required this.day});
+
+  final int day;
+
+  @override
+  Widget build(BuildContext context) {
+    final number = NumberFormat.decimalPattern(context.locale.languageCode)
+      ..maximumFractionDigits = 1;
+    final was = day - 1;
+
+    String seconds(double value) => '${number.format(value)} sn';
+
+    String clock(Duration length) {
+      final rest = (length.inSeconds % 60).toString().padLeft(2, '0');
+      return '${length.inMinutes}:$rest';
+    }
+
+    final rows = <_Dial>[
+      _Dial(
+        icon: Icons.schedule_rounded,
+        label: 'gun.sure'.tr(),
+        value: clock(Balance.runLength(day)),
+        delta:
+            Balance.runLength(day).inSeconds -
+            Balance.runLength(was).inSeconds.toDouble(),
+        unit: 'sn',
+        moreIsBetter: true,
+        number: number,
+      ),
+      _Dial(
+        icon: Icons.groups_rounded,
+        label: 'gun.gelis'.tr(),
+        value: seconds(Balance.arrivalGap(day)),
+        delta: Balance.arrivalGap(day) - Balance.arrivalGap(was),
+        unit: 'sn',
+        moreIsBetter: true,
+        number: number,
+      ),
+      _Dial(
+        icon: Icons.local_fire_department_rounded,
+        label: 'gun.yanma'.tr(),
+        value: seconds(Balance.cookedWindow(day)),
+        delta: Balance.cookedWindow(day) - Balance.cookedWindow(was),
+        unit: 'sn',
+        moreIsBetter: true,
+        number: number,
+      ),
+      _Dial(
+        icon: Icons.hourglass_bottom_rounded,
+        label: 'gun.sabir'.tr(),
+        value: seconds(Balance.patience(day)),
+        delta: Balance.patience(day) - Balance.patience(was),
+        unit: 'sn',
+        moreIsBetter: true,
+        number: number,
+      ),
+      _Dial(
+        icon: Icons.payments_rounded,
+        label: 'gun.carpan'.tr(),
+        value: '×${number.format(Balance.dayMultiplier(day))}',
+        delta: (Balance.dayMultiplier(day) - Balance.dayMultiplier(was)) * 100,
+        unit: '%',
+        moreIsBetter: true,
+        number: number,
+      ),
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        BrandChip(label: 'gun.bugun'.tr(), icon: Icons.today_rounded),
+        const SizedBox(height: 10),
+        for (final row in rows) ...[
+          row,
+          const SizedBox(height: 6),
+        ],
+      ],
+    );
+  }
+}
+
+/// One line of it: what the number is now, and which way it moved.
+class _Dial extends StatelessWidget {
+  const _Dial({
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.delta,
+    required this.unit,
+    required this.moreIsBetter,
+    required this.number,
+  });
+
+  final IconData icon;
+  final String label;
+  final String value;
+  final double delta;
+  final String unit;
+  final bool moreIsBetter;
+  final NumberFormat number;
+
+  @override
+  Widget build(BuildContext context) {
+    // Day one has no yesterday, and every dial eventually hits its floor and
+    // stops moving. Neither is worth a row of "±0".
+    final moved = delta.abs() >= 0.05;
+    final good = delta > 0 == moreIsBetter;
+    return Row(
+      children: [
+        Icon(icon, size: 15, color: KiymaPalette.ahsap),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            label,
+            style: const TextStyle(
+              fontFamily: 'Rubik',
+              fontVariations: [FontVariation('wght', 600)],
+              fontSize: 12,
+              color: KiymaPalette.komur,
+            ),
+          ),
+        ),
+        Text(
+          value,
+          style: const TextStyle(
+            fontFamily: 'Rubik',
+            fontVariations: [FontVariation('wght', 900)],
+            fontSize: 13,
+            color: KiymaPalette.komur,
+          ),
+        ),
+        SizedBox(
+          width: 58,
+          child: moved
+              ? Text(
+                  '${delta > 0 ? '+' : '−'}'
+                  '${number.format(delta.abs())} $unit',
+                  textAlign: TextAlign.right,
+                  style: TextStyle(
+                    fontFamily: 'Rubik',
+                    fontVariations: const [FontVariation('wght', 700)],
+                    fontSize: 11,
+                    color: good ? KiymaPalette.yesil : KiymaPalette.kirmizi,
+                  ),
+                )
+              : null,
+        ),
+      ],
+    );
+  }
+}
+
+/// The right half: where the level is, what the money can reach, one thing
+/// worth remembering, and the two ways out.
+class _Start extends StatelessWidget {
+  const _Start({required this.state});
+
+  final KiymaState state;
+
+  /// Cheapest thing the till can already cover. Naming it here is the only
+  /// moment the player can act on it: the shop is one tap away and the run
+  /// has not started.
+  Unlock? get _affordable {
+    Unlock? best;
+    for (final unlock in getIt<KiymaCubit>().progress.unlocks.forSale) {
+      if (unlock.price > state.para) continue;
+      if (best == null || unlock.price < best.price) best = unlock;
+    }
+    return best;
+  }
+
+  /// Turns over with the day rather than at random, so it is stable within a
+  /// day and different on the next one.
+  static const _tips = 6;
+
+  @override
+  Widget build(BuildContext context) {
+    final buy = _affordable;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          'gun.baslik'.tr(args: ['${state.gun}']),
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontFamily: 'Rubik',
+            fontSize: 24,
+            fontWeight: FontWeight.w800,
+            color: KiymaPalette.komur,
+          ),
+        ),
+        const SizedBox(height: 10),
+        LevelBar(value: state.seviyeOrani),
+        const SizedBox(height: 14),
+        _Tip(index: state.gun % _tips + 1),
+        const SizedBox(height: 14),
+        ChunkyButton(
+          label: 'gun.ac'.tr(),
+          icon: Icons.local_fire_department_rounded,
+          big: true,
+          onPressed: () => unawaited(context.router.push(const GameRoute())),
+        ),
+        const SizedBox(height: 10),
+        ChunkyButton(
+          label: buy == null
+              ? 'menu.yukselt'.tr()
+              : 'gun.alinabilir'.tr(
+                  args: ['kilit.${buy.id}'.tr(), '${buy.price}'],
+                ),
+          icon: buy == null
+              ? Icons.upgrade_rounded
+              : Icons.shopping_bag_rounded,
+          color: buy == null ? KiymaPalette.ahsap : KiymaPalette.yesil,
+          onPressed: () => unawaited(context.router.push(const ShopRoute())),
+        ),
+      ],
+    );
+  }
+}
+
+class _Tip extends StatelessWidget {
+  const _Tip({required this.index});
+
+  final int index;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+    decoration: BoxDecoration(
+      color: KiymaPalette.ahsap.withValues(alpha: 0.10),
+      borderRadius: BorderRadius.circular(10),
+    ),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Icon(
+          Icons.lightbulb_outline_rounded,
+          size: 15,
+          color: KiymaPalette.ahsap,
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            'gun.ipucu_$index'.tr(),
+            style: const TextStyle(
+              fontFamily: 'Rubik',
+              fontVariations: [FontVariation('wght', 500)],
+              fontSize: 11,
+              height: 1.35,
+              color: KiymaPalette.komur,
+            ),
+          ),
+        ),
+      ],
     ),
   );
 }

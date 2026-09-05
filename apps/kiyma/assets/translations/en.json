@@ -1,6 +1,6 @@
 {
   "hud": {
-    "para": "₺{}",
+    "para": "{} gold",
     "gun": "Day {}"
   },
   "baslangic": {
@@ -18,7 +18,20 @@
   },
   "gun": {
     "baslik": "Day {}",
-    "ac": "Open the counter"
+    "ac": "Open the counter",
+    "bugun": "TODAY",
+    "sure": "Counter open",
+    "gelis": "Between customers",
+    "yanma": "Until the meat burns",
+    "sabir": "Patience",
+    "carpan": "Everything is worth",
+    "alinabilir": "{} ready — {} gold",
+    "ipucu_1": "A rolled wrap is not served until it is papered.",
+    "ipucu_2": "A burnt skewer holds its slot until it is binned.",
+    "ipucu_3": "Gold on the ledge is swept in ten seconds, and 30% of it goes.",
+    "ipucu_4": "Ingredients do not wait for the meat: the bread is enough.",
+    "ipucu_5": "The higher the tempo, the more everything pays.",
+    "ipucu_6": "Leave the grill empty and the mince tray starts blinking."
   },
   "magaza": {
     "baslik": "Grow the shop",

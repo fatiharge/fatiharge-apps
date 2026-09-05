@@ -35,7 +35,7 @@ class MenuPage extends StatelessWidget {
               child: Row(
                 children: [
                   BrandChip(
-                    icon: Icons.payments_outlined,
+                    icon: Icons.paid_rounded,
                     label: 'hud.para'.tr(args: ['${state.para}']),
                   ),
                   const SizedBox(width: 8),

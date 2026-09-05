@@ -156,16 +156,16 @@ void main() {
       await open(tester, const ShopRoute());
 
       expect(find.text('Biber'), findsOneWidget);
-      expect(find.text('₺200'), findsOneWidget);
+      expect(find.text('200 altın'), findsOneWidget);
 
-      await tester.tap(find.text('₺150'));
+      await tester.tap(find.text('150'));
       await tester.pumpAndSettle();
 
       expect(getIt<Progress>().unlocks.has('malzeme_biber'), isTrue);
-      expect(find.text('₺50'), findsOneWidget);
+      expect(find.text('50 altın'), findsOneWidget);
       // Pickles cost 300; the button is there but dead.
       final pickles = tester.widget<InkWell>(
-        find.ancestor(of: find.text('₺300'), matching: find.byType(InkWell)),
+        find.ancestor(of: find.text('300'), matching: find.byType(InkWell)),
       );
       expect(pickles.onTap, isNull);
     });
@@ -177,17 +177,17 @@ void main() {
       // rest of the session.
       earn(200);
       await open(tester, const MenuRoute());
-      expect(find.text('₺200'), findsOneWidget);
+      expect(find.text('200 altın'), findsOneWidget);
 
       await tester.tap(find.text('Yükselt'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('₺150'));
+      await tester.tap(find.text('150'));
       await tester.pumpAndSettle();
 
       await tester.tap(find.byIcon(Icons.arrow_back_rounded));
       await tester.pumpAndSettle();
       expect(find.byType(MenuPage), findsOneWidget);
-      expect(find.text('₺50'), findsOneWidget);
+      expect(find.text('50 altın'), findsOneWidget);
     });
   });
 }

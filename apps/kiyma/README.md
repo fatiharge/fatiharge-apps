@@ -282,6 +282,24 @@ The split is deliberate about update rates. Patience bars and cooking meters
 change every frame and are drawn inside the canvas. The bloc only emits when
 money, standing or the phase move — a few times a second at most.
 
+## The day card
+
+Its job is to say what is different about today. Five numbers move with the
+day — the clock, how often people arrive, how long meat survives, how long
+anybody waits, and what everything pays — and until this card listed them the
+whole ramp was invisible: the game tightened five screws a day and never said
+so. Each row carries the change since yesterday, green or red, and a dial that
+has hit its floor stops showing one.
+
+Beside it: the cheapest thing the till can already cover, named on its own
+button, because this is the only moment the player can act on it — the shop is
+one tap away and the run has not started. And one rule worth remembering,
+turning over with the day rather than at random so it is stable within a day.
+
+**No currency symbol anywhere.** The game pays in gold, and `₺` was a leftover
+from before that decision — it also came out as an empty box, because Rubik
+has no lira glyph.
+
 ## The summary
 
 It arrives in beats rather than all at once — banner, card, takings counting
