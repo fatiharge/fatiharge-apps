@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:injectable/injectable.dart';
 import 'package:kiyma/domain/balance.dart';
 import 'package:kiyma/domain/day_run.dart';
 import 'package:kiyma/domain/progress.dart';
 import 'package:kiyma/domain/run_summary.dart';
 import 'package:kiyma/domain/unlocks.dart';
+import 'package:kiyma/infrastructure/progress_store.dart';
 import 'package:kiyma/infrastructure/world.dart';
 import 'package:utility_kit/utility_kit.dart';
 
@@ -46,10 +49,19 @@ class KiymaState {
 /// and dies with the cubit that page built.
 @injectable
 class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
-  KiymaCubit(this._world, this.progress) : super(_initial) {
-    progress.listen(_emit);
+  KiymaCubit(this._world, this.progress, this._store) : super(_initial) {
+    progress
+      ..listen(_emit)
+      ..listen(_write);
     _emit();
   }
+
+  final ProgressStore _store;
+
+  /// Written on every change rather than at chosen moments: `Progress`
+  /// already announces them, and a game that is killed mid-run should lose
+  /// the run, never the shop.
+  void _write() => unawaited(_store.save(progress));
 
   static const _initial = KiymaState(
     gun: 1,
@@ -101,7 +113,9 @@ class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
   /// it is earned, and what the run was worth is recorded on [Progress].
   @override
   Future<void> close() async {
-    progress.unlisten(_emit);
+    progress
+      ..unlisten(_emit)
+      ..unlisten(_write);
     _bank(emitAfter: false);
     return super.close();
   }

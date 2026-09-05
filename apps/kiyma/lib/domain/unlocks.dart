@@ -52,6 +52,9 @@ class Unlocks {
 
   final Set<String> _open;
 
+  /// What has been bought, for the store to write down.
+  Iterable<String> get opened => _open;
+
   bool has(String id) => _open.contains(id);
 
   void open(String id) => _open.add(id);

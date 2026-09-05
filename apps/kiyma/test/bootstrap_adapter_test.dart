@@ -23,16 +23,22 @@ void main() {
     expect(jobs.map((job) => job.name), [
       'display',
       'dependencies',
+      'kayit',
       'scene',
       'art',
     ]);
-    for (final job in jobs.skip(1)) {
+    for (final job in jobs.where((j) => j.name == 'scene' || j.name == 'art')) {
       expect(
         job.errorPolicy,
         BootstrapErrorPolicy.restart,
         reason: '${job.name}: there is no reduced game to fall back to',
       );
     }
+    // A save that will not read is not a reason to refuse to play.
+    expect(
+      jobs.firstWhere((j) => j.name == 'kayit').errorPolicy,
+      BootstrapErrorPolicy.skip,
+    );
 
     // The container is not up yet, so nothing the later jobs need can be
     // resolved before the first one has run.

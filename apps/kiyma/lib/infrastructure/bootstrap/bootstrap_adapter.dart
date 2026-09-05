@@ -4,7 +4,9 @@ import 'package:auto_route/auto_route.dart';
 import 'package:bootstrap_kit/bootstrap_kit.dart';
 import 'package:flutter/services.dart';
 import 'package:kiyma/config/injectable.dart';
+import 'package:kiyma/domain/progress.dart';
 import 'package:kiyma/infrastructure/language_choice.dart';
+import 'package:kiyma/infrastructure/progress_store.dart';
 import 'package:kiyma/infrastructure/world.dart';
 import 'package:kiyma/route/app_router.dart';
 import 'package:kiyma/route/app_router.gr.dart';
@@ -40,6 +42,12 @@ class BootstrapAdapter implements BootstrapPort {
       'dependencies',
       configureDependencies,
       errorPolicy: BootstrapErrorPolicy.restart,
+    ),
+    BootstrapJob(
+      'kayit',
+      () async => getIt<ProgressStore>().restore(getIt<Progress>()),
+      // A save that will not read is not a reason to refuse to play.
+      errorPolicy: BootstrapErrorPolicy.skip,
     ),
     BootstrapJob(
       'scene',

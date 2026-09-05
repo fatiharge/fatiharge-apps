@@ -30,6 +30,7 @@ import 'package:kiyma/domain/unlocks.dart';
 import 'package:kiyma/infrastructure/assets.dart';
 import 'package:kiyma/infrastructure/bootstrap/bootstrap_adapter.dart';
 import 'package:kiyma/infrastructure/language_choice.dart';
+import 'package:kiyma/infrastructure/progress_store.dart';
 import 'package:kiyma/infrastructure/scene_loader.dart';
 import 'package:kiyma/infrastructure/world.dart';
 import 'package:kiyma/main.dart';

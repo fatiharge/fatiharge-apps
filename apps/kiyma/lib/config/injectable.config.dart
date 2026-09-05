@@ -15,6 +15,7 @@ import 'package:kiyma/application/kiyma_cubit.dart' as _i427;
 import 'package:kiyma/config/storage_module.dart' as _i57;
 import 'package:kiyma/domain/progress.dart' as _i472;
 import 'package:kiyma/infrastructure/language_choice.dart' as _i82;
+import 'package:kiyma/infrastructure/progress_store.dart' as _i672;
 import 'package:kiyma/infrastructure/world.dart' as _i620;
 import 'package:shared_preferences/shared_preferences.dart' as _i460;
 
@@ -35,8 +36,15 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i82.LanguageChoice>(
       () => _i82.LanguageChoice(gh<_i460.SharedPreferences>()),
     );
+    gh.lazySingleton<_i672.ProgressStore>(
+      () => _i672.ProgressStore(gh<_i460.SharedPreferences>()),
+    );
     gh.factory<_i427.KiymaCubit>(
-      () => _i427.KiymaCubit(gh<_i620.GameWorld>(), gh<_i472.Progress>()),
+      () => _i427.KiymaCubit(
+        gh<_i620.GameWorld>(),
+        gh<_i472.Progress>(),
+        gh<_i672.ProgressStore>(),
+      ),
     );
     return this;
   }

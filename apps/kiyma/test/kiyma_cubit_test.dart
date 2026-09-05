@@ -4,15 +4,21 @@ import 'package:kiyma/domain/balance.dart';
 import 'package:kiyma/domain/day_run.dart';
 import 'package:kiyma/domain/progress.dart';
 import 'package:kiyma/domain/unlocks.dart';
+import 'package:kiyma/infrastructure/progress_store.dart';
 import 'package:kiyma/infrastructure/world.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late GameWorld world;
+  late ProgressStore store;
+
   setUpAll(() async {
     world = GameWorld();
     await world.loadScene();
+    SharedPreferences.setMockInitialValues({});
+    store = ProgressStore(await SharedPreferences.getInstance());
   });
 
   /// Opens the counter and lets the clock run out.
@@ -23,7 +29,7 @@ void main() {
 
   group('KiymaCubit', () {
     test('opens on day one with nothing behind it', () {
-      final cubit = KiymaCubit(world, Progress());
+      final cubit = KiymaCubit(world, Progress(), store);
       expect(cubit.state.gun, 1);
       expect(cubit.state.xp, 0);
       expect(cubit.state.hedef, Balance.target(1));
@@ -32,7 +38,7 @@ void main() {
     });
 
     test('a finished run is banked and reported', () async {
-      final cubit = KiymaCubit(world, Progress());
+      final cubit = KiymaCubit(world, Progress(), store);
       final effects = <DayEvent>[];
       cubit.effects.listen(effects.add);
 
@@ -55,7 +61,7 @@ void main() {
       // Reachable from the second run on: the burn penalty comes off the same
       // xp the run's take is differenced from.
       final progress = Progress()..kazan(200);
-      final cubit = KiymaCubit(world, progress)..startDay();
+      final cubit = KiymaCubit(world, progress, store)..startDay();
       progress.cezalandir(36);
       cubit.run!.tick(Balance.runLength(1).inSeconds + 1);
 
@@ -68,7 +74,7 @@ void main() {
     });
 
     test('crossing the level takes the day with it', () {
-      final cubit = KiymaCubit(world, Progress())..startDay();
+      final cubit = KiymaCubit(world, Progress(), store)..startDay();
       cubit.progress.kazan(Balance.target(1));
       cubit.run!.tick(Balance.runLength(1).inSeconds + 1);
 
@@ -81,7 +87,7 @@ void main() {
     });
 
     test('a run big enough crosses more than one level', () {
-      final cubit = KiymaCubit(world, Progress())..startDay();
+      final cubit = KiymaCubit(world, Progress(), store)..startDay();
       cubit.progress.kazan(Balance.target(3));
       cubit.run!.tick(Balance.runLength(1).inSeconds + 1);
 
@@ -90,7 +96,7 @@ void main() {
     });
 
     test('spending never costs a level', () {
-      final cubit = KiymaCubit(world, Progress())..startDay();
+      final cubit = KiymaCubit(world, Progress(), store)..startDay();
       final earned = Balance.target(3) + 50;
       cubit.progress.kazan(earned);
       cubit.run!.tick(Balance.runLength(1).inSeconds + 1);
@@ -104,7 +110,7 @@ void main() {
 
     test('closing the page ends the run and records what it took', () async {
       final progress = Progress();
-      final cubit = KiymaCubit(world, progress)..startDay();
+      final cubit = KiymaCubit(world, progress, store)..startDay();
       progress.kazan(26);
 
       await cubit.close();
@@ -114,7 +120,7 @@ void main() {
     });
 
     test('a new run clears the last summary', () {
-      final cubit = KiymaCubit(world, Progress());
+      final cubit = KiymaCubit(world, Progress(), store);
       playOut(cubit);
       expect(cubit.state.oturum, isNotNull);
 
@@ -125,12 +131,12 @@ void main() {
 
     test('closing without a run records nothing', () async {
       final progress = Progress();
-      await KiymaCubit(world, progress).close();
+      await KiymaCubit(world, progress, store).close();
       expect(progress.sonOturum, isNull);
     });
 
     test('pausing stops the clock and resuming starts it again', () {
-      final cubit = KiymaCubit(world, Progress())..startDay();
+      final cubit = KiymaCubit(world, Progress(), store)..startDay();
       final run = cubit.run!;
       final left = run.kalanSure;
 
@@ -145,21 +151,21 @@ void main() {
     });
 
     test('nothing can be touched while it is paused', () {
-      final cubit = KiymaCubit(world, Progress())..startDay();
+      final cubit = KiymaCubit(world, Progress(), store)..startDay();
       final run = cubit.run!;
       cubit.duraklat(durdur: true);
       expect(run.beginDrag(world.scene['lavas_kaynak'].quad.center), isFalse);
     });
 
     test('the debug grant is money and only money', () {
-      final cubit = KiymaCubit(world, Progress())..bagisla(1000);
+      final cubit = KiymaCubit(world, Progress(), store)..bagisla(1000);
       expect(cubit.state.para, 1000);
       expect(cubit.state.xp, 0, reason: 'the level is what was played');
       expect(cubit.state.gun, 1);
     });
 
     test('buying takes the money and opens the lock', () {
-      final cubit = KiymaCubit(world, Progress());
+      final cubit = KiymaCubit(world, Progress(), store);
       cubit.progress.kazan(200);
 
       cubit.buy(const Unlock('malzeme_biber', 150));

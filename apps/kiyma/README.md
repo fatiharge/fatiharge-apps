@@ -37,6 +37,20 @@ counter.
 says why: it holds what bootstrap pre-renders, and a blurred silhouette is a
 drawing.
 
+## What survives
+
+`infrastructure/progress_store.dart` writes the till, the day and the shop to
+`SharedPreferences` on every change — `Progress` already announces them, and a
+game that is killed mid-run should lose the run, never the shop. Restoring is
+a bootstrap job of its own under the `skip` policy: a save that will not read
+is not a reason to refuse to play, and an unreadable one is deleted rather
+than guessed at, because it will not read on the next launch either. The
+payload carries a version and an older shape is dropped.
+
+Nothing survived a cold start before this, and the arithmetic says how much
+that mattered: the catalogue runs to about nine thousand gold and day one
+takes twenty-four.
+
 ## The frame
 
 No phone is 16:9 and the kitchen was measured in one 1024x576 space, so there
@@ -492,13 +506,8 @@ baseline is rendered by the host, and macOS does not match Linux.
 
 Stages 6 to 8 of the plan. Named so nobody has to rediscover them:
 
-- **Nothing is saved except the language.** Money, the day number and the
-  unlocks live in memory and are gone when the app closes, so the menu's
-  money chip reads zero on every launch. easy_localization persists the
-  chosen locale on its own, which is also what tells the app it is a first
-  run.
-- **No settings screen, no ads, no IAP.** The menu reaches the language
-  screen directly, which is the whole of the settings that exists.
+- **No settings screen beyond the language.**
+- **No ads and no IAP.** The summary's x2 offer is drawn and dead.
 - **A release build reports no crash anywhere.** All three apps implement
   `bootstrap_kit`'s `onCrash` with `developer.log`, which writes to the VM
   service and is compiled out in product mode. Framework errors still print;
