@@ -118,7 +118,7 @@ all read. Progress therefore publishes its own changes to plain callbacks:
 buying in the shop, which is pushed over a still-mounted menu, otherwise left
 the menu's money chip showing the balance from before the purchase.
 
-A run is a **clock**: `180s + day * 5s`, with customers arriving as seats
+A run is a **clock**: `120s + day * 5s`, with customers arriving as seats
 free until it stops. What it pays feeds **XP**, and XP is what turns the day
 over — the two are the same number underneath and are never shown together,
 so progress reads as levelling rather than as a bank balance. The counter
@@ -136,6 +136,15 @@ order card shows well and more than a player scans mid-rush; parsley came off
 the wrap and aubergine off the plate, and the two wells they left are empty
 steel.
 
+The HUD is **one plate**, not three panels: the pause key, the till and the
+tempo meter share a housing because they are one instrument — the tempo is
+what the till is multiplied by. Cream on charcoal with a hard offset shadow,
+the same language as every screen; a dark wooden version was tried and it
+aged the whole counter, which the HUD is in a position to do because it is
+the one thing on screen at all times. The run's clock is also a hairline
+across the very top of the scene, above everything, so it is seen without
+being looked at — the wall clock is for reading, the thread is for noticing.
+
 The run has a **tempo**, 0 to 100, opening at 50. Serving people pushes it
 up, burning meat and losing customers pull it down, and it drains while
 somebody is waiting — faster the longer since anybody was served. It is worth
@@ -148,6 +157,11 @@ that cannot be recovered, only sat out. The punishment for a cold counter is
 that it pays half. It is also the reputation system of the design doc's
 section 9 done properly — that one was persistent, invisible and worth a 13 %
 swing.
+
+Its stage is a **glyph on a badge**, not a word — read faster and needing no
+translation — and at the top of the meter a band of light sweeps the plate. A
+push the meter has no room left to take is **paid out as gold** instead, so a
+strong run does not go quiet at the ceiling.
 
 Two details it took a simulator to find. Gains shrink as the meter fills, or a
 counter at full supply parks at 100 for the whole run and the meter is a
