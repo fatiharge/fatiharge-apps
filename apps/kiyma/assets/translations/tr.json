@@ -70,5 +70,11 @@
   "duraklat": {
     "baslik": "Duraklatıldı",
     "devam": "Devam et"
+  },
+  "tempo": {
+    "soguk": "SOĞUK",
+    "normal": "NORMAL",
+    "isiniyor": "ISINIYOR",
+    "ates": "ATEŞ"
   }
 }

@@ -25,6 +25,7 @@ import 'package:kiyma/domain/progress.dart';
 import 'package:kiyma/domain/quad.dart';
 import 'package:kiyma/domain/run_summary.dart';
 import 'package:kiyma/domain/scene.dart';
+import 'package:kiyma/domain/tempo.dart';
 import 'package:kiyma/domain/unlocks.dart';
 import 'package:kiyma/infrastructure/assets.dart';
 import 'package:kiyma/infrastructure/bootstrap/bootstrap_adapter.dart';

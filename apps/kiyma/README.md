@@ -136,6 +136,30 @@ order card shows well and more than a player scans mid-rush; parsley came off
 the wrap and aubergine off the plate, and the two wells they left are empty
 steel.
 
+The run has a **tempo**, 0 to 100, opening at 50. Serving people pushes it
+up, burning meat and losing customers pull it down, and it drains while
+somebody is waiting — faster the longer since anybody was served. It is worth
+half the takings either way (×0.5 at nothing, ×1.5 at full) and, above the
+halfway mark only, a wider cooked window and slower patience.
+
+That asymmetry is the whole design. A meter that makes meat burn faster *and*
+is pushed down by burnt meat is a spiral: one bad stretch compounds into a run
+that cannot be recovered, only sat out. The punishment for a cold counter is
+that it pays half. It is also the reputation system of the design doc's
+section 9 done properly — that one was persistent, invisible and worth a 13 %
+swing.
+
+Two details it took a simulator to find. Gains shrink as the meter fills, or a
+counter at full supply parks at 100 for the whole run and the meter is a
+constant. And nothing drains while nobody is waiting: without that, day one —
+where arrivals are deliberately slow — cooled the player to half takings for a
+gap the game chose rather than one they caused.
+
+Mis-moves are counted, not charged: the first two in a row are free, and it
+costs more each time after that. A leaning counter under a moving finger
+produces drops that are not mistakes, and the red flash already answers those;
+three in a row is not a slipping finger.
+
 **A touch places what has one place to go** — meat on the grill, an
 ingredient on the wrap, a component on the plate, a jug into the first empty
 glass. Dragging is still the vocabulary and still the only way to say *who*
@@ -258,6 +282,28 @@ The split is deliberate about update rates. Patience bars and cooking meters
 change every frame and are drawn inside the canvas. The bloc only emits when
 money, standing or the phase move — a few times a second at most.
 
+## Measuring the economy
+
+```bash
+fvm flutter test test/economy_test.dart
+```
+
+`DayRun` has no engine in it, so a whole run plays out in a loop with no
+canvas and no clock. `test/support/counter_bot.dart` is a scripted player —
+one thing at a time, wraps only — so what it takes is a floor, not a ceiling.
+It prints a table on every pass, because that table is how `Balance` gets set:
+
+```
+day  plodding  skilled  step
+  1       363      346   350
+ 10       940     2427  1450
+```
+
+Day one is one unhurried run. By day ten a good player is worth two and a half
+times a plodding one, and that widening is the difficulty curve. It also found
+the two bugs above in the tempo meter, and that the old target table was out
+by a factor of twelve — a single day-one run cleared the first three days.
+
 ## The art pipeline
 
 `assets/items` and `assets/data/scene.json` are **generated**, not hand-kept.
@@ -334,7 +380,8 @@ Stages 6 to 8 of the plan. Named so nobody has to rediscover them:
 - **The chef and the customers were never drawn.** They are meant to be
   animated, so for now a customer is a coloured silhouette — see the nine
   states above — and the chef is not drawn at all.
-- **The numbers are the doc's opening suggestions.** Everything in
-  `Balance` is marked `[ÖNERİ]` in the design doc and is waiting for
-  playtest. The money target table was derived from the income formula, so
-  changing the formula means recomputing the table.
+- **The numbers are measured, not played.** `test/economy_test.dart` plays
+  whole runs with a scripted player and prints what they take; the target
+  table and the shop ladder were set from that, and the test asserts the
+  shape they have to keep. What it cannot tell us is how any of it *feels* —
+  a bot has no hands.

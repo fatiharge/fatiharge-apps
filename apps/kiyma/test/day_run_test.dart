@@ -111,9 +111,11 @@ void main() {
 
       // 10 * 1.08 rounded, plus one ingredient at the flat bonus — left on
       // the ledge, not in the till.
-      expect(run.altin[0]!.miktar, 13);
+      // 10 * 1.08 rounded, one ingredient at the flat bonus, at neutral
+      // tempo — a run opens with the multiplier at exactly one.
+      expect(run.altin[0]!.miktar, 11 + Balance.ingredientBonus);
       run.tap(slot('altin_alani', 0));
-      expect(run.progress.para, 13);
+      expect(run.progress.para, 11 + Balance.ingredientBonus);
     });
 
     test('takes ingredients while the meat is still on the grill', () {
@@ -475,7 +477,8 @@ void main() {
       run.tick(0.1);
       expect(run.musteriler[1], isNull);
 
-      for (var i = 0; i < 10; i++) {
+      // Long enough for the day's arrival gap, which widens on early days.
+      for (var i = 0; i < 40; i++) {
         run.tick(0.5);
       }
       expect(run.musteriler[1], isNotNull, reason: 'the seat filled again');

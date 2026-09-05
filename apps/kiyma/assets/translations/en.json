@@ -70,5 +70,11 @@
   "duraklat": {
     "baslik": "Paused",
     "devam": "Resume"
+  },
+  "tempo": {
+    "soguk": "COLD",
+    "normal": "STEADY",
+    "isiniyor": "WARMING",
+    "ates": "ON FIRE"
   }
 }

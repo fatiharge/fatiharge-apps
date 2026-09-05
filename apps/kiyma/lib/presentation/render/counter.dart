@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'dart:ui';
 
+import 'package:easy_localization/easy_localization.dart';
 // `Quad` collides with vector_math's, which Flame re-exports everywhere.
 import 'package:flame/components.dart' hide Quad;
 import 'package:flame/events.dart';
@@ -13,9 +14,13 @@ import 'package:kiyma/domain/model/order.dart';
 import 'package:kiyma/domain/model/products.dart';
 import 'package:kiyma/domain/quad.dart';
 import 'package:kiyma/domain/scene.dart';
+import 'package:kiyma/domain/tempo.dart';
 import 'package:kiyma/infrastructure/assets.dart';
 import 'package:kiyma/presentation/render/halo.dart';
 import 'package:kiyma/presentation/render/painter.dart';
+
+// Only for the two glyphs the grill badges carry.
+// `Quad` collides with vector_math's, which Flame re-exports everywhere.
 
 /// The whole counter: every pixel of the game world and every gesture on it.
 ///
@@ -43,6 +48,20 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   // top-left because the whole right-hand wall is now the clock's.
   static const _pause = Rect.fromLTWH(14, 10, 88, 88);
   static const _gold = Rect.fromLTWH(114, 10, 282, 88);
+
+  /// Under the till, because it is what the till is multiplied by. Stops
+  /// short of it: the leftmost customer's patience bar starts at x344.
+  static const _tempo = Rect.fromLTWH(114, 106, 210, 40);
+
+  /// One colour per band. Four named states are learnable; a continuous
+  /// multiplier is not, and nobody would ever work out why the meat burned
+  /// faster this time.
+  static const Map<TempoHali, Color> _tempoColours = {
+    TempoHali.soguk: Color(0xFF6C8AA6),
+    TempoHali.normal: Color(0xFFCBA23C),
+    TempoHali.isiniyor: Color(0xFFE8862A),
+    TempoHali.ates: Color(0xFFE0452A),
+  };
 
   /// Areas whose contents change during play, so their idle art is never the
   /// whole story and is drawn by the passes further down.
@@ -545,6 +564,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
 
   /// What is left over the scene: the till and the pause button.
   void _renderHud(Canvas canvas) {
+    _renderTempo(canvas);
     drawPanel(canvas, _gold);
     final coins = assets['altin'];
     if (coins != null) {
@@ -815,5 +835,49 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       ..translate(-run.carriedAt.dx, -(run.carriedAt.dy - 12));
     drawCentered(canvas, image, run.carriedAt - const Offset(0, 12), width);
     canvas.restore();
+  }
+
+  /// The run's momentum: a named band, a meter, and the last change still
+  /// floating off it. Everything the counter is worth passes through this
+  /// number, so it is drawn as large as the till it multiplies.
+  void _renderTempo(Canvas canvas) {
+    final tempo = run.tempo;
+    final colour = _tempoColours[tempo.hal]!;
+    drawPanel(canvas, _tempo, fill: const Color(0xFF2A2622));
+
+    drawBar(
+      canvas,
+      Rect.fromLTWH(_tempo.left + 12, _tempo.top + 25, _tempo.width - 24, 8),
+      tempo.oran,
+      color: colour,
+      background: const Color(0x55000000),
+    );
+
+    drawText(
+      canvas,
+      'tempo.${tempo.hal.name}'.tr(),
+      Offset(_tempo.left + 12, _tempo.top + 3),
+      size: 15,
+      weight: 900,
+      family: 'Rubik',
+      color: colour,
+    );
+
+    // The change, floating off the meter. Without it the multiplier is
+    // invisible and the player never learns what feeds it.
+    if (tempo.degisimKalan <= 0) return;
+    final delta = tempo.sonDegisim;
+    final fade = (tempo.degisimKalan / 1.1).clamp(0.0, 1.0);
+    drawText(
+      canvas,
+      '${delta > 0 ? '+' : ''}${delta.round()}',
+      Offset(_tempo.right - 26, _tempo.top + 3 - (1 - fade) * 12),
+      size: 16,
+      weight: 900,
+      family: 'Rubik',
+      center: true,
+      color: (delta > 0 ? const Color(0xFF7BD154) : const Color(0xFFE0574A))
+          .withValues(alpha: fade),
+    );
   }
 }

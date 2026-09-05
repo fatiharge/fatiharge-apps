@@ -28,13 +28,17 @@ class MangalSlot {
   double get pismeOrani =>
       (_gecen / (Balance.rawSeconds + Balance.cookingSeconds)).clamp(0, 1);
 
+  /// How wide the cooked window is right now: the day narrows it, a hot
+  /// counter widens it back out.
+  double pencere(int day, double carpan) => Balance.cookedWindow(day) * carpan;
+
   /// `0..1` through the current state, for the progress the player reads.
-  double ilerleme(int day) => switch (durum) {
+  double ilerleme(int day, [double carpan = 1]) => switch (durum) {
     Pisme.cig => _gecen / Balance.rawSeconds,
     Pisme.pisiyor => (_gecen - Balance.rawSeconds) / Balance.cookingSeconds,
     Pisme.pismis =>
       (_gecen - Balance.rawSeconds - Balance.cookingSeconds) /
-          Balance.cookedWindow(day),
+          pencere(day, carpan),
     _ => 1,
   };
 
@@ -50,14 +54,14 @@ class MangalSlot {
 
   /// Advances the clock. Returns `true` on the frame the meat burns, which is
   /// where the money penalty is charged.
-  bool tick(double dt, int day) {
+  bool tick(double dt, int day, [double carpan = 1]) {
     if (durum == null || durum == Pisme.yanmis) return false;
     _gecen += dt;
     const cooked = Balance.rawSeconds + Balance.cookingSeconds;
     final next = switch (_gecen) {
       < Balance.rawSeconds => Pisme.cig,
       _ when _gecen < cooked => Pisme.pisiyor,
-      _ when _gecen < cooked + Balance.cookedWindow(day) => Pisme.pismis,
+      _ when _gecen < cooked + pencere(day, carpan) => Pisme.pismis,
       _ => Pisme.yanmis,
     };
     final burned = next == Pisme.yanmis && durum != Pisme.yanmis;

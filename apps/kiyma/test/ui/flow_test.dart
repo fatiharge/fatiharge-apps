@@ -163,9 +163,9 @@ void main() {
 
       expect(getIt<Progress>().unlocks.has('malzeme_biber'), isTrue);
       expect(find.text('₺50'), findsOneWidget);
-      // Pickles cost 250; the button is there but dead.
+      // Pickles cost 300; the button is there but dead.
       final pickles = tester.widget<InkWell>(
-        find.ancestor(of: find.text('₺250'), matching: find.byType(InkWell)),
+        find.ancestor(of: find.text('₺300'), matching: find.byType(InkWell)),
       );
       expect(pickles.onTap, isNull);
     });

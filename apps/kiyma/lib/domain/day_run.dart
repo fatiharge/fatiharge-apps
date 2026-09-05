@@ -8,6 +8,7 @@ import 'package:kiyma/domain/model/products.dart';
 import 'package:kiyma/domain/order_maker.dart';
 import 'package:kiyma/domain/progress.dart';
 import 'package:kiyma/domain/scene.dart';
+import 'package:kiyma/domain/tempo.dart';
 
 /// Something the day did that the screen should react to once.
 enum DayEvent {
@@ -88,8 +89,12 @@ class DayRun {
 
   static const _flashFor = 0.28;
 
-  void _flash(String region, {bool ok = true}) =>
-      parlama[region] = (left: _flashFor, ok: ok);
+  void _flash(String region, {bool ok = true}) {
+    parlama[region] = (left: _flashFor, ok: ok);
+    // Every success and every refusal in the game passes through here, which
+    // makes it the one place that can count a run of mis-moves.
+    ok ? tempo.basarili() : tempo.gecersizHareket();
+  }
 
   double flashAt(String region) => (parlama[region]?.left ?? 0) / _flashFor;
 
@@ -108,6 +113,11 @@ class DayRun {
 
   /// How many customers left with everything they asked for.
   int memnunMusteri = 0;
+
+  /// The counter's momentum. Everything the player does feeds it or costs it,
+  /// and what it is worth is a multiplier on the takings, the cooked window
+  /// and how fast patience runs out.
+  final Tempo tempo = Tempo();
 
   double get sureOrani =>
       (kalanSure / Balance.runLength(day).inSeconds).clamp(0, 1);
@@ -155,9 +165,15 @@ class DayRun {
     bekleyenYanik = mangal.any((slot) => slot.yanmis) ? bekleyenYanik + dt : 0;
     if (kagitCagiriyor > 0) kagitCagiriyor -= dt;
 
+    tempo.tick(
+      dt,
+      bekleyen: musteriler.any((c) => c != null && c.yerinde),
+    );
+
     for (final slot in mangal) {
-      if (slot.tick(dt, day)) {
+      if (slot.tick(dt, day, tempo.pismeCarpani)) {
         progress.cezalandir(Balance.burnPenalty(day).round());
+        tempo.etYandi();
         onEvent(DayEvent.yandi);
         onChanged();
       }
@@ -179,6 +195,7 @@ class DayRun {
         // Swept up rather than lost: leaving it costs the tip, not the sale.
         progress.kazan((pile.miktar * Balance.sweptKeeps).round());
         altin[i] = null;
+        tempo.altinSupuruldu();
         onEvent(DayEvent.altinSupuruldu);
         onChanged();
       }
@@ -194,7 +211,7 @@ class DayRun {
         );
         continue;
       }
-      customer.sabirKalan -= dt;
+      customer.sabirKalan -= dt / tempo.sabirCarpani;
       if (customer.sabirKalan <= 0) {
         _ayril(i, memnun: false);
       }
@@ -216,7 +233,7 @@ class DayRun {
               Balance.slowestWalk +
               _random.nextDouble() * (1 - Balance.slowestWalk),
         );
-        _sonrakiGelis = Balance.arrivalGap;
+        _sonrakiGelis = Balance.arrivalGap(day);
         onEvent(DayEvent.musteriGeldi);
         onChanged();
       }
@@ -386,6 +403,7 @@ class DayRun {
     if (pick < 0) return false;
     progress.kazan(altin[pick]!.miktar);
     altin[pick] = null;
+    tempo.altinAlindi();
     onChanged();
     return true;
   }
@@ -725,6 +743,7 @@ class DayRun {
 
     if (kazanc == null) {
       customer.reddet();
+      tempo.urunReddedildi();
       onEvent(DayEvent.reddedildi);
       // Handled, not invalid: the drop was a legal move that the customer
       // turned down, so the product goes to its shelf rather than reporting a
@@ -743,7 +762,11 @@ class DayRun {
     }
 
     _consume(held);
-    customer.odenen += kazanc;
+    customer.odenen += (kazanc * tempo.paraCarpani).round();
+    tempo.servisEdildi(
+      tamami: customer.tamamlandi,
+      sabirOrani: customer.sabirOrani,
+    );
     onEvent(DayEvent.kabul);
 
     if (customer.tamamlandi) _ayril(index, memnun: true);
@@ -782,9 +805,13 @@ class DayRun {
       );
     }
 
-    if (memnun) memnunMusteri++;
+    if (memnun) {
+      memnunMusteri++;
+    } else {
+      tempo.musteriKizdi();
+    }
     onEvent(memnun ? DayEvent.musteriMemnun : DayEvent.musteriKizgin);
-    _sonrakiGelis = math.max(_sonrakiGelis, Balance.arrivalGap);
+    _sonrakiGelis = math.max(_sonrakiGelis, Balance.arrivalGap(day));
     onChanged();
   }
 

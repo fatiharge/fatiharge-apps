@@ -40,7 +40,12 @@ abstract final class Balance {
 
   /// Flat, unscaled by the day: otherwise "stuff everything in" becomes the
   /// dominant late strategy.
-  static const ingredientBonus = 2;
+  ///
+  /// Big enough that a full wrap is worth roughly three bare ones. At the old
+  /// +2 an ingredient was close to a pure loss: `OrderMaker` only asks for
+  /// what is open, so buying one *created* orders that demanded it, and the
+  /// whole return was two gold on an eleven-gold wrap.
+  static const ingredientBonus = 5;
 
   static const Map<Tatli, int> tatliBase = {Tatli.baklava: 8};
   static const Map<Icecek, int> icecekBase = {
@@ -94,11 +99,33 @@ abstract final class Balance {
   static const sweptAfter = 10.0;
   static const sweptKeeps = 0.7;
 
-  static const arrivalGap = 3.0;
+  /// Gap between arrivals, closing with the day.
+  ///
+  /// It was a flat three seconds, which made day one a firehose: the bot
+  /// clears forty customers in a 185-second run and is limited by supply, not
+  /// by its own hands. Day one should be teachable.
+  static double arrivalGap(int day) => math.max(2.2, 8 - day * 0.6);
 
   /// XP needed to reach each day. Earned money is what feeds it, but the
   /// player is never shown that link — they see a level bar.
-  static const targets = [70, 170, 295, 450, 640, 865, 1125, 1425, 1770, 2155];
+  ///
+  /// Measured, not guessed: `test/economy_test.dart` plays whole runs with a
+  /// scripted player and reports what they take. Each step is about what a
+  /// plodding player clears in one run, so an ordinary day is one run and a
+  /// good one is faster. The old table was out by a factor of twelve — a
+  /// single day-one run cleared the first three days at once.
+  static const targets = [
+    350,
+    770,
+    1270,
+    1870,
+    2590,
+    3440,
+    4440,
+    5590,
+    6890,
+    8340,
+  ];
 
   static int target(int day) {
     if (day <= targets.length) return targets[day - 1];
@@ -106,7 +133,7 @@ abstract final class Balance {
     var value = targets.last;
     var step = targets.last - targets[targets.length - 2];
     for (var d = targets.length; d < day; d++) {
-      step += 40;
+      step += 150;
       value += step;
     }
     return value;

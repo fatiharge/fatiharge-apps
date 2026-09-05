@@ -89,14 +89,15 @@ void main() {
 
     test('spending never costs a level', () {
       final cubit = KiymaCubit(world, Progress())..startDay();
-      cubit.progress.kazan(300);
+      final earned = Balance.target(3) + 50;
+      cubit.progress.kazan(earned);
       cubit.run!.tick(Balance.runLength(1).inSeconds + 1);
-      expect(cubit.state.gun, 4, reason: '300 clears the first three');
+      expect(cubit.state.gun, 4, reason: 'it cleared the first three days');
 
       cubit.buy(const Unlock('malzeme_biber', 150));
       expect(cubit.state.gun, 4, reason: 'spending is not levelling');
-      expect(cubit.state.xp, 300);
-      expect(cubit.state.para, 150);
+      expect(cubit.state.xp, earned);
+      expect(cubit.state.para, earned - 150);
     });
 
     test('closing the page ends the run and records what it took', () async {

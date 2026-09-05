@@ -18,8 +18,9 @@ void main() {
     test('ingredient bonuses do not scale with the day', () {
       final early = Balance.income(Balance.durumBase, 1, ingredients: 3);
       final late = Balance.income(Balance.durumBase, 20, ingredients: 3);
-      expect(early - Balance.income(Balance.durumBase, 1), 6);
-      expect(late - Balance.income(Balance.durumBase, 20), 6);
+      const three = 3 * Balance.ingredientBonus;
+      expect(early - Balance.income(Balance.durumBase, 1), three);
+      expect(late - Balance.income(Balance.durumBase, 20), three);
     });
 
     test('a run is three minutes plus five seconds a day', () {
@@ -27,9 +28,9 @@ void main() {
       expect(Balance.runLength(10), const Duration(seconds: 230));
     });
 
-    test('the target table is the doc table, and keeps climbing past it', () {
-      expect(Balance.target(1), 70);
-      expect(Balance.target(10), 2155);
+    test('the target table climbs, and keeps climbing past its end', () {
+      expect(Balance.target(1), Balance.targets.first);
+      expect(Balance.target(10), Balance.targets.last);
       expect(Balance.target(11), greaterThan(Balance.target(10)));
       expect(
         Balance.target(12) - Balance.target(11),
