@@ -212,6 +212,12 @@ class CounterComponent extends PositionComponent with DragCallbacks {
 
   @override
   void render(Canvas canvas) {
+    // Clipped to the design box. The camera is no longer a 16:9 window, so
+    // without this a customer still walking in from off-stage is drawn out
+    // in the margin, on top of the blurred room.
+    canvas
+      ..save()
+      ..clipRect(Offset.zero & Size(size.x, size.y));
     _renderScene(canvas);
     _renderWall(canvas);
     // Somebody still crossing the shop passes behind what is standing on the
@@ -228,6 +234,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     _renderCarried(canvas);
     _renderFlashes(canvas);
     _renderHud(canvas);
+    canvas.restore();
   }
 
   void _renderScene(Canvas canvas) {

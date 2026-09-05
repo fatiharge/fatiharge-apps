@@ -103,6 +103,7 @@ class _GameView extends StatelessWidget {
                   _GameHost(
                     run: run,
                     onPause: () => cubit.duraklat(durdur: true),
+                    insets: MediaQuery.viewPaddingOf(context),
                   ),
                 if (state.duraklatildi)
                   _PauseOverlay(onResume: () => cubit.duraklat(durdur: false)),
@@ -171,10 +172,18 @@ class _PauseOverlay extends StatelessWidget {
 /// [GameWidget] restarts the engine when handed a new game object, and the
 /// parent rebuilds whenever money moves.
 class _GameHost extends StatefulWidget {
-  const _GameHost({required this.run, required this.onPause});
+  const _GameHost({
+    required this.run,
+    required this.onPause,
+    required this.insets,
+  });
 
   final DayRun run;
   final VoidCallback onPause;
+
+  /// Passed in rather than read here: the game rebuilds on a new run, not on
+  /// a metrics change, so the value has to arrive from a widget that does.
+  final EdgeInsets insets;
 
   @override
   State<_GameHost> createState() => _GameHostState();
@@ -189,15 +198,21 @@ class _GameHostState extends State<_GameHost> {
       scene: world.scene,
       art: world.art,
       halos: world.halos,
+      backdrop: world.backdrop,
       run: widget.run,
       onPause: widget.onPause,
+      insets: widget.insets,
     );
   }
 
   @override
   void didUpdateWidget(covariant _GameHost old) {
     super.didUpdateWidget(old);
-    if (!identical(old.run, widget.run)) _game = _build();
+    if (!identical(old.run, widget.run)) {
+      _game = _build();
+    } else if (old.insets != widget.insets) {
+      _game.insetsChanged(widget.insets);
+    }
   }
 
   @override

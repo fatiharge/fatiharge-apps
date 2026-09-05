@@ -43,3 +43,9 @@ kotlin {
 flutter {
     source = "../.."
 }
+
+dependencies {
+    // WindowInsetsControllerCompat: hiding the system bars from Kotlin, which
+    // is the only place left that can since targetSdk 36.
+    implementation("androidx.core:core-ktx:1.13.1")
+}

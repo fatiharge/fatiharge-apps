@@ -1,10 +1,14 @@
-import 'dart:ui' show VoidCallback;
+import 'dart:math' as math;
+import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
+import 'package:flutter/widgets.dart' show EdgeInsets;
 import 'package:kiyma/domain/day_run.dart';
 import 'package:kiyma/domain/scene.dart';
 import 'package:kiyma/infrastructure/assets.dart';
+import 'package:kiyma/presentation/palette.dart';
+import 'package:kiyma/presentation/render/backdrop.dart';
 import 'package:kiyma/presentation/render/counter.dart';
 import 'package:kiyma/presentation/render/halo.dart';
 
@@ -20,6 +24,8 @@ class KiymaGame extends FlameGame {
     required this.halos,
     required this.run,
     required this.onPause,
+    this.backdrop,
+    this.insets = EdgeInsets.zero,
   });
 
   final SceneData scene;
@@ -35,19 +41,35 @@ class KiymaGame extends FlameGame {
   /// The HUD is drawn in the scene, so its buttons are hit-tested there too.
   final VoidCallback onPause;
 
+  /// The blurred plate the margin is painted with.
+  final Image? backdrop;
+
+  /// What the notch, the camera cutout and the gesture bar are covering. The
+  /// counter is kept out of all of it.
+  EdgeInsets insets;
+
+  /// Never let the box touch the glass, even where the system says it may:
+  /// rounded corners eat the last few pixels on every modern phone.
+  static const _gutter = 20.0;
+
+  @override
+  Color backgroundColor() => KiymaPalette.zemin;
+
   @override
   Future<void> onLoad() async {
-    // Everything in the art was measured in one 1024x576 space, so the fit is
-    // a single letterbox rather than a layout pass. The viewfinder is moved
-    // to the top-left because scene coordinates start there, not at a centre.
-    camera = CameraComponent.withFixedResolution(
-      world: world,
-      width: scene.size.width,
-      height: scene.size.height,
-    )..viewfinder.anchor = Anchor.topLeft;
-    camera.viewfinder.position = Vector2.zero();
+    // Not `withFixedResolution`: that clips to a 16:9 window and leaves the
+    // rest of the screen as whatever is behind the game, which was black —
+    // the loudest way software can say nobody finished it. An unclipped
+    // camera at the same zoom shows exactly the same counter and lets the
+    // margin be painted.
+    camera = CameraComponent(world: world)..viewfinder.anchor = Anchor.center;
 
-    world.add(
+    await world.addAll([
+      Backdrop(
+        blurred: backdrop,
+        stage: Offset.zero & Size(scene.size.width, scene.size.height),
+        visible: () => camera.visibleWorldRect,
+      ),
       CounterComponent(
         scene: scene,
         assets: art,
@@ -55,6 +77,43 @@ class KiymaGame extends FlameGame {
         run: run,
         onPause: onPause,
       ),
+    ]);
+    _fit(size);
+  }
+
+  /// The system's furniture moved — a fold opened, the bar came back.
+  void insetsChanged(EdgeInsets value) {
+    insets = value;
+    if (isLoaded) _fit(size);
+  }
+
+  @override
+  void onGameResize(Vector2 size) {
+    super.onGameResize(size);
+    if (isLoaded) _fit(size);
+  }
+
+  /// Fits the design box into what is left after the system's furniture, and
+  /// centres it there rather than on the screen — so a notch on one side does
+  /// not push the counter under it.
+  void _fit(Vector2 view) {
+    final left = math.max(insets.left, _gutter);
+    final right = math.max(insets.right, _gutter);
+    final top = math.max(insets.top, _gutter);
+    final bottom = math.max(insets.bottom, _gutter);
+
+    final zoom = math.max(
+      0.01,
+      math.min(
+        (view.x - left - right) / scene.size.width,
+        (view.y - top - bottom) / scene.size.height,
+      ),
     );
+    camera.viewfinder
+      ..zoom = zoom
+      ..position = Vector2(
+        scene.size.width / 2 + (right - left) / 2 / zoom,
+        scene.size.height / 2 + (bottom - top) / 2 / zoom,
+      );
   }
 }

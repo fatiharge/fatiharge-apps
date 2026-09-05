@@ -37,6 +37,34 @@ counter.
 says why: it holds what bootstrap pre-renders, and a blurred silhouette is a
 drawing.
 
+## The frame
+
+No phone is 16:9 and the kitchen was measured in one 1024x576 space, so there
+is always a margin. It used to be black — the loudest way software can say
+nobody finished it.
+
+The camera is no longer `withFixedResolution`, which clips to a 16:9 window
+and leaves the rest to the background colour. It is a plain `CameraComponent`
+at the same zoom, so not a pixel inside the design box moves, and the margin
+is painted: `presentation/render/backdrop.dart` fills it with the scene
+painting blurred small at startup, knocked down, vignetted, with a rule and an
+outward shadow around the box so it reads as a lit stage in a dark room.
+
+The box is fitted to the **safe** rectangle, not the screen: the notch, the
+camera cutout and the gesture bar are measured out of it, with a 20-unit floor
+per side for rounded corners, and it is centred in what is left — so a cutout
+on one side does not push the counter under it. `CounterComponent.render`
+clips to the box, because unclipping the camera made customers visible while
+they were still walking in from off-stage.
+
+The system bars are hidden in `MainActivity.kt` rather than from Dart:
+`setEnabledSystemUIMode(immersiveSticky)` stopped hiding anything at
+targetSdk 36. Dart now says `edgeToEdge`, which is what actually happens.
+
+`test/golden/frame_golden_test.dart` renders the counter on a wide screen
+with a cutout and on a squarer one, which is what stops a letterbox shipping
+past a green suite again.
+
 ## One coordinate space
 
 Every position in the game — the painted layers, all 35 regions, the recipe

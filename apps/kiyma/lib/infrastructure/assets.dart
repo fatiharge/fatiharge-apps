@@ -48,6 +48,30 @@ class GameAssets {
 
   Image? operator [](String name) => _images[name];
 
+  /// The scene painting, blurred small, for the margin around the counter.
+  ///
+  /// Baked once and tiny: it is only ever drawn out of focus and scaled up,
+  /// so 320x180 is more than the blur can carry anyway.
+  Future<Image?> bakeBackdrop() async {
+    final scene = _images['back_scene.jpg'];
+    if (scene == null) return null;
+    const w = 320.0;
+    const h = 180.0;
+    final recorder = PictureRecorder();
+    Canvas(recorder).drawImageRect(
+      scene,
+      Rect.fromLTWH(0, 0, scene.width.toDouble(), scene.height.toDouble()),
+      const Rect.fromLTWH(0, 0, w, h),
+      Paint()
+        ..filterQuality = FilterQuality.medium
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 9),
+    );
+    final picture = recorder.endRecording();
+    final baked = await picture.toImage(w.toInt(), h.toInt());
+    picture.dispose();
+    return baked;
+  }
+
   /// Draws every image once, offscreen, so the GPU has them before the
   /// counter does.
   ///

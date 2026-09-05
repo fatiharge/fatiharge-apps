@@ -24,7 +24,17 @@ class BootstrapAdapter implements BootstrapPort {
         DeviceOrientation.landscapeLeft,
         DeviceOrientation.landscapeRight,
       ]);
-      await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+      // Edge to edge, not immersive: the platform stopped honouring the Dart
+      // opt-out at targetSdk 36, so the bars are hidden in MainActivity.kt
+      // and this only says where the app is allowed to draw.
+      await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+      SystemChrome.setSystemUIOverlayStyle(
+        const SystemUiOverlayStyle(
+          statusBarColor: Color(0x00000000),
+          statusBarIconBrightness: Brightness.light,
+          systemNavigationBarColor: Color(0x00000000),
+        ),
+      );
     }, errorPolicy: BootstrapErrorPolicy.skip),
     const BootstrapJob(
       'dependencies',

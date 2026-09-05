@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:injectable/injectable.dart';
 import 'package:kiyma/domain/scene.dart';
 import 'package:kiyma/infrastructure/assets.dart';
@@ -16,10 +18,15 @@ class GameWorld {
   SceneData? _scene;
   GameAssets? _art;
   Halos? _halos;
+  Image? _backdrop;
 
   SceneData get scene => _scene ?? _missing('scene');
   GameAssets get art => _art ?? _missing('art');
   Halos get halos => _halos ?? _missing('halos');
+
+  /// The blurred plate the margin around the counter is painted with. Null
+  /// only if the scene painting itself failed to load.
+  Image? get backdrop => _backdrop;
 
   Future<void> loadScene() async => _scene = await loadSceneAsset();
 
@@ -29,6 +36,7 @@ class GameWorld {
   Future<void> loadArt() async {
     final art = _art = await GameAssets.load();
     _halos = await Halos.bake(scene, art);
+    _backdrop = await art.bakeBackdrop();
     await art.warm();
   }
 
