@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The brand screen's own ground. The window is this colour from the
+         moment the process starts, so there is no white or black flash
+         before Flutter's first frame lands on the same cream. -->
+    <color name="brand_ground">#F5E9D7</color>
+</resources>

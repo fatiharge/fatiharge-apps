@@ -37,6 +37,15 @@ counter.
 says why: it holds what bootstrap pre-renders, and a blurred silhouette is a
 drawing.
 
+## Launching
+
+The window is cream from the moment the process starts — `colors.xml` holds
+the brand ground and both launch backgrounds and both themes point at it — so
+there is no flash of white or black before the first Flutter frame, which is
+itself the cream brand screen. The icon is a skewer and a flame, generated
+with the rest of the art and written into every Android density, both maskable
+web sizes and all fifteen iOS slots.
+
 ## What survives
 
 `infrastructure/progress_store.dart` writes the till, the day and the shop to

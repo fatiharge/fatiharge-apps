@@ -3,10 +3,10 @@
     "short_name": "Kıyma",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
-    "orientation": "portrait-primary",
+    "background_color": "#F5E9D7",
+    "theme_color": "#14100F",
+    "description": "Adana kebapçısının tezgahında bir pişirme oyunu.",
+    "orientation": "landscape",
     "prefer_related_applications": false,
     "icons": [
         {
