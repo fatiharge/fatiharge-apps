@@ -132,7 +132,30 @@ void drawText(
   bool center = false,
   int weight = 500,
   String? family,
+  Color? outline,
 }) {
+  if (outline != null) {
+    // Drawn four times around: a number thrown over a painted kitchen has no
+    // guaranteed backdrop, and an outline is what stops it disappearing into
+    // a bright tray.
+    for (final d in const [
+      Offset(-1.6, 0),
+      Offset(1.6, 0),
+      Offset(0, -1.6),
+      Offset(0, 1.6),
+    ]) {
+      drawText(
+        canvas,
+        text,
+        at + d,
+        size: size,
+        color: outline.withValues(alpha: color.a),
+        center: center,
+        weight: weight,
+        family: family,
+      );
+    }
+  }
   final painter = m.TextPainter(
     text: m.TextSpan(
       text: text,

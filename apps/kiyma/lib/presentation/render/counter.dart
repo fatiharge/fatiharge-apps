@@ -15,6 +15,7 @@ import 'package:kiyma/domain/quad.dart';
 import 'package:kiyma/domain/scene.dart';
 import 'package:kiyma/domain/tempo.dart';
 import 'package:kiyma/infrastructure/assets.dart';
+import 'package:kiyma/presentation/render/effects.dart';
 import 'package:kiyma/presentation/render/halo.dart';
 import 'package:kiyma/presentation/render/painter.dart';
 
@@ -127,8 +128,24 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     icon: Icons.priority_high_rounded,
   );
 
+  /// Everything short-lived the counter draws.
+  late final Effects fx = Effects(assets);
+
+  /// The seams effects need: a moment of slowed time on a hit, and a room
+  /// that can be knocked. The instrument is drawn outside the shake, so it
+  /// stays bolted to the screen.
+  double _freeze = 0;
+  double _shake = 0;
+  double _shakeFor = 0;
+
+  /// The till catching up with the money, so a sale rolls rather than jumps.
+  double _till = 0;
+
   Offset _last = Offset.zero;
   Offset _start = Offset.zero;
+
+  /// Where the carried thing is drawn, always a little behind the finger.
+  Offset _held = Offset.zero;
   double _elapsed = 0;
 
   /// How far this drag has ever got from where it started.
@@ -137,8 +154,170 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   @override
   void update(double dt) {
     _elapsed += dt;
-    run.tick(dt);
+
+    // Hit-stop: the world crawls for a few frames on a hit while the pulses
+    // keep breathing, which is what makes a serve land.
+    if (_freeze > 0) {
+      _freeze -= dt;
+      run.tick(dt * 0.12);
+    } else {
+      run.tick(dt);
+    }
+
+    if (_shake > 0) _shake -= dt;
+    fx.update(dt);
+    _drain();
+    _emit(dt);
+
+    _till += (run.progress.para - _till) * (1 - math.exp(-14 * dt));
+    if ((run.progress.para - _till).abs() < 1) {
+      _till = run.progress.para.toDouble();
+    }
+
+    final target = run.carried == null ? run.carriedAt : run.carriedAt;
+    _held += (target - _held) * (1 - math.exp(-22 * dt));
   }
+
+  /// Turns what the rules said happened into something to look at.
+  void _drain() {
+    for (final cue in run.cues) {
+      switch (cue.kind) {
+        case DayEvent.kabul:
+          _serve(cue);
+        case DayEvent.yandi:
+          _knock(3.4, 0.12);
+          fx
+            ..burst(
+              at: cue.at,
+              colour: const Color(0xFF3A302A),
+              count: 10,
+              speed: 150,
+            )
+            ..floater(
+              at: cue.at,
+              text: '${cue.amount}',
+              colour: const Color(0xFFC4321F),
+            );
+        case DayEvent.musteriKizgin:
+          _knock(6, 0.3);
+          fx.floater(
+            at: cue.at,
+            text: '!',
+            colour: const Color(0xFFC4321F),
+            size: 26,
+          );
+        case DayEvent.altinSupuruldu:
+          fx
+            ..burst(
+              at: cue.at,
+              colour: const Color(0xFF8E8578),
+              count: 8,
+              speed: 90,
+              up: math.pi / 2,
+              gravity: 120,
+            )
+            ..floater(
+              at: cue.at,
+              text: '${cue.amount}',
+              colour: const Color(0xFFC4321F),
+              rise: -20,
+            );
+        case _:
+          break;
+      }
+    }
+    run.cues.clear();
+  }
+
+  /// The one hit in the game, given the weight of one.
+  void _serve(Cue cue) {
+    final band = _tempoColours[run.tempo.hal]!;
+    final to = cue.to;
+    _freeze = to == null ? 0.04 : 0.07;
+    if (to != null) _knock(4, 0.18);
+
+    final asset = cue.asset;
+    if (asset != null && to != null) {
+      fx.flight(from: cue.at, to: to, asset: asset, width: 74);
+    }
+    fx
+      ..ring(at: cue.at, colour: band)
+      ..burst(at: cue.at, colour: const Color(0xFFF5E9D7))
+      ..burst(at: cue.at, colour: band, count: 8, speed: 190)
+      ..floater(
+        at: (to ?? cue.at) - const Offset(0, 24),
+        text: '+${cue.amount}',
+        colour: const Color(0xFFFFE9B0),
+        size: 24,
+      );
+    if (cue.asset == 'altin') {
+      fx.coins(
+        from: cue.at,
+        to: Offset(_gold.left + 32, _gold.center.dy),
+      );
+    }
+  }
+
+  void _knock(double amount, double seconds) {
+    _shake = seconds;
+    _shakeFor = seconds;
+    _shakeAmount = amount;
+  }
+
+  double _shakeAmount = 0;
+
+  /// The kitchen, doing what a kitchen does whether or not anybody touches
+  /// it: smoke off the coals, steam off what is ready.
+  void _emit(double dt) {
+    _sinceSmoke += dt;
+    if (_sinceSmoke < 0.16) return;
+    _sinceSmoke = 0;
+
+    final slots = scene['mangal_alani'].slots;
+    for (var i = 0; i < run.mangal.length; i++) {
+      final slot = run.mangal[i];
+      if (!slot.unlocked || slot.bos) continue;
+      final at = slots[i].center;
+      if (slot.yanmis) {
+        fx.puff(
+          at: at,
+          asset: 'duman',
+          tint: const Color(0xFF2A2320),
+          life: 3.4,
+          from: 18,
+          to: 62,
+          rise: 150,
+          peak: 0.7,
+        );
+      } else if (slot.durum == Pisme.pismis) {
+        fx.puff(
+          at: at,
+          asset: 'buhar',
+          life: 1.4,
+          from: 8,
+          to: 24,
+          rise: 44,
+          peak: 0.4,
+        );
+      } else {
+        fx.puff(at: at, asset: 'duman', peak: 0.45, from: 12, to: 40);
+      }
+    }
+
+    if (run.durumIstasyonu?.etli ?? false) {
+      fx.puff(
+        at: scene['durum_hazirlama'].quad.center - const Offset(0, 26),
+        asset: 'buhar',
+        life: 1.5,
+        from: 8,
+        to: 22,
+        rise: 40,
+        peak: 0.35,
+      );
+    }
+  }
+
+  double _sinceSmoke = 0;
 
   // --- Gestures (design doc 13: tap, drag, upward flick — nothing else) ---
 
@@ -215,9 +394,19 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     // Clipped to the design box. The camera is no longer a 16:9 window, so
     // without this a customer still walking in from off-stage is drawn out
     // in the margin, on top of the blurred room.
+    // The room is knocked, the instrument is not: a HUD that shakes with the
+    // scene reads as a broken screen rather than as an impact.
     canvas
       ..save()
-      ..clipRect(Offset.zero & Size(size.x, size.y));
+      ..clipRect(Offset.zero & Size(size.x, size.y))
+      ..save();
+    if (_shake > 0) {
+      final left = _shakeFor <= 0 ? 0.0 : _shake / _shakeFor;
+      canvas.translate(
+        math.sin(_elapsed * 61) * _shakeAmount * left,
+        math.cos(_elapsed * 47) * _shakeAmount * left * 0.6,
+      );
+    }
     _renderScene(canvas);
     _renderWall(canvas);
     // Somebody still crossing the shop passes behind what is standing on the
@@ -226,15 +415,72 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     _renderMovers(canvas);
     _renderSources(canvas);
     _renderMangal(canvas);
+    // Smoke passes in front of the skewers and behind everything on the
+    // counter, which is where smoke is.
+    fx.render(canvas, EffectLayer.room);
     _renderDurum(canvas);
     _renderTabak(canvas);
     _renderShelves(canvas);
     _renderSeated(canvas);
     _renderGold(canvas);
+    fx.render(canvas, EffectLayer.counter);
     _renderCarried(canvas);
     _renderFlashes(canvas);
+    _renderLight(canvas);
+    canvas.restore();
+
+    fx.render(canvas, EffectLayer.over);
     _renderHud(canvas);
     canvas.restore();
+  }
+
+  /// What the room is made of besides its paint: a vignette that pulls the
+  /// eye in, coals that breathe, and the whole kitchen taking the colour of
+  /// the tempo — grey-blue and dead when it is cold, warm when it is not.
+  void _renderLight(Canvas canvas) {
+    final stage = Offset.zero & Size(size.x, size.y);
+    final tempo = run.tempo.oran;
+
+    canvas
+      ..drawRect(
+        stage,
+        Paint()
+          ..blendMode = BlendMode.plus
+          ..color = Color.lerp(
+            const Color(0x0C1B3A5E),
+            const Color(0x18FF7A1F),
+            tempo,
+          )!,
+      )
+      ..drawRect(
+        stage,
+        Paint()
+          ..shader = Gradient.radial(
+            stage.center,
+            size.x * 0.62,
+            const [Color(0x00000000), Color(0x59140F0C)],
+            const [0.5, 1],
+          ),
+      );
+
+    // The last twenty seconds, closing in.
+    if (run.kalanSure < 20 && run.kalanSure > 0) {
+      final urgency =
+          (1 - run.kalanSure / 20) * (0.6 + 0.4 * math.sin(_elapsed * 6));
+      canvas.drawRect(
+        stage,
+        Paint()
+          ..shader = Gradient.radial(
+            stage.center,
+            size.x * 0.6,
+            [
+              const Color(0x00000000),
+              const Color(0xFFD93B2B).withValues(alpha: 0.22 * urgency),
+            ],
+            const [0.45, 1],
+          ),
+      );
+    }
   }
 
   void _renderScene(Canvas canvas) {
@@ -310,6 +556,26 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   void _renderMangal(Canvas canvas) {
     final region = scene['mangal_alani'];
     final slots = region.slots;
+
+    // Coals that breathe, and burn hotter the fuller the grill is.
+    final busy = run.mangal.where((s) => s.unlocked && !s.bos).length;
+    final burning = run.mangal.any((s) => s.yanmis);
+    final heat = (0.35 + busy * 0.2).clamp(0.0, 1.0) * (0.7 + 0.3 * _pulse);
+    canvas.drawCircle(
+      region.quad.center,
+      190,
+      Paint()
+        ..blendMode = BlendMode.plus
+        ..shader = Gradient.radial(
+          region.quad.center,
+          190,
+          [
+            (burning ? const Color(0xFFD93B2B) : const Color(0xFFFF7A1F))
+                .withValues(alpha: 0.26 * heat),
+            const Color(0x00000000),
+          ],
+        ),
+    );
     for (var i = 0; i < slots.length; i++) {
       final slot = run.mangal[i];
       if (!slot.unlocked) continue;

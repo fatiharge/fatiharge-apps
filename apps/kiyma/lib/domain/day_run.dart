@@ -25,6 +25,22 @@ enum DayEvent {
   gunBitti,
 }
 
+/// Something that happened, and where.
+///
+/// [DayEvent] alone says only what, so every reward was drawn on the plate in
+/// the top-left corner and nothing could burst under the finger that earned
+/// it. The renderer drains these into its effects pool; the rules stay free
+/// of the engine and the headless simulator keeps running at full speed.
+class Cue {
+  Cue(this.kind, this.at, {this.to, this.amount = 0, this.asset});
+
+  final DayEvent kind;
+  final Offset at;
+  final Offset? to;
+  final int amount;
+  final String? asset;
+}
+
 /// One day behind the counter: the mutable world, and every rule that moves
 /// it.
 ///
@@ -115,6 +131,26 @@ class DayRun {
   /// How many customers left with everything they asked for.
   int memnunMusteri = 0;
 
+  /// What just happened and where, waiting to be drawn. Capped, because the
+  /// headless simulator plays thousands of runs and nothing drains it there.
+  final List<Cue> cues = [];
+
+  static const _cueCap = 24;
+
+  void _cue(
+    DayEvent kind,
+    Offset at, {
+    Offset? to,
+    int amount = 0,
+    String? asset,
+  }) {
+    if (cues.length >= _cueCap) cues.removeAt(0);
+    cues.add(Cue(kind, at, to: to, amount: amount, asset: asset));
+  }
+
+  /// Where a customer is standing, for anything addressed to them.
+  Offset yeri(int slot) => scene['musteri_slot_${slot + 1}'].quad.bounds.center;
+
   /// The counter's momentum. Everything the player does feeds it or costs it,
   /// and what it is worth is a multiplier on the takings, the cooked window
   /// and how fast patience runs out.
@@ -175,8 +211,14 @@ class DayRun {
 
     for (final slot in mangal) {
       if (slot.tick(dt, day, tempo.pismeCarpani)) {
-        progress.cezalandir(Balance.burnPenalty(day).round());
+        final penalty = Balance.burnPenalty(day).round();
+        progress.cezalandir(penalty);
         tempo.etYandi();
+        _cue(
+          DayEvent.yandi,
+          scene['mangal_alani'].slots[mangal.indexOf(slot)].center,
+          amount: -penalty,
+        );
         onEvent(DayEvent.yandi);
         onChanged();
       }
@@ -196,7 +238,13 @@ class DayRun {
       pile.kalan -= dt;
       if (pile.kalan <= 0) {
         // Swept up rather than lost: leaving it costs the tip, not the sale.
-        progress.kazan((pile.miktar * Balance.sweptKeeps).round());
+        final kept = (pile.miktar * Balance.sweptKeeps).round();
+        progress.kazan(kept);
+        _cue(
+          DayEvent.altinSupuruldu,
+          scene['altin_alani'].slots[i].center,
+          amount: kept - pile.miktar,
+        );
         altin[i] = null;
         tempo.altinSupuruldu();
         onEvent(DayEvent.altinSupuruldu);
@@ -423,7 +471,14 @@ class DayRun {
       }
     }
     if (pick < 0) return false;
-    progress.kazan(altin[pick]!.miktar);
+    final taken = altin[pick]!.miktar;
+    progress.kazan(taken);
+    _cue(
+      DayEvent.kabul,
+      scene['altin_alani'].slots[pick].center,
+      amount: taken,
+      asset: 'altin',
+    );
     altin[pick] = null;
     tempo.altinAlindi();
     onChanged();
@@ -601,7 +656,7 @@ class DayRun {
       if (customer == null || !customer.yerinde || held is! HazirUrun) {
         return false;
       }
-      return _servis(index, customer, held);
+      return _servis(index, customer, held, point);
     }
 
     switch (region.name) {
@@ -749,7 +804,7 @@ class DayRun {
 
   // --- Serving ---
 
-  bool _servis(int index, Customer customer, HazirUrun held) {
+  bool _servis(int index, Customer customer, HazirUrun held, Offset point) {
     final order = customer.order;
     final kazanc = switch (held.urun) {
       TatliUrun(:final tatli)
@@ -766,6 +821,7 @@ class DayRun {
     if (kazanc == null) {
       customer.reddet();
       tempo.urunReddedildi();
+      _cue(DayEvent.reddedildi, yeri(index));
       onEvent(DayEvent.reddedildi);
       // Handled, not invalid: the drop was a legal move that the customer
       // turned down, so the product goes to its shelf rather than reporting a
@@ -784,7 +840,15 @@ class DayRun {
     }
 
     _consume(held);
-    customer.odenen += (kazanc * tempo.paraCarpani).round();
+    final paid = (kazanc * tempo.paraCarpani).round();
+    customer.odenen += paid;
+    _cue(
+      DayEvent.kabul,
+      point,
+      to: yeri(index),
+      amount: paid,
+      asset: held.asset,
+    );
     tempo.servisEdildi(
       tamami: customer.tamamlandi,
       sabirOrani: customer.sabirOrani,
@@ -831,6 +895,7 @@ class DayRun {
       memnunMusteri++;
     } else {
       tempo.musteriKizdi();
+      _cue(DayEvent.musteriKizgin, yeri(index));
     }
     onEvent(memnun ? DayEvent.musteriMemnun : DayEvent.musteriKizgin);
     _sonrakiGelis = math.max(_sonrakiGelis, Balance.arrivalGap(day));

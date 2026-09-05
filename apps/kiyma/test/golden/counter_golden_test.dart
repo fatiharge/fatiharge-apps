@@ -124,17 +124,24 @@ void main() {
       run.tempo.servisEdildi(tamami: true, sabirOrani: 1);
     }
 
+    // Something in the air: the counter emits and the pool ages on update,
+    // so a still frame shows none of it unless it is asked for.
+    final component = CounterComponent(
+      scene: scene,
+      assets: assets,
+      halos: halos,
+      run: run,
+      onPause: () {},
+    );
+    for (var i = 0; i < 40; i++) {
+      component.update(1 / 60);
+    }
+
     late Image frame;
     await tester.runAsync(() async {
       final recorder = PictureRecorder();
       final canvas = Canvas(recorder);
-      CounterComponent(
-        scene: scene,
-        assets: assets,
-        halos: halos,
-        run: run,
-        onPause: () {},
-      ).render(canvas);
+      component.render(canvas);
       frame = await recorder.endRecording().toImage(
         scene.size.width.toInt(),
         scene.size.height.toInt(),

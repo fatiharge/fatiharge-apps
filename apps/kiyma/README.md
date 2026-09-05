@@ -313,6 +313,31 @@ wherever the finger was. `classifyTouch` is arithmetic over a start, an end
 and the furthest the finger ever got; net displacement alone would read a
 drag out and back as a tap.
 
+## Effects
+
+`presentation/render/effects.dart` is the pool. There was nowhere to put an
+effect before it: one `render` of a dozen fixed passes, no tween, no
+particle, no seam to shake. An effect is age, life and a draw call — no
+Flame, no widgets — so it tests without a canvas, and everything is spawned
+by the renderer rather than by the rules, which stay engine-free and let the
+headless simulator keep running at full speed.
+
+The rules say *where* now, not just *what*: `Cue` carries a place, an amount
+and an asset beside its `DayEvent`, so a reward bursts under the finger that
+earned it instead of on the plate in the corner. The renderer drains the
+queue each frame.
+
+Two seams sit beside the pool. `_freeze` slows the world for a few frames on
+a hit while the pulses keep breathing, which is what makes a serve land.
+`_shake` knocks the room — inside a save/restore that the instrument sits
+outside of, because a HUD that shakes with the scene reads as a broken screen
+rather than as an impact.
+
+The room itself is lit rather than blitted: a vignette pulling the eye in, an
+ember pool that breathes and burns hotter the fuller the grill is, the whole
+kitchen taking the colour of the tempo, and the last twenty seconds closing in
+red.
+
 ## Where the rules live
 
 `DayRun` is the whole game: the grill, the two prep stations, the shelves, the
