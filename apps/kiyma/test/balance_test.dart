@@ -23,9 +23,9 @@ void main() {
       expect(late - Balance.income(Balance.durumBase, 20), three);
     });
 
-    test('a run is three minutes plus five seconds a day', () {
-      expect(Balance.runLength(1), const Duration(seconds: 185));
-      expect(Balance.runLength(10), const Duration(seconds: 230));
+    test('a run is two minutes plus five seconds a day', () {
+      expect(Balance.runLength(1), const Duration(seconds: 125));
+      expect(Balance.runLength(10), const Duration(seconds: 170));
     });
 
     test('the target table climbs, and keeps climbing past its end', () {

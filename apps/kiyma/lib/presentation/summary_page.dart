@@ -790,7 +790,7 @@ class _Choices extends StatelessWidget {
     children: [
       _Rise(
         animation: reveal,
-        child: _AdOffer(amount: amount),
+        child: _AdOffer(amount: amount, shine: breath),
       ),
       Row(
         children: [
@@ -848,88 +848,138 @@ class _Choices extends StatelessWidget {
 /// Not wired to anything yet: there is no ad SDK in the build. It is here
 /// because the shape of the screen depends on it being here.
 class _AdOffer extends StatelessWidget {
-  const _AdOffer({required this.amount});
+  const _AdOffer({required this.amount, required this.shine});
 
   final int amount;
 
+  /// The same beat the primary button breathes on, spent differently: a band
+  /// of light crossing the offer. The two buttons are asking for different
+  /// things and should not ask in the same way.
+  final Animation<double> shine;
+
   @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
-    decoration: BoxDecoration(
-      color: KiymaPalette.ates,
-      borderRadius: BorderRadius.circular(14),
-      border: Border.all(color: KiymaPalette.komur, width: 2),
-      boxShadow: const [
-        BoxShadow(color: KiymaPalette.komur, offset: Offset(0, 4)),
-      ],
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: shine,
+    builder: (context, child) => CustomPaint(
+      foregroundPainter: _ShinePainter(shine.value),
+      child: child,
     ),
-    child: Row(
-      children: [
-        Container(
-          width: 32,
-          height: 32,
-          decoration: BoxDecoration(
-            color: KiymaPalette.komur,
-            borderRadius: BorderRadius.circular(9),
-          ),
-          child: const Icon(
-            Icons.play_arrow_rounded,
-            size: 20,
-            color: KiymaPalette.kor,
-          ),
-        ),
-        const SizedBox(width: 9),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'ozet.reklam'.tr(),
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontFamily: 'Rubik',
-                  fontVariations: [FontVariation('wght', 900)],
-                  fontSize: 12,
-                  height: 1.2,
-                  letterSpacing: 0.6,
-                  color: KiymaPalette.krema,
-                ),
-              ),
-              Text(
-                'ozet.reklam_alt'.tr(),
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontFamily: 'Rubik',
-                  fontVariations: [FontVariation('wght', 600)],
-                  fontSize: 9,
-                  height: 1.3,
-                  color: Color(0xCCFFFFFF),
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(width: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-          decoration: BoxDecoration(
-            color: KiymaPalette.yesil,
-            borderRadius: BorderRadius.circular(9),
-            border: Border.all(color: KiymaPalette.komur, width: 2),
-          ),
-          child: Text(
-            'ozet.kazanc'.tr(args: [_signed(amount * 2)]),
-            style: const TextStyle(
-              fontFamily: 'Rubik',
-              fontVariations: [FontVariation('wght', 900)],
-              fontSize: 12,
-              height: 1,
+    child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
+      decoration: BoxDecoration(
+        color: KiymaPalette.ates,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: KiymaPalette.komur, width: 2),
+        boxShadow: const [
+          BoxShadow(color: KiymaPalette.komur, offset: Offset(0, 4)),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
               color: KiymaPalette.komur,
+              borderRadius: BorderRadius.circular(9),
+            ),
+            child: const Icon(
+              Icons.play_arrow_rounded,
+              size: 20,
+              color: KiymaPalette.kor,
             ),
           ),
-        ),
-      ],
+          const SizedBox(width: 9),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'ozet.reklam'.tr(),
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontFamily: 'Rubik',
+                    fontVariations: [FontVariation('wght', 900)],
+                    fontSize: 12,
+                    height: 1.2,
+                    letterSpacing: 0.6,
+                    color: KiymaPalette.krema,
+                  ),
+                ),
+                Text(
+                  'ozet.reklam_alt'.tr(),
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontFamily: 'Rubik',
+                    fontVariations: [FontVariation('wght', 600)],
+                    fontSize: 9,
+                    height: 1.3,
+                    color: Color(0xCCFFFFFF),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+            decoration: BoxDecoration(
+              color: KiymaPalette.yesil,
+              borderRadius: BorderRadius.circular(9),
+              border: Border.all(color: KiymaPalette.komur, width: 2),
+            ),
+            child: Text(
+              'ozet.kazanc'.tr(args: [_signed(amount * 2)]),
+              style: const TextStyle(
+                fontFamily: 'Rubik',
+                fontVariations: [FontVariation('wght', 900)],
+                fontSize: 12,
+                height: 1,
+                color: KiymaPalette.komur,
+              ),
+            ),
+          ),
+        ],
+      ),
     ),
   );
+}
+
+/// A slanted band of light crossing the offer. It is the only optional thing
+/// on the screen, so it is the only thing that advertises itself.
+class _ShinePainter extends CustomPainter {
+  const _ShinePainter(this.t);
+
+  final double t;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    // Only across the second half of the beat: a band that never leaves is
+    // not a glint, it is a stripe.
+    if (t < 0.5) return;
+    final phase = (t - 0.5) * 2;
+    final x = -60 + phase * (size.width + 120);
+    canvas
+      ..save()
+      ..clipRRect(
+        RRect.fromRectAndRadius(
+          Offset.zero & size,
+          const Radius.circular(14),
+        ),
+      )
+      ..drawPath(
+        Path()
+          ..moveTo(x, size.height)
+          ..lineTo(x + 26, size.height)
+          ..lineTo(x + 44, 0)
+          ..lineTo(x + 18, 0)
+          ..close(),
+        Paint()..color = const Color(0x59FFFFFF),
+      )
+      ..restore();
+  }
+
+  @override
+  bool shouldRepaint(_ShinePainter old) => old.t != t;
 }

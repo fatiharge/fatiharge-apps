@@ -119,6 +119,11 @@ void main() {
       // The burnt skewer has been sitting long enough for the bin to ask.
       ..bekleyenYanik = Balance.idleBurnt;
 
+    // A pinned meter, so the plate is drawn alight.
+    for (var i = 0; i < 40; i++) {
+      run.tempo.servisEdildi(tamami: true, sabirOrani: 1);
+    }
+
     late Image frame;
     await tester.runAsync(() async {
       final recorder = PictureRecorder();

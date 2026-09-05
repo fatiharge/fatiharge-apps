@@ -247,6 +247,99 @@ void drawDial(
   glyph.paint(canvas, center - Offset(glyph.width / 2, glyph.height / 2));
 }
 
+/// The highlight along the top of a panel. One translucent band is most of
+/// what separates a surface that looks moulded from one that looks printed.
+void drawGloss(Canvas canvas, Rect rect) {
+  canvas.drawRRect(
+    RRect.fromRectAndCorners(
+      Rect.fromLTWH(
+        rect.left + 5,
+        rect.top + 4,
+        rect.width - 10,
+        rect.height * 0.34,
+      ),
+      topLeft: const Radius.circular(14),
+      topRight: const Radius.circular(14),
+      bottomLeft: const Radius.circular(6),
+      bottomRight: const Radius.circular(6),
+    ),
+    Paint()..color = const Color(0x44FFFFFF),
+  );
+}
+
+/// A key on the panel: a coloured chunky button with the outline and the hard
+/// offset shadow every other button in the game has.
+void drawKey(Canvas canvas, Rect rect, Color colour) {
+  final shape = RRect.fromRectAndRadius(rect, const Radius.circular(13));
+  canvas
+    ..drawRRect(
+      shape.shift(const Offset(0, 3)),
+      Paint()..color = const Color(0xFF2E2A26),
+    )
+    ..drawRRect(shape, Paint()..color = colour)
+    ..drawRRect(
+      RRect.fromRectAndCorners(
+        Rect.fromLTWH(
+          rect.left + 4,
+          rect.top + 3,
+          rect.width - 8,
+          rect.height * 0.32,
+        ),
+        topLeft: const Radius.circular(10),
+        topRight: const Radius.circular(10),
+        bottomLeft: const Radius.circular(5),
+        bottomRight: const Radius.circular(5),
+      ),
+      Paint()..color = const Color(0x3DFFFFFF),
+    )
+    ..drawRRect(
+      shape.deflate(1),
+      Paint()
+        ..color = const Color(0xFF2E2A26)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.5,
+    );
+}
+
+/// A socket cut into a panel: a dark inset with a lighter bevel. The plate
+/// holds three of them and everything the HUD says is drawn inside one.
+void drawSocket(Canvas canvas, Rect rect) {
+  final shape = RRect.fromRectAndRadius(rect, const Radius.circular(8));
+  canvas
+    ..drawRRect(shape, Paint()..color = const Color(0xFF17140F))
+    ..drawRRect(
+      shape.deflate(0.75),
+      Paint()
+        ..color = const Color(0x33F5E9D7)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.5,
+    );
+}
+
+/// One Material glyph, centred. Used where a word would need translating and
+/// a picture does not.
+void drawGlyph(
+  Canvas canvas,
+  m.IconData icon,
+  Offset center,
+  double size,
+  Color color,
+) {
+  final painter = m.TextPainter(
+    text: m.TextSpan(
+      text: String.fromCharCode(icon.codePoint),
+      style: m.TextStyle(
+        fontSize: size,
+        fontFamily: icon.fontFamily,
+        package: icon.fontPackage,
+        color: color,
+      ),
+    ),
+    textDirection: TextDirection.ltr,
+  )..layout();
+  painter.paint(canvas, center - Offset(painter.width / 2, painter.height / 2));
+}
+
 /// A rounded meter. Used for cooking progress and for patience, which are the
 /// two clocks the player has to read at a glance.
 void drawBar(

@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 import 'dart:ui';
 
-import 'package:easy_localization/easy_localization.dart';
 // `Quad` collides with vector_math's, which Flame re-exports everywhere.
 import 'package:flame/components.dart' hide Quad;
 import 'package:flame/events.dart';
@@ -18,9 +17,6 @@ import 'package:kiyma/domain/tempo.dart';
 import 'package:kiyma/infrastructure/assets.dart';
 import 'package:kiyma/presentation/render/halo.dart';
 import 'package:kiyma/presentation/render/painter.dart';
-
-// Only for the two glyphs the grill badges carry.
-// `Quad` collides with vector_math's, which Flame re-exports everywhere.
 
 /// The whole counter: every pixel of the game world and every gesture on it.
 ///
@@ -43,24 +39,40 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   final DayRun run;
   final VoidCallback onPause;
 
-  // What is left of the HUD after the clock and the calendar moved onto the
-  // wall: the till and the pause button, both still chrome. They share the
-  // top-left because the whole right-hand wall is now the clock's.
-  static const _pause = Rect.fromLTWH(14, 10, 88, 88);
-  static const _gold = Rect.fromLTWH(114, 10, 282, 88);
+  /// One plate, three sockets.
+  ///
+  /// The pause button, the till and the tempo meter were three separate
+  /// panels and read as three unrelated things. They are one instrument —
+  /// the tempo is what the till is multiplied by — so they share a housing.
+  /// It stops short of x344, where the leftmost patience bar begins, and
+  /// hangs low enough that the flames off its top edge have somewhere to go.
+  static const _plate = Rect.fromLTWH(14, 22, 322, 116);
+  static const _pause = Rect.fromLTWH(28, 34, 58, 58);
+  static const _gold = Rect.fromLTWH(96, 34, 226, 58);
+  static const _tempo = Rect.fromLTWH(72, 102, 250, 24);
 
-  /// Under the till, because it is what the till is multiplied by. Stops
-  /// short of it: the leftmost customer's patience bar starts at x344.
-  static const _tempo = Rect.fromLTWH(114, 106, 210, 40);
+  /// The badge on the left of the meter, sitting proud of the plate.
+  static const _stage = Offset(48, 114);
 
-  /// One colour per band. Four named states are learnable; a continuous
-  /// multiplier is not, and nobody would ever work out why the meat burned
-  /// faster this time.
+  /// The clock as a hairline across the very top of the scene. The wall
+  /// clock is there to be read; this is there to be noticed.
+  static const _thread = 5.0;
+
+  /// One colour and one glyph per band. Four states are learnable where a
+  /// continuous multiplier is not, and a glyph is read faster than a word in
+  /// any language.
   static const Map<TempoHali, Color> _tempoColours = {
     TempoHali.soguk: Color(0xFF6C8AA6),
     TempoHali.normal: Color(0xFFCBA23C),
     TempoHali.isiniyor: Color(0xFFE8862A),
     TempoHali.ates: Color(0xFFE0452A),
+  };
+
+  static const Map<TempoHali, IconData> _tempoGlyphs = {
+    TempoHali.soguk: Icons.ac_unit_rounded,
+    TempoHali.normal: Icons.thermostat_rounded,
+    TempoHali.isiniyor: Icons.whatshot_rounded,
+    TempoHali.ates: Icons.local_fire_department_rounded,
   };
 
   /// Areas whose contents change during play, so their idle art is never the
@@ -562,38 +574,113 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     }
   }
 
-  /// What is left over the scene: the till and the pause button.
+  /// The instrument the counter is read off: the pause, the till and the
+  /// tempo in one housing, with the run's clock threaded across the top of
+  /// the screen above it.
+  ///
+  /// Cream on charcoal with a hard offset shadow, because that is what every
+  /// other screen in the game is. A dark wooden plate was tried and it aged
+  /// the whole counter: the HUD is the one thing on screen at all times, so
+  /// it sets the tone for everything behind it.
   void _renderHud(Canvas canvas) {
-    _renderTempo(canvas);
-    drawPanel(canvas, _gold);
-    final coins = assets['altin'];
-    if (coins != null) {
-      drawCentered(canvas, coins, Offset(_gold.left + 66, _gold.center.dy), 88);
-    }
-    drawText(
-      canvas,
-      '${run.progress.para}',
-      Offset(_gold.left + 128, _gold.top + 20),
-      size: 44,
-      weight: 800,
-      family: 'Rubik',
-      color: const Color(0xFF2E2A26),
-    );
+    _renderThread(canvas);
 
-    drawPanel(canvas, _pause);
-    for (final dx in [-12.0, 12.0]) {
+    final tempo = run.tempo;
+    final hot = tempo.hal == TempoHali.ates;
+
+    drawPanel(canvas, _plate, fill: const Color(0xFFF7EEDF));
+    drawGloss(canvas, _plate);
+    if (hot) _renderShine(canvas);
+
+    _renderPause(canvas);
+    _renderTill(canvas);
+    _renderTempo(canvas);
+  }
+
+  /// The run's clock, drained left to right. Five pixels at the very top of
+  /// the scene, above everything, so it is seen without being looked at.
+  void _renderThread(Canvas canvas) {
+    canvas
+      ..drawRect(
+        Rect.fromLTWH(0, 0, size.x, _thread),
+        Paint()..color = const Color(0x552E2A26),
+      )
+      ..drawRect(
+        Rect.fromLTWH(0, 0, size.x * run.sureOrani, _thread),
+        Paint()
+          ..color = run.kalanSure < 20
+              ? const Color(0xFFE0452A)
+              : const Color(0xFFF3A431),
+      );
+  }
+
+  /// A band of light sweeping the plate while the meter is pinned. Cheaper
+  /// and far less dated than drawn flames, and it says the same thing.
+  void _renderShine(Canvas canvas) {
+    final phase = (_elapsed * 0.55) % 1;
+    final x = _plate.left - 90 + phase * (_plate.width + 180);
+    canvas
+      ..save()
+      ..clipRRect(
+        RRect.fromRectAndRadius(_plate, const Radius.circular(18)),
+      )
+      ..drawPath(
+        Path()
+          ..moveTo(x, _plate.bottom)
+          ..lineTo(x + 34, _plate.bottom)
+          ..lineTo(x + 34 + 26, _plate.top)
+          ..lineTo(x + 26, _plate.top)
+          ..close(),
+        Paint()..color = const Color(0x33FFFFFF),
+      )
+      ..restore();
+  }
+
+  void _renderPause(Canvas canvas) {
+    drawKey(canvas, _pause, const Color(0xFFE8641A));
+    for (final dx in [-8.0, 8.0]) {
       canvas.drawRRect(
         RRect.fromRectAndRadius(
           Rect.fromCenter(
             center: _pause.center + Offset(dx, 0),
-            width: 14,
-            height: 44,
+            width: 9,
+            height: 26,
           ),
-          const Radius.circular(4),
+          const Radius.circular(3),
         ),
-        Paint()..color = const Color(0xFF2E2A26),
+        Paint()..color = const Color(0xFFFFF6E8),
       );
     }
+  }
+
+  void _renderTill(Canvas canvas) {
+    final coins = assets['altin'];
+    if (coins != null) {
+      drawCentered(canvas, coins, Offset(_gold.left + 32, _gold.center.dy), 56);
+    }
+    drawText(
+      canvas,
+      '${run.progress.para}',
+      Offset(_gold.left + 66, _gold.top + 8),
+      size: 38,
+      weight: 900,
+      family: 'Rubik',
+      color: const Color(0xFF2E2A26),
+    );
+
+    // What a full meter paid out, floating off the till it went into.
+    if (run.tempoIkramiyeKalan <= 0) return;
+    final fade = (run.tempoIkramiyeKalan / 1.2).clamp(0.0, 1.0);
+    drawText(
+      canvas,
+      '+${run.tempoIkramiye}',
+      Offset(_gold.right - 16, _gold.top - 4 - (1 - fade) * 14),
+      size: 20,
+      weight: 900,
+      family: 'Rubik',
+      center: true,
+      color: const Color(0xFF2F8F3A).withValues(alpha: fade),
+    );
   }
 
   /// Everybody crossing the shop, in or out.
@@ -843,24 +930,66 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   void _renderTempo(Canvas canvas) {
     final tempo = run.tempo;
     final colour = _tempoColours[tempo.hal]!;
-    drawPanel(canvas, _tempo, fill: const Color(0xFF2A2622));
 
-    drawBar(
-      canvas,
-      Rect.fromLTWH(_tempo.left + 12, _tempo.top + 25, _tempo.width - 24, 8),
-      tempo.oran,
-      color: colour,
-      background: const Color(0x55000000),
+    // A track, not a socket: segmented like the grill dials, so the meter is
+    // read as steps rather than as a smear.
+    final track = RRect.fromRectAndRadius(
+      _tempo,
+      Radius.circular(_tempo.height / 2),
     );
+    canvas
+      ..drawRRect(
+        track.shift(const Offset(0, 2)),
+        Paint()..color = const Color(0x332E2A26),
+      )
+      ..drawRRect(track, Paint()..color = const Color(0xFF2E2A26))
+      ..save()
+      ..clipRRect(track)
+      ..drawRect(
+        Rect.fromLTWH(
+          _tempo.left,
+          _tempo.top,
+          _tempo.width * tempo.oran,
+          _tempo.height,
+        ),
+        Paint()..color = colour,
+      )
+      // A lit meter reads as filled; a bare rectangle of colour reads as a
+      // loading bar.
+      ..drawRect(
+        Rect.fromLTWH(
+          _tempo.left,
+          _tempo.top + 2,
+          _tempo.width * tempo.oran,
+          _tempo.height * 0.36,
+        ),
+        Paint()..color = const Color(0x4DFFFFFF),
+      );
+    for (var i = 1; i < 10; i++) {
+      final x = _tempo.left + _tempo.width * i / 10;
+      canvas.drawLine(
+        Offset(x, _tempo.top + 2),
+        Offset(x, _tempo.bottom - 2),
+        Paint()
+          ..color = const Color(0x552E2A26)
+          ..strokeWidth = 2,
+      );
+    }
+    canvas.restore();
 
-    drawText(
+    // The stage is a glyph on a badge that sits proud of the plate, not a
+    // word: read faster, and needs no translating.
+    drawKey(
       canvas,
-      'tempo.${tempo.hal.name}'.tr(),
-      Offset(_tempo.left + 12, _tempo.top + 3),
-      size: 15,
-      weight: 900,
-      family: 'Rubik',
-      color: colour,
+      Rect.fromCenter(center: _stage, width: 46, height: 40),
+      colour,
+    );
+    drawGlyph(
+      canvas,
+      _tempoGlyphs[tempo.hal]!,
+      _stage - const Offset(0, 1),
+      24,
+      const Color(0xFFFFF6E8),
     );
 
     // The change, floating off the meter. Without it the multiplier is
@@ -871,12 +1000,12 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     drawText(
       canvas,
       '${delta > 0 ? '+' : ''}${delta.round()}',
-      Offset(_tempo.right - 26, _tempo.top + 3 - (1 - fade) * 12),
-      size: 16,
+      Offset(_tempo.right - 18, _tempo.top - 22 - (1 - fade) * 12),
+      size: 17,
       weight: 900,
       family: 'Rubik',
       center: true,
-      color: (delta > 0 ? const Color(0xFF7BD154) : const Color(0xFFE0574A))
+      color: (delta > 0 ? const Color(0xFF2F8F3A) : const Color(0xFFC4321F))
           .withValues(alpha: fade),
     );
   }

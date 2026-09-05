@@ -64,6 +64,18 @@ class Tempo {
   double sonDegisim = 0;
   double degisimKalan = 0;
 
+  /// Pushes the meter had no room to take. Drained by the run and paid out as
+  /// gold, so a full meter does not make good play worthless.
+  double tasan = 0;
+
+  double bosalt() {
+    final over = tasan;
+    tasan = 0;
+    return over;
+  }
+
+  bool get dolu => _deger >= 99.5;
+
   double get deger => _deger;
 
   /// The best the counter read all run. What the summary reports: a number
@@ -147,6 +159,7 @@ class Tempo {
   void _uygula(double delta, {bool quiet = false}) {
     final before = _deger;
     final scaled = delta > 0 ? delta * (1 - _deger / doygunluk) : delta;
+    if (scaled > 0) tasan += math.max(0, _deger + scaled - 100);
     _deger = (_deger + scaled).clamp(0, 100);
     _zirve = math.max(_zirve, _deger);
     if (quiet || (_deger - before).abs() < 0.01) return;

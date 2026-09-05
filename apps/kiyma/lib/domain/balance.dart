@@ -70,12 +70,19 @@ abstract final class Balance {
 
   /// How long the counter stays open. A run is a clock, not a queue:
   /// customers keep arriving as seats free until the time is up.
-  static Duration runLength(int day) => Duration(seconds: 180 + day * 5);
+  static Duration runLength(int day) => Duration(seconds: 120 + day * 5);
 
   /// Gap between one customer leaving and the next taking the place.
   /// How long the quickest customer takes to walk in and settle, and how
   /// slow the slowest one is as a fraction of that. Everybody gets a speed
   /// somewhere in between, so a queue does not move as one body.
+  /// Gold for a push the tempo meter had no room left to take.
+  ///
+  /// At the top of the meter a good move would otherwise be worth nothing;
+  /// this turns the overflow into money, so playing well at full tempo keeps
+  /// paying rather than going quiet.
+  static const tempoBonus = 2.5;
+
   static const arrivalWalk = 2.0;
   static const slowestWalk = 0.4;
 
@@ -115,16 +122,16 @@ abstract final class Balance {
   /// good one is faster. The old table was out by a factor of twelve — a
   /// single day-one run cleared the first three days at once.
   static const targets = [
-    350,
-    770,
-    1270,
-    1870,
-    2590,
-    3440,
-    4440,
-    5590,
-    6890,
-    8340,
+    240,
+    525,
+    870,
+    1290,
+    1800,
+    2390,
+    3070,
+    3850,
+    4730,
+    5710,
   ];
 
   static int target(int day) {
@@ -133,7 +140,7 @@ abstract final class Balance {
     var value = targets.last;
     var step = targets.last - targets[targets.length - 2];
     for (var d = targets.length; d < day; d++) {
-      step += 150;
+      step += 100;
       value += step;
     }
     return value;

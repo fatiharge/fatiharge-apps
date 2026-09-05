@@ -88,8 +88,10 @@ DEKOR = [
         "category": "dekor",
         "asset": "duvar_saati_2.png",
         "asset_fit": "orta",
-        # Above the rightmost order card, which reaches y95.
-        "x": 806, "y": 2, "w": 206, "h": 92,
+        # Above the rightmost order card, which reaches y95. Smaller than
+        # it was: the run's clock is now also a thread across the top of the
+        # screen, so this one is for reading rather than for glancing.
+        "x": 858, "y": 12, "w": 154, "h": 69,
     },
     {
         "name": "duvar_takvimi",

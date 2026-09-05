@@ -19,6 +19,7 @@ enum DayEvent {
   mangalDolu,
   altinSupuruldu,
   musteriGeldi,
+  tempoBonusu,
   musteriMemnun,
   musteriKizgin,
   gunBitti,
@@ -164,11 +165,13 @@ class DayRun {
     bosDurum = durumIstasyonu == null ? bosDurum + dt : 0;
     bekleyenYanik = mangal.any((slot) => slot.yanmis) ? bekleyenYanik + dt : 0;
     if (kagitCagiriyor > 0) kagitCagiriyor -= dt;
+    if (tempoIkramiyeKalan > 0) tempoIkramiyeKalan -= dt;
 
     tempo.tick(
       dt,
       bekleyen: musteriler.any((c) => c != null && c.yerinde),
     );
+    _tempoTasmasi();
 
     for (final slot in mangal) {
       if (slot.tick(dt, day, tempo.pismeCarpani)) {
@@ -247,6 +250,25 @@ class DayRun {
       onChanged();
     }
   }
+
+  /// A meter with no room left still has to pay for good play, or the last
+  /// stretch of a strong run goes quiet. What it could not absorb becomes
+  /// gold, straight into the till.
+  void _tempoTasmasi() {
+    final over = tempo.bosalt();
+    if (over <= 0) return;
+    final gold = (over * Balance.tempoBonus).round();
+    if (gold <= 0) return;
+    tempoIkramiye = gold;
+    tempoIkramiyeKalan = 1.2;
+    progress.kazan(gold);
+    onEvent(DayEvent.tempoBonusu);
+    onChanged();
+  }
+
+  /// The last overflow payout, still on screen.
+  int tempoIkramiye = 0;
+  double tempoIkramiyeKalan = 0;
 
   int? _bosMusteriSlotu() {
     for (var i = 0; i < progress.unlocks.musteriSlots; i++) {

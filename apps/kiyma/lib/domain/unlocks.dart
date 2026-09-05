@@ -26,27 +26,27 @@ class Unlocks {
   /// shows, top to bottom.
   ///
   /// The ladder compounds: each rung of the same kind costs roughly twice the
-  /// last. The whole shop is about 11,000 and ten days of play earns about
-  /// 8,300, so by the end of the table the player has had to choose what not
+  /// last. The whole shop is about 7,300 and ten days of play earns about
+  /// 5,700, so by the end of the table the player has had to choose what not
   /// to buy — which is the point of a shop.
   static const catalogue = [
-    Unlock('malzeme_biber', 150),
-    Unlock('malzeme_tursu', 300),
-    Unlock('bekleme_2', 400),
-    Unlock('mangal_3', 700),
-    Unlock('icecek_hatti', 700),
-    Unlock('bekleme_3', 900),
-    Unlock('porsiyon_hatti', 900),
-    Unlock('musteri_3', 1400),
-    Unlock('mangal_4', 1600),
-    Unlock('icecek_salgam', 250),
-    Unlock('icecek_ayran', 400),
-    Unlock('icecek_kola', 650),
-    Unlock('bilesen_icli_kofte', 300),
-    Unlock('bilesen_pilav', 450),
-    Unlock('bilesen_patates', 700),
-    Unlock('bilesen_ezme', 1050),
-    Unlock('tatli_baklava', 500),
+    Unlock('malzeme_biber', 100),
+    Unlock('malzeme_tursu', 200),
+    Unlock('bekleme_2', 250),
+    Unlock('mangal_3', 450),
+    Unlock('icecek_hatti', 450),
+    Unlock('bekleme_3', 600),
+    Unlock('porsiyon_hatti', 600),
+    Unlock('musteri_3', 900),
+    Unlock('mangal_4', 1050),
+    Unlock('icecek_salgam', 150),
+    Unlock('icecek_ayran', 250),
+    Unlock('icecek_kola', 400),
+    Unlock('bilesen_icli_kofte', 200),
+    Unlock('bilesen_pilav', 300),
+    Unlock('bilesen_patates', 450),
+    Unlock('bilesen_ezme', 700),
+    Unlock('tatli_baklava', 300),
   ];
 
   final Set<String> _open;
