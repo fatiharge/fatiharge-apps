@@ -65,7 +65,9 @@
     "xp": "{} / {} XP",
     "reklam_alt": "Kısa video ile hasılatı ikiye katla!",
     "hazir": "Siparişler hazır, servise başla!",
-    "gun_rozet": "GÜN"
+    "gun_rozet": "GÜN",
+    "zirve": "EN İYİ TEMPO",
+    "yildiz": "{} / 3 yıldız"
   },
   "duraklat": {
     "baslik": "Duraklatıldı",

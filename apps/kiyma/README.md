@@ -282,6 +282,23 @@ The split is deliberate about update rates. Patience bars and cooking meters
 change every frame and are drawn inside the canvas. The bloc only emits when
 money, standing or the phase move — a few times a second at most.
 
+## The summary
+
+It arrives in beats rather than all at once — banner, card, takings counting
+up, stars, level bar, then the buttons — because the order the numbers land in
+is the telling. A screen that appears complete has nothing to say about how
+the run went.
+
+**Stars** are three, and the criterion is the target table's own meaning: a
+day cleared in one run is three. **The peak tempo** is reported as its band,
+because a meter that only went down would be a poor thing to end on. **The
+primary button breathes** and never settles; a button that blinks on and off
+reads as an error.
+
+That breathing is why `summary_golden_test.dart` cannot use `pumpAndSettle` —
+it never returns — and pumps in fixed steps instead, the same trap the Flame
+tests have.
+
 ## Measuring the economy
 
 ```bash

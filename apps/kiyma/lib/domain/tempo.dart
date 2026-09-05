@@ -55,6 +55,7 @@ class Tempo {
   static const enHizliSizma = 3.5;
 
   double _deger = baslangic;
+  double _zirve = baslangic;
   double _sonServis = 0;
   int _ustuste = 0;
 
@@ -65,7 +66,13 @@ class Tempo {
 
   double get deger => _deger;
 
-  TempoHali get hal => switch (_deger) {
+  /// The best the counter read all run. What the summary reports: a number
+  /// that only ever went down would be a poor thing to end on.
+  TempoHali get zirve => _halFor(_zirve);
+
+  TempoHali get hal => _halFor(_deger);
+
+  static TempoHali _halFor(double value) => switch (value) {
     < 25 => TempoHali.soguk,
     < 55 => TempoHali.normal,
     < 80 => TempoHali.isiniyor,
@@ -141,6 +148,7 @@ class Tempo {
     final before = _deger;
     final scaled = delta > 0 ? delta * (1 - _deger / doygunluk) : delta;
     _deger = (_deger + scaled).clamp(0, 100);
+    _zirve = math.max(_zirve, _deger);
     if (quiet || (_deger - before).abs() < 0.01) return;
     sonDegisim = _deger - before;
     degisimKalan = 1.1;

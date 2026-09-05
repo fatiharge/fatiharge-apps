@@ -126,6 +126,7 @@ class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
       xpOnce: xpOnce,
       gunOnce: gunOnce,
       atlananGun: atlanan,
+      zirveTempo: current.tempo.zirve,
     );
     if (emitAfter) _emit();
   }

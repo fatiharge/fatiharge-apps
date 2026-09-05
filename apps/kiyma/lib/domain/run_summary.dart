@@ -1,3 +1,5 @@
+import 'package:kiyma/domain/tempo.dart';
+
 /// What a finished run was worth, kept so the summary can animate from before
 /// it to after it.
 class RunSummary {
@@ -7,6 +9,7 @@ class RunSummary {
     required this.xpOnce,
     required this.gunOnce,
     required this.atlananGun,
+    required this.zirveTempo,
   });
 
   final int kazanc;
@@ -18,6 +21,9 @@ class RunSummary {
 
   /// How many levels the run crossed.
   final int atlananGun;
+
+  /// The best the counter read all run.
+  final TempoHali zirveTempo;
 
   bool get seviyeAtladi => atlananGun > 0;
 }

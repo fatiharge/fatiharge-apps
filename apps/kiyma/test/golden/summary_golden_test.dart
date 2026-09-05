@@ -6,8 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show FontLoader, rootBundle;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kiyma/config/injectable.dart';
+import 'package:kiyma/domain/balance.dart';
 import 'package:kiyma/domain/progress.dart';
 import 'package:kiyma/domain/run_summary.dart';
+import 'package:kiyma/domain/tempo.dart';
 import 'package:kiyma/infrastructure/world.dart';
 import 'package:kiyma/route/app_router.dart';
 import 'package:kiyma/route/app_router.gr.dart';
@@ -45,23 +47,34 @@ void main() {
     await tester.binding.setSurfaceSize(const Size(880, 400));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
+    // Two thirds of the way through day five: a partly filled bar, two of
+    // three stars, and a run that did not quite turn the day over.
+    const day = 5;
+    final opening = Balance.floor(day);
+    const took = 500;
     final progress = getIt<Progress>()
-      ..gun = 12
-      ..xp = 3800
-      ..para = 3800
-      ..sonOturum = const RunSummary(
-        kazanc: 1450,
+      ..gun = day
+      ..xp = opening + took
+      ..para = opening + took
+      ..sonOturum = RunSummary(
+        kazanc: took,
         musteri: 7,
-        xpOnce: 2350,
-        gunOnce: 12,
+        xpOnce: opening,
+        gunOnce: day,
         atlananGun: 0,
+        zirveTempo: TempoHali.ates,
       );
-    expect(progress.gun, 12);
+    expect(progress.gun, day);
 
     final router = AppRouter();
     await router.replaceAll([const SummaryRoute()]);
     await pumpApp(tester, router: router);
-    await tester.pumpAndSettle();
+    // Not `pumpAndSettle`: the primary button breathes for as long as the
+    // screen is up, so settling never returns. Pump past the entrance and
+    // catch it where it has arrived.
+    for (var i = 0; i < 12; i++) {
+      await tester.pump(const Duration(milliseconds: 200));
+    }
 
     await expectLater(
       find.byType(MaterialApp),

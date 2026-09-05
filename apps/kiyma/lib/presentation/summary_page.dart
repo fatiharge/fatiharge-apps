@@ -8,6 +8,7 @@ import 'package:kiyma/config/injectable.dart';
 import 'package:kiyma/domain/balance.dart';
 import 'package:kiyma/domain/progress.dart';
 import 'package:kiyma/domain/run_summary.dart';
+import 'package:kiyma/domain/tempo.dart';
 import 'package:kiyma/infrastructure/world.dart';
 import 'package:kiyma/presentation/brand.dart';
 import 'package:kiyma/presentation/level_bar.dart';
@@ -31,8 +32,36 @@ class SummaryPage extends StatefulWidget {
   State<SummaryPage> createState() => _SummaryPageState();
 }
 
-class _SummaryPageState extends State<SummaryPage> {
+class _SummaryPageState extends State<SummaryPage>
+    with TickerProviderStateMixin {
   static const _fill = Duration(milliseconds: 1200);
+
+  /// The result arrives in beats rather than all at once: the banner, then
+  /// the card, then the takings counting up, then the stars, then the level.
+  /// A screen that appears complete has nothing to say about how the run
+  /// went — the order the numbers arrive in *is* the telling.
+  late final AnimationController _entrance = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1500),
+  )..forward();
+
+  /// Never stops: the button you are meant to press keeps asking.
+  late final AnimationController _breath = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1400),
+  )..repeat(reverse: true);
+
+  Animation<double> _beat(double from, double to) => CurvedAnimation(
+    parent: _entrance,
+    curve: Interval(from, to, curve: Curves.easeOutBack),
+  );
+
+  @override
+  void dispose() {
+    _entrance.dispose();
+    _breath.dispose();
+    super.dispose();
+  }
 
   late final Progress _progress = getIt<Progress>();
   late final RunSummary? _run = _progress.sonOturum;
@@ -42,6 +71,20 @@ class _SummaryPageState extends State<SummaryPage> {
   late double _to = (_run?.seviyeAtladi ?? false)
       ? 1
       : Balance.ratio(_progress.xp, _shownDay);
+
+  /// Out of three: what the day asked for against what the run took. A day
+  /// cleared in one run is three stars, which is what the target table was
+  /// set to mean.
+  int get _stars {
+    final run = _run;
+    if (run == null) return 0;
+    final step = Balance.target(run.gunOnce) - Balance.floor(run.gunOnce);
+    if (step <= 0) return 3;
+    final share = run.kazanc / step;
+    if (share >= 1) return 3;
+    if (share >= 0.6) return 2;
+    return share >= 0.25 ? 1 : 0;
+  }
 
   /// The bar tops out, the day turns over, and the rest fills the new level.
   void _levelUp() {
@@ -64,6 +107,7 @@ class _SummaryPageState extends State<SummaryPage> {
         fit: StackFit.expand,
         children: [
           const _Kitchen(),
+          if (_run?.seviyeAtladi ?? false) _Burst(animation: _entrance),
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 6, 16, 10),
@@ -74,32 +118,47 @@ class _SummaryPageState extends State<SummaryPage> {
                     const Positioned.fill(child: _Skewers()),
                     Positioned.fill(
                       top: 17,
-                      child: _Card(
-                        left: _Takings(
-                          amount: _run?.kazanc ?? 0,
-                          served: _run?.musteri ?? 0,
-                          day: _run?.gunOnce ?? _progress.gun,
-                          level: _Level(
-                            day: _shownDay,
-                            xp: (_progress.xp - floor).clamp(
-                              0,
-                              Balance.target(_shownDay) - floor,
+                      child: _Rise(
+                        animation: _beat(0.08, 0.5),
+                        child: _Card(
+                          left: _Takings(
+                            amount: _run?.kazanc ?? 0,
+                            served: _run?.musteri ?? 0,
+                            day: _run?.gunOnce ?? _progress.gun,
+                            stars: _stars,
+                            zirve: _run?.zirveTempo ?? TempoHali.normal,
+                            reveal: _entrance,
+                            level: _Level(
+                              day: _shownDay,
+                              xp: (_progress.xp - floor).clamp(
+                                0,
+                                Balance.target(_shownDay) - floor,
+                              ),
+                              target: Balance.target(_shownDay) - floor,
+                              from: _from,
+                              to: _to,
+                              duration: _fill,
+                              onEnd: _levelUp,
                             ),
-                            target: Balance.target(_shownDay) - floor,
-                            from: _from,
-                            to: _to,
-                            duration: _fill,
-                            onEnd: _levelUp,
+                          ),
+                          right: _Choices(
+                            amount: _run?.kazanc ?? 0,
+                            reveal: _beat(0.55, 1),
+                            breath: _breath,
                           ),
                         ),
-                        right: _Choices(amount: _run?.kazanc ?? 0),
                       ),
                     ),
                     Positioned(
                       top: 0,
                       left: 0,
                       right: 0,
-                      child: Center(child: _Banner(text: 'ozet.baslik'.tr())),
+                      child: Center(
+                        child: _Drop(
+                          animation: _beat(0, 0.35),
+                          child: _Banner(text: 'ozet.baslik'.tr()),
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -110,6 +169,94 @@ class _SummaryPageState extends State<SummaryPage> {
       ),
     );
   }
+}
+
+/// Scales and lifts into place on its beat.
+class _Rise extends StatelessWidget {
+  const _Rise({required this.animation, required this.child});
+
+  final Animation<double> animation;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: animation,
+    builder: (context, child) {
+      final t = animation.value.clamp(0.0, 1.2);
+      return Opacity(
+        opacity: t.clamp(0.0, 1.0),
+        child: Transform.translate(
+          offset: Offset(0, (1 - t) * 26),
+          child: Transform.scale(scale: 0.94 + 0.06 * t, child: child),
+        ),
+      );
+    },
+    child: child,
+  );
+}
+
+/// Falls in from above the frame, with the overshoot the curve gives it.
+class _Drop extends StatelessWidget {
+  const _Drop({required this.animation, required this.child});
+
+  final Animation<double> animation;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: animation,
+    builder: (context, child) => Transform.translate(
+      offset: Offset(0, (1 - animation.value.clamp(0.0, 1.0)) * -70),
+      child: child,
+    ),
+    child: child,
+  );
+}
+
+/// Rings going out behind the card when the run crossed a day.
+///
+/// The only thing on this screen that is pure celebration. It is drawn rather
+/// than animated as widgets because it is two circles and a fade.
+class _Burst extends StatelessWidget {
+  const _Burst({required this.animation});
+
+  final Animation<double> animation;
+
+  @override
+  Widget build(BuildContext context) => IgnorePointer(
+    child: AnimatedBuilder(
+      animation: animation,
+      builder: (context, _) =>
+          CustomPaint(painter: _BurstPainter(animation.value)),
+    ),
+  );
+}
+
+class _BurstPainter extends CustomPainter {
+  const _BurstPainter(this.t);
+
+  final double t;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (t <= 0.35) return;
+    final centre = size.center(Offset.zero);
+    for (var ring = 0; ring < 2; ring++) {
+      final phase = ((t - 0.35) / 0.65 - ring * 0.22).clamp(0.0, 1.0);
+      if (phase <= 0) continue;
+      canvas.drawCircle(
+        centre,
+        size.shortestSide * (0.2 + phase * 0.85),
+        Paint()
+          ..color = KiymaPalette.ates.withValues(alpha: (1 - phase) * 0.22)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 10 * (1 - phase) + 1,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_BurstPainter old) => old.t != t;
 }
 
 /// The card is a fixed shape, not a stretched one.
@@ -270,12 +417,18 @@ class _Takings extends StatelessWidget {
     required this.amount,
     required this.served,
     required this.day,
+    required this.stars,
+    required this.zirve,
+    required this.reveal,
     required this.level,
   });
 
   final int amount;
   final int served;
   final int day;
+  final int stars;
+  final TempoHali zirve;
+  final Animation<double> reveal;
   final Widget level;
 
   @override
@@ -360,24 +513,22 @@ class _Takings extends StatelessWidget {
           ),
           Row(
             children: [
-              Container(
-                width: 8,
-                height: 8,
-                decoration: const BoxDecoration(
-                  color: KiymaPalette.yesil,
-                  shape: BoxShape.circle,
-                ),
-              ),
-              const SizedBox(width: 7),
-              Flexible(
+              _Stars(filled: stars, reveal: reveal),
+              const SizedBox(width: 10),
+              _TempoBadge(hal: zirve),
+              const SizedBox(width: 10),
+              // Expanded, not Flexible beside a Spacer: those split the room
+              // between them and the sentence came out with an ellipsis.
+              Expanded(
                 child: Text(
                   'ozet.musteri'.tr(args: ['$served']),
                   overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.right,
                   style: const TextStyle(
                     fontFamily: 'Rubik',
                     fontVariations: [FontVariation('wght', 700)],
                     fontSize: 11,
-                    color: KiymaPalette.komur,
+                    color: Color(0xFF8C7166),
                   ),
                 ),
               ),
@@ -388,6 +539,109 @@ class _Takings extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Out of three. They pop in one after another rather than appearing, which
+/// is the difference between a score and a result.
+class _Stars extends StatelessWidget {
+  const _Stars({required this.filled, required this.reveal});
+
+  final int filled;
+  final Animation<double> reveal;
+
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: reveal,
+    builder: (context, _) => Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (var i = 0; i < 3; i++)
+          Padding(
+            padding: const EdgeInsets.only(right: 2),
+            child: Transform.scale(
+              scale: i < filled ? _pop(i) : 1,
+              child: Icon(
+                i < filled ? Icons.star_rounded : Icons.star_outline_rounded,
+                size: 22,
+                color: i < filled ? KiymaPalette.kor : const Color(0x332E2A26),
+              ),
+            ),
+          ),
+      ],
+    ),
+  );
+
+  /// Overshoots and settles, one star every 90 ms from the halfway beat.
+  double _pop(int index) {
+    final start = 0.45 + index * 0.06;
+    final t = ((reveal.value - start) / 0.12).clamp(0.0, 1.0);
+    if (t <= 0) return 0;
+    return Curves.easeOutBack.transform(t);
+  }
+}
+
+/// The best the counter read all run, in the band's own colour.
+class _TempoBadge extends StatelessWidget {
+  const _TempoBadge({required this.hal});
+
+  final TempoHali hal;
+
+  static const Map<TempoHali, Color> _colours = {
+    TempoHali.soguk: Color(0xFF6C8AA6),
+    TempoHali.normal: Color(0xFFCBA23C),
+    TempoHali.isiniyor: Color(0xFFE8862A),
+    TempoHali.ates: Color(0xFFE0452A),
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final colour = _colours[hal]!;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: colour.withValues(alpha: 0.16),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: colour, width: 1.5),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.local_fire_department_rounded, size: 12, color: colour),
+          const SizedBox(width: 4),
+          Text(
+            'tempo.${hal.name}'.tr(),
+            style: TextStyle(
+              fontFamily: 'Rubik',
+              fontVariations: const [FontVariation('wght', 900)],
+              fontSize: 10,
+              letterSpacing: 0.5,
+              color: colour,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Never settles. The one thing on the screen that is asking to be pressed
+/// has to look like it, and a button that blinks on and off reads as an
+/// error — this one breathes.
+class _Breathing extends StatelessWidget {
+  const _Breathing({required this.animation, required this.child});
+
+  final Animation<double> animation;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: animation,
+    builder: (context, child) => Transform.scale(
+      scale: 1 + 0.028 * Curves.easeInOut.transform(animation.value),
+      child: child,
+    ),
+    child: child,
+  );
 }
 
 /// The level panel: which day, how far through it, and which one is next.
@@ -519,16 +773,25 @@ class _DayBadge extends StatelessWidget {
 
 /// The right column: the one tempting option, then the two real ones.
 class _Choices extends StatelessWidget {
-  const _Choices({required this.amount});
+  const _Choices({
+    required this.amount,
+    required this.reveal,
+    required this.breath,
+  });
 
   final int amount;
+  final Animation<double> reveal;
+  final Animation<double> breath;
 
   @override
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
-      _AdOffer(amount: amount),
+      _Rise(
+        animation: reveal,
+        child: _AdOffer(amount: amount),
+      ),
       Row(
         children: [
           Expanded(
@@ -544,13 +807,16 @@ class _Choices extends StatelessWidget {
           const SizedBox(width: 10),
           Expanded(
             flex: 5,
-            child: ChunkyButton(
-              label: 'ozet.yeniden'.tr(),
-              icon: Icons.play_arrow_rounded,
-              big: true,
-              color: KiymaPalette.krema,
-              onPressed: () =>
-                  unawaited(context.router.replaceAll([const DayRoute()])),
+            child: _Breathing(
+              animation: breath,
+              child: ChunkyButton(
+                label: 'ozet.yeniden'.tr(),
+                icon: Icons.play_arrow_rounded,
+                big: true,
+                color: KiymaPalette.krema,
+                onPressed: () =>
+                    unawaited(context.router.replaceAll([const DayRoute()])),
+              ),
             ),
           ),
         ],
