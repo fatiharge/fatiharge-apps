@@ -5,7 +5,8 @@ import 'dart:ui';
 import 'package:flame/components.dart' hide Quad;
 import 'package:flame/events.dart';
 // Only for the two glyphs the grill badges carry.
-import 'package:flutter/material.dart' show IconData, Icons;
+import 'package:flutter/material.dart' show Curves, IconData, Icons;
+import 'package:kiyma/domain/balance.dart';
 import 'package:kiyma/domain/day_run.dart';
 import 'package:kiyma/domain/gesture.dart';
 import 'package:kiyma/domain/model/items.dart';
@@ -47,10 +48,15 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   /// the tempo is what the till is multiplied by — so they share a housing.
   /// It stops short of x344, where the leftmost patience bar begins, and
   /// hangs low enough that the flames off its top edge have somewhere to go.
-  static const _plate = Rect.fromLTWH(14, 22, 322, 116);
+  static const _plate = Rect.fromLTWH(14, 22, 286, 116);
   static const _pause = Rect.fromLTWH(28, 34, 58, 58);
-  static const _gold = Rect.fromLTWH(96, 34, 226, 58);
-  static const _tempo = Rect.fromLTWH(72, 102, 250, 24);
+  static const _gold = Rect.fromLTWH(96, 34, 190, 58);
+  static const _tempo = Rect.fromLTWH(72, 102, 214, 24);
+
+  /// The band above the heads, which the hand never enters. The tickets used
+  /// to sit beside each face, in the middle of every drag.
+  static const _ticket = Size(148, 78);
+  static const _ticketTop = 10.0;
 
   /// The badge on the left of the meter, sitting proud of the plate.
   static const _stage = Offset(48, 114);
@@ -129,7 +135,8 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   );
 
   /// Everything short-lived the counter draws.
-  late final Effects fx = Effects(assets);
+  /// Seeded: a golden that renders a pool has to be the same picture twice.
+  late final Effects fx = Effects(assets, random: math.Random(7));
 
   /// The seams effects need: a moment of slowed time on a hit, and a room
   /// that can be knocked. The instrument is drawn outside the shake, so it
@@ -153,6 +160,10 @@ class CounterComponent extends PositionComponent with DragCallbacks {
 
   @override
   void update(double dt) {
+    // Nothing moves behind the pause card. `DayRun.tick` already returns
+    // early, but `_elapsed` kept climbing, so every halo and shine went on
+    // breathing over a frozen game.
+    if (run.duraklatildi) return;
     _elapsed += dt;
 
     // Hit-stop: the world crawls for a few frames on a hit while the pulses
@@ -486,9 +497,11 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   void _renderScene(Canvas canvas) {
     for (final layer in scene.layers) {
       final image = assets[layer.src];
-      if (image != null) {
-        drawInQuad(canvas, image, Quad.fromRect(layer.rect), AssetFit.doldur);
-      }
+      if (image == null) continue;
+      // The painted room bleeds a little, so a knock cannot expose a strip
+      // the scene never drew. scene.json is generated; this belongs here.
+      final rect = layer.z == 0 ? layer.rect.inflate(16) : layer.rect;
+      drawInQuad(canvas, image, Quad.fromRect(rect), AssetFit.doldur);
     }
   }
 
@@ -560,15 +573,21 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     // Coals that breathe, and burn hotter the fuller the grill is.
     final busy = run.mangal.where((s) => s.unlocked && !s.bos).length;
     final burning = run.mangal.any((s) => s.yanmis);
-    final heat = (0.35 + busy * 0.2).clamp(0.0, 1.0) * (0.7 + 0.3 * _pulse);
+    // Its own slow, non-harmonic beat rather than `_pulse`: coals breathing
+    // in lockstep with the hint halos read as a mechanism, not a fire.
+    final breath =
+        0.5 +
+        0.28 * math.sin(_elapsed * 2.1) +
+        0.22 * math.sin(_elapsed * 3.37);
+    final heat = (0.35 + busy * 0.2).clamp(0.0, 1.0) * (0.62 + 0.38 * breath);
     canvas.drawCircle(
       region.quad.center,
-      190,
+      140,
       Paint()
         ..blendMode = BlendMode.plus
         ..shader = Gradient.radial(
           region.quad.center,
-          190,
+          140,
           [
             (burning ? const Color(0xFFD93B2B) : const Color(0xFFFF7A1F))
                 .withValues(alpha: 0.26 * heat),
@@ -994,8 +1013,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       final quad = scene['musteri_slot_${i + 1}'].quad;
       _renderBody(canvas, quad, customer);
       final head = Offset(quad.bounds.center.dx, quad.bounds.top + 26);
-      _renderPatience(canvas, head, customer);
-      _renderOrder(canvas, head, customer);
+      _renderOrder(canvas, head, customer, i);
     }
   }
 
@@ -1033,91 +1051,224 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       );
   }
 
-  /// Upright, on the left of the head: a bar lying across the order card was
-  /// one more thing to find inside it.
-  void _renderPatience(Canvas canvas, Offset head, Customer customer) {
+  /// The order, as the paper a kebab shop writes it on.
+  ///
+  /// Three fixed bands in every ticket, always the same size and always in
+  /// the same order, so three of them can be read at a glance under time
+  /// pressure: what they want, the four ingredients as wanted / forbidden /
+  /// unmentioned, and the two extras. The rail is iterated in enum order
+  /// rather than set order — a shuffled row cannot be scanned.
+  void _renderOrder(Canvas canvas, Offset head, Customer customer, int slot) {
+    final rect = Rect.fromLTWH(
+      math.max(306, head.dx - _ticket.width / 2),
+      _ticketTop,
+      _ticket.width,
+      _ticket.height,
+    );
+
+    // Arrives rather than appears, and leans a little so a row of them reads
+    // as three pieces of paper.
+    final settle = (customer.yerindeSure / 0.35).clamp(0.0, 1.0);
+    final drop = (1 - Curves.easeOutBack.transform(settle)) * 22;
+    // Leaning out from the middle, so three of them read as three pieces
+    // of paper rather than one sprite repeated.
+    final tilt = (slot - 1) * 0.042;
+    final panic = customer.sabirOrani < 0.3;
+    final shake = customer.hataKalan > 0
+        ? math.sin(customer.hataKalan * 46) * 5
+        : 0.0;
+
+    canvas
+      ..save()
+      ..translate(rect.center.dx + shake, rect.center.dy - drop)
+      ..rotate(tilt * settle + (panic ? math.sin(_elapsed * 7) * 0.012 : 0))
+      ..scale(0.7 + 0.3 * Curves.easeOutBack.transform(settle))
+      ..translate(-rect.center.dx, -rect.center.dy);
+
+    drawTicket(
+      canvas,
+      rect,
+      fill: panic
+          ? Color.lerp(
+              const Color(0xFFF7EEDF),
+              const Color(0xFFF2B9AC),
+              0.35 + 0.25 * math.sin(_elapsed * 6),
+            )!
+          : const Color(0xFFF7EEDF),
+    );
+
+    _ticketHeader(canvas, rect, customer);
+    _ticketRail(canvas, rect, customer);
+    _ticketExtras(canvas, rect, customer);
+
+    // Patience, printed along the torn edge.
     drawBar(
       canvas,
-      Rect.fromCenter(
-        center: Offset(head.dx - 30, head.dy + 12),
-        width: 62,
-        height: 11,
-      ),
+      Rect.fromLTWH(rect.left + 8, rect.bottom - 12, rect.width - 16, 5),
       customer.sabirOrani,
       color: Color.lerp(_avoid, _want, customer.sabirOrani)!,
-      background: const Color(0xCC141A20),
-      angle: -math.pi / 2,
+      background: const Color(0x332E2A26),
+    );
+    canvas.restore();
+  }
+
+  void _ticketHeader(Canvas canvas, Rect rect, Customer customer) {
+    final order = customer.order;
+    final durum = order.tip == UrunTipi.durum;
+    final band = Rect.fromLTWH(
+      rect.left + 5,
+      rect.top + 5,
+      rect.width - 10,
+      24,
+    );
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(band, const Radius.circular(5)),
+      Paint()
+        ..color = durum ? const Color(0xFFE2A73C) : const Color(0xFF7C93A8),
+    );
+    _icon(
+      canvas,
+      durum ? 'doner_bekleme' : 'porsiyon_hazirlama',
+      Offset(band.left + 18, band.center.dy),
+      22,
+      done: customer.anaUrunVerildi,
+    );
+    drawText(
+      canvas,
+      '${_ticketWorth(customer)}',
+      Offset(band.right - 8, band.top + 4),
+      size: 15,
+      weight: 900,
+      family: 'Rubik',
+      right: true,
+      color: const Color(0xFF2E2A26),
     );
   }
 
-  void _renderOrder(Canvas canvas, Offset head, Customer customer) {
-    final card = Rect.fromLTWH(head.dx + 22, head.dy - 26, 88, 74);
-    canvas
-      ..drawRRect(
-        RRect.fromRectAndRadius(card, const Radius.circular(8)),
-        Paint()..color = const Color(0xF2141A20),
-      )
-      ..drawRRect(
-        RRect.fromRectAndRadius(card.deflate(0.5), const Radius.circular(8)),
-        Paint()
-          ..color = const Color(0x33FFFFFF)
-          ..style = PaintingStyle.stroke,
-      );
-
+  int _ticketWorth(Customer customer) {
     final order = customer.order;
-    _icon(
-      canvas,
-      order.tip == UrunTipi.durum ? 'doner_bekleme' : 'porsiyon_hazirlama',
-      Offset(card.left + 17, card.top + 18),
-      24,
-      done: customer.anaUrunVerildi,
-    );
-
-    // Three constraints at most, so one row is always enough.
-    var x = card.left + 38;
-    for (final id in order.ister) {
-      _icon(
-        canvas,
-        _iconAsset(order.tip, id),
-        Offset(x, card.top + 18),
-        15,
-        ring: _want,
-      );
-      x += 17;
-    }
-    for (final id in order.istemez) {
-      _icon(
-        canvas,
-        _iconAsset(order.tip, id),
-        Offset(x, card.top + 18),
-        15,
-        ring: _avoid,
-        crossed: true,
-      );
-      x += 17;
-    }
-
-    var side = card.right - 16;
-    final icecek = order.icecek;
-    if (icecek != null) {
-      _icon(
-        canvas,
-        icecek.servedAsset,
-        Offset(side, card.top + 50),
-        17,
-        done: customer.icecekVerildi,
-      );
-      side -= 21;
-    }
+    final base = order.tip == UrunTipi.durum
+        ? Balance.durumBase
+        : Balance.porsiyonBase;
+    var worth = customer.anaUrunVerildi
+        ? 0
+        : Balance.income(base, run.day, ingredients: order.ister.length);
     final tatli = order.tatli;
-    if (tatli != null) {
-      _icon(
-        canvas,
-        tatli.asset,
-        Offset(side, card.top + 50),
-        19,
-        done: customer.tatliVerildi,
+    if (tatli != null && !customer.tatliVerildi) {
+      worth += Balance.income(Balance.tatliBase[tatli]!, run.day);
+    }
+    final icecek = order.icecek;
+    if (icecek != null && !customer.icecekVerildi) {
+      worth += Balance.income(Balance.icecekBase[icecek]!, run.day);
+    }
+    return worth;
+  }
+
+  /// Four wells, always, in enum order: wanted, forbidden, or neither.
+  ///
+  /// The empty ones carry the bonus an unmentioned ingredient is worth, which
+  /// is the one economy rule a player had no way of discovering.
+  void _ticketRail(Canvas canvas, Rect rect, Customer customer) {
+    final order = customer.order;
+    final durum = order.tip == UrunTipi.durum;
+    final ids = durum
+        ? Malzeme.values.map((m) => m.id).toList()
+        : Bilesen.values.map((b) => b.id).toList();
+
+    final pitch = (rect.width - 12) / ids.length;
+    for (var i = 0; i < ids.length; i++) {
+      final id = ids[i];
+      final at = Offset(
+        rect.left + 6 + pitch * (i + 0.5),
+        rect.top + 44,
       );
+      final wanted = order.ister.contains(id);
+      final banned = order.istemez.contains(id);
+      final wrong = customer.hataKalan > 0 && customer.hatali.contains(id);
+      final well = Rect.fromCenter(center: at, width: pitch - 3, height: 26);
+
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(well, const Radius.circular(5)),
+        Paint()
+          ..color = wrong
+              ? const Color(0xFFE0574A)
+              : wanted
+              ? const Color(0xFF6FCF7C)
+              : banned
+              ? const Color(0x33E0574A)
+              : const Color(0x142E2A26),
+      );
+      if (wanted || banned || wrong) {
+        canvas.drawRRect(
+          RRect.fromRectAndRadius(well, const Radius.circular(5)),
+          Paint()
+            ..color = const Color(0xFF2E2A26)
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 1.6,
+        );
+      }
+
+      final image = assets[_iconAsset(order.tip, id)];
+      if (image != null) {
+        drawContained(canvas, image, at, 21);
+      }
+      if (banned || wrong) {
+        const r = 9.0;
+        canvas
+          ..drawLine(
+            at + const Offset(-r, -r),
+            at + const Offset(r, r),
+            Paint()
+              ..color = const Color(0xFFC4321F)
+              ..strokeWidth = 2.6,
+          )
+          ..drawLine(
+            at + const Offset(-r, r),
+            at + const Offset(r, -r),
+            Paint()
+              ..color = const Color(0xFFC4321F)
+              ..strokeWidth = 2.6,
+          );
+      } else if (!wanted) {
+        drawText(
+          canvas,
+          '+${Balance.income(0, run.day, ingredients: 1)}',
+          Offset(at.dx, well.bottom - 9),
+          size: 8,
+          weight: 800,
+          family: 'Rubik',
+          center: true,
+          color: const Color(0x772E2A26),
+        );
+      }
+    }
+  }
+
+  /// Two fixed sockets, dessert always left and drink always right, printed
+  /// empty when there is none — so the eye learns one place to look.
+  void _ticketExtras(Canvas canvas, Rect rect, Customer customer) {
+    final order = customer.order;
+    for (final (i, entry) in [
+      (order.tatli?.asset, customer.tatliVerildi),
+      (order.icecek?.servedAsset, customer.icecekVerildi),
+    ].indexed) {
+      final at = Offset(
+        i == 0 ? rect.left + 22 : rect.right - 22,
+        rect.top + 66,
+      );
+      final asset = entry.$1;
+      if (asset == null) {
+        canvas.drawCircle(
+          at,
+          9,
+          Paint()
+            ..color = const Color(0x1A2E2A26)
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 1.4,
+        );
+        continue;
+      }
+      _icon(canvas, asset, at, 19, done: entry.$2);
     }
   }
 

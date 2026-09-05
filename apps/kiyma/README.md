@@ -313,6 +313,27 @@ wherever the finger was. `classifyTouch` is arithmetic over a start, an end
 and the furthest the finger ever got; net displacement alone would read a
 drag out and back as a tap.
 
+## The order ticket
+
+Paper, not a phone panel — cream with a torn bottom edge, a hard shadow and a
+per-seat tilt so three of them read as three dockets rather than one sprite
+repeated. It moved out of the drag path into the empty band above the heads,
+where the hand never goes, and grew from 88x74 to 148x78.
+
+Three fixed bands, always in the same place: a coloured header carrying the
+product and what the whole order is still worth; a rail of **always four**
+wells in enum order — wanted is a green plaque, forbidden is red and crossed,
+and an unmentioned one is an empty outline carrying the bonus it would pay,
+which is the one economy rule a player had no way of discovering; then two
+fixed sockets, dessert always left and drink always right, printed empty when
+there is none. A shuffled row of two or three icons cannot be scanned under
+time pressure; four in a fixed order can.
+
+It drops in and settles when its customer arrives, reddens and jitters below
+30 % patience, and shakes with the wrong wells lit when an order is refused —
+`Order.ihlal` names them, because "the game said no" and "you forgot the
+pepper" are different sentences and only one teaches anything.
+
 ## Effects
 
 `presentation/render/effects.dart` is the pool. There was nowhere to put an

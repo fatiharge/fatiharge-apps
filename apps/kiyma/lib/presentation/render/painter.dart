@@ -133,6 +133,7 @@ void drawText(
   int weight = 500,
   String? family,
   Color? outline,
+  bool right = false,
 }) {
   if (outline != null) {
     // Drawn four times around: a number thrown over a painted kitchen has no
@@ -153,6 +154,7 @@ void drawText(
         center: center,
         weight: weight,
         family: family,
+        right: right,
       );
     }
   }
@@ -172,7 +174,14 @@ void drawText(
     ),
     textDirection: TextDirection.ltr,
   )..layout();
-  painter.paint(canvas, center ? at - Offset(painter.width / 2, 0) : at);
+  painter.paint(
+    canvas,
+    center
+        ? at - Offset(painter.width / 2, 0)
+        : right
+        ? at - Offset(painter.width, 0)
+        : at,
+  );
 }
 
 /// A cream panel with the design's dark outline and hard offset shadow — the
@@ -322,6 +331,55 @@ void drawKey(Canvas canvas, Rect rect, Color colour) {
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2.5,
     );
+}
+
+/// The paper a kebab shop actually writes an order on.
+///
+/// The card used to be a blue-black rounded slab — phone interface, not
+/// kitchen — sitting in the middle of the drag path. Cream paper with a torn
+/// bottom edge and a hard shadow reads as a thing on the counter, and the
+/// tilt is what stops three of them looking like one sprite repeated.
+void drawTicket(
+  Canvas canvas,
+  Rect rect, {
+  Color fill = const Color(0xFFF7EEDF),
+}) {
+  final path = Path()
+    ..moveTo(rect.left, rect.top + 6)
+    ..quadraticBezierTo(rect.left, rect.top, rect.left + 6, rect.top)
+    ..lineTo(rect.right - 6, rect.top)
+    ..quadraticBezierTo(rect.right, rect.top, rect.right, rect.top + 6)
+    ..lineTo(rect.right, rect.bottom - 5);
+  // Torn along the bottom, the way a docket comes off the pad.
+  const teeth = 9;
+  for (var i = teeth; i >= 0; i--) {
+    final x = rect.left + rect.width * i / teeth;
+    path.lineTo(x, rect.bottom - (i.isEven ? 0 : 6));
+  }
+  path.close();
+
+  canvas
+    ..drawPath(
+      path.shift(const Offset(0, 4)),
+      Paint()..color = const Color(0xFF2E2A26),
+    )
+    ..drawPath(path, Paint()..color = fill)
+    ..drawPath(
+      path,
+      Paint()
+        ..color = const Color(0xFF2E2A26)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.5,
+    );
+}
+
+/// Draws [image] so its longest side fits [box], centred.
+///
+/// Every icon then occupies the same square whatever its aspect, which is
+/// what stops a row of them looking like a shuffled pile.
+void drawContained(Canvas canvas, Image image, Offset centre, double box) {
+  final scale = math.min(box / image.width, box / image.height);
+  drawCentered(canvas, image, centre, image.width * scale);
 }
 
 /// A socket cut into a panel: a dark inset with a lighter bevel. The plate

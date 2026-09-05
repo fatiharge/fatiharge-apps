@@ -25,14 +25,26 @@ class Order {
   final Tatli? tatli;
   final Icecek? icecek;
 
+  /// Which named ingredients the refusal was about.
+  ///
+  /// "The game said no" and "you forgot the pepper" are different sentences,
+  /// and only one of them teaches anything.
+  Set<String> ihlal(Urun urun) {
+    final icerik = _icerik(urun);
+    if (icerik == null) return ister.union(istemez);
+    return ister.difference(icerik).union(istemez.intersection(icerik));
+  }
+
+  Set<String>? _icerik(Urun urun) => switch (urun) {
+    DurumUrun(:final durum) when tip == UrunTipi.durum =>
+      durum.malzemeler.map((m) => m.id).toSet(),
+    PorsiyonUrun(:final porsiyon) when tip == UrunTipi.porsiyon =>
+      porsiyon.bilesenler.map((b) => b.id).toSet(),
+    _ => null,
+  };
+
   bool anaUrunKabul(Urun urun) {
-    final icerik = switch (urun) {
-      DurumUrun(:final durum) when tip == UrunTipi.durum =>
-        durum.malzemeler.map((m) => m.id).toSet(),
-      PorsiyonUrun(:final porsiyon) when tip == UrunTipi.porsiyon =>
-        porsiyon.bilesenler.map((b) => b.id).toSet(),
-      _ => null,
-    };
+    final icerik = _icerik(urun);
     if (icerik == null) return false;
     return ister.every(icerik.contains) && !istemez.any(icerik.contains);
   }
@@ -92,6 +104,14 @@ class Customer {
   double varis = 0;
 
   bool get yerinde => varis >= 1;
+
+  /// How long they have been standing there, so the ticket can arrive rather
+  /// than appear.
+  double yerindeSure = 0;
+
+  /// What the last refusal was about, and how long it stays marked.
+  Set<String> hatali = const {};
+  double hataKalan = 0;
 
   final double sabirToplam;
   double sabirKalan;

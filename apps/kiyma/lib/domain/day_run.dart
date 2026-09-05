@@ -262,6 +262,8 @@ class DayRun {
         );
         continue;
       }
+      customer.yerindeSure += dt;
+      if (customer.hataKalan > 0) customer.hataKalan -= dt;
       customer.sabirKalan -= dt / tempo.sabirCarpani;
       if (customer.sabirKalan <= 0) {
         _ayril(i, memnun: false);
@@ -819,7 +821,10 @@ class DayRun {
     };
 
     if (kazanc == null) {
-      customer.reddet();
+      customer
+        ..reddet()
+        ..hatali = order.ihlal(held.urun)
+        ..hataKalan = 1.2;
       tempo.urunReddedildi();
       _cue(DayEvent.reddedildi, yeri(index));
       onEvent(DayEvent.reddedildi);

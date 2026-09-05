@@ -48,8 +48,22 @@ class _GamePageState extends State<GamePage> {
     );
   }
 
+  /// A phone call must not freeze the counter and hand it back under the
+  /// player's finger; it pauses, and they choose when to go on.
+  AppLifecycleListener? _lifecycle;
+
+  @override
+  void initState() {
+    super.initState();
+    _lifecycle = AppLifecycleListener(
+      onHide: () => _cubit.duraklat(durdur: true),
+      onInactive: () => _cubit.duraklat(durdur: true),
+    );
+  }
+
   @override
   void dispose() {
+    _lifecycle?.dispose();
     _toastTimer?.cancel();
     _toast.dispose();
     unawaited(_cubit.close());
@@ -57,9 +71,17 @@ class _GamePageState extends State<GamePage> {
   }
 
   @override
-  Widget build(BuildContext context) => BlocProvider.value(
-    value: _cubit,
-    child: _GameView(toast: _toast, onEvent: _say),
+  Widget build(BuildContext context) => PopScope(
+    // The back gesture used to end the run outright. It opens the card the
+    // player can leave from instead.
+    canPop: false,
+    onPopInvokedWithResult: (didPop, _) {
+      if (!didPop) _cubit.duraklat(durdur: true);
+    },
+    child: BlocProvider.value(
+      value: _cubit,
+      child: _GameView(toast: _toast, onEvent: _say),
+    ),
   );
 }
 
@@ -214,6 +236,16 @@ class _GameHostState extends State<_GameHost> {
       _game.insetsChanged(widget.insets);
     }
   }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Flame keeps scheduling frames behind the pause card otherwise, which
+    // is a lot of work to do for a picture nobody can see.
+    _paused ? _game.pauseEngine() : _game.resumeEngine();
+  }
+
+  bool get _paused => widget.run.duraklatildi;
 
   @override
   Widget build(BuildContext context) => GameWidget(game: _game);
