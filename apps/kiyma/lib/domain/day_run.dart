@@ -1,18 +1,18 @@
 import 'dart:math' as math;
 import 'dart:ui';
 import 'package:kiyma/domain/balance.dart';
-import 'package:kiyma/domain/gun_kurali.dart';
-import 'package:kiyma/domain/gun_profili.dart';
+import 'package:kiyma/domain/day_rule.dart';
 import 'package:kiyma/domain/model/carried.dart';
+import 'package:kiyma/domain/model/customer_kind.dart';
 import 'package:kiyma/domain/model/items.dart';
-import 'package:kiyma/domain/model/musteri_tipi.dart';
 import 'package:kiyma/domain/model/order.dart';
 import 'package:kiyma/domain/model/products.dart';
-import 'package:kiyma/domain/ogretmen.dart';
 import 'package:kiyma/domain/order_maker.dart';
 import 'package:kiyma/domain/progress.dart';
 import 'package:kiyma/domain/scene.dart';
 import 'package:kiyma/domain/tempo.dart';
+import 'package:kiyma/domain/trade_shape.dart';
+import 'package:kiyma/domain/tutor.dart';
 
 /// Something the day did that the screen should react to once.
 enum DayEvent {
@@ -79,21 +79,21 @@ class DayRun {
        _maker = OrderMaker(
          progress.unlocks,
          day: progress.gun,
-         kural: GunKurali.forDay(progress.gun),
+         kural: DayRule.forDay(progress.gun),
          random: random,
        ) {
     final unlocks = progress.unlocks;
     mangal = [
       for (var i = 0; i < 4; i++)
-        MangalSlot(
+        GrillSlot(
           komur: unlocks.komurKademesi,
-          pencere: GunKurali.forDay(progress.gun).pencereCarpani,
+          pencere: DayRule.forDay(progress.gun).pencereCarpani,
           unlocked: i < _acikMangal(progress),
         ),
     ];
-    bekleme = List<Urun?>.filled(3, null);
-    altin = List<Altin?>.filled(3, null);
-    bardakBekletme = List<Bardak?>.filled(3, null);
+    bekleme = List<Product?>.filled(3, null);
+    altin = List<CoinPile?>.filled(3, null);
+    bardakBekletme = List<Glass?>.filled(3, null);
     musteriler = List<Customer?>.filled(3, null);
     kalanSure = Balance.runLength(day).inSeconds.toDouble();
     _acilis = progress.xp;
@@ -112,19 +112,19 @@ class DayRun {
   final OrderMaker _maker;
   final math.Random _random;
 
-  late final List<MangalSlot> mangal;
+  late final List<GrillSlot> mangal;
 
   /// One shelf for both lines. Wraps and plates share it.
-  late final List<Urun?> bekleme;
-  late final List<Bardak?> bardakBekletme;
+  late final List<Product?> bekleme;
+  late final List<Glass?> bardakBekletme;
   late final List<Customer?> musteriler;
 
   /// Still walking off. Nothing here affects a rule; the seat was freed the
   /// moment they turned to go.
-  final List<Ayrilan> ayrilanlar = [];
+  final List<Departure> ayrilanlar = [];
 
-  Durum? durumIstasyonu;
-  Porsiyon? tabakIstasyonu;
+  Wrap? durumIstasyonu;
+  Plate? tabakIstasyonu;
 
   Carried? carried;
   Offset carriedAt = Offset.zero;
@@ -155,7 +155,7 @@ class DayRun {
 
   /// What each customer left on the ledge, waiting to be picked up. One pile
   /// per place, so the gold sits where the person who paid it stood.
-  late final List<Altin?> altin;
+  late final List<CoinPile?> altin;
 
   /// Seconds left on the counter. A run is a clock: customers keep arriving
   /// as seats free until it runs out.
@@ -207,7 +207,7 @@ class DayRun {
   bool bitti = false;
 
   /// What is different about today. Neutral on days one to three.
-  late final GunKurali kural = GunKurali.forDay(day);
+  late final DayRule kural = DayRule.forDay(day);
 
   /// How many customers the day asks to be sent away happy, and whether it
   /// has happened yet.
@@ -220,12 +220,12 @@ class DayRun {
   /// While it is running the clock is stopped and nobody comes through the
   /// door unless the step asks for somebody: a first lesson played against a
   /// ticking day teaches only that the game does not wait.
-  final Ogretmen? ogretmen;
+  final Tutor? ogretmen;
 
   bool get ogretiliyor => ogretmen != null && !ogretmen!.bitti;
 
   /// Walking out of a lesson, and stepping through the parts of one that are
-  /// only the usta talking. Here rather than on [Ogretmen] so that the screen
+  /// only the usta talking. Here rather than on [Tutor] so that the screen
   /// is told to redraw and the shop is told the lesson is over.
   void dersiAtla() {
     ogretmen?.atla();
@@ -237,14 +237,14 @@ class DayRun {
     onChanged();
   }
 
-  void _kilometre(Kilometre kilometre) {
+  void _kilometre(Milestone kilometre) {
     if (!ogretiliyor) return;
     ogretmen!.ulasildi(kilometre);
     onChanged();
   }
 
   /// The shape of this particular day, and how far through it we are.
-  late final GunProfili profil = GunProfili.forDay(day);
+  late final TradeShape profil = TradeShape.forDay(day);
 
   double get gunOrani => 1 - sureOrani;
 
@@ -325,8 +325,8 @@ class DayRun {
   bool get copeAtilabilir => carried != null && copeGider(carried!);
 
   static bool copeGider(Carried held) => switch (held) {
-    HazirUrun() => true,
-    PismisEt(yanik: true) => true,
+    FinishedProduct() => true,
+    CookedMeat(yanik: true) => true,
     _ => false,
   };
 
@@ -386,13 +386,13 @@ class DayRun {
         onEvent(DayEvent.yandi);
         onChanged();
       }
-      if (!pismisti && slot.alinabilir) _kilometre(Kilometre.etPisti);
+      if (!pismisti && slot.alinabilir) _kilometre(Milestone.etPisti);
     }
 
     for (final bardak in bardakBekletme) {
       final doluyordu = bardak?.doluyor ?? false;
       bardak?.tick(dt);
-      if (doluyordu && !bardak!.doluyor) _kilometre(Kilometre.bardakDoldu);
+      if (doluyordu && !bardak!.doluyor) _kilometre(Milestone.bardakDoldu);
     }
 
     parlama
@@ -503,7 +503,7 @@ class DayRun {
     if (musteriler.any((c) => c != null)) return;
     musteriler[0] = Customer(
       order: Order(
-        tip: UrunTipi.durum,
+        tip: ProductKind.durum,
         ister: {...adim.ister},
         istemez: {},
       ),
@@ -546,8 +546,7 @@ class DayRun {
   /// grill day one had.
   static int _acikMangal(Progress progress) => math.max(
     Balance.enAzMangal,
-    progress.unlocks.mangalSlots -
-        GunKurali.forDay(progress.gun).mangalKesintisi,
+    progress.unlocks.mangalSlots - DayRule.forDay(progress.gun).mangalKesintisi,
   );
 
   /// The gap to the next arrival: the day's base, stretched or squeezed by
@@ -564,14 +563,14 @@ class DayRun {
   /// editing the order would be the game cheating.
   void _fikirDegisirMi(Customer customer) {
     final order = customer.order;
-    if (order.musteriTipi != MusteriTipi.kararsiz) return;
+    if (order.musteriTipi != CustomerKind.kararsiz) return;
     if (customer.fikirDegisti || !customer.yerinde) return;
     if (customer.sabirOrani > Balance.kararsizAn) return;
 
     customer.fikirDegisti = true;
     final havuz = [
       for (final id
-          in order.tip == UrunTipi.durum
+          in order.tip == ProductKind.durum
               ? progress.unlocks.malzemeler.map((m) => m.id)
               : progress.unlocks.bilesenler.map((b) => b.id))
         if (!order.ister.contains(id) && !order.istemez.contains(id)) id,
@@ -651,8 +650,8 @@ class DayRun {
   /// renderer asks this instead, and skips what the finger is already
   /// carrying.
   bool lifted(String region, [int? slot]) => switch (carried) {
-    PismisEt(slot: final from) when region == 'mangal_alani' => from == slot,
-    HazirUrun(fromSource: false, :final origin, slot: final from) =>
+    CookedMeat(slot: final from) when region == 'mangal_alani' => from == slot,
+    FinishedProduct(fromSource: false, :final origin, slot: final from) =>
       origin == region && from == slot,
     _ => false,
   };
@@ -677,18 +676,18 @@ class DayRun {
         }
       case 'tabak_kaynak':
         if (tabakIstasyonu == null) {
-          tabakIstasyonu = Porsiyon(
+          tabakIstasyonu = Plate(
             gerekenTutam: progress.unlocks.tutamAdedi,
           );
-          _kilometre(Kilometre.tabakBasladi);
+          _kilometre(Milestone.tabakBasladi);
           _flash('tabak_kaynak');
           return;
         }
       case 'bardak_kaynak':
         final free = bardakBekletme.indexWhere((b) => b == null);
         if (free >= 0 && free < progress.unlocks.bardakGozu) {
-          bardakBekletme[free] = Bardak();
-          _kilometre(Kilometre.bardakAlindi);
+          bardakBekletme[free] = Glass();
+          _kilometre(Milestone.bardakAlindi);
           _flash('bardak_kaynak');
           return;
         }
@@ -715,7 +714,7 @@ class DayRun {
     // And the grill announces its own refusal — it is four small slots at
     // the edge of the scene and a skewer that quietly fails to appear reads
     // as a lost input — so raw meat has already been answered by now.
-    if (held is CigKiyma || !_tekYer(held)) return;
+    if (held is RawMince || !_tekYer(held)) return;
     _flash(region.name, ok: false);
     onEvent(DayEvent.gecersiz);
   }
@@ -727,13 +726,13 @@ class DayRun {
   /// finished wrap or a poured glass could be for any of three people, so a
   /// tap on one of those only lifts it and costs nothing.
   static bool _tekYer(Carried held) => switch (held) {
-    CigKiyma() ||
-    Lavas() ||
-    PismisEt(yanik: false) ||
-    MalzemeTutami() ||
-    Kagit() ||
-    BilesenTutami() ||
-    Surahi() => true,
+    RawMince() ||
+    Flatbread() ||
+    CookedMeat(yanik: false) ||
+    IngredientHandful() ||
+    Paper() ||
+    PlateItemHandful() ||
+    Jug() => true,
     _ => false,
   };
 
@@ -746,19 +745,19 @@ class DayRun {
     }
 
     return switch (held) {
-      CigKiyma() => at('mangal_alani', _mangalaKoy) || _mangalDolu(),
+      RawMince() => at('mangal_alani', _mangalaKoy) || _mangalDolu(),
       // Bread goes to the wrap while that is free, and to the plate after —
       // the plate cannot start without it either.
-      Lavas() =>
+      Flatbread() =>
         at('durum_hazirlama', () => _durumaBirak(held)) ||
             at('tabak_hazirlama', () => _tabagaBirak(held)),
-      PismisEt(yanik: false) =>
+      CookedMeat(yanik: false) =>
         at('durum_hazirlama', () => _durumaBirak(held)) ||
             at('tabak_hazirlama', () => _tabagaBirak(held)),
-      MalzemeTutami() => at('durum_hazirlama', () => _durumaBirak(held)),
-      Kagit() => at('durum_hazirlama', () => _durumaBirak(held)),
-      BilesenTutami() => at('tabak_hazirlama', () => _tabagaBirak(held)),
-      Surahi() => at('bardak_bekletme', () => _surahiyiDok(held)),
+      IngredientHandful() => at('durum_hazirlama', () => _durumaBirak(held)),
+      Paper() => at('durum_hazirlama', () => _durumaBirak(held)),
+      PlateItemHandful() => at('tabak_hazirlama', () => _tabagaBirak(held)),
+      Jug() => at('bardak_bekletme', () => _surahiyiDok(held)),
       _ => false,
     };
   }
@@ -785,7 +784,7 @@ class DayRun {
     );
     altin[pick] = null;
     tempo.altinAlindi();
-    _kilometre(Kilometre.altinToplandi);
+    _kilometre(Milestone.altinToplandi);
     onChanged();
     return true;
   }
@@ -806,11 +805,11 @@ class DayRun {
     final target = _bosSlot(0);
     if (target == null) return false;
     mangal[target].koy();
-    _kilometre(Kilometre.kiymaMangalda);
+    _kilometre(Milestone.kiymaMangalda);
     return true;
   }
 
-  bool _surahiyiDok(Surahi held) {
+  bool _surahiyiDok(Jug held) {
     for (final bardak in bardakBekletme) {
       if (bardak != null && bardak.bos) {
         bardak.doldur(
@@ -836,7 +835,7 @@ class DayRun {
         station != null &&
         station.sarilabilir) {
       station.sarili = true;
-      _kilometre(Kilometre.durumSarildi);
+      _kilometre(Milestone.durumSarildi);
       _flash('durum_hazirlama');
       onChanged();
       return;
@@ -873,7 +872,7 @@ class DayRun {
       final landed = regionAt(point);
       // Raw meat is the only thing the grill takes, so a refusal there is
       // always a full grill.
-      if (landed?.name == 'mangal_alani' && held is CigKiyma) {
+      if (landed?.name == 'mangal_alani' && held is RawMince) {
         _mangalDolu();
       } else {
         if (landed != null) _flash(landed.name, ok: false);
@@ -887,25 +886,33 @@ class DayRun {
   Carried? _pickUp(SceneRegion region, Offset point) {
     final unlocks = progress.unlocks;
 
-    if (region.name == 'malzeme_kiyma') return const CigKiyma();
-    if (region.name == 'lavas_kaynak') return const Lavas();
-    if (region.name == 'kagit_kaynak') return const Kagit();
+    if (region.name == 'malzeme_kiyma') return const RawMince();
+    if (region.name == 'lavas_kaynak') return const Flatbread();
+    if (region.name == 'kagit_kaynak') return const Paper();
 
     for (final malzeme in unlocks.malzemeler) {
-      if (region.name == malzeme.region) return MalzemeTutami(malzeme);
+      if (region.name == malzeme.region) return IngredientHandful(malzeme);
     }
     for (final bilesen in unlocks.bilesenler) {
-      if (region.name == bilesen.region) return BilesenTutami(bilesen);
+      if (region.name == bilesen.region) return PlateItemHandful(bilesen);
     }
     for (final icecek in unlocks.icecekler) {
       if (region.name != icecek.sourceRegion) continue;
       return icecek.poured
-          ? Surahi(icecek)
-          : HazirUrun(IcecekUrun(icecek), region.name, fromSource: true);
+          ? Jug(icecek)
+          : FinishedProduct(
+              DrinkProduct(icecek),
+              region.name,
+              fromSource: true,
+            );
     }
     for (final tatli in unlocks.tatlilar) {
       if (region.name == tatli.region) {
-        return HazirUrun(TatliUrun(tatli), region.name, fromSource: true);
+        return FinishedProduct(
+          DessertProduct(tatli),
+          region.name,
+          fromSource: true,
+        );
       }
     }
 
@@ -916,7 +923,7 @@ class DayRun {
       case 'durum_hazirlama':
         final station = durumIstasyonu;
         if (station != null && station.hazir) {
-          return HazirUrun(DurumUrun(station), region.name);
+          return FinishedProduct(WrapProduct(station), region.name);
         }
         // Reaching for a rolled wrap with no paper on it: the paper is the
         // step being skipped, so the paper is what answers.
@@ -927,20 +934,22 @@ class DayRun {
       case 'tabak_hazirlama':
         final station = tabakIstasyonu;
         if (station != null && station.hazir) {
-          return HazirUrun(PorsiyonUrun(station), region.name);
+          return FinishedProduct(PlateProduct(station), region.name);
         }
 
       case 'bekleme_alani':
         final index = _slotAt(region, point);
         final urun = bekleme[index];
-        if (urun != null) return HazirUrun(urun, region.name, slot: index);
+        if (urun != null) {
+          return FinishedProduct(urun, region.name, slot: index);
+        }
 
       case 'bardak_bekletme':
         final index = _slotAt(region, point);
         final bardak = bardakBekletme[index];
         if (bardak != null && bardak.hazir) {
-          return HazirUrun(
-            IcecekUrun(bardak.icerik!),
+          return FinishedProduct(
+            DrinkProduct(bardak.icerik!),
             region.name,
             slot: index,
           );
@@ -966,7 +975,7 @@ class DayRun {
     if (region.name.startsWith('musteri_slot_')) {
       final index = int.parse(region.name.split('_').last) - 1;
       final customer = musteriler[index];
-      if (customer == null || !customer.yerinde || held is! HazirUrun) {
+      if (customer == null || !customer.yerinde || held is! FinishedProduct) {
         return false;
       }
       return _servis(index, customer, held, point);
@@ -974,11 +983,11 @@ class DayRun {
 
     switch (region.name) {
       case 'mangal_alani':
-        if (held is! CigKiyma) return false;
+        if (held is! RawMince) return false;
         final target = _bosSlot(_slotAt(region, point));
         if (target == null) return false;
         mangal[target].koy();
-        _kilometre(Kilometre.kiymaMangalda);
+        _kilometre(Milestone.kiymaMangalda);
         return true;
 
       case 'durum_hazirlama':
@@ -988,13 +997,14 @@ class DayRun {
         return _tabagaBirak(held);
 
       case 'bekleme_alani':
-        if (held is! HazirUrun || held.urun.beklemeBolgesi != region.name) {
+        if (held is! FinishedProduct ||
+            held.urun.beklemeBolgesi != region.name) {
           return false;
         }
         return _rafaKoy(held, _slotAt(region, point));
 
       case 'bardak_bekletme':
-        if (held is! Surahi) return false;
+        if (held is! Jug) return false;
         final bardak = bardakBekletme[_slotAt(region, point)];
         if (bardak == null || !bardak.bos) return false;
         bardak.doldur(
@@ -1007,29 +1017,29 @@ class DayRun {
   }
 
   bool _durumaBirak(Carried held) {
-    if (held is Lavas) {
+    if (held is Flatbread) {
       if (durumIstasyonu != null) return false;
-      durumIstasyonu = Durum(gerekenTutam: progress.unlocks.tutamAdedi);
-      _kilometre(Kilometre.durumBasladi);
+      durumIstasyonu = Wrap(gerekenTutam: progress.unlocks.tutamAdedi);
+      _kilometre(Milestone.durumBasladi);
       return true;
     }
     final station = durumIstasyonu;
     if (station == null) return false;
     switch (held) {
-      case PismisEt(yanik: false):
+      case CookedMeat(yanik: false):
         if (station.etli || station.sarili) return false;
         station.etli = true;
-        _kilometre(Kilometre.etDurumda);
-      case MalzemeTutami(:final malzeme):
+        _kilometre(Milestone.etDurumda);
+      case IngredientHandful(:final malzeme):
         if (!station.malzemeKabul(malzeme)) return false;
         station.malzemeEkle(malzeme);
         if (station.malzemeler.contains(malzeme)) {
-          _kilometre(Kilometre.malzemeTam);
+          _kilometre(Milestone.malzemeTam);
         }
-      case Kagit():
+      case Paper():
         if (!station.kagitBekliyor) return false;
         station.kagitli = true;
-        _kilometre(Kilometre.durumKagitlandi);
+        _kilometre(Milestone.durumKagitlandi);
       case _:
         return false;
     }
@@ -1041,15 +1051,15 @@ class DayRun {
     final station = tabakIstasyonu;
     if (station == null) return false;
     switch (held) {
-      case Lavas():
+      case Flatbread():
         if (!station.lavasBekliyor) return false;
         station.lavasli = true;
-        _kilometre(Kilometre.tabagaLavas);
-      case PismisEt(yanik: false):
+        _kilometre(Milestone.tabagaLavas);
+      case CookedMeat(yanik: false):
         if (!station.lavasli || station.etli) return false;
         station.etli = true;
-        _kilometre(Kilometre.tabagaEt);
-      case BilesenTutami(:final bilesen):
+        _kilometre(Milestone.tabagaEt);
+      case PlateItemHandful(:final bilesen):
         if (!station.bilesenKabul(bilesen)) return false;
         station.bilesenEkle(bilesen);
       case _:
@@ -1059,7 +1069,7 @@ class DayRun {
     return true;
   }
 
-  bool _rafaKoy(HazirUrun held, int preferred) {
+  bool _rafaKoy(FinishedProduct held, int preferred) {
     final capacity = progress.unlocks.bekleme;
     final target = preferred < capacity && bekleme[preferred] == null
         ? preferred
@@ -1088,8 +1098,8 @@ class DayRun {
   /// burning — that is the one about to cost money.
   Carried? _mangaldanAl(int index) {
     final under = mangal[index];
-    if (under.alinabilir) return PismisEt(index);
-    if (under.yanmis) return PismisEt(index, yanik: true);
+    if (under.alinabilir) return CookedMeat(index);
+    if (under.yanmis) return CookedMeat(index, yanik: true);
 
     var pick = -1;
     var urgency = -1.0;
@@ -1101,10 +1111,10 @@ class DayRun {
         pick = i;
       }
     }
-    if (pick >= 0) return PismisEt(pick);
+    if (pick >= 0) return CookedMeat(pick);
 
     final burnt = _nearest(index, (slot) => slot.yanmis);
-    return burnt == null ? null : PismisEt(burnt, yanik: true);
+    return burnt == null ? null : CookedMeat(burnt, yanik: true);
   }
 
   /// [preferred] when it is free, otherwise the closest slot that is.
@@ -1114,7 +1124,7 @@ class DayRun {
     return _nearest(preferred, (slot) => slot.bos);
   }
 
-  int? _nearest(int from, bool Function(MangalSlot slot) matches) {
+  int? _nearest(int from, bool Function(GrillSlot slot) matches) {
     int? best;
     var distance = mangal.length;
     for (var i = 0; i < mangal.length; i++) {
@@ -1129,7 +1139,12 @@ class DayRun {
 
   // --- Serving ---
 
-  bool _servis(int index, Customer customer, HazirUrun held, Offset point) {
+  bool _servis(
+    int index,
+    Customer customer,
+    FinishedProduct held,
+    Offset point,
+  ) {
     final order = customer.order;
     // Which line of the ticket this settles. A big order has two, and the
     // first one it fits is the one it goes against.
@@ -1142,10 +1157,10 @@ class DayRun {
         ikinci.anaUrunKabul(held.urun);
 
     final kazanc = switch (held.urun) {
-      TatliUrun(:final tatli)
+      DessertProduct(:final tatli)
           when order.tatli == tatli && !customer.tatliVerildi =>
         Balance.income(Balance.tatliBase[tatli]!, day),
-      IcecekUrun(:final icecek)
+      DrinkProduct(:final icecek)
           when order.icecek == icecek && !customer.icecekVerildi =>
         Balance.income(Balance.icecekBase[icecek]!, day),
       final urun when anaUyar || ikinciUyar => _anaUrunGeliri(
@@ -1175,9 +1190,9 @@ class DayRun {
     }
 
     switch (held.urun) {
-      case TatliUrun():
+      case DessertProduct():
         customer.tatliVerildi = true;
-      case IcecekUrun():
+      case DrinkProduct():
         customer.icecekVerildi = true;
       case _:
         if (anaUyar) {
@@ -1218,7 +1233,7 @@ class DayRun {
       kritik: kritik,
     );
     onEvent(DayEvent.kabul);
-    _kilometre(Kilometre.servisEdildi);
+    _kilometre(Milestone.servisEdildi);
 
     if (customer.tamamlandi) {
       _seriIkramiyesi(index);
@@ -1232,7 +1247,7 @@ class DayRun {
   /// on top. Paid at the end rather than per item, so it reads as a tip and
   /// not as a better price.
   void _bahsis(int index, Customer customer) {
-    if (customer.order.musteriTipi != MusteriTipi.comert) return;
+    if (customer.order.musteriTipi != CustomerKind.comert) return;
     if (customer.sabirOrani < Balance.comertEsigi) return;
     final miktar = (customer.odenen * Balance.comertBahsis).round();
     if (miktar <= 0) return;
@@ -1241,17 +1256,17 @@ class DayRun {
     onEvent(DayEvent.bahsis);
   }
 
-  int _anaUrunGeliri(Urun urun, MusteriTipi tipi) {
+  int _anaUrunGeliri(Product urun, CustomerKind tipi) {
     // Better mince lifts the base the day multiplies, so it compounds with
     // the day rather than sitting on top as a flat tip.
     final kasap = Balance.kasapPayi * progress.unlocks.kasapKademesi;
     final taban = switch (urun) {
-      DurumUrun(:final durum) => Balance.income(
+      WrapProduct(:final durum) => Balance.income(
         Balance.durumBase + kasap,
         day,
         ingredients: durum.malzemeler.length,
       ),
-      PorsiyonUrun(:final porsiyon) => Balance.income(
+      PlateProduct(:final porsiyon) => Balance.income(
         Balance.porsiyonBase + kasap,
         day,
         ingredients: porsiyon.bilesenler.length,
@@ -1268,16 +1283,16 @@ class DayRun {
     if (customer == null) return;
     musteriler[index] = null;
     ayrilanlar.add(
-      Ayrilan(slot: index, hal: customer.cikisHali, hiz: customer.hiz),
+      Departure(slot: index, hal: customer.cikisHali, hiz: customer.hiz),
     );
 
     // They pay on the way out, onto the ledge they were standing at. Nothing
     // reaches the till until somebody picks it up — and the clock on it
     // restarts, so a second payment onto the same spot is not half-swept.
     if (customer.odenen > 0) {
-      altin[index] = Altin(
+      altin[index] = CoinPile(
         (altin[index]?.miktar ?? 0) + customer.odenen,
-        tip: _random.nextInt(Altin.tipler.length),
+        tip: _random.nextInt(CoinPile.tipler.length),
         kasa: progress.unlocks.kasaKademesi,
       );
     }
@@ -1301,9 +1316,9 @@ class DayRun {
   /// a successful drop, so a drop that fails needs no undo.
   void _consume(Carried held) {
     switch (held) {
-      case PismisEt(:final slot):
+      case CookedMeat(:final slot):
         mangal[slot].bosalt();
-      case HazirUrun(fromSource: false, :final origin, :final slot):
+      case FinishedProduct(fromSource: false, :final origin, :final slot):
         switch (origin) {
           case 'durum_hazirlama':
             durumIstasyonu = null;
@@ -1323,7 +1338,7 @@ class DayRun {
   /// when that is full it stays in the prep area and blocks it. Nothing here
   /// has to move for that second case — a failed drop never removed it.
   void _putBack(Carried held) {
-    if (held is! HazirUrun || held.fromSource) return;
+    if (held is! FinishedProduct || held.fromSource) return;
     if (held.origin != 'durum_hazirlama' && held.origin != 'tabak_hazirlama') {
       return;
     }

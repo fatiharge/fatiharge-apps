@@ -2,14 +2,14 @@ import 'dart:math' as math;
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kiyma/domain/balance.dart';
+import 'package:kiyma/domain/model/customer_kind.dart';
 import 'package:kiyma/domain/model/items.dart';
-import 'package:kiyma/domain/model/musteri_tipi.dart';
 import 'package:kiyma/domain/model/order.dart';
 import 'package:kiyma/domain/order_maker.dart';
 import 'package:kiyma/domain/unlocks.dart';
 
 void main() {
-  Set<MusteriTipi> typesOver(int day, {Unlocks? unlocks}) {
+  Set<CustomerKind> typesOver(int day, {Unlocks? unlocks}) {
     final maker = OrderMaker(
       unlocks ?? Unlocks(),
       day: day,
@@ -19,21 +19,21 @@ void main() {
   }
 
   test('the early days are plain, and nothing turns up before its day', () {
-    expect(typesOver(1), {MusteriTipi.siradan});
-    expect(typesOver(2), {MusteriTipi.siradan});
-    expect(typesOver(3), contains(MusteriTipi.aceleci));
-    expect(typesOver(3), isNot(contains(MusteriTipi.titiz)));
+    expect(typesOver(1), {CustomerKind.siradan});
+    expect(typesOver(2), {CustomerKind.siradan});
+    expect(typesOver(3), contains(CustomerKind.aceleci));
+    expect(typesOver(3), isNot(contains(CustomerKind.titiz)));
   });
 
   test('a big order waits for the plate line, whatever day it is', () {
     // Day nine is well past kalabalik's day, and it still cannot appear:
     // two wraps is the same job twice.
-    expect(typesOver(9), isNot(contains(MusteriTipi.kalabalik)));
+    expect(typesOver(9), isNot(contains(CustomerKind.kalabalik)));
 
     final open = Unlocks()
       ..open('porsiyon_hatti')
       ..open('bilesen_ezme');
-    expect(typesOver(9, unlocks: open), contains(MusteriTipi.kalabalik));
+    expect(typesOver(9, unlocks: open), contains(CustomerKind.kalabalik));
   });
 
   test('a big order is two products, and they are different lines', () {
@@ -44,7 +44,7 @@ void main() {
     var seen = 0;
     for (var i = 0; i < 500; i++) {
       final order = maker.make();
-      if (order.musteriTipi != MusteriTipi.kalabalik) continue;
+      if (order.musteriTipi != CustomerKind.kalabalik) continue;
       seen++;
       expect(order.ikinci, isNotNull);
       expect(order.ikinci!.tip, isNot(order.tip));
@@ -64,7 +64,7 @@ void main() {
     var seen = 0;
     for (var i = 0; i < 500; i++) {
       final order = maker.make();
-      if (order.musteriTipi != MusteriTipi.titiz) continue;
+      if (order.musteriTipi != CustomerKind.titiz) continue;
       seen++;
       expect(order.istemez.length, greaterThanOrEqualTo(Balance.titizIstemez));
       // Never out of what they asked for.
@@ -74,9 +74,9 @@ void main() {
   });
 
   test('the hurried pay for the time they take away', () {
-    expect(MusteriTipi.aceleci.odemeCarpani, greaterThan(1));
-    expect(MusteriTipi.titiz.odemeCarpani, greaterThan(1));
-    expect(MusteriTipi.siradan.odemeCarpani, 1);
+    expect(CustomerKind.aceleci.odemeCarpani, greaterThan(1));
+    expect(CustomerKind.titiz.odemeCarpani, greaterThan(1));
+    expect(CustomerKind.siradan.odemeCarpani, 1);
     // The trade has to be worth taking: less time for the same money is
     // just a worse customer.
     expect(Balance.aceleciSabir, lessThan(1));
@@ -85,10 +85,10 @@ void main() {
 
   test('changing your mind swaps one ask for another, never for a ban', () {
     final order = Order(
-      tip: UrunTipi.durum,
+      tip: ProductKind.durum,
       ister: {'domates'},
       istemez: {'sogan'},
-      musteriTipi: MusteriTipi.kararsiz,
+      musteriTipi: CustomerKind.kararsiz,
     )..fikirDegistir('domates', 'sogan');
 
     expect(order.ister, {'sogan'});

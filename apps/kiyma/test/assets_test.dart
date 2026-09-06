@@ -42,20 +42,20 @@ void main() {
       'kivilcim',
       'patlama',
       'takvim',
-      ...Altin.tipler,
+      ...CoinPile.tipler,
       'back_scene.jpg',
       'base_table.png',
-      for (final malzeme in Malzeme.values) ...[
+      for (final malzeme in Ingredient.values) ...[
         malzeme.trayAsset,
         malzeme.stripAsset,
         malzeme.portionAsset,
       ],
-      for (final bilesen in Bilesen.values) ...[
+      for (final bilesen in PlateItem.values) ...[
         bilesen.trayAsset,
         bilesen.portionAsset,
       ],
-      for (final tatli in Tatli.values) tatli.asset,
-      for (final icecek in Icecek.values) ...[
+      for (final tatli in Dessert.values) tatli.asset,
+      for (final icecek in Drink.values) ...[
         icecek.sourceAsset,
         icecek.servedAsset,
       ],

@@ -6,11 +6,11 @@ import 'package:kiyma/domain/model/items.dart';
 /// `cig` and `pisiyor` behave identically — neither can be picked up. They are
 /// two states only so the player can see progress; six seconds of one
 /// unchanging picture reads as a hang.
-enum Pisme { cig, pisiyor, pismis, yanmis }
+enum Doneness { cig, pisiyor, pismis, yanmis }
 
 /// One skewer position on the grill.
-class MangalSlot {
-  MangalSlot({this.komur = 0, this.pencere = 1, this.unlocked = true});
+class GrillSlot {
+  GrillSlot({this.komur = 0, this.pencere = 1, this.unlocked = true});
 
   /// How much wider the day's rule makes the cooked window.
   final double pencere;
@@ -25,12 +25,12 @@ class MangalSlot {
   late final double _pisme =
       Balance.cookingSeconds * Balance.komurCarpani(komur);
 
-  Pisme? durum;
+  Doneness? durum;
   double _gecen = 0;
 
   bool get bos => durum == null;
-  bool get alinabilir => durum == Pisme.pismis;
-  bool get yanmis => durum == Pisme.yanmis;
+  bool get alinabilir => durum == Doneness.pismis;
+  bool get yanmis => durum == Doneness.yanmis;
 
   /// `0..1` over raw *and* cooking together.
   ///
@@ -45,14 +45,14 @@ class MangalSlot {
 
   /// `0..1` through the current state, for the progress the player reads.
   double ilerleme(int day, [double carpan = 1]) => switch (durum) {
-    Pisme.cig => _gecen / _cig,
-    Pisme.pisiyor => (_gecen - _cig) / _pisme,
-    Pisme.pismis => (_gecen - _cig - _pisme) / pencereGenisligi(day, carpan),
+    Doneness.cig => _gecen / _cig,
+    Doneness.pisiyor => (_gecen - _cig) / _pisme,
+    Doneness.pismis => (_gecen - _cig - _pisme) / pencereGenisligi(day, carpan),
     _ => 1,
   };
 
   void koy() {
-    durum = Pisme.cig;
+    durum = Doneness.cig;
     _gecen = 0;
   }
 
@@ -64,16 +64,16 @@ class MangalSlot {
   /// Advances the clock. Returns `true` on the frame the meat burns, which is
   /// where the money penalty is charged.
   bool tick(double dt, int day, [double carpan = 1]) {
-    if (durum == null || durum == Pisme.yanmis) return false;
+    if (durum == null || durum == Doneness.yanmis) return false;
     _gecen += dt;
     final cooked = _cig + _pisme;
     final next = switch (_gecen) {
-      _ when _gecen < _cig => Pisme.cig,
-      _ when _gecen < cooked => Pisme.pisiyor,
-      _ when _gecen < cooked + pencereGenisligi(day, carpan) => Pisme.pismis,
-      _ => Pisme.yanmis,
+      _ when _gecen < _cig => Doneness.cig,
+      _ when _gecen < cooked => Doneness.pisiyor,
+      _ when _gecen < cooked + pencereGenisligi(day, carpan) => Doneness.pismis,
+      _ => Doneness.yanmis,
     };
-    final burned = next == Pisme.yanmis && durum != Pisme.yanmis;
+    final burned = next == Doneness.yanmis && durum != Doneness.yanmis;
     durum = next;
     return burned;
   }
@@ -84,8 +84,8 @@ class MangalSlot {
 /// Left alone it is swept into the till after [Balance.sweptAfter] seconds,
 /// minus the part that goes missing — the point of touching it is the tip,
 /// not the sale.
-class Altin {
-  Altin(this.miktar, {this.tip = 0, int kasa = 0})
+class CoinPile {
+  CoinPile(this.miktar, {this.tip = 0, int kasa = 0})
     : kalan = Balance.supurulmeSuresi(kasa);
 
   /// The art each pile is drawn with. Chosen at random so a counter of four
@@ -103,8 +103,8 @@ class Altin {
 }
 
 /// A wrap being built, then carried.
-class Durum {
-  Durum({this.gerekenTutam = Balance.tutamAdedi});
+class Wrap {
+  Wrap({this.gerekenTutam = Balance.tutamAdedi});
 
   /// How many handfuls make one whole ingredient on *this* wrap.
   ///
@@ -115,30 +115,31 @@ class Durum {
   final int gerekenTutam;
 
   bool etli = false;
-  final Map<Malzeme, int> _tutamlar = {};
+  final Map<Ingredient, int> _tutamlar = {};
 
   bool sarili = false;
   bool kagitli = false;
 
   /// How much of [malzeme] is on, `0..`[Balance.tutamAdedi].
-  int tutam(Malzeme malzeme) => _tutamlar[malzeme] ?? 0;
+  int tutam(Ingredient malzeme) => _tutamlar[malzeme] ?? 0;
 
   /// Only the finished ones. A third of an onion is not an onion: it does
   /// not satisfy an order, it does not earn the bonus, and the customer
   /// who asked for no onion is not offended by it.
-  Set<Malzeme> get malzemeler => {
+  Set<Ingredient> get malzemeler => {
     for (final entry in _tutamlar.entries)
       if (entry.value >= gerekenTutam) entry.key,
   };
 
-  void malzemeEkle(Malzeme malzeme) => _tutamlar[malzeme] = tutam(malzeme) + 1;
+  void malzemeEkle(Ingredient malzeme) =>
+      _tutamlar[malzeme] = tutam(malzeme) + 1;
 
   /// Ingredients go on any time before the roll, meat or no meat.
   ///
   /// Requiring the meat first made the grill block the whole wrap line: with
   /// nothing to do but wait for a skewer, the six seconds of cooking were six
   /// seconds of standing still.
-  bool malzemeKabul(Malzeme malzeme) =>
+  bool malzemeKabul(Ingredient malzeme) =>
       !sarili && tutam(malzeme) < gerekenTutam;
 
   bool get sarilabilir => etli && !sarili;
@@ -147,31 +148,32 @@ class Durum {
 }
 
 /// A plate being built, then carried.
-class Porsiyon {
-  Porsiyon({this.gerekenTutam = Balance.tutamAdedi});
+class Plate {
+  Plate({this.gerekenTutam = Balance.tutamAdedi});
 
-  /// See [Durum.gerekenTutam].
+  /// See [Wrap.gerekenTutam].
   final int gerekenTutam;
 
   bool lavasli = false;
   bool etli = false;
-  final Map<Bilesen, int> _tutamlar = {};
+  final Map<PlateItem, int> _tutamlar = {};
 
-  int tutam(Bilesen bilesen) => _tutamlar[bilesen] ?? 0;
+  int tutam(PlateItem bilesen) => _tutamlar[bilesen] ?? 0;
 
-  Set<Bilesen> get bilesenler => {
+  Set<PlateItem> get bilesenler => {
     for (final entry in _tutamlar.entries)
       if (entry.value >= gerekenTutam) entry.key,
   };
 
-  void bilesenEkle(Bilesen bilesen) => _tutamlar[bilesen] = tutam(bilesen) + 1;
+  void bilesenEkle(PlateItem bilesen) =>
+      _tutamlar[bilesen] = tutam(bilesen) + 1;
 
   /// Flatbread first and mandatory; nothing else lands on a bare plate.
   bool get lavasBekliyor => !lavasli;
 
   /// After the bread, in any order — the same rule as the wrap, and for the
   /// same reason: waiting on the grill is not a decision.
-  bool bilesenKabul(Bilesen bilesen) =>
+  bool bilesenKabul(PlateItem bilesen) =>
       lavasli && tutam(bilesen) < gerekenTutam;
 
   /// No rolling and no paper: a plate is servable as soon as it has meat on
@@ -181,8 +183,8 @@ class Porsiyon {
 
 /// A glass on the shelf. Locked while it fills, so it cannot be carried away
 /// half full.
-class Bardak {
-  Icecek? icerik;
+class Glass {
+  Drink? icerik;
   double _dolum = 0;
   double _sure = Balance.pourSeconds;
 
@@ -194,13 +196,13 @@ class Bardak {
   double get dolumOrani => doluyor ? 1 - _dolum / _sure : 1;
 
   /// What is in it, or on its way in.
-  Icecek? get icecek => icerik ?? _bekleyen;
+  Drink? get icecek => icerik ?? _bekleyen;
 
-  Icecek? _bekleyen;
+  Drink? _bekleyen;
 
   /// [sure] is how long this counter's jug takes, which a wider mouth
   /// shortens. Held so the meter drawn on the glass matches the wait.
-  void doldur(Icecek icecek, double sure) {
+  void doldur(Drink icecek, double sure) {
     _bekleyen = icecek;
     _sure = sure;
     _dolum = sure;
@@ -218,8 +220,8 @@ class Bardak {
 }
 
 /// Something finished that can be handed over, parked or binned.
-sealed class Urun {
-  const Urun();
+sealed class Product {
+  const Product();
 
   /// The shelf it goes back to when a customer refuses it. One shelf for both
   /// lines: two half-depth ones drew everything at half size.
@@ -229,10 +231,10 @@ sealed class Urun {
   String get evi;
 }
 
-class DurumUrun extends Urun {
-  const DurumUrun(this.durum);
+class WrapProduct extends Product {
+  const WrapProduct(this.durum);
 
-  final Durum durum;
+  final Wrap durum;
 
   @override
   String get beklemeBolgesi => 'bekleme_alani';
@@ -241,10 +243,10 @@ class DurumUrun extends Urun {
   String get evi => 'durum_hazirlama';
 }
 
-class PorsiyonUrun extends Urun {
-  const PorsiyonUrun(this.porsiyon);
+class PlateProduct extends Product {
+  const PlateProduct(this.porsiyon);
 
-  final Porsiyon porsiyon;
+  final Plate porsiyon;
 
   @override
   String get beklemeBolgesi => 'bekleme_alani';
@@ -253,10 +255,10 @@ class PorsiyonUrun extends Urun {
   String get evi => 'tabak_hazirlama';
 }
 
-class TatliUrun extends Urun {
-  const TatliUrun(this.tatli);
+class DessertProduct extends Product {
+  const DessertProduct(this.tatli);
 
-  final Tatli tatli;
+  final Dessert tatli;
 
   @override
   String? get beklemeBolgesi => null;
@@ -265,10 +267,10 @@ class TatliUrun extends Urun {
   String get evi => tatli.region;
 }
 
-class IcecekUrun extends Urun {
-  const IcecekUrun(this.icecek);
+class DrinkProduct extends Product {
+  const DrinkProduct(this.icecek);
 
-  final Icecek icecek;
+  final Drink icecek;
 
   @override
   String? get beklemeBolgesi => icecek.poured ? 'bardak_bekletme' : null;

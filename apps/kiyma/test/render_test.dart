@@ -55,25 +55,25 @@ void main() {
           // side: the card and the meter only exist for the first.
           ..musteriler[0] = (Customer(
             order: Order(
-              tip: UrunTipi.durum,
-              ister: {Malzeme.domates.id},
-              istemez: {Malzeme.sogan.id},
-              tatli: Tatli.baklava,
-              icecek: Icecek.ayran,
+              tip: ProductKind.durum,
+              ister: {Ingredient.domates.id},
+              istemez: {Ingredient.sogan.id},
+              tatli: Dessert.baklava,
+              icecek: Drink.ayran,
             ),
             day: 1,
           )..varis = 1)
           ..musteriler[1] = Customer(
             order: Order(
-              tip: UrunTipi.porsiyon,
-              ister: {Bilesen.ezme.id},
+              tip: ProductKind.porsiyon,
+              ister: {PlateItem.ezme.id},
               istemez: const {},
             ),
             day: 1,
           )
           ..musteriler[2] = Customer(
             order: Order(
-              tip: UrunTipi.durum,
+              tip: ProductKind.durum,
               ister: const {},
               istemez: const {},
             ),
@@ -86,32 +86,31 @@ void main() {
     run
       ..durumIstasyonu = fullWrap()
       ..tabakIstasyonu = fullPlate()
-      ..bekleme[0] = DurumUrun(fullWrap()..kagitli = true)
-      ..bekleme[1] = PorsiyonUrun(fullPlate())
-      ..bardakBekletme[0] = (Bardak()
-        ..doldur(Icecek.ayran, Balance.pourSeconds))
-      ..bardakBekletme[1] = (Bardak()..icerik = Icecek.kola)
+      ..bekleme[0] = WrapProduct(fullWrap()..kagitli = true)
+      ..bekleme[1] = PlateProduct(fullPlate())
+      ..bardakBekletme[0] = (Glass()..doldur(Drink.ayran, Balance.pourSeconds))
+      ..bardakBekletme[1] = (Glass()..icerik = Drink.kola)
       // A pile of each kind, and one about to be swept.
-      ..altin[0] = Altin(12)
-      ..altin[1] = Altin(30, tip: 1)
-      ..altin[2] = (Altin(7, tip: 2)..kalan = 1)
+      ..altin[0] = CoinPile(12)
+      ..altin[1] = CoinPile(30, tip: 1)
+      ..altin[2] = (CoinPile(7, tip: 2)..kalan = 1)
       // Every grill badge at once: raw, cooking, ready, burnt.
       ..mangal[1].tick(3, 1)
       ..mangal[2].tick(6.5, 1)
       // Somebody on the way out, in each of the three moods.
       ..ayrilanlar.addAll([
         for (final hal in [
-          MusteriHali.gidiyorMutlu,
-          MusteriHali.gidiyorStabil,
-          MusteriHali.gidiyorKizgin,
+          CustomerMood.gidiyorMutlu,
+          CustomerMood.gidiyorStabil,
+          CustomerMood.gidiyorKizgin,
         ])
-          Ayrilan(slot: 0, hal: hal, hiz: 1)..gidis = 0.4,
+          Departure(slot: 0, hal: hal, hiz: 1)..gidis = 0.4,
       ])
       // A sheet in the hand: the one carryable drawn instead of its own art,
       // so nothing else covers this path.
       ..beginDrag(scene['kagit_kaynak'].quad.center)
       ..carriedAt = const Offset(500, 400);
-    expect(run.carried, isA<Kagit>());
+    expect(run.carried, isA<Paper>());
 
     await tester.pumpWidget(
       MaterialApp(

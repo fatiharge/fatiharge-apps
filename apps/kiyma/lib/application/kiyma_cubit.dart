@@ -2,9 +2,9 @@ import 'dart:async';
 import 'package:injectable/injectable.dart';
 import 'package:kiyma/domain/balance.dart';
 import 'package:kiyma/domain/day_run.dart';
-import 'package:kiyma/domain/ogretmen.dart';
 import 'package:kiyma/domain/progress.dart';
 import 'package:kiyma/domain/run_summary.dart';
+import 'package:kiyma/domain/tutor.dart';
 import 'package:kiyma/domain/unlocks.dart';
 import 'package:kiyma/infrastructure/progress_store.dart';
 import 'package:kiyma/infrastructure/world.dart';
@@ -86,13 +86,13 @@ class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
 
   void startDay() {
     progress.sonOturum = null;
-    final ders = Ders.bekleyen(progress);
+    final ders = Lesson.bekleyen(progress);
     run = DayRun(
       scene: _world.scene,
       progress: progress,
       onChanged: _dersVeEmit,
       onEvent: _onEvent,
-      ogretmen: ders == null ? null : Ogretmen(ders),
+      ogretmen: ders == null ? null : Tutor(ders),
     );
     _emit();
   }

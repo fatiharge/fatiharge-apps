@@ -62,7 +62,7 @@ void main() {
         xpOnce: opening,
         gunOnce: day,
         atlananGun: 0,
-        zirveTempo: TempoHali.ates,
+        zirveTempo: TempoBand.ates,
         // The worst case for the layout: a day that earned more badges than
         // the strip shows. It overflowed by eleven pixels on a real phone.
         kritik: Balance.rozetKritik,

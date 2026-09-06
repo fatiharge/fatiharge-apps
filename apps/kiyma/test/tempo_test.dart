@@ -6,7 +6,7 @@ void main() {
     test('opens halfway, where every multiplier is neutral', () {
       final tempo = Tempo();
       expect(tempo.deger, Tempo.baslangic);
-      expect(tempo.hal, TempoHali.normal);
+      expect(tempo.hal, TempoBand.normal);
       expect(tempo.paraCarpani, 1);
       expect(tempo.pismeCarpani, 1);
       expect(tempo.sabirCarpani, 1);
@@ -113,14 +113,14 @@ void main() {
         cold.musteriKizdi();
       }
       expect(cold.deger, 0);
-      expect(cold.hal, TempoHali.soguk);
+      expect(cold.hal, TempoBand.soguk);
 
       final hot = Tempo();
       for (var i = 0; i < 20; i++) {
         hot.servisEdildi(tamami: true, sabirOrani: 1);
       }
       expect(hot.deger, 100);
-      expect(hot.hal, TempoHali.ates);
+      expect(hot.hal, TempoBand.ates);
     });
 
     test('a cold counter pays half and is barely harder', () {
@@ -152,11 +152,11 @@ void main() {
       for (var i = 0; i < 30; i++) {
         tempo.tick(1, bekleyen: true);
       }
-      expect(tempo.hal, TempoHali.soguk);
+      expect(tempo.hal, TempoBand.soguk);
       tempo
         ..servisEdildi(tamami: true, sabirOrani: 1)
         ..servisEdildi(tamami: true, sabirOrani: 1);
-      expect(tempo.hal, TempoHali.normal);
+      expect(tempo.hal, TempoBand.normal);
     });
   });
 }

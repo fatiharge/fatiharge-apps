@@ -6,7 +6,7 @@ import 'package:kiyma/domain/progress.dart';
 /// polls `durumIstasyonu?.sarili` has to know what a wrap is, and then every
 /// lesson is coupled to every rule. A milestone is the run saying "this
 /// happened", once, and the lesson only has to recognise the name.
-enum Kilometre {
+enum Milestone {
   durumBasladi,
   kiymaMangalda,
   etPisti,
@@ -24,8 +24,8 @@ enum Kilometre {
 }
 
 /// One thing the usta asks for.
-class Adim {
-  const Adim(
+class LessonStep {
+  const LessonStep(
     this.id, {
     this.hedef,
     this.bekler,
@@ -41,7 +41,7 @@ class Adim {
 
   /// What the counter has to do. Null means there is nothing to do — the
   /// step is the usta talking, and a touch moves it on.
-  final Kilometre? bekler;
+  final Milestone? bekler;
 
   /// Whether somebody has to be standing at the counter for this to be
   /// possible. The run seats one rather than waiting for the door.
@@ -54,11 +54,11 @@ class Adim {
 }
 
 /// A lesson: what is taught, when it is owed, and in what order.
-class Ders {
-  const Ders(this.id, this.adimlar, {this.gun, this.kilit});
+class Lesson {
+  const Lesson(this.id, this.adimlar, {this.gun, this.kilit});
 
   final String id;
-  final List<Adim> adimlar;
+  final List<LessonStep> adimlar;
 
   /// Owed on this day or later.
   final int? gun;
@@ -68,48 +68,64 @@ class Ders {
 
   /// The first run. Everything the counter is for, in the order a wrap is
   /// built — which is also the order somebody would be shown it.
-  static const ilkGun = Ders('ilk_gun', [
-    Adim('lavas', hedef: 'lavas_kaynak', bekler: Kilometre.durumBasladi),
-    Adim('kiyma', hedef: 'malzeme_kiyma', bekler: Kilometre.kiymaMangalda),
-    Adim('bekle', hedef: 'mangal_alani', bekler: Kilometre.etPisti),
-    Adim('eti_al', hedef: 'mangal_alani', bekler: Kilometre.etDurumda),
-    Adim('malzeme', hedef: 'malzeme_domates', bekler: Kilometre.malzemeTam),
-    Adim('sar', hedef: 'durum_hazirlama', bekler: Kilometre.durumSarildi),
-    Adim('kagit', hedef: 'kagit_kaynak', bekler: Kilometre.durumKagitlandi),
-    Adim(
+  static const ilkGun = Lesson('ilk_gun', [
+    LessonStep('lavas', hedef: 'lavas_kaynak', bekler: Milestone.durumBasladi),
+    LessonStep(
+      'kiyma',
+      hedef: 'malzeme_kiyma',
+      bekler: Milestone.kiymaMangalda,
+    ),
+    LessonStep('bekle', hedef: 'mangal_alani', bekler: Milestone.etPisti),
+    LessonStep('eti_al', hedef: 'mangal_alani', bekler: Milestone.etDurumda),
+    LessonStep(
+      'malzeme',
+      hedef: 'malzeme_domates',
+      bekler: Milestone.malzemeTam,
+    ),
+    LessonStep('sar', hedef: 'durum_hazirlama', bekler: Milestone.durumSarildi),
+    LessonStep(
+      'kagit',
+      hedef: 'kagit_kaynak',
+      bekler: Milestone.durumKagitlandi,
+    ),
+    LessonStep(
       'ver',
       hedef: 'musteri_slot_1',
-      bekler: Kilometre.servisEdildi,
+      bekler: Milestone.servisEdildi,
       musteri: true,
       ister: {'domates'},
     ),
-    Adim('altin', hedef: 'altin_alani', bekler: Kilometre.altinToplandi),
-    Adim('bitti'),
+    LessonStep('altin', hedef: 'altin_alani', bekler: Milestone.altinToplandi),
+    LessonStep('bitti'),
   ], gun: 1);
 
   /// The two things on the wall that nobody would guess.
-  static const olculer = Ders('olculer', [
-    Adim('tempo'),
-    Adim('saat'),
+  static const olculer = Lesson('olculer', [
+    LessonStep('tempo'),
+    LessonStep('saat'),
   ], gun: 2);
 
-  static const gidis = Ders('gidis', [Adim('gidis')], gun: 3);
+  static const gidis = Lesson('gidis', [LessonStep('gidis')], gun: 3);
 
-  static const porsiyon = Ders('porsiyon', [
-    Adim('tabak', hedef: 'tabak_kaynak', bekler: Kilometre.tabakBasladi),
-    Adim('lavas', hedef: 'lavas_kaynak', bekler: Kilometre.tabagaLavas),
-    Adim('et', hedef: 'mangal_alani', bekler: Kilometre.tabagaEt),
-    Adim('bitti'),
+  static const porsiyon = Lesson('porsiyon', [
+    LessonStep('tabak', hedef: 'tabak_kaynak', bekler: Milestone.tabakBasladi),
+    LessonStep('lavas', hedef: 'lavas_kaynak', bekler: Milestone.tabagaLavas),
+    LessonStep('et', hedef: 'mangal_alani', bekler: Milestone.tabagaEt),
+    LessonStep('bitti'),
   ], kilit: 'porsiyon_hatti');
 
-  static const icecek = Ders('icecek', [
-    Adim('bardak', hedef: 'bardak_kaynak', bekler: Kilometre.bardakAlindi),
-    Adim('dok', hedef: 'surahi_ayran', bekler: Kilometre.bardakDoldu),
-    Adim('bitti'),
+  static const icecek = Lesson('icecek', [
+    LessonStep(
+      'bardak',
+      hedef: 'bardak_kaynak',
+      bekler: Milestone.bardakAlindi,
+    ),
+    LessonStep('dok', hedef: 'surahi_ayran', bekler: Milestone.bardakDoldu),
+    LessonStep('bitti'),
   ], kilit: 'icecek_hatti');
 
   /// The first lesson that is owed and has not been heard.
-  static Ders? bekleyen(Progress progress) {
+  static Lesson? bekleyen(Progress progress) {
     for (final ders in katalog) {
       if (progress.gordu(ders.id)) continue;
       if (ders.gun != null && progress.gun < ders.gun!) continue;
@@ -119,7 +135,7 @@ class Ders {
     return null;
   }
 
-  static const List<Ders> katalog = [
+  static const List<Lesson> katalog = [
     ilkGun,
     olculer,
     gidis,
@@ -133,10 +149,10 @@ class Ders {
 /// It is deliberately dumb: it knows which step it is on and what would end
 /// it. Nothing about the counter, nothing about drawing — a whole lesson can
 /// be played through in a test by naming milestones.
-class Ogretmen {
-  Ogretmen(this.ders);
+class Tutor {
+  Tutor(this.ders);
 
-  final Ders ders;
+  final Lesson ders;
 
   int _sira = 0;
 
@@ -144,14 +160,15 @@ class Ogretmen {
 
   int get toplam => ders.adimlar.length;
 
-  Adim? get adim => _sira < ders.adimlar.length ? ders.adimlar[_sira] : null;
+  LessonStep? get adim =>
+      _sira < ders.adimlar.length ? ders.adimlar[_sira] : null;
 
   bool get bitti => adim == null;
 
   /// A step with nothing to do is waiting on a touch, not on the counter.
   bool get dokunusBekliyor => adim != null && adim!.bekler == null;
 
-  void ulasildi(Kilometre kilometre) {
+  void ulasildi(Milestone kilometre) {
     if (adim?.bekler == kilometre) _sira++;
   }
 

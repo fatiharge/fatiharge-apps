@@ -1,6 +1,6 @@
 import 'package:kiyma/domain/balance.dart';
+import 'package:kiyma/domain/model/customer_kind.dart';
 import 'package:kiyma/domain/model/items.dart';
-import 'package:kiyma/domain/model/musteri_tipi.dart';
 import 'package:kiyma/domain/model/products.dart';
 
 /// What one customer wants. `ister` and `istemez` never overlap.
@@ -14,42 +14,42 @@ class Order {
     required this.istemez,
     this.tatli,
     this.icecek,
-    this.musteriTipi = MusteriTipi.siradan,
+    this.musteriTipi = CustomerKind.siradan,
     this.ikinci,
   });
 
   /// Who is asking. It changes how long they wait and what they pay, not
   /// what the counter has to make.
-  final MusteriTipi musteriTipi;
+  final CustomerKind musteriTipi;
 
-  /// A second main product on the same ticket, for [MusteriTipi.kalabalik].
+  /// A second main product on the same ticket, for [CustomerKind.kalabalik].
   /// It carries no extras of its own — one ticket, one dessert, one drink.
   final Order? ikinci;
 
-  final UrunTipi tip;
+  final ProductKind tip;
 
   /// Wrap ingredients or plate components, depending on [tip]. Held as ids so
   /// one order type covers both lines.
   final Set<String> ister;
   final Set<String> istemez;
 
-  final Tatli? tatli;
-  final Icecek? icecek;
+  final Dessert? tatli;
+  final Drink? icecek;
 
   /// Which named ingredients the refusal was about.
   ///
   /// "The game said no" and "you forgot the pepper" are different sentences,
   /// and only one of them teaches anything.
-  Set<String> ihlal(Urun urun) {
+  Set<String> ihlal(Product urun) {
     final icerik = _icerik(urun);
     if (icerik == null) return ister.union(istemez);
     return ister.difference(icerik).union(istemez.intersection(icerik));
   }
 
-  Set<String>? _icerik(Urun urun) => switch (urun) {
-    DurumUrun(:final durum) when tip == UrunTipi.durum =>
+  Set<String>? _icerik(Product urun) => switch (urun) {
+    WrapProduct(:final durum) when tip == ProductKind.durum =>
       durum.malzemeler.map((m) => m.id).toSet(),
-    PorsiyonUrun(:final porsiyon) when tip == UrunTipi.porsiyon =>
+    PlateProduct(:final porsiyon) when tip == ProductKind.porsiyon =>
       porsiyon.bilesenler.map((b) => b.id).toSet(),
     _ => null,
   };
@@ -63,7 +63,7 @@ class Order {
     istemez.remove(giren);
   }
 
-  bool anaUrunKabul(Urun urun) {
+  bool anaUrunKabul(Product urun) {
     final icerik = _icerik(urun);
     if (icerik == null) return false;
     return ister.every(icerik.contains) && !istemez.any(icerik.contains);
@@ -74,7 +74,7 @@ class Order {
 ///
 /// One value drives what they are drawn as. For now that is a flat colour, so
 /// the states can be seen and argued about before anybody animates them.
-enum MusteriHali {
+enum CustomerMood {
   yuruyor,
   bekliyorCokSakin,
   bekliyorSakin,
@@ -91,11 +91,11 @@ enum MusteriHali {
 /// They leave the seat the moment they turn to go — the next customer is
 /// already on their way in — so this holds nothing but what is still on
 /// screen.
-class Ayrilan {
-  Ayrilan({required this.slot, required this.hal, required this.hiz});
+class Departure {
+  Departure({required this.slot, required this.hal, required this.hiz});
 
   final int slot;
-  final MusteriHali hal;
+  final CustomerMood hal;
   final double hiz;
 
   double gidis = 0;
@@ -115,7 +115,7 @@ class Customer {
        sabirKalan = Balance.patience(day, ikram: ikram) * _sabirCarpani(order);
 
   static double _sabirCarpani(Order order) =>
-      order.musteriTipi == MusteriTipi.aceleci ? Balance.aceleciSabir : 1;
+      order.musteriTipi == CustomerKind.aceleci ? Balance.aceleciSabir : 1;
 
   final Order order;
   final int day;
@@ -169,20 +169,20 @@ class Customer {
 
   bool get hicAlmadi => odenen == 0;
 
-  MusteriHali get hal => switch (this) {
-    _ when !yerinde => MusteriHali.yuruyor,
-    _ when sabirOrani > 0.8 => MusteriHali.bekliyorCokSakin,
-    _ when sabirOrani > 0.6 => MusteriHali.bekliyorSakin,
-    _ when sabirOrani > 0.4 => MusteriHali.bekliyorStabil,
-    _ when sabirOrani > 0.2 => MusteriHali.bekliyorSupheli,
-    _ => MusteriHali.bekliyorKizgin,
+  CustomerMood get hal => switch (this) {
+    _ when !yerinde => CustomerMood.yuruyor,
+    _ when sabirOrani > 0.8 => CustomerMood.bekliyorCokSakin,
+    _ when sabirOrani > 0.6 => CustomerMood.bekliyorSakin,
+    _ when sabirOrani > 0.4 => CustomerMood.bekliyorStabil,
+    _ when sabirOrani > 0.2 => CustomerMood.bekliyorSupheli,
+    _ => CustomerMood.bekliyorKizgin,
   };
 
   /// Served in full, served in part, or served nothing at all.
-  MusteriHali get cikisHali => switch (this) {
-    _ when tamamlandi => MusteriHali.gidiyorMutlu,
-    _ when hicAlmadi => MusteriHali.gidiyorKizgin,
-    _ => MusteriHali.gidiyorStabil,
+  CustomerMood get cikisHali => switch (this) {
+    _ when tamamlandi => CustomerMood.gidiyorMutlu,
+    _ when hicAlmadi => CustomerMood.gidiyorKizgin,
+    _ => CustomerMood.gidiyorStabil,
   };
 
   /// A refusal costs a fifth of what is left, and the customer waits on with

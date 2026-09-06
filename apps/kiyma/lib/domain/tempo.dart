@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
 /// How the counter is reading, 0 to 100.
-enum TempoHali { soguk, normal, isiniyor, ates }
+enum TempoBand { soguk, normal, isiniyor, ates }
 
 /// The run's momentum: it drains on its own and is pushed back up by serving
 /// people. What it is worth is a multiplier on the whole counter.
@@ -123,15 +123,15 @@ class Tempo {
 
   /// The best the counter read all run. What the summary reports: a number
   /// that only ever went down would be a poor thing to end on.
-  TempoHali get zirve => _halFor(_zirve);
+  TempoBand get zirve => _halFor(_zirve);
 
-  TempoHali get hal => _halFor(_deger);
+  TempoBand get hal => _halFor(_deger);
 
-  static TempoHali _halFor(double value) => switch (value) {
-    < 25 => TempoHali.soguk,
-    < 55 => TempoHali.normal,
-    < 80 => TempoHali.isiniyor,
-    _ => TempoHali.ates,
+  static TempoBand _halFor(double value) => switch (value) {
+    < 25 => TempoBand.soguk,
+    < 55 => TempoBand.normal,
+    < 80 => TempoBand.isiniyor,
+    _ => TempoBand.ates,
   };
 
   /// `0..1` across the whole meter, for drawing it.

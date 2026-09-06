@@ -2,15 +2,15 @@ import 'dart:math' as math;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kiyma/domain/balance.dart';
 import 'package:kiyma/domain/day_run.dart';
-import 'package:kiyma/domain/gun_profili.dart';
 import 'package:kiyma/domain/model/carried.dart';
 import 'package:kiyma/domain/model/items.dart';
 import 'package:kiyma/domain/model/order.dart';
 import 'package:kiyma/domain/model/products.dart';
-import 'package:kiyma/domain/ogretmen.dart';
 import 'package:kiyma/domain/progress.dart';
 import 'package:kiyma/domain/scene.dart';
 import 'package:kiyma/domain/tempo.dart';
+import 'package:kiyma/domain/trade_shape.dart';
+import 'package:kiyma/domain/tutor.dart';
 import 'support/scene_from_disk.dart';
 
 void main() {
@@ -72,7 +72,7 @@ void main() {
   }
 
   Order wrapFor(Set<String> ister, {Set<String> istemez = const {}}) =>
-      Order(tip: UrunTipi.durum, ister: ister, istemez: istemez);
+      Order(tip: ProductKind.durum, ister: ister, istemez: istemez);
 
   /// Drags [region] onto [target] enough times to make one whole ingredient.
   void loadUp(DayRun run, String region, String target) {
@@ -82,11 +82,11 @@ void main() {
   }
 
   /// Lavash, cooked meat, then whatever ingredients were asked for.
-  void buildWrap(DayRun run, {Set<Malzeme> malzemeler = const {}}) {
+  void buildWrap(DayRun run, {Set<Ingredient> malzemeler = const {}}) {
     expect(drag(run, at('lavas_kaynak'), at('durum_hazirlama')), isTrue);
     expect(drag(run, at('malzeme_kiyma'), slot('mangal_alani', 0)), isTrue);
     cook(run, Balance.rawSeconds + Balance.cookingSeconds + 0.2);
-    expect(run.mangal[0].durum, Pisme.pismis);
+    expect(run.mangal[0].durum, Doneness.pismis);
     expect(
       drag(run, slot('mangal_alani', 0), at('durum_hazirlama')),
       isTrue,
@@ -103,10 +103,10 @@ void main() {
       final run = build();
       final customer = waiting(run, wrapFor({'domates'}));
 
-      buildWrap(run, malzemeler: {Malzeme.domates});
+      buildWrap(run, malzemeler: {Ingredient.domates});
       final station = run.durumIstasyonu!;
       expect(station.etli, isTrue);
-      expect(station.malzemeler, {Malzeme.domates});
+      expect(station.malzemeler, {Ingredient.domates});
 
       // Paper before the roll is not a step (design doc 3.1).
       expect(drag(run, at('kagit_kaynak'), at('durum_hazirlama')), isTrue);
@@ -147,7 +147,7 @@ void main() {
       final run = build();
       expect(drag(run, at('lavas_kaynak'), at('durum_hazirlama')), isTrue);
       loadUp(run, 'malzeme_domates', 'durum_hazirlama');
-      expect(run.durumIstasyonu!.malzemeler, {Malzeme.domates});
+      expect(run.durumIstasyonu!.malzemeler, {Ingredient.domates});
       expect(events, isNot(contains(DayEvent.gecersiz)));
 
       // The meat is still what closes it: no skewer, no roll.
@@ -163,7 +163,7 @@ void main() {
 
       for (var i = 1; i < Balance.tutamAdedi; i++) {
         expect(drag(run, at('malzeme_domates'), at('durum_hazirlama')), isTrue);
-        expect(station.tutam(Malzeme.domates), i);
+        expect(station.tutam(Ingredient.domates), i);
         expect(
           station.malzemeler,
           isEmpty,
@@ -172,12 +172,12 @@ void main() {
       }
 
       expect(drag(run, at('malzeme_domates'), at('durum_hazirlama')), isTrue);
-      expect(station.malzemeler, {Malzeme.domates});
+      expect(station.malzemeler, {Ingredient.domates});
 
       // And a finished one takes no more: the well is full, not bottomless.
       // `drag` reports the pickup, not the drop, so the count is the check.
       drag(run, at('malzeme_domates'), at('durum_hazirlama'));
-      expect(station.tutam(Malzeme.domates), Balance.tutamAdedi);
+      expect(station.tutam(Ingredient.domates), Balance.tutamAdedi);
     });
 
     test('will not take an ingredient after the roll', () {
@@ -209,7 +209,7 @@ void main() {
 
     test('takes the same ingredient only once', () {
       final run = build();
-      buildWrap(run, malzemeler: {Malzeme.domates});
+      buildWrap(run, malzemeler: {Ingredient.domates});
       drag(run, at('malzeme_domates'), at('durum_hazirlama'));
       expect(run.durumIstasyonu!.malzemeler, hasLength(1));
     });
@@ -234,7 +234,7 @@ void main() {
 
       final before = run.tempo.deger;
       run.tap(at('malzeme_domates'));
-      expect(run.durumIstasyonu!.tutam(Malzeme.domates), 1);
+      expect(run.durumIstasyonu!.tutam(Ingredient.domates), 1);
       // One handful, one step — not two for lifting it and putting it down.
       expect(run.tempo.deger - before, closeTo(Tempo.adim * 0.5, 0.2));
     });
@@ -248,20 +248,20 @@ void main() {
 
   group('the grill', () {
     test('runs raw, cooking, cooked, burnt on the design doc clock', () {
-      final slot = MangalSlot()..koy();
-      expect(slot.durum, Pisme.cig);
+      final slot = GrillSlot()..koy();
+      expect(slot.durum, Doneness.cig);
       expect(slot.alinabilir, isFalse);
 
       slot.tick(Balance.rawSeconds + 0.01, 1);
-      expect(slot.durum, Pisme.pisiyor);
+      expect(slot.durum, Doneness.pisiyor);
       expect(slot.alinabilir, isFalse);
 
       slot.tick(Balance.cookingSeconds, 1);
-      expect(slot.durum, Pisme.pismis);
+      expect(slot.durum, Doneness.pismis);
       expect(slot.alinabilir, isTrue);
 
       final burned = slot.tick(Balance.cookedWindow(1), 1);
-      expect(slot.durum, Pisme.yanmis);
+      expect(slot.durum, Doneness.yanmis);
       expect(burned, isTrue, reason: 'reported once, on the frame it burns');
       expect(slot.tick(1, 1), isFalse, reason: 'and never again');
     });
@@ -348,7 +348,7 @@ void main() {
         expect(run.mangal[3].bos, isTrue);
         final held = run.beginDrag(slot('mangal_alani', 3));
         expect(held, isTrue);
-        expect((run.carried! as PismisEt).slot, 1);
+        expect((run.carried! as CookedMeat).slot, 1);
       },
     );
 
@@ -361,10 +361,10 @@ void main() {
 
       run.mangal[2].koy();
       cook(run, Balance.rawSeconds + Balance.cookingSeconds + 0.2);
-      expect(run.mangal[2].durum, Pisme.pismis);
+      expect(run.mangal[2].durum, Doneness.pismis);
 
       run.beginDrag(slot('mangal_alani', 1));
-      final held = run.carried! as PismisEt;
+      final held = run.carried! as CookedMeat;
       expect(held.slot, 2);
       expect(held.yanik, isFalse);
     });
@@ -376,7 +376,7 @@ void main() {
       cook(run, burnsAt);
 
       run.beginDrag(slot('mangal_alani', 1));
-      final held = run.carried! as PismisEt;
+      final held = run.carried! as CookedMeat;
       expect(held.slot, 0);
       expect(held.yanik, isTrue);
     });
@@ -415,7 +415,7 @@ void main() {
 
     test('a touch anywhere on the ledge takes the nearest pile', () {
       final run = build()
-        ..altin[2] = Altin(40)
+        ..altin[2] = CoinPile(40)
         ..tap(slot('altin_alani', 0));
 
       expect(run.progress.para, 40);
@@ -438,7 +438,7 @@ void main() {
 
     test('left alone it is swept up, most of it', () {
       final run = build()
-        ..altin[0] = Altin(100)
+        ..altin[0] = CoinPile(100)
         ..tick(Balance.sweptAfter - 0.2);
       expect(run.altin[0], isNotNull, reason: 'still there to be had');
       expect(run.progress.para, 0);
@@ -451,7 +451,7 @@ void main() {
 
     test('a second payment restarts the clock on the pile', () {
       final run = build()
-        ..altin[0] = Altin(10)
+        ..altin[0] = CoinPile(10)
         ..tick(Balance.sweptAfter - 1);
       waiting(run, wrapFor(const {}))
         ..odenen = 15
@@ -477,7 +477,7 @@ void main() {
         run,
         wrapFor({'domates'}, istemez: {'sogan'}),
       );
-      buildWrap(run, malzemeler: {Malzeme.domates, Malzeme.sogan});
+      buildWrap(run, malzemeler: {Ingredient.domates, Ingredient.sogan});
       run.flickUp(at('durum_hazirlama'));
       drag(run, at('kagit_kaynak'), at('durum_hazirlama'));
 
@@ -497,12 +497,12 @@ void main() {
     test('a refused wrap blocks the prep area when the shelf is full', () {
       final run = build();
       waiting(run, wrapFor({'sogan'}));
-      buildWrap(run, malzemeler: {Malzeme.domates});
+      buildWrap(run, malzemeler: {Ingredient.domates});
       run.flickUp(at('durum_hazirlama'));
       drag(run, at('kagit_kaynak'), at('durum_hazirlama'));
 
       // One shelf slot is open on day one, and something is already on it.
-      run.bekleme[0] = DurumUrun(Durum());
+      run.bekleme[0] = WrapProduct(Wrap());
       drag(run, at('durum_hazirlama'), at('musteri_slot_1'));
       expect(run.durumIstasyonu, isNotNull, reason: 'stuck in the prep area');
     });
@@ -512,10 +512,10 @@ void main() {
       final customer = waiting(
         run,
         Order(
-          tip: UrunTipi.durum,
+          tip: ProductKind.durum,
           ister: const {},
           istemez: const {},
-          tatli: Tatli.baklava,
+          tatli: Dessert.baklava,
         ),
       );
 
@@ -523,7 +523,7 @@ void main() {
       expect(customer.tatliVerildi, isTrue);
       expect(
         customer.odenen,
-        Balance.income(Balance.tatliBase[Tatli.baklava]!, 1),
+        Balance.income(Balance.tatliBase[Dessert.baklava]!, 1),
       );
       expect(run.musteriler[0], isNotNull, reason: 'the wrap is still owed');
 
@@ -580,7 +580,7 @@ void main() {
       expect(run.tabakIstasyonu!.hazir, isTrue, reason: 'no roll, no paper');
 
       loadUp(run, 'malzeme_ezme', 'tabak_hazirlama');
-      expect(run.tabakIstasyonu!.bilesenler, {Bilesen.ezme});
+      expect(run.tabakIstasyonu!.bilesenler, {PlateItem.ezme});
     });
 
     test('takes components while the meat is still on the grill', () {
@@ -593,7 +593,7 @@ void main() {
 
       drag(run, at('lavas_kaynak'), at('tabak_hazirlama'));
       loadUp(run, 'malzeme_ezme', 'tabak_hazirlama');
-      expect(run.tabakIstasyonu!.bilesenler, {Bilesen.ezme});
+      expect(run.tabakIstasyonu!.bilesenler, {PlateItem.ezme});
       expect(run.tabakIstasyonu!.hazir, isFalse, reason: 'still no meat');
     });
 
@@ -653,7 +653,7 @@ void main() {
       for (var i = 0; i < Balance.tutamAdedi; i++) {
         run.tap(at('malzeme_domates'));
       }
-      expect(run.durumIstasyonu!.malzemeler, {Malzeme.domates});
+      expect(run.durumIstasyonu!.malzemeler, {Ingredient.domates});
     });
 
     test('a plate component never lands on a wrap', () {
@@ -772,8 +772,8 @@ void main() {
       // Only reachable once a second shelf slot is open; with one slot the
       // preferred index is always the empty one and the fallback never runs.
       final run = build(unlock: ['bekleme_2'])
-        ..bekleme[0] = DurumUrun(Durum()..kagitli = true)
-        ..durumIstasyonu = (Durum()
+        ..bekleme[0] = WrapProduct(Wrap()..kagitli = true)
+        ..durumIstasyonu = (Wrap()
           ..etli = true
           ..sarili = true
           ..kagitli = true);
@@ -793,8 +793,8 @@ void main() {
       final run = build(unlock: ['porsiyon_hatti', 'bilesen_ezme']);
       final customer = Customer(
         order: Order(
-          tip: UrunTipi.porsiyon,
-          ister: {Bilesen.ezme.id},
+          tip: ProductKind.porsiyon,
+          ister: {PlateItem.ezme.id},
           istemez: const {},
         ),
         day: run.day,
@@ -814,7 +814,7 @@ void main() {
         isTrue,
       );
       expect(run.tabakIstasyonu, isNull, reason: 'the station cleared');
-      expect(run.bekleme[0], isA<PorsiyonUrun>());
+      expect(run.bekleme[0], isA<PlateProduct>());
 
       expect(
         drag(run, slot('bekleme_alani', 0), at('musteri_slot_1')),
@@ -830,12 +830,12 @@ void main() {
     test('a wrap does not settle a plate order', () {
       final run = build(unlock: ['porsiyon_hatti']);
       final order = Order(
-        tip: UrunTipi.porsiyon,
+        tip: ProductKind.porsiyon,
         ister: const {},
         istemez: const {},
       );
-      expect(order.anaUrunKabul(DurumUrun(Durum()..etli = true)), isFalse);
-      expect(order.anaUrunKabul(PorsiyonUrun(Porsiyon())), isTrue);
+      expect(order.anaUrunKabul(WrapProduct(Wrap()..etli = true)), isFalse);
+      expect(order.anaUrunKabul(PlateProduct(Plate())), isTrue);
       expect(run.progress.unlocks.porsiyonHatti, isTrue);
     });
   });
@@ -846,10 +846,10 @@ void main() {
       final customer = waiting(
         run,
         Order(
-          tip: UrunTipi.durum,
+          tip: ProductKind.durum,
           ister: const {},
           istemez: const {},
-          icecek: Icecek.ayran,
+          icecek: Drink.ayran,
         ),
       );
 
@@ -867,7 +867,7 @@ void main() {
 
       bardak.tick(Balance.pourSeconds);
       expect(bardak.hazir, isTrue);
-      expect(bardak.icerik, Icecek.ayran);
+      expect(bardak.icerik, Drink.ayran);
 
       expect(
         drag(run, slot('bardak_bekletme', 0), at('musteri_slot_1')),
@@ -882,10 +882,10 @@ void main() {
       final customer = waiting(
         run,
         Order(
-          tip: UrunTipi.durum,
+          tip: ProductKind.durum,
           ister: const {},
           istemez: const {},
-          icecek: Icecek.kola,
+          icecek: Drink.kola,
         ),
       );
       expect(drag(run, at('kola_kaynak'), at('musteri_slot_1')), isTrue);
@@ -919,7 +919,7 @@ void main() {
         onEvent: events.add,
         onChanged: () {},
         random: math.Random(5),
-        ogretmen: Ogretmen(Ders.ilkGun),
+        ogretmen: Tutor(Lesson.ilkGun),
       );
       final before = run.kalanSure;
       for (var i = 0; i < 200; i++) {
@@ -999,7 +999,7 @@ void main() {
         onChanged: () {},
         random: math.Random(4),
       );
-      expect(run.profil, GunProfili.ciftServis);
+      expect(run.profil, TradeShape.ciftServis);
 
       // Counted in windows across the run: two busy stretches with a
       // quieter one between them is the shape, not a flat line.
@@ -1072,7 +1072,7 @@ void main() {
 
       expect(run.musteriler[0], isNull, reason: 'the seat is free now');
       expect(run.ayrilanlar, hasLength(1));
-      expect(run.ayrilanlar.first.hal, MusteriHali.gidiyorKizgin);
+      expect(run.ayrilanlar.first.hal, CustomerMood.gidiyorKizgin);
       expect(run.ayrilanlar.first.slot, 0);
       expect(customer.hicAlmadi, isTrue);
 
@@ -1086,7 +1086,7 @@ void main() {
         ..odenen = 12
         ..sabirKalan = 0.05;
       run.tick(0.1);
-      expect(run.ayrilanlar.single.hal, MusteriHali.gidiyorStabil);
+      expect(run.ayrilanlar.single.hal, CustomerMood.gidiyorStabil);
 
       waiting(run, wrapFor(const {}), slot: 1)
         ..anaUrunVerildi = true
@@ -1094,23 +1094,23 @@ void main() {
       run.tick(0.1);
       expect(
         run.ayrilanlar.map((a) => a.hal),
-        contains(MusteriHali.gidiyorMutlu),
+        contains(CustomerMood.gidiyorMutlu),
       );
     });
 
     test('patience shows on the body long before it runs out', () {
       final run = build();
       final customer = waiting(run, wrapFor(const {}));
-      expect(customer.hal, MusteriHali.bekliyorCokSakin);
+      expect(customer.hal, CustomerMood.bekliyorCokSakin);
 
       customer.sabirKalan = customer.sabirToplam * 0.5;
-      expect(customer.hal, MusteriHali.bekliyorStabil);
+      expect(customer.hal, CustomerMood.bekliyorStabil);
 
       customer.sabirKalan = customer.sabirToplam * 0.1;
-      expect(customer.hal, MusteriHali.bekliyorKizgin);
+      expect(customer.hal, CustomerMood.bekliyorKizgin);
 
       customer.varis = 0;
-      expect(customer.hal, MusteriHali.yuruyor, reason: 'not there yet');
+      expect(customer.hal, CustomerMood.yuruyor, reason: 'not there yet');
     });
 
     test('an empty wrap station starts asking for bread', () {

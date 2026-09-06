@@ -2,8 +2,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kiyma/application/kiyma_cubit.dart';
 import 'package:kiyma/domain/balance.dart';
 import 'package:kiyma/domain/day_run.dart';
-import 'package:kiyma/domain/ogretmen.dart';
 import 'package:kiyma/domain/progress.dart';
+import 'package:kiyma/domain/tutor.dart';
 import 'package:kiyma/domain/unlocks.dart';
 import 'package:kiyma/infrastructure/progress_store.dart';
 import 'package:kiyma/infrastructure/world.dart';
@@ -24,7 +24,8 @@ void main() {
 
   /// A player who has already been taught. A lesson stops the clock, so a
   /// run that opens with one owed never reaches its own end.
-  Progress taught() => Progress()..gordum(Ders.katalog.map((ders) => ders.id));
+  Progress taught() =>
+      Progress()..gordum(Lesson.katalog.map((ders) => ders.id));
 
   /// Opens the counter and lets the clock run out.
   void playOut(KiymaCubit cubit) {
@@ -107,7 +108,7 @@ void main() {
       cubit.run!.tick(Balance.runLength(1).inSeconds + 1);
       expect(cubit.state.gun, 4, reason: 'it cleared the first three days');
 
-      cubit.buy(const Unlock('malzeme_biber', 60, Grup.malzeme, 1));
+      cubit.buy(const Unlock('malzeme_biber', 60, UnlockGroup.malzeme, 1));
       expect(cubit.state.gun, 4, reason: 'spending is not levelling');
       expect(cubit.state.xp, earned);
       expect(cubit.state.para, earned - 60);
@@ -173,11 +174,11 @@ void main() {
       final cubit = KiymaCubit(world, taught(), store);
       cubit.progress.kazan(200);
 
-      cubit.buy(const Unlock('malzeme_biber', 150, Grup.malzeme, 1));
+      cubit.buy(const Unlock('malzeme_biber', 150, UnlockGroup.malzeme, 1));
       expect(cubit.state.para, 50);
       expect(cubit.progress.unlocks.has('malzeme_biber'), isTrue);
 
-      cubit.buy(const Unlock('malzeme_tursu', 250, Grup.malzeme, 1));
+      cubit.buy(const Unlock('malzeme_tursu', 250, UnlockGroup.malzeme, 1));
       expect(cubit.state.para, 50, reason: 'not enough for the next one');
     });
   });

@@ -1,9 +1,9 @@
 import 'dart:math' as math;
 
 import 'package:kiyma/domain/balance.dart';
-import 'package:kiyma/domain/gun_kurali.dart';
+import 'package:kiyma/domain/day_rule.dart';
+import 'package:kiyma/domain/model/customer_kind.dart';
 import 'package:kiyma/domain/model/items.dart';
-import 'package:kiyma/domain/model/musteri_tipi.dart';
 import 'package:kiyma/domain/model/order.dart';
 import 'package:kiyma/domain/unlocks.dart';
 
@@ -17,7 +17,7 @@ class OrderMaker {
   OrderMaker(
     this.unlocks, {
     required this.day,
-    this.kural = GunKurali.yok,
+    this.kural = DayRule.yok,
     math.Random? random,
   }) : _random = random ?? math.Random();
 
@@ -28,14 +28,14 @@ class OrderMaker {
 
   /// What is different about today. Neutral by default, so nothing here
   /// needs to know which rule is running.
-  final GunKurali kural;
+  final DayRule kural;
 
   final math.Random _random;
 
   Order make() {
     final tipi = _tip();
     final ana = _urun(
-      enAzIstemez: tipi == MusteriTipi.titiz ? Balance.titizIstemez : 0,
+      enAzIstemez: tipi == CustomerKind.titiz ? Balance.titizIstemez : 0,
     );
     return Order(
       tip: ana.tip,
@@ -47,11 +47,11 @@ class OrderMaker {
       // The other line where there is one: two wraps is the same job twice,
       // where a wrap and a plate is two jobs — which is the whole point of
       // a big order.
-      ikinci: tipi == MusteriTipi.kalabalik
+      ikinci: tipi == CustomerKind.kalabalik
           ? _urun(
-              zorla: ana.tip == UrunTipi.durum
-                  ? UrunTipi.porsiyon
-                  : UrunTipi.durum,
+              zorla: ana.tip == ProductKind.durum
+                  ? ProductKind.porsiyon
+                  : ProductKind.durum,
             )
           : null,
     );
@@ -61,9 +61,9 @@ class OrderMaker {
   /// before its day, and the ordinary customer outweighs all of them
   /// together — the specials read as special only because most people
   /// are not one.
-  MusteriTipi _tip() {
+  CustomerKind _tip() {
     final acik = [
-      for (final tip in MusteriTipi.values)
+      for (final tip in CustomerKind.values)
         if (day >= tip.gun && (tip.kilit == null || unlocks.has(tip.kilit!)))
           tip,
     ];
@@ -74,25 +74,25 @@ class OrderMaker {
       pick -= tip.agirlik;
       if (pick < 0) return tip;
     }
-    return MusteriTipi.siradan;
+    return CustomerKind.siradan;
   }
 
   /// One product's worth of asks. [zorla] pins the line; [enAzIstemez] is
   /// the floor on forbidden ingredients, which is what makes a fussy
   /// customer fussy.
-  Order _urun({UrunTipi? zorla, int enAzIstemez = 0}) {
+  Order _urun({ProductKind? zorla, int enAzIstemez = 0}) {
     final porsiyon =
         !kural.sadeDurum &&
-        (zorla == UrunTipi.porsiyon ||
+        (zorla == ProductKind.porsiyon ||
             (zorla == null && unlocks.porsiyonHatti && _random.nextBool()));
     // Asking for a plate before the plate line is open is the one thing that
     // is never allowed, whatever was pinned.
     final tip = porsiyon && unlocks.porsiyonHatti
-        ? UrunTipi.porsiyon
-        : UrunTipi.durum;
+        ? ProductKind.porsiyon
+        : ProductKind.durum;
 
     final pool =
-        (tip == UrunTipi.porsiyon
+        (tip == ProductKind.porsiyon
                 ? unlocks.bilesenler.map((b) => b.id)
                 : unlocks.malzemeler.map((m) => m.id))
             .toList()

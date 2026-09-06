@@ -6,8 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kiyma/application/kiyma_cubit.dart';
 import 'package:kiyma/config/injectable.dart';
 import 'package:kiyma/domain/balance.dart';
-import 'package:kiyma/domain/gun_kurali.dart';
-import 'package:kiyma/domain/gun_profili.dart';
+import 'package:kiyma/domain/day_rule.dart';
+import 'package:kiyma/domain/trade_shape.dart';
 import 'package:kiyma/domain/unlocks.dart';
 import 'package:kiyma/presentation/brand.dart';
 import 'package:kiyma/presentation/gold_text.dart';
@@ -151,14 +151,14 @@ class _Today extends StatelessWidget {
             // The shape of the day, named before it starts. A rush that can
             // be planned for is a shift; one that just happens is noise.
             BrandChip(
-              label: 'gidis.${GunProfili.forDay(day).ad}'.tr(),
+              label: 'gidis.${TradeShape.forDay(day).ad}'.tr(),
               icon: Icons.show_chart_rounded,
             ),
             // Only when there is one: three chips on a day with nothing
             // special about it would teach the player to stop reading them.
-            if (!GunKurali.forDay(day).adsiz)
+            if (!DayRule.forDay(day).adsiz)
               BrandChip(
-                label: 'kural.${GunKurali.forDay(day).id}'.tr(),
+                label: 'kural.${DayRule.forDay(day).id}'.tr(),
                 icon: Icons.gavel_rounded,
               ),
           ],
@@ -168,11 +168,11 @@ class _Today extends StatelessWidget {
           row,
           const SizedBox(height: 6),
         ],
-        if (!GunKurali.forDay(day).adsiz) ...[
+        if (!DayRule.forDay(day).adsiz) ...[
           const SizedBox(height: 2),
           _Satir(
             icon: Icons.gavel_rounded,
-            text: 'kural.${GunKurali.forDay(day).id}_ne'.tr(),
+            text: 'kural.${DayRule.forDay(day).id}_ne'.tr(),
           ),
         ],
         const SizedBox(height: 2),

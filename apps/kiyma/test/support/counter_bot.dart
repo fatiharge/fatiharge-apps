@@ -115,13 +115,13 @@ class CounterBot {
     final durum = run.durumIstasyonu;
     if (durum != null &&
         durum.hazir &&
-        _give('durum_hazirlama', DurumUrun(durum))) {
+        _give('durum_hazirlama', WrapProduct(durum))) {
       return true;
     }
     final tabak = run.tabakIstasyonu;
     if (tabak != null &&
         tabak.hazir &&
-        _give('tabak_hazirlama', PorsiyonUrun(tabak))) {
+        _give('tabak_hazirlama', PlateProduct(tabak))) {
       return true;
     }
     for (var i = 0; i < run.bekleme.length; i++) {
@@ -132,7 +132,7 @@ class CounterBot {
     for (var i = 0; i < run.bardakBekletme.length; i++) {
       final bardak = run.bardakBekletme[i];
       if (bardak == null || !bardak.hazir) continue;
-      if (_give('bardak_bekletme', IcecekUrun(bardak.icerik!), slot: i)) {
+      if (_give('bardak_bekletme', DrinkProduct(bardak.icerik!), slot: i)) {
         return true;
       }
     }
@@ -148,9 +148,9 @@ class CounterBot {
       return true;
     }
     // Cola comes out of the crate and goes straight over: no glass, no pour.
-    if (_unlocks.icecekler.contains(Icecek.kola)) {
+    if (_unlocks.icecekler.contains(Drink.kola)) {
       final index = _wants(
-        (c) => c.bekliyorIcecek && c.order.icecek == Icecek.kola,
+        (c) => c.bekliyorIcecek && c.order.icecek == Drink.kola,
       );
       if (index >= 0) {
         _drag(
@@ -164,7 +164,7 @@ class CounterBot {
   }
 
   /// Hands [urun] to the first customer it settles something for.
-  bool _give(String from, Urun urun, {int? slot}) {
+  bool _give(String from, Product urun, {int? slot}) {
     for (var i = 0; i < run.musteriler.length; i++) {
       final customer = run.musteriler[i];
       if (customer == null || !customer.yerinde) continue;
@@ -179,10 +179,10 @@ class CounterBot {
     return false;
   }
 
-  bool _kabulEder(Customer customer, Urun urun) => switch (urun) {
-    IcecekUrun(:final icecek) =>
+  bool _kabulEder(Customer customer, Product urun) => switch (urun) {
+    DrinkProduct(:final icecek) =>
       customer.bekliyorIcecek && customer.order.icecek == icecek,
-    TatliUrun(:final tatli) =>
+    DessertProduct(:final tatli) =>
       customer.bekliyorTatli && customer.order.tatli == tatli,
     _ => !customer.anaUrunVerildi && customer.order.anaUrunKabul(urun),
   };
@@ -238,7 +238,7 @@ class CounterBot {
       // always open and the grill is running anyway.
       return _wrap(null);
     }
-    return order.tip == UrunTipi.porsiyon ? _plate(order) : _wrap(order);
+    return order.tip == ProductKind.porsiyon ? _plate(order) : _wrap(order);
   }
 
   bool _wrap(Order? order) {

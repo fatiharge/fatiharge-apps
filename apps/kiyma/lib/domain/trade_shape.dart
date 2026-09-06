@@ -1,11 +1,11 @@
 /// How busy the counter is, as a multiple of the day's base arrival gap.
 /// Below one is busier than the base, above it is quieter.
-enum Yogunluk {
+enum Busyness {
   sakin(1.9),
   ortalama(1.15),
   yogun(0.6);
 
-  const Yogunluk(this.aralikCarpani);
+  const Busyness(this.aralikCarpani);
 
   final double aralikCarpani;
 }
@@ -20,16 +20,16 @@ enum Yogunluk {
 ///
 /// The shape is fixed per day rather than random, so the day card can name it
 /// and the player can walk in knowing what is coming.
-class GunProfili {
-  const GunProfili(this.ad, this.dilimler);
+class TradeShape {
+  const TradeShape(this.ad, this.dilimler);
 
   /// The key the day card reads its name from.
   final String ad;
 
   /// Where each stretch begins, `0..1` through the day, in order.
-  final List<(double, Yogunluk)> dilimler;
+  final List<(double, Busyness)> dilimler;
 
-  Yogunluk yogunlukAt(double oran) {
+  Busyness yogunlukAt(double oran) {
     var out = dilimler.first.$2;
     for (final (baslangic, seviye) in dilimler) {
       if (oran >= baslangic) out = seviye;
@@ -39,36 +39,36 @@ class GunProfili {
 
   /// Day one only. Nothing to read, nothing to plan around: the first run is
   /// for finding out where the bread is.
-  static const duz = GunProfili('duz', [(0, Yogunluk.ortalama)]);
+  static const duz = TradeShape('duz', [(0, Busyness.ortalama)]);
 
-  static const oglePatlamasi = GunProfili('ogle', [
-    (0, Yogunluk.sakin),
-    (0.25, Yogunluk.yogun),
-    (0.60, Yogunluk.ortalama),
+  static const oglePatlamasi = TradeShape('ogle', [
+    (0, Busyness.sakin),
+    (0.25, Busyness.yogun),
+    (0.60, Busyness.ortalama),
   ]);
 
   /// Two rushes with a lull between them — the shape a kebab shop actually
   /// has, and the one that gives the middle of a run something to be.
-  static const ciftServis = GunProfili('cift_servis', [
-    (0, Yogunluk.sakin),
-    (0.15, Yogunluk.yogun),
-    (0.45, Yogunluk.ortalama),
-    (0.60, Yogunluk.sakin),
-    (0.70, Yogunluk.yogun),
+  static const ciftServis = TradeShape('cift_servis', [
+    (0, Busyness.sakin),
+    (0.15, Busyness.yogun),
+    (0.45, Busyness.ortalama),
+    (0.60, Busyness.sakin),
+    (0.70, Busyness.yogun),
   ]);
 
-  static const aksamustu = GunProfili('aksamustu', [
-    (0, Yogunluk.sakin),
-    (0.35, Yogunluk.ortalama),
-    (0.60, Yogunluk.yogun),
+  static const aksamustu = TradeShape('aksamustu', [
+    (0, Busyness.sakin),
+    (0.35, Busyness.ortalama),
+    (0.60, Busyness.yogun),
   ]);
 
-  static const List<GunProfili> dongu = [
+  static const List<TradeShape> dongu = [
     oglePatlamasi,
     ciftServis,
     aksamustu,
   ];
 
-  static GunProfili forDay(int day) =>
+  static TradeShape forDay(int day) =>
       day <= 1 ? duz : dongu[(day - 2) % dongu.length];
 }

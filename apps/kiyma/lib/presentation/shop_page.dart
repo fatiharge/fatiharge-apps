@@ -253,7 +253,7 @@ class _Kart extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     for (final unlock in satilan) ...[
-                      UrunKarti(
+                      ItemCard(
                         unlock: unlock,
                         unlocks: unlocks,
                         gun: gun,

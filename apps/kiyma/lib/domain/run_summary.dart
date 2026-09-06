@@ -32,8 +32,8 @@ class RunSummary {
   final bool hedefTamam;
 
   /// What the day earned, in the order the summary should read them out.
-  List<Rozet> get rozetler => [
-    for (final rozet in Rozet.values)
+  List<DayBadge> get rozetler => [
+    for (final rozet in DayBadge.values)
       if (rozet.kazanildi(this)) rozet,
   ];
 
@@ -48,7 +48,7 @@ class RunSummary {
   final int atlananGun;
 
   /// The best the counter read all run.
-  final TempoHali zirveTempo;
+  final TempoBand zirveTempo;
 
   bool get seviyeAtladi => atlananGun > 0;
 }
@@ -59,7 +59,7 @@ class RunSummary {
 /// them: a badge you get every time is a decoration. They are derived from
 /// the run rather than awarded during it, so nothing has to be remembered
 /// and the summary is the only place that knows they exist.
-enum Rozet {
+enum DayBadge {
   /// Nothing burnt, nobody left angry. The one everybody is chasing.
   kusursuz,
   temiz,
@@ -79,7 +79,7 @@ enum Rozet {
     hedef => run.hedefTamam,
     seri => run.enUzunSeri >= Balance.rozetSeri,
     kurtarici => run.kritik >= Balance.rozetKritik,
-    ates => run.zirveTempo == TempoHali.ates,
+    ates => run.zirveTempo == TempoBand.ates,
     // Half again what the day asked for.
     dolu => run.hedef > 0 && run.musteri >= (run.hedef * 1.5).round(),
   };

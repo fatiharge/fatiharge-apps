@@ -128,7 +128,7 @@ class _SummaryPageState extends State<SummaryPage>
                             rozetler: _run?.rozetler ?? const [],
                             day: _run?.gunOnce ?? _progress.gun,
                             stars: _stars,
-                            zirve: _run?.zirveTempo ?? TempoHali.normal,
+                            zirve: _run?.zirveTempo ?? TempoBand.normal,
                             reveal: _entrance,
                             level: _Level(
                               day: _shownDay,
@@ -432,13 +432,13 @@ class _Takings extends StatelessWidget {
 
   /// What the day earned. At most four are drawn — a wall of chips says
   /// nothing, and a day that earned five was a very good day either way.
-  final List<Rozet> rozetler;
+  final List<DayBadge> rozetler;
 
   static const _gosterilen = 4;
 
   final int day;
   final int stars;
-  final TempoHali zirve;
+  final TempoBand zirve;
   final Animation<double> reveal;
   final Widget level;
 
@@ -620,13 +620,13 @@ class _Stars extends StatelessWidget {
 class _TempoBadge extends StatelessWidget {
   const _TempoBadge({required this.hal});
 
-  final TempoHali hal;
+  final TempoBand hal;
 
-  static const Map<TempoHali, Color> _colours = {
-    TempoHali.soguk: Color(0xFF6C8AA6),
-    TempoHali.normal: Color(0xFFCBA23C),
-    TempoHali.isiniyor: Color(0xFFE8862A),
-    TempoHali.ates: Color(0xFFE0452A),
+  static const Map<TempoBand, Color> _colours = {
+    TempoBand.soguk: Color(0xFF6C8AA6),
+    TempoBand.normal: Color(0xFFCBA23C),
+    TempoBand.isiniyor: Color(0xFFE8862A),
+    TempoBand.ates: Color(0xFFE0452A),
   };
 
   @override

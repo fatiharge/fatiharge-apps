@@ -7,8 +7,8 @@ import 'package:kiyma/domain/tempo.dart';
 /// engine multiplies and adds unconditionally and never learns a single
 /// rule's name. A rule that needed an `if` of its own would be the first of
 /// five, and then the run would be a switch statement nobody can follow.
-class GunKurali {
-  const GunKurali(
+class DayRule {
+  const DayRule(
     this.id, {
     this.odeme = 1,
     this.bagislanan = Tempo.bagislanan,
@@ -45,37 +45,37 @@ class GunKurali {
 
   bool get adsiz => id == 'yok';
 
-  static const yok = GunKurali('yok');
+  static const yok = DayRule('yok');
 
-  static const denetim = GunKurali(
+  static const denetim = DayRule(
     'denetim',
     odeme: Balance.denetimOdemesi,
     bagislanan: Balance.denetimBagislanan,
   );
 
-  static const komurAz = GunKurali(
+  static const komurAz = DayRule(
     'komur_az',
     mangalKesintisi: Balance.komurKesintisi,
     pencereCarpani: Balance.komurPenceresi,
   );
 
-  static const durumGunu = GunKurali(
+  static const durumGunu = DayRule(
     'durum_gunu',
     sadeDurum: true,
     odeme: Balance.durumGunuOdemesi,
   );
 
-  static const titizGun = GunKurali(
+  static const titizGun = DayRule(
     'titiz_gun',
     ekMalzeme: Balance.titizEkMalzeme,
   );
 
-  static const bayram = GunKurali(
+  static const bayram = DayRule(
     'bayram',
     tatliSansi: Balance.bayramTatliSansi,
   );
 
-  static const List<GunKurali> dongu = [
+  static const List<DayRule> dongu = [
     denetim,
     komurAz,
     durumGunu,
@@ -84,7 +84,7 @@ class GunKurali {
   ];
 
   /// Fixed per day rather than drawn, so the card can promise it.
-  static GunKurali forDay(int day) => day < Balance.ilkKuralGunu
+  static DayRule forDay(int day) => day < Balance.ilkKuralGunu
       ? yok
       : dongu[(day - Balance.ilkKuralGunu) % dongu.length];
 }

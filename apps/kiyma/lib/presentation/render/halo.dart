@@ -43,7 +43,7 @@ class Halos {
     if (ledge == null) return;
     final slots = ledge.slots;
     for (var i = 0; i < slots.length; i++) {
-      for (final asset in Altin.tipler) {
+      for (final asset in CoinPile.tipler) {
         yield ('$asset@$i', asset, slots[i], AssetFit.alt);
       }
     }

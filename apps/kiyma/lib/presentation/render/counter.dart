@@ -8,8 +8,8 @@ import 'package:kiyma/domain/balance.dart';
 import 'package:kiyma/domain/day_run.dart';
 import 'package:kiyma/domain/gesture.dart';
 import 'package:kiyma/domain/model/carried.dart';
+import 'package:kiyma/domain/model/customer_kind.dart';
 import 'package:kiyma/domain/model/items.dart';
-import 'package:kiyma/domain/model/musteri_tipi.dart';
 import 'package:kiyma/domain/model/order.dart';
 import 'package:kiyma/domain/model/products.dart';
 import 'package:kiyma/domain/quad.dart';
@@ -82,18 +82,18 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   /// One colour and one glyph per band. Four states are learnable where a
   /// continuous multiplier is not, and a glyph is read faster than a word in
   /// any language.
-  static const Map<TempoHali, Color> _tempoColours = {
-    TempoHali.soguk: Color(0xFF6C8AA6),
-    TempoHali.normal: Color(0xFFCBA23C),
-    TempoHali.isiniyor: Color(0xFFE8862A),
-    TempoHali.ates: Color(0xFFE0452A),
+  static const Map<TempoBand, Color> _tempoColours = {
+    TempoBand.soguk: Color(0xFF6C8AA6),
+    TempoBand.normal: Color(0xFFCBA23C),
+    TempoBand.isiniyor: Color(0xFFE8862A),
+    TempoBand.ates: Color(0xFFE0452A),
   };
 
-  static const Map<TempoHali, IconData> _tempoGlyphs = {
-    TempoHali.soguk: Icons.ac_unit_rounded,
-    TempoHali.normal: Icons.thermostat_rounded,
-    TempoHali.isiniyor: Icons.whatshot_rounded,
-    TempoHali.ates: Icons.local_fire_department_rounded,
+  static const Map<TempoBand, IconData> _tempoGlyphs = {
+    TempoBand.soguk: Icons.ac_unit_rounded,
+    TempoBand.normal: Icons.thermostat_rounded,
+    TempoBand.isiniyor: Icons.whatshot_rounded,
+    TempoBand.ates: Icons.local_fire_department_rounded,
   };
 
   /// Areas whose contents change during play, so their idle art is never the
@@ -123,16 +123,16 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   /// Placeholder for art nobody has drawn: the customer's state as a flat
   /// colour. Green is patient, red is not, and the three leaving colours say
   /// how the visit went.
-  static const Map<MusteriHali, Color> _mood = {
-    MusteriHali.yuruyor: Color(0xFF7C8794),
-    MusteriHali.bekliyorCokSakin: Color(0xFF3E8F52),
-    MusteriHali.bekliyorSakin: Color(0xFF7FB86A),
-    MusteriHali.bekliyorStabil: Color(0xFFE0B341),
-    MusteriHali.bekliyorSupheli: Color(0xFFE07C2E),
-    MusteriHali.bekliyorKizgin: Color(0xFFC93B2B),
-    MusteriHali.gidiyorMutlu: Color(0xFF35C46E),
-    MusteriHali.gidiyorStabil: Color(0xFF5E7FA8),
-    MusteriHali.gidiyorKizgin: Color(0xFF7A1F16),
+  static const Map<CustomerMood, Color> _mood = {
+    CustomerMood.yuruyor: Color(0xFF7C8794),
+    CustomerMood.bekliyorCokSakin: Color(0xFF3E8F52),
+    CustomerMood.bekliyorSakin: Color(0xFF7FB86A),
+    CustomerMood.bekliyorStabil: Color(0xFFE0B341),
+    CustomerMood.bekliyorSupheli: Color(0xFFE07C2E),
+    CustomerMood.bekliyorKizgin: Color(0xFFC93B2B),
+    CustomerMood.gidiyorMutlu: Color(0xFF35C46E),
+    CustomerMood.gidiyorStabil: Color(0xFF5E7FA8),
+    CustomerMood.gidiyorKizgin: Color(0xFF7A1F16),
   };
 
   static const _want = Color(0xFF6FCF7C);
@@ -337,7 +337,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
           rise: 150,
           peak: 0.7,
         );
-      } else if (slot.durum == Pisme.pismis) {
+      } else if (slot.durum == Doneness.pismis) {
         fx.puff(
           at: at,
           asset: 'buhar',
@@ -808,10 +808,10 @@ class CounterComponent extends PositionComponent with DragCallbacks {
 
       final image =
           assets[switch (durum) {
-            Pisme.cig => 'sis_cig',
-            Pisme.pisiyor => 'sis_pisiyor',
-            Pisme.pismis => 'sis_pismis',
-            Pisme.yanmis => 'sis_yanmis',
+            Doneness.cig => 'sis_cig',
+            Doneness.pisiyor => 'sis_pisiyor',
+            Doneness.pismis => 'sis_pismis',
+            Doneness.yanmis => 'sis_yanmis',
           }];
       if (image != null) {
         drawInQuad(canvas, image, slots[i], AssetFit.orta);
@@ -819,13 +819,13 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       // Filling while it cooks, draining while it is worth taking, and full
       // red once it is only taking up a slot.
       final (dial, value) = switch (durum) {
-        Pisme.pismis => (_ready, 1 - slot.ilerleme(run.day)),
-        Pisme.yanmis => (_burnt, 1.0),
+        Doneness.pismis => (_ready, 1 - slot.ilerleme(run.day)),
+        Doneness.yanmis => (_burnt, 1.0),
         _ => (_cooking, slot.pismeOrani),
       };
       // Only the ready one breathes. On a grill of four badges the one that
       // moves should be the one there is something to do about.
-      final radius = durum == Pisme.pismis
+      final radius = durum == Doneness.pismis
           ? 13 * (1 + 0.13 * math.sin(_elapsed * 8))
           : 13.0;
       drawDial(
@@ -851,7 +851,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     if (station.kagitli) {
       final paper = assets['doner_bekleme'];
       if (paper != null) drawInQuad(canvas, paper, region.quad, AssetFit.orta);
-      _renderContents(canvas, region.quad, DurumUrun(station));
+      _renderContents(canvas, region.quad, WrapProduct(station));
       return;
     }
     if (station.sarili) {
@@ -863,7 +863,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       _layer(canvas, region.quad, layer);
     }
     if (station.etli) _layer(canvas, region.quad, composition.ingredient('et'));
-    for (final malzeme in Malzeme.values) {
+    for (final malzeme in Ingredient.values) {
       final tutam = station.tutam(malzeme);
       if (tutam == 0) continue;
       _layer(
@@ -889,7 +889,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       _layer(canvas, region.quad, composition.ingredient('lavas'));
     }
     if (station.etli) _layer(canvas, region.quad, composition.ingredient('et'));
-    for (final bilesen in Bilesen.values) {
+    for (final bilesen in PlateItem.values) {
       final tutam = station.tutam(bilesen);
       if (tutam == 0) continue;
       _layer(
@@ -978,8 +978,8 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       if (urun == null || run.lifted(region.name, i)) continue;
       final image =
           assets[switch (urun) {
-            DurumUrun() => 'doner_bekleme',
-            PorsiyonUrun() => 'porsiyon_hazirlama',
+            WrapProduct() => 'doner_bekleme',
+            PlateProduct() => 'porsiyon_hazirlama',
             _ => '',
           }];
       if (image != null) drawInQuad(canvas, image, slots[i], AssetFit.alt);
@@ -1003,14 +1003,14 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   /// built them forty seconds ago has to remember which is which — while a
   /// customer is asking for the one with no onion. The chip is what a
   /// counter would actually do, which is write it on the paper.
-  void _renderContents(Canvas canvas, Quad quad, Urun urun) {
+  void _renderContents(Canvas canvas, Quad quad, Product urun) {
     final ids = switch (urun) {
-      DurumUrun(:final durum) => [
-        for (final m in Malzeme.values)
+      WrapProduct(:final durum) => [
+        for (final m in Ingredient.values)
           if (durum.malzemeler.contains(m)) m.id,
       ],
-      PorsiyonUrun(:final porsiyon) => [
-        for (final b in Bilesen.values)
+      PlateProduct(:final porsiyon) => [
+        for (final b in PlateItem.values)
           if (porsiyon.bilesenler.contains(b)) b.id,
       ],
       // A baklava is a baklava; there is nothing hidden inside it.
@@ -1486,7 +1486,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     Canvas canvas,
     Quad quad,
     Customer? customer, {
-    MusteriHali? hal,
+    CustomerMood? hal,
   }) {
     final bounds = quad.bounds;
     final colour = _mood[hal ?? customer!.hal]!;
@@ -1576,21 +1576,21 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   /// Material rather than the drawn set: these are the card saying something
   /// about the person, not about the food, and an icon reads as an
   /// annotation where a painted mark would read as an ingredient.
-  static const Map<MusteriTipi, ({Color renk, IconData glif})> _tipRozeti = {
-    MusteriTipi.aceleci: (renk: Color(0xFFE0452A), glif: Icons.bolt_rounded),
-    MusteriTipi.titiz: (
+  static const Map<CustomerKind, ({Color renk, IconData glif})> _tipRozeti = {
+    CustomerKind.aceleci: (renk: Color(0xFFE0452A), glif: Icons.bolt_rounded),
+    CustomerKind.titiz: (
       renk: Color(0xFF5B7C99),
       glif: Icons.checklist_rounded,
     ),
-    MusteriTipi.comert: (
+    CustomerKind.comert: (
       renk: Color(0xFF3E9D4C),
       glif: Icons.volunteer_activism_rounded,
     ),
-    MusteriTipi.kararsiz: (
+    CustomerKind.kararsiz: (
       renk: Color(0xFF8A63B5),
       glif: Icons.swap_horiz_rounded,
     ),
-    MusteriTipi.kalabalik: (
+    CustomerKind.kalabalik: (
       renk: Color(0xFF9A6A2E),
       glif: Icons.groups_rounded,
     ),
@@ -1600,7 +1600,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   ///
   /// Outside the paper rather than on it: the card is already three bands of
   /// what they want, and this is not a want — it is who is asking.
-  void _ticketTab(Canvas canvas, Rect rect, MusteriTipi tipi) {
+  void _ticketTab(Canvas canvas, Rect rect, CustomerKind tipi) {
     final rozet = _tipRozeti[tipi];
     if (rozet == null) return;
     final at = Offset(rect.left + 15, rect.top - 3);
@@ -1625,7 +1625,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   /// one row fewer to scan.
   void _ticketHeader(Canvas canvas, Rect rect, Customer customer) {
     final order = customer.order;
-    final durum = order.tip == UrunTipi.durum;
+    final durum = order.tip == ProductKind.durum;
     final band = Rect.fromLTWH(
       rect.left + 5,
       rect.top + 5,
@@ -1649,7 +1649,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     if (order.ikinci case final ikinci?) {
       _mark(
         canvas,
-        ikinci.tip == UrunTipi.durum ? 'durum' : 'porsiyon',
+        ikinci.tip == ProductKind.durum ? 'durum' : 'porsiyon',
         Offset(band.left + 38, band.center.dy),
         23,
         done: customer.ikinciVerildi,
@@ -1714,7 +1714,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
 
   int _urunDegeri(Order order) =>
       (Balance.income(
-                order.tip == UrunTipi.durum
+                order.tip == ProductKind.durum
                     ? Balance.durumBase
                     : Balance.porsiyonBase,
                 run.day,
@@ -1731,9 +1731,9 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   /// is not worth the clutter — three quarters of every card said nothing.
   static List<String> _wanted(Order order) => [
     for (final id
-        in order.tip == UrunTipi.durum
-            ? Malzeme.values.map((m) => m.id)
-            : Bilesen.values.map((b) => b.id))
+        in order.tip == ProductKind.durum
+            ? Ingredient.values.map((m) => m.id)
+            : PlateItem.values.map((b) => b.id))
       if (order.ister.contains(id) || order.istemez.contains(id)) id,
   ];
 
@@ -1843,7 +1843,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
 
     // The paper is the one carryable whose source art is not what leaves it:
     // what a hand takes off a roll is a sheet.
-    if (held is Kagit) {
+    if (held is Paper) {
       drawTornSheet(
         canvas,
         run.carriedAt - const Offset(0, 14),

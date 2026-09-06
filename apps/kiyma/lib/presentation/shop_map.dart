@@ -85,8 +85,8 @@ abstract final class ShopMap {
   /// The ladders a region carries, whether or not they still have rungs for
   /// sale — the card shows a finished ladder as finished rather than not at
   /// all.
-  static List<Grup> gruplar(String bolge) {
-    final out = <Grup>[];
+  static List<UnlockGroup> gruplar(String bolge) {
+    final out = <UnlockGroup>[];
     for (final unlock in Unlocks.catalogue) {
       if (_yerler[unlock.id] != bolge) continue;
       if (!out.contains(unlock.grup)) out.add(unlock.grup);

@@ -14,10 +14,10 @@ void main() {
   /// the enums are the list rather than a hand-written one.
   test('every ingredient, extra and product has a mark', () {
     for (final id in [
-      ...Malzeme.values.map((m) => m.id),
-      ...Bilesen.values.map((b) => b.id),
-      ...Tatli.values.map((t) => t.id),
-      ...Icecek.values.map((i) => i.id),
+      ...Ingredient.values.map((m) => m.id),
+      ...PlateItem.values.map((b) => b.id),
+      ...Dessert.values.map((t) => t.id),
+      ...Drink.values.map((i) => i.id),
       'durum',
       'porsiyon',
       'et',
@@ -39,10 +39,10 @@ void main() {
     final recorder = PictureRecorder();
     final canvas = Canvas(recorder);
     for (final id in [
-      ...Malzeme.values.map((m) => m.id),
-      ...Bilesen.values.map((b) => b.id),
-      ...Tatli.values.map((t) => t.id),
-      ...Icecek.values.map((i) => i.id),
+      ...Ingredient.values.map((m) => m.id),
+      ...PlateItem.values.map((b) => b.id),
+      ...Dessert.values.map((t) => t.id),
+      ...Drink.values.map((i) => i.id),
       'durum',
       'porsiyon',
       'et',

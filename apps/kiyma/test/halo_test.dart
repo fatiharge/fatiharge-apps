@@ -33,13 +33,13 @@ void main() {
 
     final places = scene['altin_alani'].slots.length;
     for (var slot = 0; slot < places; slot++) {
-      for (final asset in Altin.tipler) {
+      for (final asset in CoinPile.tipler) {
         final key = Halos.goldKey(asset, slot);
         expect(halos[key], isNotNull, reason: key);
       }
     }
 
-    expect(halos.length, hints.length + places * Altin.tipler.length);
+    expect(halos.length, hints.length + places * CoinPile.tipler.length);
   });
 
   test('each one is its region plus room for the blur to spread', () {

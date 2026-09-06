@@ -36,16 +36,16 @@ void main() {
       for (final name in named) {
         expect(scene.maybe(name), isNotNull, reason: name);
       }
-      for (final malzeme in Malzeme.values) {
+      for (final malzeme in Ingredient.values) {
         expect(scene.maybe(malzeme.region), isNotNull, reason: malzeme.region);
       }
-      for (final bilesen in Bilesen.values) {
+      for (final bilesen in PlateItem.values) {
         expect(scene.maybe(bilesen.region), isNotNull, reason: bilesen.region);
       }
-      for (final tatli in Tatli.values) {
+      for (final tatli in Dessert.values) {
         expect(scene.maybe(tatli.region), isNotNull, reason: tatli.region);
       }
-      for (final icecek in Icecek.values) {
+      for (final icecek in Drink.values) {
         expect(scene.maybe(icecek.sourceRegion), isNotNull);
       }
     });
@@ -64,14 +64,14 @@ void main() {
       final durum = scene['durum_hazirlama'].composition!;
       expect(durum.ingredient('et'), isNotNull);
       expect(durum.finished, isNotNull);
-      for (final malzeme in Malzeme.values) {
+      for (final malzeme in Ingredient.values) {
         expect(durum.ingredient(malzeme.id), isNotNull, reason: malzeme.id);
       }
 
       final tabak = scene['tabak_hazirlama'].composition!;
       expect(tabak.ingredient('lavas'), isNotNull);
       expect(tabak.ingredient('et'), isNotNull);
-      for (final bilesen in Bilesen.values) {
+      for (final bilesen in PlateItem.values) {
         expect(tabak.ingredient(bilesen.id), isNotNull, reason: bilesen.id);
       }
     });

@@ -83,11 +83,11 @@ abstract final class Balance {
   /// dominant late strategy — the customer's `istemez` is what pushes back.
   static const ingredientBonus = 0.8;
 
-  static const Map<Tatli, int> tatliBase = {Tatli.baklava: 1};
-  static const Map<Icecek, int> icecekBase = {
-    Icecek.kola: 1,
-    Icecek.ayran: 1,
-    Icecek.salgam: 1,
+  static const Map<Dessert, int> tatliBase = {Dessert.baklava: 1};
+  static const Map<Drink, int> icecekBase = {
+    Drink.kola: 1,
+    Drink.ayran: 1,
+    Drink.salgam: 1,
   };
 
   /// Better mince, per rung. Added to the base rather than multiplied onto

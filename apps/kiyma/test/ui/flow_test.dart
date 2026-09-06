@@ -7,8 +7,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kiyma/application/kiyma_cubit.dart';
 import 'package:kiyma/config/injectable.dart';
 import 'package:kiyma/domain/balance.dart';
-import 'package:kiyma/domain/ogretmen.dart';
 import 'package:kiyma/domain/progress.dart';
+import 'package:kiyma/domain/tutor.dart';
 import 'package:kiyma/infrastructure/bootstrap/bootstrap_adapter.dart';
 import 'package:kiyma/infrastructure/world.dart';
 import 'package:kiyma/presentation/brand.dart';
@@ -41,7 +41,7 @@ void main() {
     await getIt<GameWorld>().loadArt();
     // A returning player, so the day card is the day card. The usta's first
     // visit has a test of its own.
-    getIt<Progress>().gordum(Ders.katalog.map((ders) => ders.id));
+    getIt<Progress>().gordum(Lesson.katalog.map((ders) => ders.id));
     router = AppRouter();
   });
 

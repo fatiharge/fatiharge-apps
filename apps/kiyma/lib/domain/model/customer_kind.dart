@@ -11,7 +11,7 @@ import 'package:kiyma/domain/balance.dart';
 /// The weights and the day each becomes possible live here rather than in
 /// `Balance` because they are what the type *is*, the same way a trade
 /// profile carries its own multipliers.
-enum MusteriTipi {
+enum CustomerKind {
   /// One order, one constraint, ordinary patience. Still the commonest
   /// customer on every day: the specials read as specials only because most
   /// people are not one.
@@ -35,7 +35,7 @@ enum MusteriTipi {
   /// different job — and until then there is only one line to work.
   kalabalik(gun: 7, agirlik: 14, kilit: 'porsiyon_hatti');
 
-  const MusteriTipi({
+  const CustomerKind({
     required this.gun,
     required this.agirlik,
     this.kilit,

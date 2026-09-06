@@ -6,29 +6,29 @@ import 'package:kiyma/domain/unlocks.dart';
 void main() {
   test('a ladder opens one rung at a time, from the bottom', () {
     final unlocks = Unlocks();
-    final komur = Unlocks.kademeler(Grup.komur);
+    final komur = Unlocks.kademeler(UnlockGroup.komur);
     expect(komur.map((u) => u.kademe), [1, 2, 3, 4, 5]);
 
     expect(unlocks.available(komur[0]), isTrue);
     expect(unlocks.available(komur[1]), isFalse, reason: 'no skipping');
 
     unlocks.open(komur[0].id);
-    expect(unlocks.kademe(Grup.komur), 1);
+    expect(unlocks.kademe(UnlockGroup.komur), 1);
     expect(unlocks.available(komur[1]), isTrue);
   });
 
   test('a group behind a lock sells nothing until it is open', () {
     final unlocks = Unlocks();
-    expect(unlocks.grupAcik(Grup.ayranSurahisi), isFalse);
+    expect(unlocks.grupAcik(UnlockGroup.ayranSurahisi), isFalse);
     expect(
       unlocks.forSale.map((u) => u.grup),
-      isNot(contains(Grup.ayranSurahisi)),
+      isNot(contains(UnlockGroup.ayranSurahisi)),
     );
 
     unlocks
       ..open('icecek_hatti')
       ..open('icecek_ayran');
-    expect(unlocks.grupAcik(Grup.ayranSurahisi), isTrue);
+    expect(unlocks.grupAcik(UnlockGroup.ayranSurahisi), isTrue);
     expect(unlocks.forSale.map((u) => u.id), contains('surahi_ayran_1'));
   });
 
@@ -38,10 +38,10 @@ void main() {
       ..open('icecek_ayran')
       ..open('surahi_ayran_1')
       ..open('surahi_ayran_2');
-    expect(unlocks.surahiKademesi(Icecek.ayran), 2);
-    expect(unlocks.surahiKademesi(Icecek.salgam), 0);
+    expect(unlocks.surahiKademesi(Drink.ayran), 2);
+    expect(unlocks.surahiKademesi(Drink.salgam), 0);
     // Cola is bottled: there is no jug to widen.
-    expect(unlocks.surahiKademesi(Icecek.kola), 0);
+    expect(unlocks.surahiKademesi(Drink.kola), 0);
   });
 
   test('the caps the counter was built for hold', () {
@@ -62,7 +62,7 @@ void main() {
     final unlocks = Unlocks();
     // Written newest-first, which a Set makes no promises about.
     ['komur_3', 'komur_1', 'komur_2'].forEach(unlocks.open);
-    expect(unlocks.kademe(Grup.komur), 3);
+    expect(unlocks.kademe(UnlockGroup.komur), 3);
   });
 
   test('the shop is half of everything the game ever pays', () {
@@ -74,8 +74,8 @@ void main() {
     // rather than a list. The two lines are the exception: opening the plate
     // or the drinks line is the big purchase and the things that go on it
     // afterwards are small, which is the shape those two should have.
-    const hatlar = {Grup.porsiyon, Grup.icecek};
-    for (final grup in Grup.values) {
+    const hatlar = {UnlockGroup.porsiyon, UnlockGroup.icecek};
+    for (final grup in UnlockGroup.values) {
       final rungs = Unlocks.kademeler(grup);
       for (var i = hatlar.contains(grup) ? 2 : 1; i < rungs.length; i++) {
         expect(

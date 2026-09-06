@@ -10,7 +10,9 @@ void main() {
       expect(progress.xp, 200);
 
       expect(
-        progress.satinAl(const Unlock('malzeme_biber', 150, Grup.malzeme, 1)),
+        progress.satinAl(
+          const Unlock('malzeme_biber', 150, UnlockGroup.malzeme, 1),
+        ),
         isTrue,
       );
       expect(progress.para, 50);
@@ -21,7 +23,9 @@ void main() {
     test('will not sell what there is no money for', () {
       final progress = Progress()..kazan(10);
       expect(
-        progress.satinAl(const Unlock('malzeme_biber', 150, Grup.malzeme, 1)),
+        progress.satinAl(
+          const Unlock('malzeme_biber', 150, UnlockGroup.malzeme, 1),
+        ),
         isFalse,
       );
       expect(progress.para, 10);

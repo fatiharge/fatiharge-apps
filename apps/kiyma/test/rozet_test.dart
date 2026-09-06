@@ -12,7 +12,7 @@ void main() {
     int seri = 0,
     int hedef = 6,
     bool hedefTamam = false,
-    TempoHali zirve = TempoHali.normal,
+    TempoBand zirve = TempoBand.normal,
   }) => RunSummary(
     kazanc: 100,
     musteri: musteri,
@@ -31,12 +31,12 @@ void main() {
   test('a flawless day earns the one badge that means flawless', () {
     // Not three: "nothing burnt" and "nobody angry" are what "perfect"
     // already says, and a chip that always comes with another is decoration.
-    expect(run().rozetler, [Rozet.kusursuz]);
+    expect(run().rozetler, [DayBadge.kusursuz]);
   });
 
   test('half a good day earns the half it managed', () {
-    expect(run(yanik: 1).rozetler, [Rozet.sabirli]);
-    expect(run(kizgin: 1).rozetler, [Rozet.temiz]);
+    expect(run(yanik: 1).rozetler, [DayBadge.sabirli]);
+    expect(run(kizgin: 1).rozetler, [DayBadge.temiz]);
     expect(run(yanik: 1, kizgin: 1).rozetler, isEmpty);
   });
 
@@ -46,27 +46,27 @@ void main() {
   });
 
   test('the earned ones need the thing they are named after', () {
-    expect(run(seri: Balance.rozetSeri).rozetler, contains(Rozet.seri));
+    expect(run(seri: Balance.rozetSeri).rozetler, contains(DayBadge.seri));
     expect(
       run(seri: Balance.rozetSeri - 1).rozetler,
-      isNot(contains(Rozet.seri)),
+      isNot(contains(DayBadge.seri)),
     );
     expect(
       run(kritik: Balance.rozetKritik).rozetler,
-      contains(Rozet.kurtarici),
+      contains(DayBadge.kurtarici),
     );
-    expect(run(hedefTamam: true).rozetler, contains(Rozet.hedef));
+    expect(run(hedefTamam: true).rozetler, contains(DayBadge.hedef));
     expect(
-      run(zirve: TempoHali.ates).rozetler,
-      contains(Rozet.ates),
+      run(zirve: TempoBand.ates).rozetler,
+      contains(DayBadge.ates),
     );
     // Half again what the day asked for, against the default goal of six.
-    expect(run(musteri: 9).rozetler, contains(Rozet.dolu));
-    expect(run().rozetler, isNot(contains(Rozet.dolu)));
+    expect(run(musteri: 9).rozetler, contains(DayBadge.dolu));
+    expect(run().rozetler, isNot(contains(DayBadge.dolu)));
   });
 
   test('the three about mistakes never turn up together', () {
-    const mistakes = {Rozet.kusursuz, Rozet.temiz, Rozet.sabirli};
+    const mistakes = {DayBadge.kusursuz, DayBadge.temiz, DayBadge.sabirli};
     for (final earned in [
       run().rozetler,
       run(kizgin: 1).rozetler,

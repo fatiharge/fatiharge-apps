@@ -67,27 +67,27 @@ void main() {
           )
           ..musteriler[0] = (Customer(
             order: Order(
-              tip: UrunTipi.durum,
-              ister: {Malzeme.domates.id, Malzeme.biber.id},
-              istemez: {Malzeme.sogan.id},
-              tatli: Tatli.baklava,
-              icecek: Icecek.ayran,
+              tip: ProductKind.durum,
+              ister: {Ingredient.domates.id, Ingredient.biber.id},
+              istemez: {Ingredient.sogan.id},
+              tatli: Dessert.baklava,
+              icecek: Drink.ayran,
             ),
             day: 1,
           )..varis = 1)
           ..musteriler[1] = (Customer(
             order: Order(
-              tip: UrunTipi.durum,
-              ister: {Malzeme.tursu.id},
+              tip: ProductKind.durum,
+              ister: {Ingredient.tursu.id},
               istemez: const {},
-              icecek: Icecek.kola,
+              icecek: Drink.kola,
             ),
             day: 1,
           )..varis = 1)
           ..musteriler[2] = (Customer(
             order: Order(
-              tip: UrunTipi.porsiyon,
-              ister: {Bilesen.ezme.id},
+              tip: ProductKind.porsiyon,
+              ister: {PlateItem.ezme.id},
               istemez: const {},
             ),
             day: 1,
@@ -106,22 +106,21 @@ void main() {
       ..tabakIstasyonu = fullPlate()
       // Two wraps that look identical and are not: the chip under each is
       // the only thing that says which is which.
-      ..bekleme[0] = DurumUrun(fullWrap()..kagitli = true)
-      ..bekleme[1] = DurumUrun(
-        Durum()
+      ..bekleme[0] = WrapProduct(fullWrap()..kagitli = true)
+      ..bekleme[1] = WrapProduct(
+        Wrap()
           ..kagitli = true
-          ..malzemeEkle(Malzeme.tursu)
-          ..malzemeEkle(Malzeme.tursu)
-          ..malzemeEkle(Malzeme.tursu),
+          ..malzemeEkle(Ingredient.tursu)
+          ..malzemeEkle(Ingredient.tursu)
+          ..malzemeEkle(Ingredient.tursu),
       )
-      ..bekleme[2] = PorsiyonUrun(fullPlate())
-      ..bardakBekletme[0] = (Bardak()
-        ..doldur(Icecek.ayran, Balance.pourSeconds))
-      ..bardakBekletme[1] = (Bardak()..icerik = Icecek.kola)
-      ..bardakBekletme[2] = Bardak()
-      ..altin[0] = Altin(24)
+      ..bekleme[2] = PlateProduct(fullPlate())
+      ..bardakBekletme[0] = (Glass()..doldur(Drink.ayran, Balance.pourSeconds))
+      ..bardakBekletme[1] = (Glass()..icerik = Drink.kola)
+      ..bardakBekletme[2] = Glass()
+      ..altin[0] = CoinPile(24)
       // The second pile is in its last seconds, so it flashes.
-      ..altin[2] = (Altin(8, tip: 1)..kalan = 1)
+      ..altin[2] = (CoinPile(8, tip: 1)..kalan = 1)
       // The burnt skewer has been sitting long enough for the bin to ask.
       ..bekleyenYanik = Balance.idleBurnt;
 
@@ -217,7 +216,7 @@ void main() {
 }
 
 final wrapOrder = Order(
-  tip: UrunTipi.durum,
-  ister: {Malzeme.domates.id},
-  istemez: {Malzeme.sogan.id},
+  tip: ProductKind.durum,
+  ister: {Ingredient.domates.id},
+  istemez: {Ingredient.sogan.id},
 );

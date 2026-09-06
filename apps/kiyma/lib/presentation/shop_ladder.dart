@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:kiyma/domain/fayda.dart';
+import 'package:kiyma/domain/benefit.dart';
 import 'package:kiyma/domain/unlocks.dart';
 import 'package:kiyma/presentation/brand.dart';
 import 'package:kiyma/presentation/gold_text.dart';
@@ -13,8 +13,8 @@ import 'package:kiyma/presentation/palette.dart';
 /// saw four rows and no reason to believe there was a game past them. A
 /// ladder that shows its top is what makes the bottom worth climbing — even,
 /// and especially, for somebody who will stop before they reach it.
-class Merdiven extends StatelessWidget {
-  const Merdiven({
+class LadderView extends StatelessWidget {
+  const LadderView({
     required this.grup,
     required this.unlocks,
     required this.para,
@@ -23,7 +23,7 @@ class Merdiven extends StatelessWidget {
     super.key,
   });
 
-  final Grup grup;
+  final UnlockGroup grup;
   final Unlocks unlocks;
   final int para;
   final void Function(Unlock) onBuy;
@@ -81,7 +81,7 @@ class Merdiven extends StatelessWidget {
               for (final unlock in rungs)
                 SizedBox(
                   width: genislik,
-                  child: KademeKarti(
+                  child: RungCard(
                     unlock: unlock,
                     alindi: unlock.kademe <= kademe,
                     sirada: unlock.kademe == kademe + 1,
@@ -104,8 +104,8 @@ class Merdiven extends StatelessWidget {
 /// change, and how much is that worth — in that order, and it is worth
 /// exactly one of them: a card that offered a whole ladder was a menu, and
 /// the player standing in front of a grill is deciding about a grill.
-class UrunKarti extends StatelessWidget {
-  const UrunKarti({
+class ItemCard extends StatelessWidget {
+  const ItemCard({
     required this.unlock,
     required this.unlocks,
     required this.gun,
@@ -122,7 +122,7 @@ class UrunKarti extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fayda = Fayda.of(unlock, gun, unlocks);
+    final fayda = Benefit.of(unlock, gun, unlocks);
     final rungs = Unlocks.kademeler(unlock.grup).length;
     return Container(
       padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
@@ -208,8 +208,8 @@ class UrunKarti extends StatelessWidget {
 }
 
 /// One rung: what it is, what it changes, and what it costs.
-class KademeKarti extends StatelessWidget {
-  const KademeKarti({
+class RungCard extends StatelessWidget {
+  const RungCard({
     required this.unlock,
     required this.alindi,
     required this.sirada,

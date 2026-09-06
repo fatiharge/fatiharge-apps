@@ -14,7 +14,11 @@ void main() {
 
       for (var i = 0; i < 300; i++) {
         final order = maker.make();
-        expect(order.tip, UrunTipi.durum, reason: 'the plate line is locked');
+        expect(
+          order.tip,
+          ProductKind.durum,
+          reason: 'the plate line is locked',
+        );
         expect(order.ister.union(order.istemez).difference(open), isEmpty);
         expect(order.tatli, isNull);
         expect(order.icecek, isNull);
@@ -42,7 +46,7 @@ void main() {
       final unlocks = Unlocks()..open('porsiyon_hatti');
       final maker = OrderMaker(unlocks, day: 1, random: math.Random(3));
       final tipler = {for (var i = 0; i < 40; i++) maker.make().tip};
-      expect(tipler, UrunTipi.values.toSet());
+      expect(tipler, ProductKind.values.toSet());
     });
 
     test('a plate order only ever names plate components', () {
@@ -51,11 +55,11 @@ void main() {
         ..open('bilesen_ezme')
         ..open('bilesen_pilav');
       final maker = OrderMaker(unlocks, day: 1, random: math.Random(4));
-      final plate = {Bilesen.ezme.id, Bilesen.pilav.id};
+      final plate = {PlateItem.ezme.id, PlateItem.pilav.id};
 
       for (var i = 0; i < 200; i++) {
         final order = maker.make();
-        if (order.tip != UrunTipi.porsiyon) continue;
+        if (order.tip != ProductKind.porsiyon) continue;
         expect(order.ister.union(order.istemez).difference(plate), isEmpty);
       }
     });
@@ -67,7 +71,7 @@ void main() {
       expect(unlocks.mangalSlots, 2);
       expect(unlocks.musteriSlots, 2);
       expect(unlocks.bekleme, 1, reason: 'one shelf slot to start');
-      expect(unlocks.malzemeler, {Malzeme.domates, Malzeme.sogan});
+      expect(unlocks.malzemeler, {Ingredient.domates, Ingredient.sogan});
       expect(unlocks.porsiyonHatti, isFalse);
       expect(unlocks.icecekHatti, isFalse);
     });
@@ -108,10 +112,10 @@ void main() {
       // and nothing that no longer exists is still for sale — a lock with no
       // item behind it would sit in the shop taking money for nothing.
       final byPrefix = {
-        'malzeme_': Malzeme.values.map((m) => m.id),
-        'bilesen_': Bilesen.values.map((b) => b.id),
-        'tatli_': Tatli.values.map((t) => t.id),
-        'icecek_': Icecek.values.map((i) => i.id),
+        'malzeme_': Ingredient.values.map((m) => m.id),
+        'bilesen_': PlateItem.values.map((b) => b.id),
+        'tatli_': Dessert.values.map((t) => t.id),
+        'icecek_': Drink.values.map((i) => i.id),
       };
       for (final entry in byPrefix.entries) {
         final expected = entry.value.map((id) => entry.key + id).toSet();

@@ -29,8 +29,8 @@ class ShopListPage extends StatelessWidget {
         builder: (context, state) {
           final cubit = context.read<KiymaCubit>();
           final unlocks = cubit.progress.unlocks;
-          final gruplar = <Grup>[
-            for (final grup in Grup.values)
+          final gruplar = <UnlockGroup>[
+            for (final grup in UnlockGroup.values)
               if (unlocks.grupAcik(grup) &&
                   Unlocks.kademeler(grup).every(
                     (unlock) => ShopMap.yeri(unlock.id) == null,
@@ -72,7 +72,7 @@ class ShopListPage extends StatelessWidget {
                   padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
                   children: [
                     for (final grup in gruplar)
-                      Merdiven(
+                      LadderView(
                         grup: grup,
                         unlocks: unlocks,
                         para: state.para,

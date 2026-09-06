@@ -20,8 +20,8 @@ sealed class Carried {
   String get evi;
 }
 
-class CigKiyma extends Carried {
-  const CigKiyma();
+class RawMince extends Carried {
+  const RawMince();
 
   @override
   String get origin => 'malzeme_kiyma';
@@ -35,8 +35,8 @@ class CigKiyma extends Carried {
 
 /// Meat lifted off a grill slot. [yanik] meat is carried too — the bin is the
 /// only place it can go, and until it gets there it blocks the slot.
-class PismisEt extends Carried {
-  const PismisEt(this.slot, {this.yanik = false});
+class CookedMeat extends Carried {
+  const CookedMeat(this.slot, {this.yanik = false});
 
   final int slot;
   final bool yanik;
@@ -51,8 +51,8 @@ class PismisEt extends Carried {
   String get evi => 'mangal_alani';
 }
 
-class Lavas extends Carried {
-  const Lavas();
+class Flatbread extends Carried {
+  const Flatbread();
 
   @override
   String get origin => 'lavas_kaynak';
@@ -65,8 +65,8 @@ class Lavas extends Carried {
 }
 
 /// Greaseproof paper, applied to a rolled wrap on the shelf.
-class Kagit extends Carried {
-  const Kagit();
+class Paper extends Carried {
+  const Paper();
 
   @override
   String get origin => 'kagit_kaynak';
@@ -78,10 +78,10 @@ class Kagit extends Carried {
   String get evi => 'kagit_kaynak';
 }
 
-class MalzemeTutami extends Carried {
-  const MalzemeTutami(this.malzeme);
+class IngredientHandful extends Carried {
+  const IngredientHandful(this.malzeme);
 
-  final Malzeme malzeme;
+  final Ingredient malzeme;
 
   @override
   String get origin => malzeme.region;
@@ -93,10 +93,10 @@ class MalzemeTutami extends Carried {
   String get asset => malzeme.portionAsset;
 }
 
-class BilesenTutami extends Carried {
-  const BilesenTutami(this.bilesen);
+class PlateItemHandful extends Carried {
+  const PlateItemHandful(this.bilesen);
 
-  final Bilesen bilesen;
+  final PlateItem bilesen;
 
   @override
   String get origin => bilesen.region;
@@ -109,10 +109,10 @@ class BilesenTutami extends Carried {
 }
 
 /// A jug on its way to a glass. It is the jug that moves, not the glass.
-class Surahi extends Carried {
-  const Surahi(this.icecek);
+class Jug extends Carried {
+  const Jug(this.icecek);
 
-  final Icecek icecek;
+  final Drink icecek;
 
   @override
   String get origin => icecek.sourceRegion;
@@ -125,10 +125,15 @@ class Surahi extends Carried {
 }
 
 /// A finished thing being taken somewhere: a customer, a shelf, or the bin.
-class HazirUrun extends Carried {
-  const HazirUrun(this.urun, this.origin, {this.slot, this.fromSource = false});
+class FinishedProduct extends Carried {
+  const FinishedProduct(
+    this.urun,
+    this.origin, {
+    this.slot,
+    this.fromSource = false,
+  });
 
-  final Urun urun;
+  final Product urun;
 
   /// Set when it came out of a numbered slot, so a refusal can put it back
   /// where it was.
@@ -146,9 +151,9 @@ class HazirUrun extends Carried {
 
   @override
   String get asset => switch (urun) {
-    DurumUrun() => 'doner_bekleme',
-    PorsiyonUrun() => 'porsiyon_hazirlama',
-    TatliUrun(:final tatli) => tatli.asset,
-    IcecekUrun(:final icecek) => icecek.servedAsset,
+    WrapProduct() => 'doner_bekleme',
+    PlateProduct() => 'porsiyon_hazirlama',
+    DessertProduct(:final tatli) => tatli.asset,
+    DrinkProduct(:final icecek) => icecek.servedAsset,
   };
 }
