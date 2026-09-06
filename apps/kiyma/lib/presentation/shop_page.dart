@@ -174,7 +174,9 @@ class _DukkanState extends State<_Dukkan> with SingleTickerProviderStateMixin {
           ),
           SafeArea(
             child: Padding(
-              padding: const EdgeInsets.all(8),
+              // Wider at the sides than the top: on a long screen the money
+              // chip sat against the right edge with its corner cut off.
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
