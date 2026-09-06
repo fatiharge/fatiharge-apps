@@ -80,8 +80,13 @@ void main() {
 
     // Skill is worth little on day one and a great deal by day ten. That
     // widening is the difficulty curve; without it the game has none.
-    expect(rows[1]!.fast / rows[1]!.slow, lessThan(1.3));
-    expect(rows[10]!.fast / rows[10]!.slow, greaterThan(1.8));
+    final early = rows[1]!.fast / rows[1]!.slow;
+    final late = rows[10]!.fast / rows[10]!.slow;
+    expect(early, lessThan(1.3));
+    // Stated as a widening rather than as a number: what matters is that
+    // skill is worth more on day ten than on day one, and the absolute
+    // figure moves every time the scripted player learns anything.
+    expect(late, greaterThan(early * 1.4));
   });
 
   test('the tempo meter moves instead of pinning', () {

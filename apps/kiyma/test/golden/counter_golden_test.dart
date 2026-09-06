@@ -115,7 +115,8 @@ void main() {
           ..malzemeEkle(Malzeme.tursu),
       )
       ..bekleme[2] = PorsiyonUrun(fullPlate())
-      ..bardakBekletme[0] = (Bardak()..doldur(Icecek.ayran))
+      ..bardakBekletme[0] = (Bardak()
+        ..doldur(Icecek.ayran, Balance.pourSeconds))
       ..bardakBekletme[1] = (Bardak()..icerik = Icecek.kola)
       ..bardakBekletme[2] = Bardak()
       ..altin[0] = Altin(24)

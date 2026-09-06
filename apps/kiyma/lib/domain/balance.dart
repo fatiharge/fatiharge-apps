@@ -22,7 +22,8 @@ abstract final class Balance {
   /// and a window that shuts while they look teaches nothing except that the
   /// grill is unfair. What it costs is nothing: day one barely pays, so the
   /// slack is spent on somebody learning rather than on somebody farming.
-  static double cookedWindow(int day) => math.max(5, 24 - day * 2.0);
+  static double cookedWindow(int day, {int komur = 0}) =>
+      math.max(5, 24 - day * 2.0) + komur * komurPencere;
 
   /// How many handfuls make one ingredient.
   ///
@@ -31,6 +32,20 @@ abstract final class Balance {
   /// the strip grows a third at a time, so a half-finished wrap is visible
   /// and abandoning one has a cost.
   static const tutamAdedi = 3;
+
+  /// What a sharper knife takes it down to, one handful per rung. One is the
+  /// floor: an ingredient that goes on in a single touch is a tray again,
+  /// not a build.
+  static int tutam(int bicak) => math.max(1, tutamAdedi - bicak);
+
+  /// Coal, per rung: the cook shortens and the window widens. The grill
+  /// feeds every other line, which is why this is the one ladder that raises
+  /// the ceiling on all of them.
+  static const komurHizi = 0.93;
+  static const komurPencere = 1.1;
+
+  static double komurCarpani(int kademe) =>
+      math.pow(komurHizi, kademe).toDouble();
 
   /// Charged the moment meat burns, not when it is binned. Money only —
   /// patience is untouched, which is what keeps the risk local and the third
@@ -75,14 +90,25 @@ abstract final class Balance {
     Icecek.salgam: 1,
   };
 
-  static int income(int base, int day, {int ingredients = 0}) =>
+  /// Better mince, per rung. Added to the base rather than multiplied onto
+  /// the takings: a multiplier on a compounding day is how an economy runs
+  /// away from the table that was fitted to it.
+  static const kasapPayi = 0.2;
+
+  static int income(num base, int day, {int ingredients = 0}) =>
       ((base + ingredients * ingredientBonus) * dayMultiplier(day)).round();
 
   // --- Patience (design doc 8.4) ---
 
+  /// A courtesy the counter can buy: flat seconds rather than a fraction,
+  /// because a late day cuts the bar to a twelve-second floor and a
+  /// percentage of a floor is nothing.
+  static const ikramSaniye = 3.0;
+
   /// Also doubled at the top and converging on the same floor, for the same
   /// reason as [cookedWindow]: the first days are the ones being learnt.
-  static double patience(int day) => math.max(12, 60 - day * 3.5);
+  static double patience(int day, {int ikram = 0}) =>
+      math.max(12, 60 - day * 3.5) + ikram * ikramSaniye;
 
   // --- Who walked in ---
 
@@ -157,12 +183,43 @@ abstract final class Balance {
   static const sweptAfter = 10.0;
   static const sweptKeeps = 0.7;
 
+  /// A bigger till, per rung: money sits longer and less of it goes when the
+  /// counter sweeps. Capped short of the whole pile — a sweep that costs
+  /// nothing is a sweep nobody reaches for.
+  static const kasaSaniye = 3.0;
+  static const kasaOrani = 0.06;
+
+  static double supurulmeSuresi(int kasa) => sweptAfter + kasa * kasaSaniye;
+
+  static double supurulenPay(int kasa) =>
+      math.min(0.9, sweptKeeps + kasa * kasaOrani);
+
+  /// What an apprentice is worth: the meter cools this much slower per rung.
+  /// It buys nothing on a good run, only room to recover on a bad one.
+  static const cirakSizma = 0.85;
+
+  static double sizmaCarpani(int cirak) =>
+      math.pow(cirakSizma, cirak).toDouble();
+
+  /// A wider jug mouth, per rung.
+  static const surahiHizi = 0.75;
+
+  static double dokumSuresi(int kademe) =>
+      pourSeconds * math.pow(surahiHizi, kademe);
+
   /// Gap between arrivals, closing with the day.
   ///
   /// It was a flat three seconds, which made day one a firehose: the bot
   /// clears forty customers in a 185-second run and is limited by supply, not
   /// by its own hands. Day one should be teachable.
-  static double arrivalGap(int day) => math.max(2.2, 8 - day * 0.6);
+  /// A sign outside brings people in faster. Applied to the floor too, or it
+  /// would be dead from day ten on — and it can never fill a place the
+  /// counter does not have, which is what stops it being the only rung worth
+  /// buying.
+  static const tabelaCarpani = 0.9;
+
+  static double arrivalGap(int day, {int tabela = 0}) =>
+      math.max(2.2, 8 - day * 0.6) * math.pow(tabelaCarpani, tabela);
 
   /// How far into the day the doors shut.
   ///
@@ -185,16 +242,16 @@ abstract final class Balance {
   /// good one is faster. The old table was out by a factor of twelve — a
   /// single day-one run cleared the first three days at once.
   static const targets = [
-    12,
-    45,
-    110,
-    225,
-    435,
-    815,
-    1525,
-    2835,
-    5350,
-    10175,
+    11,
+    34,
+    80,
+    180,
+    395,
+    875,
+    1825,
+    3700,
+    7060,
+    13060,
   ];
 
   static int target(int day) {

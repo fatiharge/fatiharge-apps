@@ -76,7 +76,11 @@ class DayRun {
        ) {
     final unlocks = progress.unlocks;
     mangal = [
-      for (var i = 0; i < 4; i++) MangalSlot(unlocked: i < unlocks.mangalSlots),
+      for (var i = 0; i < 4; i++)
+        MangalSlot(
+          komur: unlocks.komurKademesi,
+          unlocked: i < unlocks.mangalSlots,
+        ),
     ];
     bekleme = List<Urun?>.filled(3, null);
     altin = List<Altin?>.filled(3, null);
@@ -344,6 +348,7 @@ class DayRun {
     tempo.tick(
       dt,
       bekleyen: musteriler.any((c) => c != null && c.yerinde),
+      sizma: Balance.sizmaCarpani(progress.unlocks.cirakKademesi),
     );
     _tempoTasmasi();
 
@@ -381,7 +386,9 @@ class DayRun {
       pile.kalan -= dt;
       if (pile.kalan <= 0) {
         // Swept up rather than lost: leaving it costs the tip, not the sale.
-        final kept = (pile.miktar * Balance.sweptKeeps).round();
+        final kept =
+            (pile.miktar * Balance.supurulenPay(progress.unlocks.kasaKademesi))
+                .round();
         progress.kazan(kept);
         _cue(
           DayEvent.altinSupuruldu,
@@ -438,6 +445,7 @@ class DayRun {
         musteriler[free] = Customer(
           order: _maker.make(),
           day: day,
+          ikram: progress.unlocks.ikramKademesi,
           hiz:
               Balance.slowestWalk +
               _random.nextDouble() * (1 - Balance.slowestWalk),
@@ -481,6 +489,7 @@ class DayRun {
         istemez: {},
       ),
       day: day,
+      ikram: progress.unlocks.ikramKademesi,
     )..varis = 1;
     onEvent(DayEvent.musteriGeldi);
     onChanged();
@@ -489,7 +498,8 @@ class DayRun {
   /// The gap to the next arrival: the day's base, stretched or squeezed by
   /// whichever stretch of the shift we are in.
   double get _gelisAraligi =>
-      Balance.arrivalGap(day) * profil.yogunlukAt(gunOrani).aralikCarpani;
+      Balance.arrivalGap(day, tabela: progress.unlocks.tabelaKademesi) *
+      profil.yogunlukAt(gunOrani).aralikCarpani;
 
   /// Halfway through the wait, an indecisive customer swaps one ingredient
   /// for another.
@@ -638,7 +648,7 @@ class DayRun {
         }
       case 'bardak_kaynak':
         final free = bardakBekletme.indexWhere((b) => b == null);
-        if (free >= 0) {
+        if (free >= 0 && free < progress.unlocks.bardakGozu) {
           bardakBekletme[free] = Bardak();
           _kilometre(Kilometre.bardakAlindi);
           _flash('bardak_kaynak');
@@ -765,7 +775,10 @@ class DayRun {
   bool _surahiyiDok(Surahi held) {
     for (final bardak in bardakBekletme) {
       if (bardak != null && bardak.bos) {
-        bardak.doldur(held.icecek);
+        bardak.doldur(
+          held.icecek,
+          Balance.dokumSuresi(progress.unlocks.surahiKademesi(held.icecek)),
+        );
         return true;
       }
     }
@@ -946,7 +959,10 @@ class DayRun {
         if (held is! Surahi) return false;
         final bardak = bardakBekletme[_slotAt(region, point)];
         if (bardak == null || !bardak.bos) return false;
-        bardak.doldur(held.icecek);
+        bardak.doldur(
+          held.icecek,
+          Balance.dokumSuresi(progress.unlocks.surahiKademesi(held.icecek)),
+        );
         return true;
     }
     return false;
@@ -1171,14 +1187,17 @@ class DayRun {
   }
 
   int _anaUrunGeliri(Urun urun, MusteriTipi tipi) {
+    // Better mince lifts the base the day multiplies, so it compounds with
+    // the day rather than sitting on top as a flat tip.
+    final kasap = Balance.kasapPayi * progress.unlocks.kasapKademesi;
     final taban = switch (urun) {
       DurumUrun(:final durum) => Balance.income(
-        Balance.durumBase,
+        Balance.durumBase + kasap,
         day,
         ingredients: durum.malzemeler.length,
       ),
       PorsiyonUrun(:final porsiyon) => Balance.income(
-        Balance.porsiyonBase,
+        Balance.porsiyonBase + kasap,
         day,
         ingredients: porsiyon.bilesenler.length,
       ),
@@ -1204,6 +1223,7 @@ class DayRun {
       altin[index] = Altin(
         (altin[index]?.miktar ?? 0) + customer.odenen,
         tip: _random.nextInt(Altin.tipler.length),
+        kasa: progress.unlocks.kasaKademesi,
       );
     }
 

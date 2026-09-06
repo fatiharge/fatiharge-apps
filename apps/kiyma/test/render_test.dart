@@ -88,7 +88,8 @@ void main() {
       ..tabakIstasyonu = fullPlate()
       ..bekleme[0] = DurumUrun(fullWrap()..kagitli = true)
       ..bekleme[1] = PorsiyonUrun(fullPlate())
-      ..bardakBekletme[0] = (Bardak()..doldur(Icecek.ayran))
+      ..bardakBekletme[0] = (Bardak()
+        ..doldur(Icecek.ayran, Balance.pourSeconds))
       ..bardakBekletme[1] = (Bardak()..icerik = Icecek.kola)
       // A pile of each kind, and one about to be swept.
       ..altin[0] = Altin(12)

@@ -106,9 +106,13 @@ class Ayrilan {
 /// A customer at the counter: an order, a patience bar, and a record of which
 /// line items have already been handed over.
 class Customer {
-  Customer({required this.order, required this.day, this.hiz = 1})
-    : sabirToplam = Balance.patience(day) * _sabirCarpani(order),
-      sabirKalan = Balance.patience(day) * _sabirCarpani(order);
+  Customer({
+    required this.order,
+    required this.day,
+    this.hiz = 1,
+    int ikram = 0,
+  }) : sabirToplam = Balance.patience(day, ikram: ikram) * _sabirCarpani(order),
+       sabirKalan = Balance.patience(day, ikram: ikram) * _sabirCarpani(order);
 
   static double _sabirCarpani(Order order) =>
       order.musteriTipi == MusteriTipi.aceleci ? Balance.aceleciSabir : 1;

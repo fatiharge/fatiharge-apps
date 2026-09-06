@@ -9,7 +9,10 @@ void main() {
       final progress = Progress()..kazan(200);
       expect(progress.xp, 200);
 
-      expect(progress.satinAl(const Unlock('malzeme_biber', 150)), isTrue);
+      expect(
+        progress.satinAl(const Unlock('malzeme_biber', 150, Grup.malzeme, 1)),
+        isTrue,
+      );
       expect(progress.para, 50);
       expect(progress.xp, 200, reason: 'levels are not spent');
       expect(progress.unlocks.has('malzeme_biber'), isTrue);
@@ -17,7 +20,10 @@ void main() {
 
     test('will not sell what there is no money for', () {
       final progress = Progress()..kazan(10);
-      expect(progress.satinAl(const Unlock('malzeme_biber', 150)), isFalse);
+      expect(
+        progress.satinAl(const Unlock('malzeme_biber', 150, Grup.malzeme, 1)),
+        isFalse,
+      );
       expect(progress.para, 10);
     });
 

@@ -10,9 +10,17 @@ enum Pisme { cig, pisiyor, pismis, yanmis }
 
 /// One skewer position on the grill.
 class MangalSlot {
-  MangalSlot({this.unlocked = true});
+  MangalSlot({this.komur = 0, this.unlocked = true});
+
+  /// How good the coal is. Worked into the two halves of the cook once,
+  /// because both are read on every frame of every slot.
+  final int komur;
 
   final bool unlocked;
+
+  late final double _cig = Balance.rawSeconds * Balance.komurCarpani(komur);
+  late final double _pisme =
+      Balance.cookingSeconds * Balance.komurCarpani(komur);
 
   Pisme? durum;
   double _gecen = 0;
@@ -25,20 +33,18 @@ class MangalSlot {
   ///
   /// The two states are the same wait from the player's side, and a meter
   /// that empties and starts again between them reads as a fault.
-  double get pismeOrani =>
-      (_gecen / (Balance.rawSeconds + Balance.cookingSeconds)).clamp(0, 1);
+  double get pismeOrani => (_gecen / (_cig + _pisme)).clamp(0, 1);
 
   /// How wide the cooked window is right now: the day narrows it, a hot
   /// counter widens it back out.
-  double pencere(int day, double carpan) => Balance.cookedWindow(day) * carpan;
+  double pencere(int day, double carpan) =>
+      Balance.cookedWindow(day, komur: komur) * carpan;
 
   /// `0..1` through the current state, for the progress the player reads.
   double ilerleme(int day, [double carpan = 1]) => switch (durum) {
-    Pisme.cig => _gecen / Balance.rawSeconds,
-    Pisme.pisiyor => (_gecen - Balance.rawSeconds) / Balance.cookingSeconds,
-    Pisme.pismis =>
-      (_gecen - Balance.rawSeconds - Balance.cookingSeconds) /
-          pencere(day, carpan),
+    Pisme.cig => _gecen / _cig,
+    Pisme.pisiyor => (_gecen - _cig) / _pisme,
+    Pisme.pismis => (_gecen - _cig - _pisme) / pencere(day, carpan),
     _ => 1,
   };
 
@@ -57,9 +63,9 @@ class MangalSlot {
   bool tick(double dt, int day, [double carpan = 1]) {
     if (durum == null || durum == Pisme.yanmis) return false;
     _gecen += dt;
-    const cooked = Balance.rawSeconds + Balance.cookingSeconds;
+    final cooked = _cig + _pisme;
     final next = switch (_gecen) {
-      < Balance.rawSeconds => Pisme.cig,
+      _ when _gecen < _cig => Pisme.cig,
       _ when _gecen < cooked => Pisme.pisiyor,
       _ when _gecen < cooked + pencere(day, carpan) => Pisme.pismis,
       _ => Pisme.yanmis,
@@ -76,7 +82,8 @@ class MangalSlot {
 /// minus the part that goes missing — the point of touching it is the tip,
 /// not the sale.
 class Altin {
-  Altin(this.miktar, {this.tip = 0}) : kalan = Balance.sweptAfter;
+  Altin(this.miktar, {this.tip = 0, int kasa = 0})
+    : kalan = Balance.supurulmeSuresi(kasa);
 
   /// The art each pile is drawn with. Chosen at random so a counter of four
   /// payments does not read as one repeated sprite.
@@ -174,22 +181,26 @@ class Porsiyon {
 class Bardak {
   Icecek? icerik;
   double _dolum = 0;
+  double _sure = Balance.pourSeconds;
 
   bool get bos => icerik == null && _dolum == 0;
   bool get doluyor => _dolum > 0;
   bool get hazir => icerik != null && _dolum == 0;
 
   /// How full it is, `0..1`. What the glass is drawn at while it pours.
-  double get dolumOrani => doluyor ? 1 - _dolum / Balance.pourSeconds : 1;
+  double get dolumOrani => doluyor ? 1 - _dolum / _sure : 1;
 
   /// What is in it, or on its way in.
   Icecek? get icecek => icerik ?? _bekleyen;
 
   Icecek? _bekleyen;
 
-  void doldur(Icecek icecek) {
+  /// [sure] is how long this counter's jug takes, which a wider mouth
+  /// shortens. Held so the meter drawn on the glass matches the wait.
+  void doldur(Icecek icecek, double sure) {
     _bekleyen = icecek;
-    _dolum = Balance.pourSeconds;
+    _sure = sure;
+    _dolum = sure;
   }
 
   void tick(double dt) {

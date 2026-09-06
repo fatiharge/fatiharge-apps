@@ -85,9 +85,12 @@ void main() {
       unlocks
         ..open('porsiyon_hatti')
         ..open('icecek_hatti');
+      // A ladder opens one rung at a time: the line first, then the
+      // components above it in order.
       final open = unlocks.forSale.map((u) => u.id);
-      expect(open, contains('bilesen_ezme'));
-      expect(open, contains('icecek_ayran'));
+      expect(open, contains('bilesen_icli_kofte'));
+      expect(open, isNot(contains('bilesen_ezme')));
+      expect(open, contains('icecek_salgam'));
     });
 
     test('the catalogue and the counter agree on what exists', () {

@@ -139,13 +139,16 @@ class Tempo {
   /// being handled, and an empty counter is not a rush: without this, a
   /// player on day one — where arrivals are deliberately slow — was cooling
   /// to half takings for a gap the game chose, not one they caused.
-  void tick(double dt, {required bool bekleyen}) {
+  /// [sizma] scales the drain: a counter with help on it cools slower. It
+  /// buys nothing on a good run, only room to recover on a bad one.
+  void tick(double dt, {required bool bekleyen, double sizma = 1}) {
     if (degisimKalan > 0) degisimKalan -= dt;
     if (dokunusKalan > 0) dokunusKalan -= dt;
     if (!bekleyen) return;
     _sonServis += dt;
     final idle = math.max(0, _sonServis - bosluk);
-    final rate = math.min(enHizliSizma, sizma + idle * boslukArtisi);
+    final rate =
+        math.min(enHizliSizma, Tempo.sizma + idle * boslukArtisi) * sizma;
     _uygula(-rate * dt, quiet: true);
   }
 

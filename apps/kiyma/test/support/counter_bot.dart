@@ -1,6 +1,5 @@
 import 'dart:math' as math;
 import 'dart:ui';
-import 'package:kiyma/domain/balance.dart';
 import 'package:kiyma/domain/day_run.dart';
 import 'package:kiyma/domain/model/items.dart';
 import 'package:kiyma/domain/model/order.dart';
@@ -262,9 +261,15 @@ class CounterBot {
       );
       return true;
     }
+    // Bread and meat get prepared ahead; the rest waits for somebody to ask.
+    // Loading a wrap with every ingredient the counter happens to own cost
+    // three handfuls each and made *buying an ingredient* measure as a loss,
+    // and rolling one with nothing in it closes a wrap that satisfies
+    // nobody and blocks the station for the rest of the run.
+    if (order == null) return false;
     for (final malzeme in _unlocks.malzemeler) {
-      if (station.tutam(malzeme) >= Balance.tutamAdedi) continue;
-      if (order != null && !order.ister.contains(malzeme.id)) continue;
+      if (station.tutam(malzeme) >= station.gerekenTutam) continue;
+      if (!order.ister.contains(malzeme.id)) continue;
       run.tap(run.scene[malzeme.region].quad.center);
       return true;
     }
@@ -295,7 +300,7 @@ class CounterBot {
       return true;
     }
     for (final bilesen in _unlocks.bilesenler) {
-      if (station.tutam(bilesen) >= Balance.tutamAdedi) continue;
+      if (station.tutam(bilesen) >= station.gerekenTutam) continue;
       if (!order.ister.contains(bilesen.id)) continue;
       run.tap(run.scene[bilesen.region].quad.center);
       return true;
@@ -305,9 +310,18 @@ class CounterBot {
     return false;
   }
 
-  /// Keeps the grill as full as it can.
+  /// Cooks what is actually owed, plus one.
+  ///
+  /// It used to fill every slot every chance it got, which meant better coal
+  /// measured as a *loss*: meat came off sooner, sat with nowhere to go, and
+  /// burned. Keeping one ahead is what a person does.
   void _grill() {
     if (run.mangal.every((s) => !s.unlocked || !s.bos)) return;
+    final owed = run.musteriler
+        .where((c) => c != null && c.yerinde && !c.anaUrunVerildi)
+        .length;
+    final onIt = run.mangal.where((s) => !s.bos && !s.yanmis).length;
+    if (onIt > owed) return;
     run.tap(run.scene['malzeme_kiyma'].quad.center);
   }
 
@@ -333,15 +347,24 @@ class CounterBot {
   }
 }
 
-/// Unlocks a player would plausibly own by [day], bought in catalogue order.
+/// The shop a player would plausibly own having earned [spend].
+///
+/// Cheapest reachable rung first, over and over. It is not clever — nobody
+/// buys purely by price — but it is the one rule that spreads across the
+/// ladders instead of pouring everything into whichever group happens to be
+/// first in the catalogue, and a measurement of a lopsided counter is a
+/// measurement of nothing.
 Unlocks unlocksFor(int day, {int spend = 0}) {
   final unlocks = Unlocks();
   var left = spend;
-  for (final unlock in Unlocks.catalogue) {
-    if (!unlocks.available(unlock)) continue;
-    if (unlock.price > left) continue;
-    left -= unlock.price;
-    unlocks.open(unlock.id);
+  while (true) {
+    Unlock? ucuz;
+    for (final unlock in unlocks.forSale) {
+      if (unlock.price > left) continue;
+      if (ucuz == null || unlock.price < ucuz.price) ucuz = unlock;
+    }
+    if (ucuz == null) return unlocks;
+    left -= ucuz.price;
+    unlocks.open(ucuz.id);
   }
-  return unlocks;
 }
