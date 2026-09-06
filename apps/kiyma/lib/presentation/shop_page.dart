@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -5,11 +7,26 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kiyma/application/kiyma_cubit.dart';
 import 'package:kiyma/config/injectable.dart';
 import 'package:kiyma/domain/unlocks.dart';
+import 'package:kiyma/infrastructure/world.dart';
 import 'package:kiyma/presentation/brand.dart';
 import 'package:kiyma/presentation/palette.dart';
+import 'package:kiyma/presentation/render/shop_scene.dart';
+import 'package:kiyma/presentation/shop_ladder.dart';
+import 'package:kiyma/presentation/shop_map.dart';
+import 'package:kiyma/route/app_router.gr.dart';
 
-/// Design doc 10.4: between days only. Functional, not finished — the design
-/// has category tabs and illustrated cards.
+/// The shop is the kitchen.
+///
+/// A list of names and prices could not say what anything was for — "Ocak
+/// körüğü, 540" is a word and a number. Standing in the room and hanging a
+/// price off the thing itself says it without a sentence: the empty steel
+/// well that would hold pickles, the grill that would take a third skewer,
+/// the jug that would pour faster. Locked things are drawn here — faint,
+/// inside a dashed outline — which is the one place in the game they should
+/// be, because seeing what you do not have is the whole point of a shop.
+///
+/// Eleven rungs have no object to stand on. Those are on [ShopListRoute],
+/// reached from here.
 @RoutePage()
 class ShopPage extends StatelessWidget {
   const ShopPage({super.key});
@@ -17,15 +34,51 @@ class ShopPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => BlocProvider(
     create: (_) => getIt<KiymaCubit>(),
-    child: BrandBackground(
-      child: BlocBuilder<KiymaCubit, KiymaState>(
-        builder: (context, state) {
-          final cubit = context.read<KiymaCubit>();
-          final unlocks = cubit.progress.unlocks;
-          return Column(
+    child: const BrandBackground(child: _Dukkan()),
+  );
+}
+
+class _Dukkan extends StatefulWidget {
+  const _Dukkan();
+
+  @override
+  State<_Dukkan> createState() => _DukkanState();
+}
+
+class _DukkanState extends State<_Dukkan> {
+  /// The object whose card is open.
+  ///
+  /// Deliberately the only thing on this page that moves. A tag that breathed
+  /// would be a repeating animation, and a repeating animation on a page the
+  /// flow tests walk through is a `pumpAndSettle` that never returns.
+  String? _secili;
+
+  /// One tag per object: the cheapest thing it still sells.
+  Map<String, int> _etiketler(Unlocks unlocks) {
+    final out = <String, int>{};
+    for (final unlock in unlocks.forSale) {
+      final bolge = ShopMap.yeri(unlock.id);
+      if (bolge == null) continue;
+      final varolan = out[bolge];
+      if (varolan == null || unlock.price < varolan) out[bolge] = unlock.price;
+    }
+    return out;
+  }
+
+  @override
+  Widget build(BuildContext context) => BlocBuilder<KiymaCubit, KiymaState>(
+    builder: (context, state) {
+      final cubit = context.read<KiymaCubit>();
+      final unlocks = cubit.progress.unlocks;
+      final world = getIt<GameWorld>();
+      final etiketler = _etiketler(unlocks);
+
+      return Stack(
+        children: [
+          Column(
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(8, 8, 20, 8),
+                padding: const EdgeInsets.fromLTRB(8, 8, 16, 4),
                 child: Row(
                   children: [
                     IconButton(
@@ -44,6 +97,22 @@ class ShopPage extends StatelessWidget {
                         ),
                       ),
                     ),
+                    SizedBox(
+                      // Width as well as height: ChunkyButton fills its row,
+                      // so it cannot be laid out where the width is
+                      // unbounded — and a Row gives its non-flex children
+                      // exactly that.
+                      width: 132,
+                      height: 36,
+                      child: ChunkyButton(
+                        label: 'magaza.gerisi'.tr(),
+                        icon: Icons.list_rounded,
+                        color: KiymaPalette.celik,
+                        onPressed: () =>
+                            context.router.push(const ShopListRoute()),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
                     BrandChip(
                       icon: Icons.payments_outlined,
                       label: 'hud.para'.tr(args: ['${state.para}']),
@@ -52,174 +121,123 @@ class ShopPage extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
-                  children: [
-                    for (final grup in Grup.values)
-                      if (unlocks.grupAcik(grup))
-                        _Merdiven(
-                          grup: grup,
-                          kademe: unlocks.kademe(grup),
-                          para: state.para,
-                          onBuy: cubit.buy,
+                child: LayoutBuilder(
+                  builder: (context, box) {
+                    final scene = world.scene;
+                    final scale = math.min(
+                      box.maxWidth / scene.size.width,
+                      box.maxHeight / scene.size.height,
+                    );
+                    return Center(
+                      child: GestureDetector(
+                        onTapUp: (details) =>
+                            _dokun(details.localPosition / scale),
+                        child: CustomPaint(
+                          size: Size(
+                            scene.size.width * scale,
+                            scene.size.height * scale,
+                          ),
+                          painter: ShopScenePainter(
+                            scene: scene,
+                            assets: world.art,
+                            unlocks: unlocks,
+                            etiketler: etiketler,
+                            secili: _secili,
+                          ),
                         ),
-                  ],
-                ),
-              ),
-            ],
-          );
-        },
-      ),
-    ),
-  );
-}
-
-/// One ladder: the heading, and every rung whether or not it is reachable.
-///
-/// The shop used to list only what could be bought right now, which meant a
-/// player on day three saw four rows and no reason to believe there was a
-/// game past them. A ladder that shows its top is what makes the bottom
-/// worth climbing — even, and especially, for somebody who will stop before
-/// they reach it.
-class _Merdiven extends StatelessWidget {
-  const _Merdiven({
-    required this.grup,
-    required this.kademe,
-    required this.para,
-    required this.onBuy,
-  });
-
-  final Grup grup;
-  final int kademe;
-  final int para;
-  final void Function(Unlock) onBuy;
-
-  @override
-  Widget build(BuildContext context) {
-    final rungs = Unlocks.kademeler(grup);
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 18),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(
-                'grup.${grup.id}'.tr(),
-                style: const TextStyle(
-                  fontFamily: 'Rubik',
-                  fontSize: 15,
-                  fontWeight: FontWeight.w800,
-                  color: KiymaPalette.komur,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                '$kademe/${rungs.length}',
-                style: const TextStyle(
-                  fontFamily: 'Rubik',
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                  color: KiymaPalette.celik,
+                      ),
+                    );
+                  },
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 6),
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            children: [
-              for (final unlock in rungs)
-                SizedBox(
-                  width: 210,
-                  height: 78,
-                  child: _UnlockCard(
-                    unlock: unlock,
-                    alindi: unlock.kademe <= kademe,
-                    sirada: unlock.kademe == kademe + 1,
-                    affordable: para >= unlock.price,
-                    onBuy: () => onBuy(unlock),
-                  ),
-                ),
-            ],
-          ),
+          if (_secili case final bolge?)
+            _Kart(
+              bolge: bolge,
+              unlocks: unlocks,
+              para: state.para,
+              onBuy: cubit.buy,
+              onClose: () => setState(() => _secili = null),
+            ),
         ],
-      ),
-    );
+      );
+    },
+  );
+
+  void _dokun(Offset point) {
+    final region = getIt<GameWorld>().scene.at(point);
+    // Everything else in the kitchen is scenery here. A touch on the counter
+    // opening an empty card would teach the player to stop touching things.
+    if (region == null || !ShopMap.bolgeler.contains(region.name)) return;
+    setState(() => _secili = region.name);
   }
 }
 
-class _UnlockCard extends StatelessWidget {
-  const _UnlockCard({
-    required this.unlock,
-    required this.alindi,
-    required this.sirada,
-    required this.affordable,
+/// What one object sells, as the ladders it carries.
+///
+/// The grill carries two — the slots across it and the coal in it — and the
+/// jugs carry the drink and the jug. Stacking them in one card is what keeps
+/// the kitchen from needing two tags on the same object.
+class _Kart extends StatelessWidget {
+  const _Kart({
+    required this.bolge,
+    required this.unlocks,
+    required this.para,
     required this.onBuy,
+    required this.onClose,
   });
 
-  final Unlock unlock;
-
-  /// Already owned. Kept on screen rather than dropped: a ladder with its
-  /// bottom rungs missing does not read as progress.
-  final bool alindi;
-
-  /// The next rung. The only one money can reach.
-  final bool sirada;
-
-  final bool affordable;
-  final VoidCallback onBuy;
+  final String bolge;
+  final Unlocks unlocks;
+  final int para;
+  final void Function(Unlock) onBuy;
+  final VoidCallback onClose;
 
   @override
-  Widget build(BuildContext context) => Opacity(
-    opacity: alindi || sirada ? 1 : 0.45,
-    child: Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: alindi
-            ? KiymaPalette.krema.withValues(alpha: 0.55)
-            : KiymaPalette.krema,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: KiymaPalette.komur.withValues(alpha: sirada ? 0.7 : 0.25),
-          width: 2,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            'kilit.${unlock.id}'.tr(),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontFamily: 'Rubik',
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: KiymaPalette.komur,
+  Widget build(BuildContext context) => Positioned.fill(
+    child: GestureDetector(
+      onTap: onClose,
+      child: ColoredBox(
+        color: const Color(0xCC0B0908),
+        child: Center(
+          child: GestureDetector(
+            onTap: () {},
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              child: BrandCard(
+                width: 560,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    for (final grup in ShopMap.gruplar(bolge))
+                      if (unlocks.grupAcik(grup))
+                        Merdiven(
+                          grup: grup,
+                          unlocks: unlocks,
+                          para: para,
+                          onBuy: onBuy,
+                          // Wider than the list's, because there is room
+                          // here and a sentence cut in half explains less
+                          // than no sentence at all.
+                          genislik: 244,
+                        ),
+                    SizedBox(
+                      height: 38,
+                      child: ChunkyButton(
+                        label: 'magaza.kapat'.tr(),
+                        icon: Icons.close_rounded,
+                        color: KiymaPalette.celik,
+                        onPressed: onClose,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
-          const Spacer(),
-          SizedBox(
-            height: 30,
-            child: alindi
-                ? const Center(
-                    child: Icon(
-                      Icons.check_circle_rounded,
-                      size: 22,
-                      color: KiymaPalette.celik,
-                    ),
-                  )
-                : ChunkyButton(
-                    // No currency symbol anywhere: the game pays in gold, and
-                    // Rubik has no lira glyph, so it came out as a box.
-                    label: '${unlock.price}',
-                    icon: Icons.paid_rounded,
-                    onPressed: sirada && affordable ? onBuy : null,
-                  ),
-          ),
-        ],
+        ),
       ),
     ),
   );

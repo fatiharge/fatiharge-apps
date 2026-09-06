@@ -152,30 +152,69 @@ void main() {
   });
 
   group('the shop', () {
-    testWidgets('sells what there is money for and nothing else', (
+    /// Touches the kitchen at a point in scene coordinates.
+    ///
+    /// The shop draws the room into whatever box it is given, so a test that
+    /// wants the pickle well has to go through the same scaling the finger
+    /// does.
+    Future<void> touch(WidgetTester tester, Offset scene) async {
+      final rect = tester.getRect(find.byType(CustomPaint).last);
+      final scale = rect.width / 1024;
+      await tester.tapAt(rect.topLeft + scene * scale);
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('is the kitchen, and a thing is bought where it stands', (
       tester,
     ) async {
       earn(65);
       await open(tester, const ShopRoute());
-
       expect(find.text('65 altın'), findsOneWidget);
 
-      // The shop is a ladder per group now, so the ingredients are below the
-      // fold on a phone.
-      await tester.scrollUntilVisible(find.text('Biber'), 140);
+      // The empty steel well that would hold peppers.
+      await touch(tester, const Offset(499, 329));
       expect(find.text('Biber'), findsOneWidget);
-      await tester.ensureVisible(find.text('60'));
-      await tester.pumpAndSettle();
+
       await tester.tap(find.text('60'));
       await tester.pumpAndSettle();
-
       expect(getIt<Progress>().unlocks.has('malzeme_biber'), isTrue);
       expect(find.text('5 altın'), findsOneWidget);
-      // Pickles cost 150; the button is there but dead.
+
+      // Pickles are the next rung and cost 150; the button is there but dead.
       final pickles = tester.widget<InkWell>(
         find.ancestor(of: find.text('150'), matching: find.byType(InkWell)),
       );
       expect(pickles.onTap, isNull);
+    });
+
+    testWidgets('a touch on scenery opens nothing', (tester) async {
+      earn(65);
+      await open(tester, const ShopRoute());
+      // The bare counter sells nothing, and a card that opened empty would
+      // teach the player to stop touching things.
+      await touch(tester, const Offset(700, 520));
+      expect(find.text('Biber'), findsNothing);
+    });
+
+    testWidgets('what has nowhere to stand is on the back page', (
+      tester,
+    ) async {
+      earn(200);
+      await open(tester, const ShopRoute());
+      await tester.tap(find.text('Gerisi'));
+      await tester.pumpAndSettle();
+
+      // A sharper knife is not an object in the kitchen.
+      expect(find.text('Keskin bıçak'), findsOneWidget);
+      // Neither is anything the shop sells at an object.
+      expect(find.text('Biber'), findsNothing);
+
+      await tester.scrollUntilVisible(find.text('100'), 140);
+      await tester.ensureVisible(find.text('100'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('100'));
+      await tester.pumpAndSettle();
+      expect(getIt<Progress>().unlocks.has('cirak_1'), isTrue);
     });
 
     testWidgets('a purchase reaches the menu underneath it', (tester) async {
@@ -189,13 +228,14 @@ void main() {
 
       await tester.tap(find.text('Yükselt'));
       await tester.pumpAndSettle();
-      // The ingredients ladder is below the fold on a phone.
-      await tester.scrollUntilVisible(find.text('60'), 140);
-      await tester.ensureVisible(find.text('60'));
-      await tester.pumpAndSettle();
+      await touch(tester, const Offset(499, 329));
       await tester.tap(find.text('60'));
       await tester.pumpAndSettle();
 
+      // The card stays open after a purchase — a ladder is usually climbed
+      // more than one rung at a time — so it is closed before leaving.
+      await tester.tap(find.text('Kapat'));
+      await tester.pumpAndSettle();
       await tester.tap(find.byIcon(Icons.arrow_back_rounded));
       await tester.pumpAndSettle();
       expect(find.byType(MenuPage), findsOneWidget);

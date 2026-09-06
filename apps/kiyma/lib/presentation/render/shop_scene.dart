@@ -1,0 +1,208 @@
+import 'dart:math' as math;
+import 'dart:ui';
+
+import 'package:flutter/material.dart' show CustomPainter;
+import 'package:kiyma/domain/quad.dart';
+import 'package:kiyma/domain/scene.dart';
+import 'package:kiyma/domain/unlocks.dart';
+import 'package:kiyma/infrastructure/assets.dart';
+import 'package:kiyma/presentation/render/painter.dart';
+
+/// The kitchen, drawn with nothing happening in it.
+///
+/// It does not share the counter's own drawing passes on purpose. The counter
+/// draws a running game — a chef, four grill dials, whatever is in the hand —
+/// and hides everything money has not opened; the shop draws a still room and
+/// its whole job is to show exactly what the counter hides. One function with
+/// hooks for both would be a function nobody could read, and neither of these
+/// is more than a loop.
+class ShopScenePainter extends CustomPainter {
+  const ShopScenePainter({
+    required this.scene,
+    required this.assets,
+    required this.unlocks,
+    required this.etiketler,
+    this.secili,
+  });
+
+  final SceneData scene;
+  final GameAssets assets;
+  final Unlocks unlocks;
+
+  /// What is for sale where, and for how much. One tag per object: a
+  /// ladder only ever offers its next rung, and two prices hanging off the
+  /// same jug would be a menu.
+  final Map<String, int> etiketler;
+
+  /// The region whose card is open, drawn lit.
+  final String? secili;
+
+  /// What a locked area looks like here: its own art, faint, inside a dashed
+  /// outline. Not a padlock — the point is that the player sees the thing
+  /// they would be buying standing in the place it would stand.
+  static const _hayalet = 0.32;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas
+      ..save()
+      ..scale(size.width / scene.size.width, size.height / scene.size.height);
+
+    for (final layer in scene.layers) {
+      final image = assets[layer.src];
+      if (image == null) continue;
+      drawInQuad(
+        canvas,
+        image,
+        Quad.fromRect(layer.rect),
+        AssetFit.doldur,
+      );
+    }
+
+    for (final region in scene.regions) {
+      if (region.category == 'dekor') continue;
+      final acik = unlocks.shows(region.name);
+      final asset = region.asset;
+      final image = asset == null ? null : assets[asset];
+      if (image == null) {
+        // A place at the counter has no art of its own — the person standing
+        // in it is the art — so the shop draws a body, or the third place
+        // would be a price on a string pointing at bare tiles.
+        if (!acik && region.category == 'musteri') {
+          _yerHayaleti(canvas, region.quad);
+        }
+        continue;
+      }
+      if (!acik) _zemin(canvas, region.quad);
+      drawInQuad(
+        canvas,
+        image,
+        region.quad,
+        region.fit,
+        paint: acik
+            ? null
+            : (Paint()
+                ..color = const Color(0xFFFFFFFF).withValues(alpha: _hayalet)),
+      );
+      if (!acik) _kesikli(canvas, region.quad);
+    }
+
+    for (final entry in etiketler.entries) {
+      final region = scene.maybe(entry.key);
+      if (region != null) _etiket(canvas, region, entry.value);
+    }
+
+    canvas.restore();
+  }
+
+  /// A price on a string, hung off the top of the thing it is for.
+  ///
+  /// Above rather than over: the whole point of buying at the object is
+  /// seeing the object, and a tag across the middle of an empty steel well
+  /// hides the one thing that explains what the well is.
+  void _etiket(Canvas canvas, SceneRegion region, int fiyat) {
+    final bounds = region.quad.bounds;
+    final lit = secili == region.name;
+    final yazi = '$fiyat';
+    final genislik = 26.0 + yazi.length * 9;
+    // Nudged back inside the design box: the top row of wells is close
+    // enough to the ceiling that a tag would hang off the picture.
+    final x = bounds.center.dx.clamp(
+      genislik / 2 + 2,
+      scene.size.width - genislik / 2 - 2,
+    );
+    final y = math.max<double>(15, bounds.top - 13);
+    final rect = Rect.fromCenter(
+      center: Offset(x, y),
+      width: genislik,
+      height: 22,
+    );
+
+    canvas.drawLine(
+      Offset(x, rect.bottom),
+      Offset(bounds.center.dx, bounds.top + 4),
+      Paint()
+        ..color = const Color(0xFF2E2A26)
+        ..strokeWidth = 1.6,
+    );
+    drawKey(
+      canvas,
+      rect,
+      lit ? const Color(0xFFE8641A) : const Color(0xFFF7EEDF),
+    );
+    drawText(
+      canvas,
+      yazi,
+      rect.center,
+      size: 14,
+      weight: 900,
+      family: 'Rubik',
+      center: true,
+      middle: true,
+      color: lit ? const Color(0xFFFFF6E8) : const Color(0xFF2E2A26),
+    );
+  }
+
+  /// A pale wash behind a thing that is not there yet.
+  ///
+  /// The faint art on its own was not enough: a dimmed tray of pickles still
+  /// reads as a tray of pickles. Sitting it on a cream card says the well is
+  /// empty and this is what would fill it.
+  void _zemin(Canvas canvas, Quad quad) => canvas.drawRRect(
+    RRect.fromRectAndRadius(
+      quad.bounds.inflate(3),
+      const Radius.circular(7),
+    ),
+    Paint()..color = const Color(0xFFF7EEDF).withValues(alpha: 0.72),
+  );
+
+  /// The body a customer would be, for a place nobody has bought yet.
+  void _yerHayaleti(Canvas canvas, Quad quad) {
+    final bounds = quad.bounds;
+    final paint = Paint()
+      ..color = const Color(0xFF6FCF7C).withValues(alpha: 0.3);
+    canvas
+      ..drawCircle(Offset(bounds.center.dx, bounds.top + 26), 19, paint)
+      ..drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(
+            bounds.left + 14,
+            bounds.top + 46,
+            bounds.width - 28,
+            46,
+          ),
+          const Radius.circular(14),
+        ),
+        paint,
+      );
+    _kesikli(canvas, quad);
+  }
+
+  /// A dashed outline round something that is not there yet. Drawn by hand
+  /// because a dash pattern is four lines of arithmetic and the alternative
+  /// is a package.
+  void _kesikli(Canvas canvas, Quad quad) {
+    final paint = Paint()
+      ..color = const Color(0xFF2E2A26).withValues(alpha: 0.55)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2;
+    final corners = quad.corners;
+    for (var i = 0; i < corners.length; i++) {
+      final a = corners[i];
+      final b = corners[(i + 1) % corners.length];
+      final length = (b - a).distance;
+      const dash = 7.0;
+      for (var t = 0.0; t < length; t += dash * 2) {
+        final from = Offset.lerp(a, b, t / length)!;
+        final to = Offset.lerp(a, b, (t + dash).clamp(0, length) / length)!;
+        canvas.drawLine(from, to, paint);
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(ShopScenePainter old) =>
+      old.secili != secili ||
+      old.unlocks != unlocks ||
+      old.etiketler.length != etiketler.length;
+}
