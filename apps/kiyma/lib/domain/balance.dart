@@ -17,10 +17,20 @@ abstract final class Balance {
 
   /// The window where meat can be taken off, narrowing with the day.
   ///
-  /// Twice the design doc's figures. Six seconds on day one read as a trap
-  /// rather than as a window: by the time the player has noticed the skewer
-  /// is ready and moved to it, most of it is gone.
-  static double cookedWindow(int day) => math.max(5, 12 - day * 0.3);
+  /// Day one opens at twice what it used to and closes on the old floor by
+  /// day ten. A first run is where the player is still looking for the bin,
+  /// and a window that shuts while they look teaches nothing except that the
+  /// grill is unfair. What it costs is nothing: day one barely pays, so the
+  /// slack is spent on somebody learning rather than on somebody farming.
+  static double cookedWindow(int day) => math.max(5, 24 - day * 2.0);
+
+  /// How many handfuls make one ingredient.
+  ///
+  /// One drag used to fill a well, which made a loaded wrap four flicks and
+  /// no decision. Three turns each ingredient into something being *built*:
+  /// the strip grows a third at a time, so a half-finished wrap is visible
+  /// and abandoning one has a cost.
+  static const tutamAdedi = 3;
 
   /// Charged the moment meat burns, not when it is binned. Money only —
   /// patience is untouched, which is what keeps the risk local and the third
@@ -39,7 +49,11 @@ abstract final class Balance {
   /// cancel it out — a treadmill by construction, where day ten paid 2.6x
   /// day one and nothing ever felt like progress. Compounding is the whole
   /// point of a progression: the numbers have to run away.
-  static double dayMultiplier(int day) => math.pow(1.55, day - 1).toDouble();
+  ///
+  /// The base is 1.79 because that is the curve through the three points the
+  /// game was asked for — a day worth 30 pays 90 on day three and 560 on day
+  /// six. Every other number here is measured; this one was specified.
+  static double dayMultiplier(int day) => math.pow(1.79, day - 1).toDouble();
 
   static const durumBase = 1;
   static const porsiyonBase = 2;
@@ -66,7 +80,9 @@ abstract final class Balance {
 
   // --- Patience (design doc 8.4) ---
 
-  static double patience(int day) => math.max(12, 30 - day * 0.6);
+  /// Also doubled at the top and converging on the same floor, for the same
+  /// reason as [cookedWindow]: the first days are the ones being learnt.
+  static double patience(int day) => math.max(12, 60 - day * 3.5);
 
   /// Applied to what is *left*, not to the maximum: two refusals cost 36% of
   /// the remaining bar, not 40% of the whole one, so back-to-back refusals do
@@ -77,7 +93,10 @@ abstract final class Balance {
 
   /// How long the counter stays open. A run is a clock, not a queue:
   /// customers keep arriving as seats free until the time is up.
-  static Duration runLength(int day) => Duration(seconds: 120 + day * 5);
+  /// A minute, not two. Two minutes of the same four gestures is where a
+  /// run stops being a push and becomes a shift; the day ends while the
+  /// player still wants one more customer, which is the point.
+  static Duration runLength(int day) => Duration(seconds: 60 + day * 5);
 
   /// Gap between one customer leaving and the next taking the place.
   /// How long the quickest customer takes to walk in and settle, and how
@@ -129,16 +148,16 @@ abstract final class Balance {
   /// good one is faster. The old table was out by a factor of twelve — a
   /// single day-one run cleared the first three days at once.
   static const targets = [
-    22,
-    80,
-    180,
-    355,
-    665,
-    1205,
-    1965,
-    2995,
-    4595,
-    7095,
+    12,
+    45,
+    110,
+    225,
+    435,
+    815,
+    1525,
+    2835,
+    5350,
+    10175,
   ];
 
   static int target(int day) {
@@ -147,9 +166,9 @@ abstract final class Balance {
     var value = targets.last;
     var step = targets.last - targets[targets.length - 2];
     for (var d = targets.length; d < day; d++) {
-      // Compounds past the table too: an additive tail would flatten the
-      // curve exactly where the income is steepest.
-      step = (step * 1.5).round();
+      // Compounds past the table at the rate the income does: anything
+      // slower and every day after the tenth would clear on its first run.
+      step = (step * 1.79).round();
       value += step;
     }
     return value;

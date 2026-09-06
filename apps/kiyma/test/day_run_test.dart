@@ -64,6 +64,13 @@ void main() {
   Order wrapFor(Set<String> ister, {Set<String> istemez = const {}}) =>
       Order(tip: UrunTipi.durum, ister: ister, istemez: istemez);
 
+  /// Drags [region] onto [target] enough times to make one whole ingredient.
+  void loadUp(DayRun run, String region, String target) {
+    for (var i = 0; i < Balance.tutamAdedi; i++) {
+      expect(drag(run, at(region), at(target)), isTrue);
+    }
+  }
+
   /// Lavash, cooked meat, then whatever ingredients were asked for.
   void buildWrap(DayRun run, {Set<Malzeme> malzemeler = const {}}) {
     expect(drag(run, at('lavas_kaynak'), at('durum_hazirlama')), isTrue);
@@ -75,7 +82,9 @@ void main() {
       isTrue,
     );
     for (final malzeme in malzemeler) {
-      expect(drag(run, at(malzeme.region), at('durum_hazirlama')), isTrue);
+      for (var i = 0; i < Balance.tutamAdedi; i++) {
+        expect(drag(run, at(malzeme.region), at('durum_hazirlama')), isTrue);
+      }
     }
   }
 
@@ -127,7 +136,7 @@ void main() {
     test('takes ingredients while the meat is still on the grill', () {
       final run = build();
       expect(drag(run, at('lavas_kaynak'), at('durum_hazirlama')), isTrue);
-      expect(drag(run, at('malzeme_domates'), at('durum_hazirlama')), isTrue);
+      loadUp(run, 'malzeme_domates', 'durum_hazirlama');
       expect(run.durumIstasyonu!.malzemeler, {Malzeme.domates});
       expect(events, isNot(contains(DayEvent.gecersiz)));
 
@@ -135,6 +144,30 @@ void main() {
       expect(run.durumIstasyonu!.sarilabilir, isFalse);
       run.flickUp(at('durum_hazirlama'));
       expect(run.durumIstasyonu!.sarili, isFalse);
+    });
+
+    test('an ingredient is three handfuls, and two is not enough', () {
+      final run = build();
+      expect(drag(run, at('lavas_kaynak'), at('durum_hazirlama')), isTrue);
+      final station = run.durumIstasyonu!;
+
+      for (var i = 1; i < Balance.tutamAdedi; i++) {
+        expect(drag(run, at('malzeme_domates'), at('durum_hazirlama')), isTrue);
+        expect(station.tutam(Malzeme.domates), i);
+        expect(
+          station.malzemeler,
+          isEmpty,
+          reason: 'part of an ingredient is not the ingredient',
+        );
+      }
+
+      expect(drag(run, at('malzeme_domates'), at('durum_hazirlama')), isTrue);
+      expect(station.malzemeler, {Malzeme.domates});
+
+      // And a finished one takes no more: the well is full, not bottomless.
+      // `drag` reports the pickup, not the drop, so the count is the check.
+      drag(run, at('malzeme_domates'), at('durum_hazirlama'));
+      expect(station.tutam(Malzeme.domates), Balance.tutamAdedi);
     });
 
     test('will not take an ingredient after the roll', () {
@@ -225,7 +258,7 @@ void main() {
       waiting(run, wrapFor(const {}));
       drag(run, at('lavas_kaynak'), at('durum_hazirlama'));
       drag(run, at('malzeme_kiyma'), slot('mangal_alani', 0));
-      cook(run, 20);
+      cook(run, 34);
       expect(run.mangal[0].yanmis, isTrue);
 
       drag(run, slot('mangal_alani', 0), at('durum_hazirlama'));
@@ -511,7 +544,7 @@ void main() {
       expect(run.tabakIstasyonu!.etli, isTrue);
       expect(run.tabakIstasyonu!.hazir, isTrue, reason: 'no roll, no paper');
 
-      drag(run, at('malzeme_ezme'), at('tabak_hazirlama'));
+      loadUp(run, 'malzeme_ezme', 'tabak_hazirlama');
       expect(run.tabakIstasyonu!.bilesenler, {Bilesen.ezme});
     });
 
@@ -524,7 +557,7 @@ void main() {
       expect(run.tabakIstasyonu!.bilesenler, isEmpty);
 
       drag(run, at('lavas_kaynak'), at('tabak_hazirlama'));
-      expect(drag(run, at('malzeme_ezme'), at('tabak_hazirlama')), isTrue);
+      loadUp(run, 'malzeme_ezme', 'tabak_hazirlama');
       expect(run.tabakIstasyonu!.bilesenler, {Bilesen.ezme});
       expect(run.tabakIstasyonu!.hazir, isFalse, reason: 'still no meat');
     });
@@ -581,9 +614,10 @@ void main() {
         ..tap(at('lavas_kaynak'))
         ..tap(at('malzeme_kiyma'));
       cook(run, Balance.rawSeconds + Balance.cookingSeconds + 0.2);
-      run
-        ..tap(slot('mangal_alani', 0))
-        ..tap(at('malzeme_domates'));
+      run.tap(slot('mangal_alani', 0));
+      for (var i = 0; i < Balance.tutamAdedi; i++) {
+        run.tap(at('malzeme_domates'));
+      }
       expect(run.durumIstasyonu!.malzemeler, {Malzeme.domates});
     });
 
@@ -725,7 +759,7 @@ void main() {
       drag(run, at('malzeme_kiyma'), slot('mangal_alani', 0));
       cook(run, Balance.rawSeconds + Balance.cookingSeconds + 0.2);
       drag(run, slot('mangal_alani', 0), at('tabak_hazirlama'));
-      drag(run, at('malzeme_ezme'), at('tabak_hazirlama'));
+      loadUp(run, 'malzeme_ezme', 'tabak_hazirlama');
       expect(run.tabakIstasyonu!.hazir, isTrue);
 
       expect(
@@ -824,7 +858,7 @@ void main() {
 
     test('customers keep coming for as long as the clock runs', () {
       final run = build();
-      for (var i = 0; i < 200; i++) {
+      for (var i = 0; i < 100; i++) {
         run.tick(0.5);
       }
       expect(run.bitti, isFalse);

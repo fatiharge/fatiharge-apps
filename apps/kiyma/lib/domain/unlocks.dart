@@ -38,15 +38,15 @@ class Unlocks {
     Unlock('icecek_hatti', 320),
     Unlock('bekleme_3', 500),
     Unlock('porsiyon_hatti', 550),
-    Unlock('musteri_3', 1500),
-    Unlock('mangal_4', 2200),
+    Unlock('musteri_3', 2400),
+    Unlock('mangal_4', 3600),
     Unlock('icecek_salgam', 120),
     Unlock('icecek_ayran', 220),
     Unlock('icecek_kola', 400),
     Unlock('bilesen_icli_kofte', 180),
     Unlock('bilesen_pilav', 300),
     Unlock('bilesen_patates', 700),
-    Unlock('bilesen_ezme', 1200),
+    Unlock('bilesen_ezme', 1800),
     Unlock('tatli_baklava', 260),
   ];
 

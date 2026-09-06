@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 import 'dart:ui';
-
+import 'package:kiyma/domain/balance.dart';
 import 'package:kiyma/domain/day_run.dart';
 import 'package:kiyma/domain/model/items.dart';
 import 'package:kiyma/domain/model/order.dart';
@@ -140,7 +140,7 @@ class CounterBot {
       return true;
     }
     for (final malzeme in run.progress.unlocks.malzemeler) {
-      if (station.malzemeler.contains(malzeme)) continue;
+      if (station.tutam(malzeme) >= Balance.tutamAdedi) continue;
       if (order != null && !order.ister.contains(malzeme.id)) continue;
       run.tap(run.scene[malzeme.region].quad.center);
       return true;

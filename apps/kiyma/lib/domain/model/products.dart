@@ -95,10 +95,23 @@ class Altin {
 /// A wrap being built, then carried.
 class Durum {
   bool etli = false;
-  final Set<Malzeme> malzemeler = {};
+  final Map<Malzeme, int> _tutamlar = {};
 
   bool sarili = false;
   bool kagitli = false;
+
+  /// How much of [malzeme] is on, `0..`[Balance.tutamAdedi].
+  int tutam(Malzeme malzeme) => _tutamlar[malzeme] ?? 0;
+
+  /// Only the finished ones. A third of an onion is not an onion: it does
+  /// not satisfy an order, it does not earn the bonus, and the customer
+  /// who asked for no onion is not offended by it.
+  Set<Malzeme> get malzemeler => {
+    for (final entry in _tutamlar.entries)
+      if (entry.value >= Balance.tutamAdedi) entry.key,
+  };
+
+  void malzemeEkle(Malzeme malzeme) => _tutamlar[malzeme] = tutam(malzeme) + 1;
 
   /// Ingredients go on any time before the roll, meat or no meat.
   ///
@@ -106,7 +119,7 @@ class Durum {
   /// nothing to do but wait for a skewer, the six seconds of cooking were six
   /// seconds of standing still.
   bool malzemeKabul(Malzeme malzeme) =>
-      !sarili && !malzemeler.contains(malzeme);
+      !sarili && tutam(malzeme) < Balance.tutamAdedi;
 
   bool get sarilabilir => etli && !sarili;
   bool get kagitBekliyor => sarili && !kagitli;
@@ -117,7 +130,16 @@ class Durum {
 class Porsiyon {
   bool lavasli = false;
   bool etli = false;
-  final Set<Bilesen> bilesenler = {};
+  final Map<Bilesen, int> _tutamlar = {};
+
+  int tutam(Bilesen bilesen) => _tutamlar[bilesen] ?? 0;
+
+  Set<Bilesen> get bilesenler => {
+    for (final entry in _tutamlar.entries)
+      if (entry.value >= Balance.tutamAdedi) entry.key,
+  };
+
+  void bilesenEkle(Bilesen bilesen) => _tutamlar[bilesen] = tutam(bilesen) + 1;
 
   /// Flatbread first and mandatory; nothing else lands on a bare plate.
   bool get lavasBekliyor => !lavasli;
@@ -125,7 +147,7 @@ class Porsiyon {
   /// After the bread, in any order — the same rule as the wrap, and for the
   /// same reason: waiting on the grill is not a decision.
   bool bilesenKabul(Bilesen bilesen) =>
-      lavasli && !bilesenler.contains(bilesen);
+      lavasli && tutam(bilesen) < Balance.tutamAdedi;
 
   /// No rolling and no paper: a plate is servable as soon as it has meat on
   /// bread. Components are the optional part.

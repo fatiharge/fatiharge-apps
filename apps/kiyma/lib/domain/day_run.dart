@@ -705,7 +705,7 @@ class DayRun {
         station.etli = true;
       case MalzemeTutami(:final malzeme):
         if (!station.malzemeKabul(malzeme)) return false;
-        station.malzemeler.add(malzeme);
+        station.malzemeEkle(malzeme);
       case Kagit():
         if (!station.kagitBekliyor) return false;
         station.kagitli = true;
@@ -728,7 +728,7 @@ class DayRun {
         station.etli = true;
       case BilesenTutami(:final bilesen):
         if (!station.bilesenKabul(bilesen)) return false;
-        station.bilesenler.add(bilesen);
+        station.bilesenEkle(bilesen);
       case _:
         return false;
     }

@@ -4,13 +4,13 @@ import 'package:kiyma/domain/balance.dart';
 void main() {
   group('Balance', () {
     test('the cooked window narrows and then holds at 5s', () {
-      expect(Balance.cookedWindow(1), closeTo(11.7, 0.001));
-      expect(Balance.cookedWindow(24), closeTo(5, 0.001));
+      expect(Balance.cookedWindow(1), closeTo(22, 0.001));
+      expect(Balance.cookedWindow(9), closeTo(6, 0.001));
       expect(Balance.cookedWindow(60), 5);
     });
 
     test('patience shortens and then holds at 12s', () {
-      expect(Balance.patience(1), closeTo(29.4, 0.001));
+      expect(Balance.patience(1), closeTo(56.5, 0.001));
       expect(Balance.patience(30), 12);
       expect(Balance.patience(100), 12);
     });
@@ -43,9 +43,9 @@ void main() {
       );
     });
 
-    test('a run is two minutes plus five seconds a day', () {
-      expect(Balance.runLength(1), const Duration(seconds: 125));
-      expect(Balance.runLength(10), const Duration(seconds: 170));
+    test('a run is a minute plus five seconds a day', () {
+      expect(Balance.runLength(1), const Duration(seconds: 65));
+      expect(Balance.runLength(10), const Duration(seconds: 110));
     });
 
     test('the target table climbs, and keeps climbing past its end', () {
