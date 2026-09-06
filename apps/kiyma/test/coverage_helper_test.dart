@@ -64,6 +64,7 @@ import 'package:kiyma/presentation/shop_page.dart';
 import 'package:kiyma/presentation/splash.dart';
 import 'package:kiyma/presentation/startup_page.dart';
 import 'package:kiyma/presentation/summary_page.dart';
+import 'package:kiyma/presentation/wiki_page.dart';
 import 'package:kiyma/route/app_router.dart';
 
 void main() {

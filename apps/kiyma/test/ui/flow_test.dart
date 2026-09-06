@@ -153,6 +153,23 @@ void main() {
     });
   });
 
+  group('the notebook', () {
+    testWidgets('gathers what the usta only says once', (tester) async {
+      await open(tester, const MenuRoute());
+      await tester.tap(find.text('Defter'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Usta’nın defteri'), findsOneWidget);
+      expect(find.text('Aceleci'), findsOneWidget);
+      // A type nobody has met is listed with the day it starts, not hidden:
+      // what is coming is a reason to keep playing.
+      expect(find.text('3. günden sonra'), findsWidgets);
+      // And it keeps going past the fold: badges are near the bottom.
+      await tester.scrollUntilVisible(find.text('Kusursuz gün'), 200);
+      expect(find.text('Kusursuz gün'), findsOneWidget);
+    });
+  });
+
   group('the shop', () {
     /// Presses a price button.
     ///

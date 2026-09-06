@@ -69,6 +69,13 @@ class MenuPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 14),
                       ChunkyButton(
+                        label: 'menu.defter'.tr(),
+                        icon: Icons.menu_book_rounded,
+                        color: KiymaPalette.celik,
+                        onPressed: () => context.router.push(const WikiRoute()),
+                      ),
+                      const SizedBox(height: 14),
+                      ChunkyButton(
                         label: 'menu.dil'.tr(),
                         icon: Icons.translate_rounded,
                         color: KiymaPalette.celik,

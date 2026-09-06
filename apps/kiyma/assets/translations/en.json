@@ -14,7 +14,8 @@
   "menu": {
     "oyna": "Play",
     "yukselt": "Upgrade",
-    "dil": "Language"
+    "dil": "Language",
+    "defter": "Notebook"
   },
   "gun": {
     "baslik": "Day {}",
@@ -295,5 +296,52 @@
     "surahi": "Filling is {}% faster",
     "ikram": "Everybody waits {} seconds longer",
     "kasa": "Money sits on the counter {} seconds longer"
+  },
+  "defter": {
+    "baslik": "The usta’s notebook",
+    "musteriler": "Who comes in",
+    "gunler": "How a day runs",
+    "kurallar": "The day’s rule",
+    "tempo": "Tempo",
+    "rozetler": "Badges",
+    "tezgah": "The counter",
+    "gun_kilidi": "After day {}",
+    "kilit": "Not yet"
+  },
+  "musteri": {
+    "siradan": "Ordinary",
+    "siradan_ne": "One product, one ask. Most of the day is this.",
+    "aceleci": "In a hurry",
+    "aceleci_ne": "Short patience, higher pay. Leaves no room for a mistake.",
+    "titiz": "Fussy",
+    "titiz_ne": "Names two things they will not have. One of them ruins the product.",
+    "comert": "Generous",
+    "comert_ne": "Tips if you are quick; nothing if they had to wait.",
+    "kararsiz": "Undecided",
+    "kararsiz_ne": "Changes their mind once while waiting. What you built stays in your hand.",
+    "kalabalik": "A crowd",
+    "kalabalik_ne": "Two products on one ticket. The place stays taken until both go."
+  },
+  "gidis_ne": {
+    "duz": "The same pace all day. The best one to learn on.",
+    "ogle": "A rush in the middle, quiet either side.",
+    "cift_servis": "Two separate rushes. The lull between them is for prep.",
+    "aksamustu": "Heavier towards the end. Fill the shelf early."
+  },
+  "tempo_ne": {
+    "soguk": "Takings halve and the meat cooks slowly.",
+    "normal": "Everything as it should be.",
+    "isiniyor": "Takings rise and everyone waits a little longer.",
+    "ates": "The best takings and the fastest grill."
+  },
+  "rozet_ne": {
+    "kusursuz": "Nothing burnt and nobody left angry.",
+    "temiz": "Not one skewer burnt.",
+    "sabirli": "Nobody gave up waiting.",
+    "hedef": "You hit the day’s customer goal.",
+    "seri": "You served a long run without a break.",
+    "kurtarici": "You caught several people with the bar almost empty.",
+    "ates": "You worked the meter up to a blaze.",
+    "dolu": "Half again as many customers as the goal asked for."
   }
 }

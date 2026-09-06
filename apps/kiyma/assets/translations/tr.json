@@ -14,7 +14,8 @@
   "menu": {
     "oyna": "Oyna",
     "yukselt": "Yükselt",
-    "dil": "Dil"
+    "dil": "Dil",
+    "defter": "Defter"
   },
   "gun": {
     "baslik": "Gün {}",
@@ -295,5 +296,52 @@
     "surahi": "Dolum %{} hızlanır",
     "ikram": "Herkes {} saniye daha bekler",
     "kasa": "Para tezgahta {} saniye daha durur"
+  },
+  "defter": {
+    "baslik": "Usta’nın defteri",
+    "musteriler": "Kim gelir",
+    "gunler": "Günün gidişi",
+    "kurallar": "Günün kuralı",
+    "tempo": "Tempo",
+    "rozetler": "Rozetler",
+    "tezgah": "Tezgah",
+    "gun_kilidi": "{}. günden sonra",
+    "kilit": "Henüz gelmedi"
+  },
+  "musteri": {
+    "siradan": "Sıradan",
+    "siradan_ne": "Bir ürün, bir istek. Günün çoğu bundan.",
+    "aceleci": "Aceleci",
+    "aceleci_ne": "Sabrı kısa, ödemesi yüksek. Hata payı bırakmaz.",
+    "titiz": "Titiz",
+    "titiz_ne": "Bir yerine iki şey istemez. Yanlış giren ürünü çöpe atar.",
+    "comert": "Cömert",
+    "comert_ne": "Erken servis edersen bahşiş bırakır; beklettiğinde bırakmaz.",
+    "kararsiz": "Kararsız",
+    "kararsiz_ne": "Beklerken fikrini bir kez değiştirir. Hazırladığın elinde kalır.",
+    "kalabalik": "Kalabalık",
+    "kalabalik_ne": "Tek biletle iki ürün. İkisi de gitmeden yer boşalmaz."
+  },
+  "gidis_ne": {
+    "duz": "Gün boyu aynı tempo. Öğrenmek için en iyisi.",
+    "ogle": "Ortada bir patlama, iki yanında sessizlik.",
+    "cift_servis": "İki ayrı yoğunluk. Aradaki sakinlik hazırlık içindir.",
+    "aksamustu": "Sona doğru ağırlaşır. Rafı önceden doldur."
+  },
+  "tempo_ne": {
+    "soguk": "Kazanç yarıya iner, et yavaş pişer.",
+    "normal": "Her şey olması gerektiği gibi.",
+    "isiniyor": "Kazanç artar, herkes biraz daha bekler.",
+    "ates": "En yüksek kazanç ve en hızlı mangal."
+  },
+  "rozet_ne": {
+    "kusursuz": "Hiçbir şey yanmadı, kimse kızgın gitmedi.",
+    "temiz": "Mangalda tek bir şiş bile yanmadı.",
+    "sabirli": "Kimse beklemekten vazgeçmedi.",
+    "hedef": "Günün müşteri hedefini tutturdun.",
+    "seri": "Arka arkaya uzun bir servis götürdün.",
+    "kurtarici": "Sabrı bitmek üzereyken birkaç kişiyi yetiştirdin.",
+    "ates": "Tempoyu ateşe çıkardın.",
+    "dolu": "Hedefin bir buçuk katı kadar müşteri çıkardın."
   }
 }
