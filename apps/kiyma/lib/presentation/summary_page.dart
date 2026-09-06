@@ -454,23 +454,29 @@ class _Takings extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          // Held to one short line and scaled into it. The column is
+          // `spaceBetween` inside a fixed box, so anything with a natural
+          // height of its own pushes the takings off the bottom.
           if (rozetler.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 6),
-              child: Wrap(
-                spacing: 6,
-                runSpacing: 4,
-                children: [
-                  for (final rozet in rozetler.take(_gosterilen))
-                    BrandChip(
-                      label: 'rozet.${rozet.name}'.tr(),
-                      icon: Icons.workspace_premium_rounded,
-                    ),
-                  if (rozetler.length > _gosterilen)
-                    BrandChip(
-                      label: '+${rozetler.length - _gosterilen}',
-                    ),
-                ],
+            SizedBox(
+              height: 22,
+              child: FittedBox(
+                alignment: Alignment.centerLeft,
+                fit: BoxFit.scaleDown,
+                child: Row(
+                  spacing: 6,
+                  children: [
+                    for (final rozet in rozetler.take(_gosterilen))
+                      BrandChip(
+                        label: 'rozet.${rozet.name}'.tr(),
+                        icon: Icons.workspace_premium_rounded,
+                      ),
+                    if (rozetler.length > _gosterilen)
+                      BrandChip(
+                        label: '+${rozetler.length - _gosterilen}',
+                      ),
+                  ],
+                ),
               ),
             ),
           Row(

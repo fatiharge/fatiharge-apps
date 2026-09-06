@@ -63,6 +63,12 @@ void main() {
         gunOnce: day,
         atlananGun: 0,
         zirveTempo: TempoHali.ates,
+        // The worst case for the layout: a day that earned more badges than
+        // the strip shows. It overflowed by eleven pixels on a real phone.
+        kritik: Balance.rozetKritik,
+        enUzunSeri: Balance.rozetSeri,
+        hedef: 5,
+        hedefTamam: true,
       );
     expect(progress.gun, day);
 
