@@ -72,6 +72,10 @@ class ShopScenePainter extends CustomPainter {
         // would be a price on a string pointing at bare tiles.
         if (!acik && region.category == 'musteri') {
           _yerHayaleti(canvas, region.quad);
+        } else if (etiketler.containsKey(region.name)) {
+          // A shelf or a prep board has no art of its own, so a tag over one
+          // points at bare steel. The outline is what the tag is pointing at.
+          _kesikli(canvas, region.quad);
         }
         continue;
       }
@@ -111,15 +115,7 @@ class ShopScenePainter extends CustomPainter {
   /// seeing the object, and a tag across the middle of an empty steel well
   /// hides the one thing that explains what the well is.
   void _etiket(Canvas canvas, SceneRegion region, int fiyat, Rect rect) {
-    final bounds = region.quad.bounds;
     final lit = secili == region.name;
-    canvas.drawLine(
-      Offset(rect.center.dx, rect.bottom),
-      Offset(bounds.center.dx, bounds.top + 4),
-      Paint()
-        ..color = const Color(0xFF2E2A26)
-        ..strokeWidth = 1.6,
-    );
     final tag = assets['fiyat_etiketi'];
     if (tag == null) {
       drawKey(
@@ -148,7 +144,7 @@ class ShopScenePainter extends CustomPainter {
       // Into the paper, which is the lower two thirds of the art — above it
       // is the string the tag hangs by.
       rect.center + Offset(0, rect.height * 0.14),
-      size: 14,
+      size: 12,
       weight: 900,
       family: 'Rubik',
       center: true,

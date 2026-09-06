@@ -135,6 +135,7 @@ void drawText(
   Color? outline,
   bool right = false,
   bool middle = false,
+  double? maxWidth,
 }) {
   if (outline != null) {
     // Drawn four times around: a number thrown over a painted kitchen has no
@@ -157,6 +158,7 @@ void drawText(
         family: family,
         right: right,
         middle: middle,
+        maxWidth: maxWidth,
       );
     }
   }
@@ -175,7 +177,7 @@ void drawText(
       ),
     ),
     textDirection: TextDirection.ltr,
-  )..layout();
+  )..layout(maxWidth: maxWidth ?? double.infinity);
   final dx = center
       ? painter.width / 2
       : right

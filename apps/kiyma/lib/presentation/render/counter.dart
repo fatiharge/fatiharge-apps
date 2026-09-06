@@ -537,10 +537,39 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       });
     }
 
-    // Low target, high bubble. Nothing to point at means it stays low, out
-    // of the tickets' way.
-    final asagida = hedef != null && hedef.quad.bounds.center.dy < size.y / 2;
-    final rect = Rect.fromLTWH(148, asagida ? size.y - 116 : 14, 736, 100);
+    // A corner, chosen for what it hides least.
+    //
+    // It was a full-width band that flipped top to bottom with the target,
+    // so "hand it over" — a target at the customers — laid the bubble across
+    // the prep area, over the wrap the player was being told to pick up.
+    final dolu = <Rect>[
+      if (hedef != null) hedef.quad.bounds,
+      for (final ad in const [
+        'durum_hazirlama',
+        'tabak_hazirlama',
+        'bekleme_alani',
+      ])
+        if (scene.maybe(ad) case final bolge?) bolge.quad.bounds,
+    ];
+    const genislik = 500.0;
+    const yukseklik = 92.0;
+    var rect = Rect.zero;
+    var enAz = double.infinity;
+    for (final aday in [
+      for (final x in [20.0, size.x - genislik - 20])
+        for (final y in [12.0, size.y - yukseklik - 12])
+          Rect.fromLTWH(x, y, genislik, yukseklik),
+    ]) {
+      var ortusme = 0.0;
+      for (final bolge in dolu) {
+        final kesisim = aday.intersect(bolge);
+        if (!kesisim.isEmpty) ortusme += kesisim.width * kesisim.height;
+      }
+      if (ortusme < enAz) {
+        enAz = ortusme;
+        rect = aday;
+      }
+    }
     drawPanel(canvas, rect, fill: const Color(0xFFF7EEDF));
 
     final usta = assets['usta'];
@@ -548,32 +577,35 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       drawCentered(
         canvas,
         usta,
-        Offset(rect.left + 4, rect.center.dy + 6),
-        118,
+        Offset(rect.left + 2, rect.center.dy + 6),
+        104,
       );
     }
 
+    // Wrapped, and clear of both the portrait and the skip button: a
+    // sentence long enough to say something ran off the end of the panel.
     drawText(
       canvas,
       ceviri('ders.${ogretmen.ders.id}.${adim.id}'),
-      Offset(rect.left + 78, rect.center.dy - 4),
-      size: 21,
+      Offset(rect.left + 68, rect.center.dy - 6),
+      size: 17,
       weight: 800,
       family: 'Rubik',
       middle: true,
+      maxWidth: genislik - 68 - 96,
       color: const Color(0xFF2E2A26),
     );
     drawText(
       canvas,
       '${ogretmen.sira + 1}/${ogretmen.toplam}',
-      Offset(rect.left + 78, rect.bottom - 24),
-      size: 13,
+      Offset(rect.left + 68, rect.bottom - 22),
+      size: 12,
       weight: 700,
       family: 'Rubik',
       color: const Color(0x992E2A26),
     );
 
-    _atlaKutusu = Rect.fromLTWH(rect.right - 106, rect.center.dy - 20, 88, 40);
+    _atlaKutusu = Rect.fromLTWH(rect.right - 92, rect.center.dy - 18, 76, 36);
     drawKey(canvas, _atlaKutusu, const Color(0xFF6E6155));
     drawText(
       canvas,

@@ -22,14 +22,19 @@ enum UnlockGroup {
   cirak('cirak'),
   tabela('tabela'),
   kasap('kasap'),
-  porsiyon('porsiyon', sirasiz: true),
+  porsiyon('porsiyon', sirasiz: true, hatli: true),
   tatli('tatli', sirasiz: true),
-  icecek('icecek', sirasiz: true),
+  icecek('icecek', sirasiz: true, hatli: true),
   bardak('bardak', gerek: 'icecek_hatti'),
   ayranSurahisi('ayran_surahisi', gerek: 'icecek_ayran'),
   salgamSurahisi('salgam_surahisi', gerek: 'icecek_salgam');
 
-  const UnlockGroup(this.id, {this.gerek, this.sirasiz = false});
+  const UnlockGroup(
+    this.id, {
+    this.gerek,
+    this.sirasiz = false,
+    this.hatli = false,
+  });
 
   /// Names `grup.<id>` in the translations, and nothing else.
   final String id;
@@ -40,8 +45,14 @@ enum UnlockGroup {
 
   /// Separate goods rather than tiers of one thing. Pickles are not a better
   /// pepper, so the shop offers them all at once and lets the prices decide
-  /// the order; the first rung still gates the rest where it is a line.
+  /// the order.
   final bool sirasiz;
+
+  /// The first rung opens the line and the rest sit on it. Only the plate and
+  /// the drinks work this way; the ingredients have no door in front of them,
+  /// and gating them on the cheapest one kept pickles off the shelf until
+  /// peppers were bought.
+  final bool hatli;
 }
 
 /// One buyable rung: what it opens, what it costs, and where it sits.
@@ -192,6 +203,7 @@ class Unlocks {
     if (!unlock.grup.sirasiz) {
       return kademe(unlock.grup) == unlock.kademe - 1;
     }
+    if (!unlock.grup.hatli) return true;
     final ilk = kademeler(unlock.grup).first;
     return unlock.id == ilk.id || has(ilk.id);
   }

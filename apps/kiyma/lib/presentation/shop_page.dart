@@ -78,9 +78,11 @@ class _DukkanState extends State<_Dukkan> {
     final vurulan =
         TagLayout.of(scene, _etiketler(unlocks)).at(point) ??
         scene.at(point)?.name;
-    // Everything else in the kitchen is scenery here. A touch on the counter
-    // opening an empty card would teach the player to stop touching things.
-    if (vurulan == null || !ShopMap.bolgeler.contains(vurulan)) return;
+    // Everything else in the kitchen is scenery here, and so is an object
+    // whose ladders are all bought: the plate stack sells the plate line and
+    // nothing after it, so once that is open there is nothing behind it and
+    // a card would open empty.
+    if (vurulan == null || ShopMap.satilan(vurulan, unlocks).isEmpty) return;
     setState(() => _secili = vurulan);
   }
 

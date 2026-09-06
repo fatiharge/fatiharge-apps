@@ -2,7 +2,6 @@ import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:kiyma/domain/scene.dart';
-import 'package:kiyma/presentation/gold_text.dart';
 
 /// Where every price tag hangs, worked out once for both readers.
 ///
@@ -27,11 +26,13 @@ class TagLayout {
       final region = scene.maybe(name);
       if (region == null) continue;
       final price = prices[name]!;
-      var rect = _place(scene, region, price);
+      var rect = _place(scene, region);
+      // Two rows at most: anything higher stops reading as belonging to the
+      // thing underneath it, however long the string is.
       var lifts = 0;
-      while (lifts < 6 &&
+      while (lifts < 2 &&
           out.any((other) => other.rect.overlaps(rect.inflate(2)))) {
-        rect = rect.translate(0, -30);
+        rect = rect.translate(0, 34);
         lifts++;
       }
       out.add((region: name, rect: rect, price: price));
@@ -41,19 +42,32 @@ class TagLayout {
 
   final List<({String region, Rect rect, int price})> tags;
 
-  static Rect _place(SceneData scene, SceneRegion region, int price) {
+  /// One size for every tag, narrow enough to hang between two wells.
+  ///
+  /// It used to grow with the price, which made a three-figure tag wider than
+  /// the 52px well it belonged to. Neighbours overlapped, every one of them
+  /// was lifted clear of the last, and the ingredient row came out as a
+  /// staircase of dockets pointing at the wrong pots.
+  static const size = 48.0;
+
+  static Rect _place(SceneData scene, SceneRegion region) {
     final bounds = region.quad.bounds;
-    // Near enough square: the tag art is a paper docket with a loop of
-    // string above it, and the loop is most of what makes it read as a tag.
-    final width = 30.0 + goldText(price).length * 10;
     final x = bounds.center.dx.clamp(
-      width / 2 + 2,
-      scene.size.width - width / 2 - 2,
+      size / 2 + 2,
+      scene.size.width - size / 2 - 2,
+    );
+    // On the front lip, the way a display case is labelled. Hung above on a
+    // string it read as floating — a tag on a low tray or a big grill ended
+    // up over bare wall — and sitting on the top edge it covered the one
+    // thing the player is there to look at.
+    final y = math.min(
+      scene.size.height - size / 2 - 4,
+      bounds.bottom - size * 0.35,
     );
     return Rect.fromCenter(
-      center: Offset(x, math.max<double>(28, bounds.top - 26)),
-      width: width,
-      height: width,
+      center: Offset(x, math.max<double>(size / 2 + 4, y)),
+      width: size,
+      height: size,
     );
   }
 
