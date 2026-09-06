@@ -10,7 +10,10 @@ enum Pisme { cig, pisiyor, pismis, yanmis }
 
 /// One skewer position on the grill.
 class MangalSlot {
-  MangalSlot({this.komur = 0, this.unlocked = true});
+  MangalSlot({this.komur = 0, this.pencere = 1, this.unlocked = true});
+
+  /// How much wider the day's rule makes the cooked window.
+  final double pencere;
 
   /// How good the coal is. Worked into the two halves of the cook once,
   /// because both are read on every frame of every slot.
@@ -37,14 +40,14 @@ class MangalSlot {
 
   /// How wide the cooked window is right now: the day narrows it, a hot
   /// counter widens it back out.
-  double pencere(int day, double carpan) =>
-      Balance.cookedWindow(day, komur: komur) * carpan;
+  double pencereGenisligi(int day, double carpan) =>
+      Balance.cookedWindow(day, komur: komur) * carpan * pencere;
 
   /// `0..1` through the current state, for the progress the player reads.
   double ilerleme(int day, [double carpan = 1]) => switch (durum) {
     Pisme.cig => _gecen / _cig,
     Pisme.pisiyor => (_gecen - _cig) / _pisme,
-    Pisme.pismis => (_gecen - _cig - _pisme) / pencere(day, carpan),
+    Pisme.pismis => (_gecen - _cig - _pisme) / pencereGenisligi(day, carpan),
     _ => 1,
   };
 
@@ -67,7 +70,7 @@ class MangalSlot {
     final next = switch (_gecen) {
       _ when _gecen < _cig => Pisme.cig,
       _ when _gecen < cooked => Pisme.pisiyor,
-      _ when _gecen < cooked + pencere(day, carpan) => Pisme.pismis,
+      _ when _gecen < cooked + pencereGenisligi(day, carpan) => Pisme.pismis,
       _ => Pisme.yanmis,
     };
     final burned = next == Pisme.yanmis && durum != Pisme.yanmis;

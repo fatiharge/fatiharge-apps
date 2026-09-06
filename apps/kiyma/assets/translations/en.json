@@ -32,7 +32,10 @@
     "ipucu_4": "Ingredients do not wait for the meat: the bread is enough.",
     "ipucu_5": "The higher the tempo, the more everything pays.",
     "ipucu_6": "Leave the grill empty and the mince tray starts blinking.",
-    "tempo": "Today's trade"
+    "tempo": "Today's trade",
+    "kural": "Today's rule",
+    "hedef": "Today's goal",
+    "hedef_ne": "{} happy customers  →  +{} gold"
   },
   "magaza": {
     "baslik": "Grow the shop",
@@ -47,7 +50,9 @@
     "musteri_kizgin": "A customer left",
     "son_siparis": "Last orders!",
     "fikir_degisti": "Changed their mind",
-    "bahsis": "Left a tip"
+    "bahsis": "Left a tip",
+    "gunluk_hedef": "Today's goal met",
+    "seri": "The run holds"
   },
   "kilit": {
     "malzeme_biber": "Pepper",
@@ -114,7 +119,9 @@
     "hazir": "The orders are in — get back to the counter!",
     "gun_rozet": "DAY",
     "zirve": "BEST TEMPO",
-    "yildiz": "{} / 3 stars"
+    "yildiz": "{} / 3 stars",
+    "hedef_tamam": "Today's goal met",
+    "hedef_kalan": "Today's goal missed"
   },
   "duraklat": {
     "baslik": "Paused",
@@ -185,5 +192,27 @@
     "bardak": "The glass shelf",
     "ayran_surahisi": "The ayran jug",
     "salgam_surahisi": "The şalgam jug"
+  },
+  "kural": {
+    "denetim": "An inspection",
+    "denetim_ne": "No mistake is forgiven, and everything pays half again.",
+    "komur_az": "Short on charcoal",
+    "komur_az_ne": "One grill slot is shut, but meat burns slower.",
+    "durum_gunu": "Wraps only",
+    "durum_gunu_ne": "No plates today, and wraps pay 30% more.",
+    "titiz_gun": "A fussy day",
+    "titiz_gun_ne": "Everybody asks for one ingredient more.",
+    "bayram": "A holiday",
+    "bayram_ne": "Everybody wants dessert."
+  },
+  "rozet": {
+    "kusursuz": "A perfect day",
+    "temiz": "Nothing burnt",
+    "sabirli": "Nobody left angry",
+    "hedef": "Goal met",
+    "seri": "A long run",
+    "kurtarici": "Saved at the buzzer",
+    "ates": "On fire",
+    "dolu": "A full counter"
   }
 }

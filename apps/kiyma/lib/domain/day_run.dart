@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'dart:ui';
 import 'package:kiyma/domain/balance.dart';
+import 'package:kiyma/domain/gun_kurali.dart';
 import 'package:kiyma/domain/gun_profili.dart';
 import 'package:kiyma/domain/model/carried.dart';
 import 'package:kiyma/domain/model/items.dart';
@@ -32,6 +33,12 @@ enum DayEvent {
 
   /// Somebody changed their mind about what they wanted.
   fikirDegisti,
+
+  /// The day's goal was reached.
+  gunlukHedef,
+
+  /// A run of customers served without a mistake paid out.
+  seri,
 
   /// A generous customer left something on top.
   bahsis,
@@ -72,6 +79,7 @@ class DayRun {
        _maker = OrderMaker(
          progress.unlocks,
          day: progress.gun,
+         kural: GunKurali.forDay(progress.gun),
          random: random,
        ) {
     final unlocks = progress.unlocks;
@@ -79,7 +87,8 @@ class DayRun {
       for (var i = 0; i < 4; i++)
         MangalSlot(
           komur: unlocks.komurKademesi,
-          unlocked: i < unlocks.mangalSlots,
+          pencere: GunKurali.forDay(progress.gun).pencereCarpani,
+          unlocked: i < _acikMangal(progress),
         ),
     ];
     bekleme = List<Urun?>.filled(3, null);
@@ -165,6 +174,7 @@ class DayRun {
   /// run is over the grill has been emptied and the evidence is gone.
   int yanikSayisi = 0;
   int kizginSayisi = 0;
+  int kritikServis = 0;
 
   /// What just happened and where, waiting to be drawn. Capped, because the
   /// headless simulator plays thousands of runs and nothing drains it there.
@@ -189,12 +199,21 @@ class DayRun {
   /// The counter's momentum. Everything the player does feeds it or costs it,
   /// and what it is worth is a multiplier on the takings, the cooked window
   /// and how fast patience runs out.
-  final Tempo tempo = Tempo();
+  late final Tempo tempo = Tempo(bagislananSayisi: kural.bagislanan);
 
   double get sureOrani =>
       (kalanSure / Balance.runLength(day).inSeconds).clamp(0, 1);
   double _sonrakiGelis = 0;
   bool bitti = false;
+
+  /// What is different about today. Neutral on days one to three.
+  late final GunKurali kural = GunKurali.forDay(day);
+
+  /// How many customers the day asks to be sent away happy, and whether it
+  /// has happened yet.
+  late final int gunlukHedef = Balance.gunlukHedef(day);
+
+  bool hedefTamam = false;
 
   /// The lesson being taught on this run, if one is owed.
   ///
@@ -494,6 +513,42 @@ class DayRun {
     onEvent(DayEvent.musteriGeldi);
     onChanged();
   }
+
+  /// A tip every fifth customer in a row, so a good stretch is worth
+  /// something the player can see rather than only a steadier meter.
+  void _seriIkramiyesi(int index) {
+    if (tempo.seri % Balance.seriIkramiyeAdimi != 0) return;
+    final miktar = Balance.seriIkramiyesi(tempo.seri, day);
+    if (miktar <= 0) return;
+    progress.kazan(miktar);
+    _cue(DayEvent.seri, yeri(index), amount: miktar, asset: 'altin');
+    onEvent(DayEvent.seri);
+  }
+
+  /// Pays the day's goal the moment it lands, not at the summary: a reward
+  /// that arrives after the run is over is a number, where one that lands
+  /// mid-shift is a moment.
+  void _gunlukHedef() {
+    if (hedefTamam || memnunMusteri < gunlukHedef) return;
+    hedefTamam = true;
+    final odul = Balance.gunlukOdul(day);
+    progress.kazan(odul);
+    _cue(
+      DayEvent.gunlukHedef,
+      scene['tezgah_ust_kenari'].quad.bounds.center,
+      amount: odul,
+      asset: 'altin',
+    );
+    onEvent(DayEvent.gunlukHedef);
+  }
+
+  /// Slots the day actually opens: a rule may close one, never below the
+  /// grill day one had.
+  static int _acikMangal(Progress progress) => math.max(
+    Balance.enAzMangal,
+    progress.unlocks.mangalSlots -
+        GunKurali.forDay(progress.gun).mangalKesintisi,
+  );
 
   /// The gap to the next arrival: the day's base, stretched or squeezed by
   /// whichever stretch of the shift we are in.
@@ -1150,7 +1205,16 @@ class DayRun {
     }
 
     _consume(held);
-    final paid = (kazanc * tempo.paraCarpani).round();
+    final son = customer.order.ikinci == null
+        ? !customer.anaUrunVerildi
+        : !customer.ikinciVerildi;
+    final paid =
+        (kazanc *
+                tempo.paraCarpani *
+                (son && customer.sabirOrani <= Balance.kritikSabir
+                    ? Balance.kritikCarpani
+                    : 1))
+            .round();
     customer.odenen += paid;
     _cue(
       DayEvent.kabul,
@@ -1159,14 +1223,22 @@ class DayRun {
       amount: paid,
       asset: held.asset,
     );
+    // The bottom of the bar pays like the top: a handover made with seconds
+    // left is the hardest thing the counter asks for, and until now it paid
+    // less than an easy one.
+    final kritik =
+        customer.tamamlandi && customer.sabirOrani <= Balance.kritikSabir;
+    if (kritik) kritikServis++;
     tempo.servisEdildi(
       tamami: customer.tamamlandi,
       sabirOrani: customer.sabirOrani,
+      kritik: kritik,
     );
     onEvent(DayEvent.kabul);
     _kilometre(Kilometre.servisEdildi);
 
     if (customer.tamamlandi) {
+      _seriIkramiyesi(index);
       _bahsis(index, customer);
       _ayril(index, memnun: true);
     }
@@ -1205,7 +1277,7 @@ class DayRun {
     };
     // Applied to the main product only: an extra is the same baklava
     // whoever asked for it.
-    return (taban * tipi.odemeCarpani).round();
+    return (taban * tipi.odemeCarpani * kural.odeme).round();
   }
 
   void _ayril(int index, {required bool memnun}) {
@@ -1229,6 +1301,7 @@ class DayRun {
 
     if (memnun) {
       memnunMusteri++;
+      _gunlukHedef();
     } else {
       kizginSayisi++;
       tempo.musteriKizdi();

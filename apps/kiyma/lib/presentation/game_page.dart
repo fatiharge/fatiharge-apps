@@ -95,6 +95,8 @@ String? _toastKey(DayEvent event) => switch (event) {
   DayEvent.sonSiparis => 'olay.son_siparis',
   DayEvent.fikirDegisti => 'olay.fikir_degisti',
   DayEvent.bahsis => 'olay.bahsis',
+  DayEvent.gunlukHedef => 'olay.gunluk_hedef',
+  DayEvent.seri => 'olay.seri',
   _ => null,
 };
 

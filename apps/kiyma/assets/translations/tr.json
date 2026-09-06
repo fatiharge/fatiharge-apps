@@ -32,7 +32,10 @@
     "ipucu_4": "Malzeme eti beklemez: lavaş konar konmaz eklenebilir.",
     "ipucu_5": "Tempo yükseldikçe her şey daha çok para eder.",
     "ipucu_6": "Mangal boş kalırsa kıyma tepsisi yanıp söner.",
-    "tempo": "Bugünün gidişi"
+    "tempo": "Bugünün gidişi",
+    "kural": "Bugünün kuralı",
+    "hedef": "Günün hedefi",
+    "hedef_ne": "{} mutlu müşteri  →  +{} altın"
   },
   "magaza": {
     "baslik": "Dükkanı büyüt",
@@ -47,7 +50,9 @@
     "musteri_kizgin": "Müşteri gitti",
     "son_siparis": "Son sipariş!",
     "fikir_degisti": "Fikir değiştirdi",
-    "bahsis": "Bahşiş bıraktı"
+    "bahsis": "Bahşiş bıraktı",
+    "gunluk_hedef": "Günün hedefi tamam",
+    "seri": "Seri devam ediyor"
   },
   "kilit": {
     "malzeme_biber": "Biber",
@@ -114,7 +119,9 @@
     "hazir": "Siparişler hazır, servise başla!",
     "gun_rozet": "GÜN",
     "zirve": "EN İYİ TEMPO",
-    "yildiz": "{} / 3 yıldız"
+    "yildiz": "{} / 3 yıldız",
+    "hedef_tamam": "Günün hedefi tuttu",
+    "hedef_kalan": "Günün hedefi tutmadı"
   },
   "duraklat": {
     "baslik": "Duraklatıldı",
@@ -185,5 +192,27 @@
     "bardak": "Bardak rafı",
     "ayran_surahisi": "Ayran sürahisi",
     "salgam_surahisi": "Şalgam sürahisi"
+  },
+  "kural": {
+    "denetim": "Ustabaşı denetimi",
+    "denetim_ne": "Hata affı yok, ama her şey %50 fazla eder.",
+    "komur_az": "Kömür az",
+    "komur_az_ne": "Bir mangal gözü kapalı, ama et geç yanıyor.",
+    "durum_gunu": "Dürüm günü",
+    "durum_gunu_ne": "Sadece dürüm var, ve %30 fazla eder.",
+    "titiz_gun": "Titiz gün",
+    "titiz_gun_ne": "Herkes bir malzeme fazla istiyor.",
+    "bayram": "Bayram",
+    "bayram_ne": "Herkes tatlı istiyor."
+  },
+  "rozet": {
+    "kusursuz": "Kusursuz gün",
+    "temiz": "Hiç yakmadı",
+    "sabirli": "Kimse kızmadı",
+    "hedef": "Hedef tuttu",
+    "seri": "Uzun seri",
+    "kurtarici": "Son saniye ustası",
+    "ates": "Ateş gibi",
+    "dolu": "Dolu tezgah"
   }
 }

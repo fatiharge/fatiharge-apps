@@ -16,6 +16,7 @@ import 'package:kiyma/config/storage_module.dart';
 import 'package:kiyma/domain/balance.dart';
 import 'package:kiyma/domain/day_run.dart';
 import 'package:kiyma/domain/gesture.dart';
+import 'package:kiyma/domain/gun_kurali.dart';
 import 'package:kiyma/domain/gun_profili.dart';
 import 'package:kiyma/domain/model/carried.dart';
 import 'package:kiyma/domain/model/items.dart';

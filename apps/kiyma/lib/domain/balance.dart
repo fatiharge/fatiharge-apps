@@ -233,6 +233,83 @@ abstract final class Balance {
   /// day open for as long as the customers' patience lasts.
   static const kapanisPayi = 25.0;
 
+  // --- A good stretch ---
+
+  /// A tip every fifth customer in a row: often enough that a good run pays
+  /// twice, rare enough that it is not the per-serve reward again. Worth one
+  /// bare wrap per step so it rides the day with everything else, and it
+  /// stops growing so the exposure to the target table stops widening.
+  static const seriIkramiyeAdimi = 5;
+  static const seriIkramiyeCarpani = 1.2;
+  static const seriIkramiyeTavani = 3;
+
+  static int seriIkramiyesi(int seri, int day) {
+    final adim = math.min(seriIkramiyeTavani, seri ~/ seriIkramiyeAdimi);
+    return adim <= 0 ? 0 : income(durumBase * seriIkramiyeCarpani * adim, day);
+  }
+
+  /// The bottom of the patience bar — the same boundary the body already
+  /// turns red at, so the state that pays is the one the player learned to
+  /// read. Half again, on the item that finishes the visit only.
+  static const kritikSabir = 0.2;
+  static const kritikCarpani = 1.5;
+
+  /// What a day has to have gone like to be worth saying so.
+  static const rozetSeri = 10;
+  static const rozetKritik = 3;
+
+  // --- What today is (design doc 11.3) ---
+
+  /// The first day that carries a named rule. Days one to three stay clean:
+  /// the trade shape arrives on day two and the usta explains it on day
+  /// three, so day four is the first card with a reader for a second name.
+  static const ilkKuralGunu = 4;
+
+  /// An inspection pays half again and forgives nothing. The reward is what
+  /// makes zero forgiveness a trade rather than a tax.
+  static const denetimOdemesi = 1.5;
+  static const denetimBagislanan = 0;
+
+  /// A cooler grill: one slot fewer, and a window half again as wide so the
+  /// day is different rather than simply worse. Two slots is the floor no
+  /// rule may take the counter below — it is day one's grill.
+  static const komurKesintisi = 1;
+  static const komurPenceresi = 1.5;
+  static const enAzMangal = 2;
+
+  /// Wraps only puts every customer through the one prep area, which is the
+  /// counter's known choke point. The premium stops the day reading as a
+  /// punishment for having bought the plate line.
+  static const durumGunuOdemesi = 1.3;
+
+  /// One more named ingredient per order, which costs handfuls and makes the
+  /// ingredient bonus — otherwise an invisible rule — the point of the day.
+  static const titizEkMalzeme = 1;
+
+  /// How often an order carries an extra. Tunables, so they live here.
+  static const tatliSansi = 0.35;
+  static const icecekSansi = 0.4;
+
+  /// A holiday means everybody, not most. The bend is that every visit needs
+  /// two handovers, so seats turn over slower; that is reward enough.
+  static const bayramTatliSansi = 1.0;
+
+  /// How many customers a day asks to be sent away happy, and what hitting
+  /// it pays. The reward is a share of the day's own level step, so it keeps
+  /// its worth forever without a second table to maintain.
+  static const gunlukHedefTaban = 5.0;
+  static const gunlukHedefEgim = 0.9;
+  static const gunlukHedefTavan = 14;
+  static const gunlukOdulPayi = 0.15;
+
+  static int gunlukHedef(int day) => math.min(
+    gunlukHedefTavan,
+    (gunlukHedefTaban + gunlukHedefEgim * (day - 1)).round(),
+  );
+
+  static int gunlukOdul(int day) =>
+      ((target(day) - floor(day)) * gunlukOdulPayi).round();
+
   /// XP needed to reach each day. Earned money is what feeds it, but the
   /// player is never shown that link — they see a level bar.
   ///

@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kiyma/application/kiyma_cubit.dart';
 import 'package:kiyma/config/injectable.dart';
 import 'package:kiyma/domain/balance.dart';
+import 'package:kiyma/domain/gun_kurali.dart';
 import 'package:kiyma/domain/gun_profili.dart';
 import 'package:kiyma/domain/unlocks.dart';
 import 'package:kiyma/presentation/brand.dart';
@@ -152,6 +153,13 @@ class _Today extends StatelessWidget {
               label: 'gidis.${GunProfili.forDay(day).ad}'.tr(),
               icon: Icons.show_chart_rounded,
             ),
+            // Only when there is one: three chips on a day with nothing
+            // special about it would teach the player to stop reading them.
+            if (!GunKurali.forDay(day).adsiz)
+              BrandChip(
+                label: 'kural.${GunKurali.forDay(day).id}'.tr(),
+                icon: Icons.gavel_rounded,
+              ),
           ],
         ),
         const SizedBox(height: 10),
@@ -159,12 +167,63 @@ class _Today extends StatelessWidget {
           row,
           const SizedBox(height: 6),
         ],
+        if (!GunKurali.forDay(day).adsiz) ...[
+          const SizedBox(height: 2),
+          _Satir(
+            icon: Icons.gavel_rounded,
+            text: 'kural.${GunKurali.forDay(day).id}_ne'.tr(),
+          ),
+        ],
+        const SizedBox(height: 2),
+        _Satir(
+          icon: Icons.flag_rounded,
+          text: 'gun.hedef_ne'.tr(
+            args: [
+              '${Balance.gunlukHedef(day)}',
+              '${Balance.gunlukOdul(day)}',
+            ],
+          ),
+        ),
       ],
     );
   }
 }
 
 /// One line of it: what the number is now, and which way it moved.
+/// A line of plain sentence under the dials: what today's rule does, and
+/// what the day is asking for. Not a dial — neither of them is a number
+/// that moved since yesterday.
+class _Satir extends StatelessWidget {
+  const _Satir({required this.icon, required this.text});
+
+  final IconData icon;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.symmetric(vertical: 3),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 15, color: KiymaPalette.celik),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            text,
+            style: const TextStyle(
+              fontFamily: 'Rubik',
+              fontSize: 13,
+              height: 1.3,
+              fontWeight: FontWeight.w600,
+              color: KiymaPalette.komur,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
 class _Dial extends StatelessWidget {
   const _Dial({
     required this.icon,

@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:kiyma/domain/balance.dart';
+import 'package:kiyma/domain/gun_kurali.dart';
 import 'package:kiyma/domain/model/items.dart';
 import 'package:kiyma/domain/model/musteri_tipi.dart';
 import 'package:kiyma/domain/model/order.dart';
@@ -13,13 +14,21 @@ import 'package:kiyma/domain/unlocks.dart';
 /// unfairness. Everything else scales with how much is open, so day one asks
 /// for a wrap with one constraint and a late day asks for three.
 class OrderMaker {
-  OrderMaker(this.unlocks, {required this.day, math.Random? random})
-    : _random = random ?? math.Random();
+  OrderMaker(
+    this.unlocks, {
+    required this.day,
+    this.kural = GunKurali.yok,
+    math.Random? random,
+  }) : _random = random ?? math.Random();
 
   final Unlocks unlocks;
 
   /// Which kinds of customer are possible yet.
   final int day;
+
+  /// What is different about today. Neutral by default, so nothing here
+  /// needs to know which rule is running.
+  final GunKurali kural;
 
   final math.Random _random;
 
@@ -32,8 +41,8 @@ class OrderMaker {
       tip: ana.tip,
       ister: ana.ister,
       istemez: ana.istemez,
-      tatli: _pick(unlocks.tatlilar, 0.35),
-      icecek: _pick(unlocks.icecekler, 0.4),
+      tatli: _pick(unlocks.tatlilar, kural.tatliSansi),
+      icecek: _pick(unlocks.icecekler, Balance.icecekSansi),
       musteriTipi: tipi,
       // The other line where there is one: two wraps is the same job twice,
       // where a wrap and a plate is two jobs — which is the whole point of
@@ -73,8 +82,9 @@ class OrderMaker {
   /// customer fussy.
   Order _urun({UrunTipi? zorla, int enAzIstemez = 0}) {
     final porsiyon =
-        zorla == UrunTipi.porsiyon ||
-        (zorla == null && unlocks.porsiyonHatti && _random.nextBool());
+        !kural.sadeDurum &&
+        (zorla == UrunTipi.porsiyon ||
+            (zorla == null && unlocks.porsiyonHatti && _random.nextBool()));
     // Asking for a plate before the plate line is open is the one thing that
     // is never allowed, whatever was pinned.
     final tip = porsiyon && unlocks.porsiyonHatti
@@ -92,7 +102,9 @@ class OrderMaker {
     // full. Half the pool, because an order asking for everything open is
     // not a choice.
     final limit = math.min(3, math.max(1, pool.length ~/ 2));
-    final count = pool.isEmpty ? 0 : 1 + _random.nextInt(limit);
+    final count = pool.isEmpty
+        ? 0
+        : math.min(pool.length, 1 + _random.nextInt(limit) + kural.ekMalzeme);
 
     final ister = <String>{};
     final istemez = <String>{};

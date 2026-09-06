@@ -124,6 +124,7 @@ class _SummaryPageState extends State<SummaryPage>
                           left: _Takings(
                             amount: _run?.kazanc ?? 0,
                             served: _run?.musteri ?? 0,
+                            rozetler: _run?.rozetler ?? const [],
                             day: _run?.gunOnce ?? _progress.gun,
                             stars: _stars,
                             zirve: _run?.zirveTempo ?? TempoHali.normal,
@@ -416,6 +417,7 @@ class _Takings extends StatelessWidget {
   const _Takings({
     required this.amount,
     required this.served,
+    required this.rozetler,
     required this.day,
     required this.stars,
     required this.zirve,
@@ -425,6 +427,13 @@ class _Takings extends StatelessWidget {
 
   final int amount;
   final int served;
+
+  /// What the day earned. At most four are drawn — a wall of chips says
+  /// nothing, and a day that earned five was a very good day either way.
+  final List<Rozet> rozetler;
+
+  static const _gosterilen = 4;
+
   final int day;
   final int stars;
   final TempoHali zirve;
@@ -445,6 +454,25 @@ class _Takings extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          if (rozetler.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 6),
+              child: Wrap(
+                spacing: 6,
+                runSpacing: 4,
+                children: [
+                  for (final rozet in rozetler.take(_gosterilen))
+                    BrandChip(
+                      label: 'rozet.${rozet.name}'.tr(),
+                      icon: Icons.workspace_premium_rounded,
+                    ),
+                  if (rozetler.length > _gosterilen)
+                    BrandChip(
+                      label: '+${rozetler.length - _gosterilen}',
+                    ),
+                ],
+              ),
+            ),
           Row(
             children: [
               BrandChip(label: 'ozet.hasilat'.tr()),

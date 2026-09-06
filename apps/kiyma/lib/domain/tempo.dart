@@ -11,6 +11,12 @@ enum TempoHali { soguk, normal, isiniyor, ates }
 /// one lives and dies with a single run, is named on the HUD, and is worth
 /// half the takings.
 class Tempo {
+  Tempo({this.bagislananSayisi = bagislanan});
+
+  /// How many mis-drops in a row this run forgives. An inspection sets it to
+  /// zero, which is the whole of that rule.
+  final int bagislananSayisi;
+
   /// Halfway. A run opens neither hot nor cold.
   static const baslangic = 50.0;
 
@@ -18,6 +24,16 @@ class Tempo {
   /// losing somebody costs a whole seat for the length of their patience, and
   /// a mis-drop costs nothing anybody can see.
   static const servis = 14.0;
+
+  /// What each customer in an unbroken run is worth, and where it stops
+  /// growing. At the cap a streak is worth exactly [hizliServis] — as much
+  /// as being prompt, and no more.
+  static const seriPrimi = 0.6;
+  static const seriTavan = 10;
+
+  /// Replaces the promptness bonus rather than stacking on it, so both ends
+  /// of the patience bar pay the same and the sloppy middle pays least.
+  static const kritikPrimi = 6.0;
 
   /// Extra for handing it over while they are still calm — up to this much.
   static const hizliServis = 6.0;
@@ -74,6 +90,12 @@ class Tempo {
   double _zirve = baslangic;
   double _sonServis = 0;
   int _ustuste = 0;
+
+  /// Customers served in a row without a burn, a walkout or a refusal.
+  int seri = 0;
+
+  /// The longest one this run, for the summary to judge the day on.
+  int enUzunSeri = 0;
 
   /// The last change and how long it has left on screen. The number moving is
   /// the whole of the teaching.
@@ -152,11 +174,29 @@ class Tempo {
     _uygula(-rate * dt, quiet: true);
   }
 
-  void servisEdildi({required bool tamami, required double sabirOrani}) {
+  /// [kritik] is a handover made at the bottom of the patience bar, which
+  /// pays the same as a prompt one — both ends of the bar are skill.
+  void servisEdildi({
+    required bool tamami,
+    required double sabirOrani,
+    bool kritik = false,
+  }) {
     _sonServis = 0;
     _ustuste = 0;
-    _uygula(tamami ? servis + hizliServis * sabirOrani.clamp(0, 1) : kalem);
+    if (!tamami) {
+      _uygula(kalem);
+      return;
+    }
+    seri++;
+    enUzunSeri = math.max(enUzunSeri, seri);
+    final prim = kritik ? kritikPrimi : hizliServis * sabirOrani.clamp(0, 1);
+    _uygula(servis + prim + seriPrimi * math.min(seri, seriTavan));
   }
+
+  /// A run of good work ends the moment something goes wrong. Kept separate
+  /// from the penalties themselves because a burn and a walkout cost
+  /// different amounts and break the same thing.
+  void seriBozuldu() => seri = 0;
 
   void altinAlindi() {
     _ustuste = 0;
@@ -177,11 +217,13 @@ class Tempo {
   void gecersizHareket() {
     _ustuste++;
     _dokunus(iyi: false);
-    if (_ustuste <= bagislanan) {
+    if (_ustuste <= bagislananSayisi) {
       _uygula(hataDokunusu, quiet: true);
       return;
     }
-    _uygula(math.max(hataTaban, hataBirim * (_ustuste - bagislanan)));
+    _uygula(
+      math.max(hataTaban, hataBirim * (_ustuste - bagislananSayisi)),
+    );
   }
 
   void _dokunus({required bool iyi}) {
@@ -189,13 +231,22 @@ class Tempo {
     sonDokunusIyi = iyi;
   }
 
-  void etYandi() => _uygula(yanik);
+  void etYandi() {
+    seriBozuldu();
+    _uygula(yanik);
+  }
 
-  void musteriKizdi() => _uygula(kizgin);
+  void musteriKizdi() {
+    seriBozuldu();
+    _uygula(kizgin);
+  }
 
   void altinSupuruldu() => _uygula(supuruldu);
 
-  void urunReddedildi() => _uygula(reddedildi);
+  void urunReddedildi() {
+    seriBozuldu();
+    _uygula(reddedildi);
+  }
 
   void _uygula(double delta, {bool quiet = false}) {
     final before = _deger;
