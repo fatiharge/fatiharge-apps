@@ -57,7 +57,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   /// instruments hang there, one above the other, beside the calendar.
   static const _gauge = Offset(196, 84);
   static const _gaugeRadius = 62.0;
-  static const _kasa = Rect.fromLTWH(122, 166, 160, 74);
+  static const _tahta = Rect.fromLTWH(132, 152, 150, 78);
 
   /// The one control that is not a kitchen object, so it is put where no
   /// drag ever goes: the bottom corner, past the end of the counter.
@@ -157,8 +157,12 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   double _shake = 0;
   double _shakeFor = 0;
 
-  /// The till catching up with the money, so a sale rolls rather than jumps.
-  double _till = 0;
+  /// The last number written on the slate, and how long the chalk has been
+  /// wet. Chalk does not roll: it is wiped and put back.
+  int _yazilan = -1;
+  double _yazma = 0;
+
+  static const _yazmaSuresi = 0.42;
 
   Offset _last = Offset.zero;
   Offset _start = Offset.zero;
@@ -198,9 +202,11 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     _drain();
     _emit(dt);
 
-    _till += (run.progress.para - _till) * (1 - math.exp(-14 * dt));
-    if ((run.progress.para - _till).abs() < 1) {
-      _till = run.progress.para.toDouble();
+    if (_yazilan != run.progress.para) {
+      _yazilan = run.progress.para;
+      _yazma = _yazmaSuresi;
+    } else if (_yazma > 0) {
+      _yazma -= dt;
     }
 
     final target = run.carried == null ? run.carriedAt : run.carriedAt;
@@ -281,7 +287,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       );
     if (cue.asset == 'altin') {
       // Into the slot, not onto a panel.
-      fx.coins(from: cue.at, to: Offset(_kasa.center.dx, _kasa.top + 11));
+      fx.coins(from: cue.at, to: _tahta.center);
     }
   }
 
@@ -439,7 +445,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     // Room objects, so they are inside the knock: a gauge bolted to a wall
     // that jumps is an impact, where a HUD that jumps is a broken screen.
     _renderTempo(canvas);
-    _renderTill(canvas);
+    _renderTahta(canvas);
     // Somebody still crossing the shop passes behind what is standing on the
     // counter; by the time they are at their place nothing is in front of
     // them anyway, so the two passes never disagree about one customer.
@@ -1113,109 +1119,6 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     }
   }
 
-  /// The money, as the box a counter keeps it in.
-  ///
-  /// It fills: the inset behind the number floods gold from the bottom as
-  /// the day's take climbs toward the next level, so the box is a progress
-  /// bar that nobody has to be told is a progress bar.
-  void _renderTill(Canvas canvas) {
-    const ink = Color(0xFF2E2A26);
-    const brass = Color(0xFFC08A3E);
-    final body = RRect.fromRectAndRadius(_kasa, const Radius.circular(11));
-    final inset = Rect.fromLTWH(
-      _kasa.left + 13,
-      _kasa.top + 22,
-      _kasa.width - 26,
-      _kasa.height - 35,
-    );
-    final well = RRect.fromRectAndRadius(inset, const Radius.circular(6));
-
-    canvas
-      ..drawRRect(
-        body.shift(const Offset(4, 7)),
-        Paint()..color = const Color(0x3D000000),
-      )
-      ..drawRRect(body, Paint()..color = const Color(0xFF8A5A2B))
-      ..drawRRect(
-        body.deflate(1.5),
-        Paint()
-          ..color = ink
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 3,
-      );
-    // Grain, so it reads as wood and not as a rounded rectangle.
-    for (final dy in [0.3, 0.62, 0.86]) {
-      canvas.drawLine(
-        Offset(_kasa.left + 8, _kasa.top + _kasa.height * dy),
-        Offset(_kasa.right - 8, _kasa.top + _kasa.height * dy),
-        Paint()
-          ..color = const Color(0x1A2E2A26)
-          ..strokeWidth = 1.5,
-      );
-    }
-    // The coin slot, and the brass the corners of a box like this have.
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(_kasa.center.dx - 34, _kasa.top + 7, 68, 8),
-        const Radius.circular(4),
-      ),
-      Paint()..color = const Color(0xFF3A2A17),
-    );
-    for (final corner in [
-      Offset(_kasa.left + 7, _kasa.bottom - 7),
-      Offset(_kasa.right - 7, _kasa.bottom - 7),
-    ]) {
-      canvas.drawCircle(corner, 3.5, Paint()..color = brass);
-    }
-
-    canvas
-      ..drawRRect(well, Paint()..color = const Color(0xFF241F1A))
-      ..save()
-      ..clipRRect(well);
-    final filled = Balance.ratio(run.progress.xp, run.day);
-    canvas
-      ..drawRect(
-        Rect.fromLTWH(
-          inset.left,
-          inset.bottom - inset.height * filled,
-          inset.width,
-          inset.height * filled,
-        ),
-        Paint()..color = const Color(0xFF6A4A12),
-      )
-      ..restore();
-
-    final coins = assets['altin'];
-    if (coins != null) {
-      drawCentered(canvas, coins, Offset(inset.left + 20, inset.center.dy), 34);
-    }
-    drawText(
-      canvas,
-      '${_till.round()}',
-      Offset(inset.right - 8, inset.center.dy),
-      size: 30,
-      weight: 900,
-      family: 'Rubik',
-      right: true,
-      middle: true,
-      color: const Color(0xFFF7EEDF),
-    );
-
-    // What a full meter paid out, floating off the box it went into.
-    if (run.tempoIkramiyeKalan <= 0) return;
-    final fade = (run.tempoIkramiyeKalan / 1.2).clamp(0.0, 1.0);
-    drawText(
-      canvas,
-      '+${run.tempoIkramiye}',
-      Offset(_kasa.right - 16, _kasa.top - 10 - (1 - fade) * 14),
-      size: 22,
-      weight: 900,
-      family: 'Rubik',
-      center: true,
-      color: const Color(0xFF7BD98A).withValues(alpha: fade),
-    );
-  }
-
   /// Whoever is actually cooking.
   ///
   /// A placeholder, like the customers: the characters are the one part of
@@ -1265,6 +1168,136 @@ class CounterComponent extends PositionComponent with DragCallbacks {
           ..close(),
         Paint()..color = const Color(0xFFDCCFB8),
       );
+  }
+
+  /// The money, chalked on a slate the way a shop actually keeps a tally.
+  ///
+  /// It was a wooden cash box with an inset panel, and it read as a sign —
+  /// the most interface-shaped thing left on a wall that already has a
+  /// calendar and a gauge on it. A slate is the same information as an
+  /// object anybody has seen in a kebab shop, and it is drawn rather than
+  /// painted, so it costs no art and never disagrees with the light.
+  void _renderTahta(Canvas canvas) {
+    const ink = Color(0xFF2E2A26);
+    const chalk = Color(0xFFF2EFE6);
+    final frame = RRect.fromRectAndRadius(_tahta, const Radius.circular(7));
+    final face = RRect.fromRectAndRadius(
+      _tahta.deflate(9),
+      const Radius.circular(3),
+    );
+
+    canvas
+      // Hung on a nail, like everything else on this wall.
+      ..drawLine(
+        Offset(_tahta.center.dx, _tahta.top - 13),
+        Offset(_tahta.center.dx, _tahta.top + 3),
+        Paint()
+          ..color = ink
+          ..strokeWidth = 3,
+      )
+      ..drawCircle(
+        Offset(_tahta.center.dx, _tahta.top - 14),
+        4,
+        Paint()..color = const Color(0xFF6E6155),
+      )
+      ..drawRRect(
+        frame.shift(const Offset(3, 6)),
+        Paint()..color = const Color(0x3D000000),
+      )
+      ..drawRRect(frame, Paint()..color = const Color(0xFF6E4A24))
+      ..drawRRect(
+        frame.deflate(1.5),
+        Paint()
+          ..color = ink
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 3,
+      )
+      ..drawRRect(face, Paint()..color = const Color(0xFF262B26));
+
+    // Old chalk that never quite comes off. Fixed smears, not random ones:
+    // a slate that reshuffles its own grime every frame is a screensaver.
+    for (final smear in const [
+      Rect.fromLTWH(0.12, 0.18, 0.5, 0.1),
+      Rect.fromLTWH(0.45, 0.66, 0.42, 0.09),
+      Rect.fromLTWH(0.08, 0.78, 0.3, 0.07),
+    ]) {
+      canvas.drawRect(
+        Rect.fromLTWH(
+          _tahta.left + 9 + smear.left * (_tahta.width - 18),
+          _tahta.top + 9 + smear.top * (_tahta.height - 18),
+          smear.width * (_tahta.width - 18),
+          smear.height * (_tahta.height - 18),
+        ),
+        Paint()..color = chalk.withValues(alpha: 0.06),
+      );
+    }
+
+    // Chalk is rewritten, not rolled: the number snaps and the dust puffs.
+    final pop = _yazma <= 0
+        ? 0.0
+        : Curves.easeOutBack.transform(
+            (1 - _yazma / _yazmaSuresi).clamp(0.0, 1.0),
+          );
+    final scale = _yazma <= 0 ? 1.0 : 1.22 - 0.22 * pop;
+    final centre = Offset(_tahta.center.dx, _tahta.center.dy - 6);
+    canvas
+      ..save()
+      ..translate(centre.dx, centre.dy)
+      ..scale(scale)
+      ..translate(-centre.dx, -centre.dy);
+    // Drawn twice, the under-pass wide and faint: chalk has a dusty edge and
+    // a clean glyph on a blackboard reads as a printed label.
+    for (final (alpha, offset) in const [
+      (0.22, Offset(1.4, 1.2)),
+      (1.0, Offset.zero),
+    ]) {
+      drawText(
+        canvas,
+        '${run.progress.para}',
+        centre + offset,
+        size: 34,
+        weight: 800,
+        family: 'Rubik',
+        center: true,
+        middle: true,
+        color: chalk.withValues(alpha: alpha),
+      );
+    }
+    canvas.restore();
+
+    // A chalk line under it, filled as far as the day has come. The box used
+    // to flood with gold to say the same thing.
+    final line = Rect.fromLTWH(
+      _tahta.left + 22,
+      _tahta.bottom - 20,
+      _tahta.width - 44,
+      3,
+    );
+    canvas
+      ..drawRect(line, Paint()..color = chalk.withValues(alpha: 0.18))
+      ..drawRect(
+        Rect.fromLTWH(
+          line.left,
+          line.top,
+          line.width * Balance.ratio(run.progress.xp, run.day),
+          line.height,
+        ),
+        Paint()..color = chalk.withValues(alpha: 0.8),
+      );
+
+    // What a full meter paid out, floating off the slate it went onto.
+    if (run.tempoIkramiyeKalan <= 0) return;
+    final fade = (run.tempoIkramiyeKalan / 1.2).clamp(0.0, 1.0);
+    drawText(
+      canvas,
+      '+${run.tempoIkramiye}',
+      Offset(_tahta.right - 12, _tahta.top - 10 - (1 - fade) * 14),
+      size: 22,
+      weight: 900,
+      family: 'Rubik',
+      center: true,
+      color: const Color(0xFF7BD98A).withValues(alpha: fade),
+    );
   }
 
   /// Everybody crossing the shop, in or out.
