@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:kiyma/domain/fayda.dart';
 import 'package:kiyma/domain/unlocks.dart';
 import 'package:kiyma/presentation/brand.dart';
 import 'package:kiyma/presentation/palette.dart';
@@ -95,6 +96,116 @@ class Merdiven extends StatelessWidget {
   }
 }
 
+/// One thing, on its own, with the number that decides it.
+///
+/// The card that opens when a player touches something in the kitchen. It
+/// answers the three questions a price raises — what is this, what does it
+/// change, and how much is that worth — in that order, and it is worth
+/// exactly one of them: a card that offered a whole ladder was a menu, and
+/// the player standing in front of a grill is deciding about a grill.
+class UrunKarti extends StatelessWidget {
+  const UrunKarti({
+    required this.unlock,
+    required this.unlocks,
+    required this.gun,
+    required this.affordable,
+    required this.onBuy,
+    super.key,
+  });
+
+  final Unlock unlock;
+  final Unlocks unlocks;
+  final int gun;
+  final bool affordable;
+  final VoidCallback onBuy;
+
+  @override
+  Widget build(BuildContext context) {
+    final fayda = Fayda.of(unlock, gun, unlocks);
+    final rungs = Unlocks.kademeler(unlock.grup).length;
+    return Container(
+      padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
+      decoration: BoxDecoration(
+        color: KiymaPalette.krema,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: KiymaPalette.komur, width: 2),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            '${'grup.${unlock.grup.id}'.tr()}  ${unlock.kademe}/$rungs',
+            style: const TextStyle(
+              fontFamily: 'Rubik',
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.4,
+              color: KiymaPalette.celik,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            'kilit.${unlock.id}'.tr(),
+            style: const TextStyle(
+              fontFamily: 'Rubik',
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+              color: KiymaPalette.komur,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'kilit.${unlock.id}_ne'.tr(),
+            style: const TextStyle(
+              fontFamily: 'Rubik',
+              fontSize: 13,
+              height: 1.3,
+              fontWeight: FontWeight.w600,
+              color: KiymaPalette.komur,
+            ),
+          ),
+          // The number, on its own line and in its own colour. It is the one
+          // thing a price can be argued with.
+          if (fayda != null) ...[
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                const Icon(
+                  Icons.trending_up_rounded,
+                  size: 17,
+                  color: KiymaPalette.ates,
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    'fayda.${fayda.anahtar}'.tr(args: fayda.args),
+                    style: const TextStyle(
+                      fontFamily: 'Rubik',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
+                      color: KiymaPalette.ates,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+          const SizedBox(height: 10),
+          // No height box round it: ChunkyButton is 50 tall and a shorter
+          // one clips its own ink, which leaves the button drawn and dead.
+          ChunkyButton(
+            key: ValueKey('al_${unlock.id}'),
+            label: '${unlock.price}',
+            icon: Icons.paid_rounded,
+            onPressed: affordable ? onBuy : null,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 /// One rung: what it is, what it changes, and what it costs.
 class KademeKarti extends StatelessWidget {
   const KademeKarti({
@@ -164,24 +275,26 @@ class KademeKarti extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          SizedBox(
-            height: 30,
-            child: alindi
-                ? const Center(
-                    child: Icon(
-                      Icons.check_circle_rounded,
-                      size: 22,
-                      color: KiymaPalette.celik,
-                    ),
-                  )
-                : ChunkyButton(
-                    // No currency symbol anywhere: the game pays in gold, and
-                    // Rubik has no lira glyph, so it came out as a box.
-                    label: '${unlock.price}',
-                    icon: Icons.paid_rounded,
-                    onPressed: sirada && affordable ? onBuy : null,
-                  ),
-          ),
+          if (alindi)
+            const SizedBox(
+              height: 30,
+              child: Center(
+                child: Icon(
+                  Icons.check_circle_rounded,
+                  size: 22,
+                  color: KiymaPalette.celik,
+                ),
+              ),
+            )
+          else
+            ChunkyButton(
+              key: ValueKey('al_${unlock.id}'),
+              // No currency symbol anywhere: the game pays in gold, and
+              // Rubik has no lira glyph, so it came out as a box.
+              label: '${unlock.price}',
+              icon: Icons.paid_rounded,
+              onPressed: sirada && affordable ? onBuy : null,
+            ),
         ],
       ),
     ),

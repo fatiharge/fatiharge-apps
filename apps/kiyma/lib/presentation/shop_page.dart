@@ -71,91 +71,82 @@ class _DukkanState extends State<_Dukkan> {
       final cubit = context.read<KiymaCubit>();
       final unlocks = cubit.progress.unlocks;
       final world = getIt<GameWorld>();
-      final etiketler = _etiketler(unlocks);
+      final scene = world.scene;
 
       return Stack(
+        // Expanded, or the only child that sizes it is the row of buttons in
+        // the corner and the room is drawn into fifty pixels.
+        fit: StackFit.expand,
         children: [
-          Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(8, 8, 16, 4),
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back_rounded),
-                      color: KiymaPalette.komur,
-                      onPressed: () => context.router.maybePop(),
-                    ),
-                    Expanded(
-                      child: Text(
-                        'magaza.baslik'.tr(),
-                        style: const TextStyle(
-                          fontFamily: 'Rubik',
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
-                          color: KiymaPalette.komur,
-                        ),
+          // The room, as big as the screen will take it. No title bar: this
+          // is the same kitchen the game is played in, and a header would
+          // make it a page about the kitchen instead.
+          Positioned.fill(
+            child: LayoutBuilder(
+              builder: (context, box) {
+                final scale = math.min(
+                  box.maxWidth / scene.size.width,
+                  box.maxHeight / scene.size.height,
+                );
+                return Center(
+                  child: GestureDetector(
+                    onTapUp: (details) => _dokun(details.localPosition / scale),
+                    child: CustomPaint(
+                      size: Size(
+                        scene.size.width * scale,
+                        scene.size.height * scale,
+                      ),
+                      painter: ShopScenePainter(
+                        scene: scene,
+                        assets: world.art,
+                        unlocks: unlocks,
+                        etiketler: _etiketler(unlocks),
+                        secili: _secili,
                       ),
                     ),
-                    SizedBox(
-                      // Width as well as height: ChunkyButton fills its row,
-                      // so it cannot be laid out where the width is
-                      // unbounded — and a Row gives its non-flex children
-                      // exactly that.
-                      width: 132,
-                      height: 36,
-                      child: ChunkyButton(
-                        label: 'magaza.gerisi'.tr(),
-                        icon: Icons.list_rounded,
-                        color: KiymaPalette.celik,
-                        onPressed: () =>
-                            context.router.push(const ShopListRoute()),
-                      ),
+                  ),
+                );
+              },
+            ),
+          ),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _Yuvarlak(
+                    icon: Icons.arrow_back_rounded,
+                    onPressed: () => context.router.maybePop(),
+                  ),
+                  const Spacer(),
+                  SizedBox(
+                    // Width only: ChunkyButton fills its row, and a Row hands
+                    // its non-flex children unbounded width — but boxing its
+                    // height clips the ink it is tapped through.
+                    width: 132,
+                    child: ChunkyButton(
+                      label: 'magaza.gerisi'.tr(),
+                      icon: Icons.list_rounded,
+                      color: KiymaPalette.celik,
+                      onPressed: () =>
+                          context.router.push(const ShopListRoute()),
                     ),
-                    const SizedBox(width: 10),
-                    BrandChip(
-                      icon: Icons.payments_outlined,
-                      label: 'hud.para'.tr(args: ['${state.para}']),
-                    ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(width: 8),
+                  BrandChip(
+                    icon: Icons.payments_outlined,
+                    label: 'hud.para'.tr(args: ['${state.para}']),
+                  ),
+                ],
               ),
-              Expanded(
-                child: LayoutBuilder(
-                  builder: (context, box) {
-                    final scene = world.scene;
-                    final scale = math.min(
-                      box.maxWidth / scene.size.width,
-                      box.maxHeight / scene.size.height,
-                    );
-                    return Center(
-                      child: GestureDetector(
-                        onTapUp: (details) =>
-                            _dokun(details.localPosition / scale),
-                        child: CustomPaint(
-                          size: Size(
-                            scene.size.width * scale,
-                            scene.size.height * scale,
-                          ),
-                          painter: ShopScenePainter(
-                            scene: scene,
-                            assets: world.art,
-                            unlocks: unlocks,
-                            etiketler: etiketler,
-                            secili: _secili,
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
+            ),
           ),
           if (_secili case final bolge?)
             _Kart(
               bolge: bolge,
               unlocks: unlocks,
+              gun: state.gun,
               para: state.para,
               onBuy: cubit.buy,
               onClose: () => setState(() => _secili = null),
@@ -174,15 +165,41 @@ class _DukkanState extends State<_Dukkan> {
   }
 }
 
-/// What one object sells, as the ladders it carries.
+/// A small round button that can sit over the room without being a bar.
+class _Yuvarlak extends StatelessWidget {
+  const _Yuvarlak({required this.icon, required this.onPressed});
+
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) => Material(
+    color: KiymaPalette.krema,
+    shape: const CircleBorder(
+      side: BorderSide(color: KiymaPalette.komur, width: 2),
+    ),
+    child: InkWell(
+      customBorder: const CircleBorder(),
+      onTap: onPressed,
+      child: Padding(
+        padding: const EdgeInsets.all(9),
+        child: Icon(icon, size: 22, color: KiymaPalette.komur),
+      ),
+    ),
+  );
+}
+
+/// What one object is selling, one thing at a time.
 ///
-/// The grill carries two — the slots across it and the coal in it — and the
-/// jugs carry the drink and the jug. Stacking them in one card is what keeps
-/// the kitchen from needing two tags on the same object.
+/// A ladder is context, not the offer: the player is standing in front of a
+/// grill deciding whether to spend on it, and what they need is what this
+/// one purchase does and what it costs. The grill and the jugs sell from two
+/// ladders at once, so at most two of these ever stack.
 class _Kart extends StatelessWidget {
   const _Kart({
     required this.bolge,
     required this.unlocks,
+    required this.gun,
     required this.para,
     required this.onBuy,
     required this.onClose,
@@ -190,55 +207,76 @@ class _Kart extends StatelessWidget {
 
   final String bolge;
   final Unlocks unlocks;
+  final int gun;
   final int para;
   final void Function(Unlock) onBuy;
   final VoidCallback onClose;
 
   @override
-  Widget build(BuildContext context) => Positioned.fill(
-    child: GestureDetector(
-      onTap: onClose,
-      child: ColoredBox(
-        color: const Color(0xCC0B0908),
-        child: Center(
-          child: GestureDetector(
-            onTap: () {},
+  Widget build(BuildContext context) {
+    final satilan = ShopMap.satilan(bolge, unlocks);
+    return Positioned.fill(
+      // The scrim is a sibling of the card, not its parent. Nesting them put
+      // two tap recognisers and a scroll view between the finger and the buy
+      // button, and the button stopped being hit at all.
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: GestureDetector(
+              onTap: onClose,
+              child: const ColoredBox(color: Color(0xCC0B0908)),
+            ),
+          ),
+          // Top-aligned rather than centred: an object that sells two things
+          // makes a card taller than a phone held sideways, and a centred
+          // scroll view starts it half off the top of the screen.
+          Align(
+            alignment: Alignment.topCenter,
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               child: BrandCard(
-                width: 560,
+                width: 460,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    for (final grup in ShopMap.gruplar(bolge))
-                      if (unlocks.grupAcik(grup))
-                        Merdiven(
-                          grup: grup,
-                          unlocks: unlocks,
-                          para: para,
-                          onBuy: onBuy,
-                          // Wider than the list's, because there is room
-                          // here and a sentence cut in half explains less
-                          // than no sentence at all.
-                          genislik: 244,
-                        ),
-                    SizedBox(
-                      height: 38,
-                      child: ChunkyButton(
-                        label: 'magaza.kapat'.tr(),
-                        icon: Icons.close_rounded,
-                        color: KiymaPalette.celik,
-                        onPressed: onClose,
+                    for (final unlock in satilan) ...[
+                      UrunKarti(
+                        unlock: unlock,
+                        unlocks: unlocks,
+                        gun: gun,
+                        affordable: para >= unlock.price,
+                        onBuy: () => onBuy(unlock),
                       ),
+                      const SizedBox(height: 12),
+                    ],
+                    if (satilan.isEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: Text(
+                          'magaza.bitti'.tr(),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontFamily: 'Rubik',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            color: KiymaPalette.celik,
+                          ),
+                        ),
+                      ),
+                    ChunkyButton(
+                      label: 'magaza.kapat'.tr(),
+                      icon: Icons.close_rounded,
+                      color: KiymaPalette.celik,
+                      onPressed: onClose,
                     ),
                   ],
                 ),
               ),
             ),
           ),
-        ),
+        ],
       ),
-    ),
-  );
+    );
+  }
 }

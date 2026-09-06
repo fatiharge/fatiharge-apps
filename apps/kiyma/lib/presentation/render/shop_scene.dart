@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart' show mapEquals;
 import 'package:flutter/material.dart' show CustomPainter;
 import 'package:kiyma/domain/quad.dart';
 import 'package:kiyma/domain/scene.dart';
@@ -87,12 +88,58 @@ class ShopScenePainter extends CustomPainter {
       if (!acik) _kesikli(canvas, region.quad);
     }
 
-    for (final entry in etiketler.entries) {
-      final region = scene.maybe(entry.key);
-      if (region != null) _etiket(canvas, region, entry.value);
-    }
+    _etiketleriCiz(canvas);
 
     canvas.restore();
+  }
+
+  /// Every tag, moved up out of each other's way.
+  ///
+  /// Two ladders can be live on neighbouring objects — the ayran jug and the
+  /// şalgam jug sit 46 units apart and a tag is about fifty wide — so the
+  /// tags are laid out left to right and anything landing on one already
+  /// placed is lifted a row. Without this the two jugs print one price over
+  /// the other and neither is readable.
+  void _etiketleriCiz(Canvas canvas) {
+    final sirali = etiketler.keys.toList()
+      ..sort((a, b) {
+        final ax = scene.maybe(a)?.quad.bounds.center.dx ?? 0;
+        final bx = scene.maybe(b)?.quad.bounds.center.dx ?? 0;
+        return ax.compareTo(bx);
+      });
+
+    final yerlesen = <Rect>[];
+    for (final ad in sirali) {
+      final region = scene.maybe(ad);
+      if (region == null) continue;
+      var rect = _etiketYeri(region, etiketler[ad]!);
+      var kacis = 0;
+      while (kacis < 4 &&
+          yerlesen.any((other) => other.overlaps(rect.inflate(2)))) {
+        rect = rect.translate(0, -30);
+        kacis++;
+      }
+      yerlesen.add(rect);
+      _etiket(canvas, region, etiketler[ad]!, rect);
+    }
+  }
+
+  Rect _etiketYeri(SceneRegion region, int fiyat) {
+    final bounds = region.quad.bounds;
+    // Near enough square: the tag art is a paper docket with a loop of
+    // string above it, and the loop is most of what makes it read as a tag.
+    final genislik = 30.0 + '$fiyat'.length * 10;
+    // Nudged back inside the design box: the top row of wells is close
+    // enough to the ceiling that a tag would hang off the picture.
+    final x = bounds.center.dx.clamp(
+      genislik / 2 + 2,
+      scene.size.width - genislik / 2 - 2,
+    );
+    return Rect.fromCenter(
+      center: Offset(x, math.max<double>(28, bounds.top - 26)),
+      width: genislik,
+      height: genislik,
+    );
   }
 
   /// A price on a string, hung off the top of the thing it is for.
@@ -100,46 +147,50 @@ class ShopScenePainter extends CustomPainter {
   /// Above rather than over: the whole point of buying at the object is
   /// seeing the object, and a tag across the middle of an empty steel well
   /// hides the one thing that explains what the well is.
-  void _etiket(Canvas canvas, SceneRegion region, int fiyat) {
+  void _etiket(Canvas canvas, SceneRegion region, int fiyat, Rect rect) {
     final bounds = region.quad.bounds;
     final lit = secili == region.name;
-    final yazi = '$fiyat';
-    final genislik = 26.0 + yazi.length * 9;
-    // Nudged back inside the design box: the top row of wells is close
-    // enough to the ceiling that a tag would hang off the picture.
-    final x = bounds.center.dx.clamp(
-      genislik / 2 + 2,
-      scene.size.width - genislik / 2 - 2,
-    );
-    final y = math.max<double>(15, bounds.top - 13);
-    final rect = Rect.fromCenter(
-      center: Offset(x, y),
-      width: genislik,
-      height: 22,
-    );
-
     canvas.drawLine(
-      Offset(x, rect.bottom),
+      Offset(rect.center.dx, rect.bottom),
       Offset(bounds.center.dx, bounds.top + 4),
       Paint()
         ..color = const Color(0xFF2E2A26)
         ..strokeWidth = 1.6,
     );
-    drawKey(
-      canvas,
-      rect,
-      lit ? const Color(0xFFE8641A) : const Color(0xFFF7EEDF),
-    );
+    final tag = assets['fiyat_etiketi'];
+    if (tag == null) {
+      drawKey(
+        canvas,
+        rect.deflate(rect.height * 0.28),
+        const Color(0xFFF7EEDF),
+      );
+    } else {
+      drawCentered(
+        canvas,
+        tag,
+        rect.center,
+        rect.width,
+        paint: lit
+            ? (Paint()
+                ..colorFilter = const ColorFilter.mode(
+                  Color(0xFFE8641A),
+                  BlendMode.modulate,
+                ))
+            : null,
+      );
+    }
     drawText(
       canvas,
-      yazi,
-      rect.center,
+      '$fiyat',
+      // Into the paper, which is the lower two thirds of the art — above it
+      // is the string the tag hangs by.
+      rect.center + Offset(0, rect.height * 0.14),
       size: 14,
       weight: 900,
       family: 'Rubik',
       center: true,
       middle: true,
-      color: lit ? const Color(0xFFFFF6E8) : const Color(0xFF2E2A26),
+      color: const Color(0xFF2E2A26),
     );
   }
 
@@ -201,8 +252,12 @@ class ShopScenePainter extends CustomPainter {
   }
 
   @override
+  /// [Unlocks] is mutated in place and has no equality, so comparing the two
+  /// instances always answers "same" — a purchase would leave the old price
+  /// hanging off the thing it just bought. The tags are what actually
+  /// changed, so the tags are what is compared.
   bool shouldRepaint(ShopScenePainter old) =>
       old.secili != secili ||
-      old.unlocks != unlocks ||
-      old.etiketler.length != etiketler.length;
+      !mapEquals(old.etiketler, etiketler) ||
+      old.unlocks.opened.length != unlocks.opened.length;
 }

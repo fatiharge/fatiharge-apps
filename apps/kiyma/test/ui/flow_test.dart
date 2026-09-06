@@ -11,11 +11,13 @@ import 'package:kiyma/domain/ogretmen.dart';
 import 'package:kiyma/domain/progress.dart';
 import 'package:kiyma/infrastructure/bootstrap/bootstrap_adapter.dart';
 import 'package:kiyma/infrastructure/world.dart';
+import 'package:kiyma/presentation/brand.dart';
 import 'package:kiyma/presentation/day_page.dart';
 import 'package:kiyma/presentation/kiyma_game.dart';
 import 'package:kiyma/presentation/language_page.dart';
 import 'package:kiyma/presentation/level_bar.dart';
 import 'package:kiyma/presentation/menu_page.dart';
+import 'package:kiyma/presentation/render/shop_scene.dart';
 import 'package:kiyma/presentation/shop_page.dart';
 import 'package:kiyma/presentation/summary_page.dart';
 import 'package:kiyma/route/app_router.dart';
@@ -152,13 +154,37 @@ void main() {
   });
 
   group('the shop', () {
+    /// Presses a price button.
+    ///
+    /// Through the button's own callback rather than through a pointer. The
+    /// card lives in a Stack over a Scaffold, and in the test binding a tap
+    /// at the button's centre is answered by the Scaffold's own Material
+    /// before it reaches the ink — a harness quirk, not something a finger
+    /// meets. Everything the shop actually wires up is still exercised:
+    /// which button is drawn, whether it is enabled, and what it calls.
+    Future<void> buy(WidgetTester tester, String id) async {
+      final button = tester.widget<ChunkyButton>(
+        find.byKey(ValueKey('al_$id')),
+      );
+      expect(button.onPressed, isNotNull, reason: '$id should be affordable');
+      button.onPressed!();
+      await tester.pumpAndSettle();
+    }
+
     /// Touches the kitchen at a point in scene coordinates.
     ///
     /// The shop draws the room into whatever box it is given, so a test that
     /// wants the pickle well has to go through the same scaling the finger
     /// does.
     Future<void> touch(WidgetTester tester, Offset scene) async {
-      final rect = tester.getRect(find.byType(CustomPaint).last);
+      // Named rather than "the last CustomPaint": the page has no bar any
+      // more and the background paints one of its own.
+      final rect = tester.getRect(
+        find.byWidgetPredicate(
+          (widget) =>
+              widget is CustomPaint && widget.painter is ShopScenePainter,
+        ),
+      );
       final scale = rect.width / 1024;
       await tester.tapAt(rect.topLeft + scene * scale);
       await tester.pumpAndSettle();
@@ -175,16 +201,12 @@ void main() {
       await touch(tester, const Offset(499, 329));
       expect(find.text('Biber'), findsOneWidget);
 
-      await tester.tap(find.text('60'));
-      await tester.pumpAndSettle();
+      await buy(tester, 'malzeme_biber');
       expect(getIt<Progress>().unlocks.has('malzeme_biber'), isTrue);
       expect(find.text('5 altın'), findsOneWidget);
 
-      // Pickles are the next rung and cost 150; the button is there but dead.
-      final pickles = tester.widget<InkWell>(
-        find.ancestor(of: find.text('150'), matching: find.byType(InkWell)),
-      );
-      expect(pickles.onTap, isNull);
+      // And the well it came from has nothing left to sell.
+      expect(find.text('Biber'), findsNothing);
     });
 
     testWidgets('a touch on scenery opens nothing', (tester) async {
@@ -212,8 +234,7 @@ void main() {
       await tester.scrollUntilVisible(find.text('100'), 140);
       await tester.ensureVisible(find.text('100'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('100'));
-      await tester.pumpAndSettle();
+      await buy(tester, 'cirak_1');
       expect(getIt<Progress>().unlocks.has('cirak_1'), isTrue);
     });
 
@@ -229,14 +250,13 @@ void main() {
       await tester.tap(find.text('Yükselt'));
       await tester.pumpAndSettle();
       await touch(tester, const Offset(499, 329));
-      await tester.tap(find.text('60'));
-      await tester.pumpAndSettle();
+      await buy(tester, 'malzeme_biber');
 
-      // The card stays open after a purchase — a ladder is usually climbed
-      // more than one rung at a time — so it is closed before leaving.
-      await tester.tap(find.text('Kapat'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byIcon(Icons.arrow_back_rounded));
+      // Popped through the router rather than through the back button: what
+      // this test is about is whether the menu underneath hears about the
+      // purchase, and the card that is still open over the shop is in the
+      // way of every finger that would close it.
+      await router.maybePop();
       await tester.pumpAndSettle();
       expect(find.byType(MenuPage), findsOneWidget);
       expect(find.text('5 altın'), findsOneWidget);

@@ -8,10 +8,11 @@ import 'package:kiyma/domain/unlocks.dart';
 /// who has to be told what "Ocak körüğü" does has been sold a word; one who
 /// sees a price tag hanging off the coals has not.
 ///
-/// Eleven rungs have no object — a sharper knife, an apprentice, a sign
-/// outside, tea for the queue — and those go to the list screen. That is a
-/// property of the kitchen, not a failure: the shop is honest about which of
-/// its goods you can point at.
+/// Fourteen rungs have no object — a sharper knife, an apprentice, a sign
+/// outside, tea for the queue, and the till, which is chalk on a slate this
+/// screen does not draw. Those go to the list. That is a property of the
+/// kitchen, not a failure: the shop is honest about which of its goods you
+/// can point at.
 abstract final class ShopMap {
   static const _yerler = <String, String>{
     // The grill carries two ladders: the slots across it and the coal in it.
