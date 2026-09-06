@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kiyma/domain/balance.dart';
 import 'package:kiyma/domain/day_run.dart';
+import 'package:kiyma/domain/model/carried.dart';
 import 'package:kiyma/domain/model/items.dart';
 import 'package:kiyma/domain/model/order.dart';
 import 'package:kiyma/domain/model/products.dart';
@@ -16,6 +17,8 @@ import 'package:kiyma/presentation/kiyma_game.dart';
 import 'package:kiyma/presentation/render/halo.dart';
 
 import 'support/scene_from_disk.dart';
+
+import 'support/stations.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -81,15 +84,10 @@ void main() {
     }
     run.mangal[3].tick(30, 1);
     run
-      ..durumIstasyonu = (Durum()
-        ..etli = true
-        ..malzemeler.addAll(Malzeme.values))
-      ..tabakIstasyonu = (Porsiyon()
-        ..lavasli = true
-        ..etli = true
-        ..bilesenler.addAll(Bilesen.values))
-      ..bekleme[0] = DurumUrun(Durum()..sarili = true)
-      ..bekleme[0] = PorsiyonUrun(Porsiyon())
+      ..durumIstasyonu = fullWrap()
+      ..tabakIstasyonu = fullPlate()
+      ..bekleme[0] = DurumUrun(fullWrap()..kagitli = true)
+      ..bekleme[1] = PorsiyonUrun(fullPlate())
       ..bardakBekletme[0] = (Bardak()..doldur(Icecek.ayran))
       ..bardakBekletme[1] = (Bardak()..icerik = Icecek.kola)
       // A pile of each kind, and one about to be swept.
@@ -107,7 +105,12 @@ void main() {
           MusteriHali.gidiyorKizgin,
         ])
           Ayrilan(slot: 0, hal: hal, hiz: 1)..gidis = 0.4,
-      ]);
+      ])
+      // A sheet in the hand: the one carryable drawn instead of its own art,
+      // so nothing else covers this path.
+      ..beginDrag(scene['kagit_kaynak'].quad.center)
+      ..carriedAt = const Offset(500, 400);
+    expect(run.carried, isA<Kagit>());
 
     await tester.pumpWidget(
       MaterialApp(

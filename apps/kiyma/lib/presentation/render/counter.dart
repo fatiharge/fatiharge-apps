@@ -1,14 +1,12 @@
 import 'dart:math' as math;
 import 'dart:ui';
-
-// `Quad` collides with vector_math's, which Flame re-exports everywhere.
 import 'package:flame/components.dart' hide Quad;
 import 'package:flame/events.dart';
-// Only for the two glyphs the grill badges carry.
 import 'package:flutter/material.dart' show Curves, IconData, Icons;
 import 'package:kiyma/domain/balance.dart';
 import 'package:kiyma/domain/day_run.dart';
 import 'package:kiyma/domain/gesture.dart';
+import 'package:kiyma/domain/model/carried.dart';
 import 'package:kiyma/domain/model/items.dart';
 import 'package:kiyma/domain/model/order.dart';
 import 'package:kiyma/domain/model/products.dart';
@@ -17,6 +15,7 @@ import 'package:kiyma/domain/scene.dart';
 import 'package:kiyma/domain/tempo.dart';
 import 'package:kiyma/infrastructure/assets.dart';
 import 'package:kiyma/presentation/render/effects.dart';
+import 'package:kiyma/presentation/render/glyphs.dart';
 import 'package:kiyma/presentation/render/halo.dart';
 import 'package:kiyma/presentation/render/painter.dart';
 
@@ -41,29 +40,31 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   final DayRun run;
   final VoidCallback onPause;
 
-  /// One plate, three sockets.
+  /// No panel anywhere. Everything the counter says is said by an object in
+  /// the room: the time by the clock on the wall, the day by the calendar
+  /// under it, the tempo by a heat gauge hung over the grill it measures,
+  /// and the money by the cash box on the wall behind the till.
   ///
-  /// The pause button, the till and the tempo meter were three separate
-  /// panels and read as three unrelated things. They are one instrument —
-  /// the tempo is what the till is multiplied by — so they share a housing.
-  /// It stops short of x344, where the leftmost patience bar begins, and
-  /// hangs low enough that the flames off its top edge have somewhere to go.
-  static const _plate = Rect.fromLTWH(14, 22, 286, 116);
-  static const _pause = Rect.fromLTWH(28, 34, 58, 58);
-  static const _gold = Rect.fromLTWH(96, 34, 190, 58);
-  static const _tempo = Rect.fromLTWH(72, 102, 214, 24);
+  /// A floating plate is the single loudest thing on a screen that is
+  /// otherwise a painted kitchen, and it was reading as an app drawn on top
+  /// of a game. The cost of losing it is that the numbers take a fraction
+  /// longer to find; what is bought is that the scene is the whole screen.
+  ///
+  /// The left wall above the grill is the only large clear area in the
+  /// scene — the counter surface is booked end to end — so the two
+  /// instruments hang there, one above the other, beside the calendar.
+  static const _gauge = Offset(196, 84);
+  static const _gaugeRadius = 62.0;
+  static const _kasa = Rect.fromLTWH(122, 166, 160, 74);
+
+  /// The one control that is not a kitchen object, so it is put where no
+  /// drag ever goes: the bottom corner, past the end of the counter.
+  static const _pause = Rect.fromLTWH(966, 508, 50, 50);
 
   /// The band above the heads, which the hand never enters. The tickets used
   /// to sit beside each face, in the middle of every drag.
   static const _ticket = Size(148, 78);
   static const _ticketTop = 10.0;
-
-  /// The badge on the left of the meter, sitting proud of the plate.
-  static const _stage = Offset(48, 114);
-
-  /// The clock as a hairline across the very top of the scene. The wall
-  /// clock is there to be read; this is there to be noticed.
-  static const _thread = 5.0;
 
   /// One colour and one glyph per band. Four states are learnable where a
   /// continuous multiplier is not, and a glyph is read faster than a word in
@@ -121,10 +122,6 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     MusteriHali.gidiyorKizgin: Color(0xFF7A1F16),
   };
 
-  /// An order line already handed over.
-  static final _faded = Paint()
-    ..filterQuality = FilterQuality.medium
-    ..color = const Color(0xFFFFFFFF).withValues(alpha: 0.3);
   static const _want = Color(0xFF6FCF7C);
   static const _avoid = Color(0xFFE0574A);
 
@@ -262,10 +259,8 @@ class CounterComponent extends PositionComponent with DragCallbacks {
         size: 24,
       );
     if (cue.asset == 'altin') {
-      fx.coins(
-        from: cue.at,
-        to: Offset(_gold.left + 32, _gold.center.dy),
-      );
+      // Into the slot, not onto a panel.
+      fx.coins(from: cue.at, to: Offset(_kasa.center.dx, _kasa.top + 11));
     }
   }
 
@@ -420,6 +415,10 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     }
     _renderScene(canvas);
     _renderWall(canvas);
+    // Room objects, so they are inside the knock: a gauge bolted to a wall
+    // that jumps is an impact, where a HUD that jumps is a broken screen.
+    _renderTempo(canvas);
+    _renderTill(canvas);
     // Somebody still crossing the shop passes behind what is standing on the
     // counter; by the time they are at their place nothing is in front of
     // them anyway, so the two passes never disagree about one customer.
@@ -441,7 +440,9 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     canvas.restore();
 
     fx.render(canvas, EffectLayer.over);
-    _renderHud(canvas);
+    // Outside the knock, alone: the one thing that has to be in the same
+    // place every frame is the button that stops the game.
+    _renderPause(canvas);
     canvas.restore();
   }
 
@@ -646,6 +647,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     if (station.kagitli) {
       final paper = assets['doner_bekleme'];
       if (paper != null) drawInQuad(canvas, paper, region.quad, AssetFit.orta);
+      _renderContents(canvas, region.quad, DurumUrun(station));
       return;
     }
     if (station.sarili) {
@@ -658,9 +660,14 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     }
     if (station.etli) _layer(canvas, region.quad, composition.ingredient('et'));
     for (final malzeme in Malzeme.values) {
-      if (station.malzemeler.contains(malzeme)) {
-        _layer(canvas, region.quad, composition.ingredient(malzeme.id));
-      }
+      final tutam = station.tutam(malzeme);
+      if (tutam == 0) continue;
+      _layer(
+        canvas,
+        region.quad,
+        composition.ingredient(malzeme.id),
+        portion: tutam / Balance.tutamAdedi,
+      );
     }
   }
 
@@ -679,16 +686,46 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     }
     if (station.etli) _layer(canvas, region.quad, composition.ingredient('et'));
     for (final bilesen in Bilesen.values) {
-      if (station.bilesenler.contains(bilesen)) {
-        _layer(canvas, region.quad, composition.ingredient(bilesen.id));
-      }
+      final tutam = station.tutam(bilesen);
+      if (tutam == 0) continue;
+      _layer(
+        canvas,
+        region.quad,
+        composition.ingredient(bilesen.id),
+        portion: tutam / Balance.tutamAdedi,
+      );
     }
   }
 
-  void _layer(Canvas canvas, Quad quad, CompositionLayer? layer) {
+  /// [portion] below one draws only that much of the layer, from the left:
+  /// an ingredient goes on in handfuls, so a third of an onion has to look
+  /// like a third of an onion rather than like a whole one.
+  void _layer(
+    Canvas canvas,
+    Quad quad,
+    CompositionLayer? layer, {
+    double portion = 1,
+  }) {
     if (layer == null) return;
     final image = assets[layer.asset];
-    if (image != null) drawCompositionLayer(canvas, image, quad, layer);
+    if (image == null) return;
+    if (portion >= 1) {
+      drawCompositionLayer(canvas, image, quad, layer);
+      return;
+    }
+    final bounds = quad.bounds;
+    canvas
+      ..save()
+      ..clipRect(
+        Rect.fromLTWH(
+          bounds.left,
+          bounds.top,
+          bounds.width * portion,
+          bounds.height,
+        ),
+      );
+    drawCompositionLayer(canvas, image, quad, layer);
+    canvas.restore();
   }
 
   void _renderShelves(Canvas canvas) {
@@ -742,6 +779,69 @@ class CounterComponent extends PositionComponent with DragCallbacks {
             _ => '',
           }];
       if (image != null) drawInQuad(canvas, image, slots[i], AssetFit.alt);
+    }
+
+    // The labels go on in a second pass. The slots overlap on purpose, so a
+    // chip drawn with its own item is covered by the next one along — which
+    // hides the label on exactly the wraps that need one.
+    for (var i = 0; i < slots.length; i++) {
+      if (i >= capacity) continue;
+      final urun = run.bekleme[i];
+      if (urun == null || run.lifted(region.name, i)) continue;
+      _renderContents(canvas, slots[i], urun);
+    }
+  }
+
+  /// What is inside something that has stopped showing it.
+  ///
+  /// A wrapped durum is a paper cylinder and a plated portion is drawn from
+  /// one sprite: three on the shelf are the same picture, and the player who
+  /// built them forty seconds ago has to remember which is which — while a
+  /// customer is asking for the one with no onion. The chip is what a
+  /// counter would actually do, which is write it on the paper.
+  void _renderContents(Canvas canvas, Quad quad, Urun urun) {
+    final ids = switch (urun) {
+      DurumUrun(:final durum) => [
+        for (final m in Malzeme.values)
+          if (durum.malzemeler.contains(m)) m.id,
+      ],
+      PorsiyonUrun(:final porsiyon) => [
+        for (final b in Bilesen.values)
+          if (porsiyon.bilesenler.contains(b)) b.id,
+      ],
+      // A baklava is a baklava; there is nothing hidden inside it.
+      _ => const <String>[],
+    };
+    if (ids.isEmpty) return;
+
+    const pitch = 15.0;
+    final bounds = quad.bounds;
+    final chip = Rect.fromCenter(
+      center: Offset(bounds.center.dx, bounds.bottom - 7),
+      width: pitch * ids.length + 9,
+      height: 19,
+    );
+    final shape = RRect.fromRectAndRadius(chip, const Radius.circular(9));
+    canvas
+      ..drawRRect(
+        shape.shift(const Offset(0, 2)),
+        Paint()..color = const Color(0x552E2A26),
+      )
+      ..drawRRect(shape, Paint()..color = const Color(0xFFFBF6EC))
+      ..drawRRect(
+        shape.deflate(0.9),
+        Paint()
+          ..color = const Color(0xFF2E2A26)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.8,
+      );
+    for (var i = 0; i < ids.length; i++) {
+      drawGameGlyph(
+        canvas,
+        ids[i],
+        Offset(chip.left + 4.5 + pitch * (i + 0.5), chip.center.dy),
+        13,
+      );
     }
   }
 
@@ -827,22 +927,76 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   void _renderWall(Canvas canvas) {
     final clock = scene.maybe('duvar_saati');
     if (clock != null) {
-      final image = assets['duvar_saati'];
-      if (image != null) drawInQuad(canvas, image, clock.quad, clock.fit);
       final bounds = clock.quad.bounds;
+      final at = bounds.center;
+      final r = math.min(bounds.width, bounds.height) / 2;
+      final late = run.kalanSure < 20;
+      final face = late ? const Color(0xFFFF5A45) : const Color(0xFFE8641A);
+
+      canvas
+        // Hung, not floating: a nail, a cord, and the shadow the wall casts
+        // under it. Without those three it read as a dial pasted onto the
+        // tiles, which is what it was.
+        ..drawLine(
+          Offset(at.dx, bounds.top - 14),
+          Offset(at.dx, bounds.top + 4),
+          Paint()
+            ..color = const Color(0xFF2E2A26)
+            ..strokeWidth = 3,
+        )
+        ..drawCircle(
+          Offset(at.dx, bounds.top - 15),
+          4,
+          Paint()..color = const Color(0xFF6E6155),
+        )
+        ..drawCircle(
+          at + const Offset(4, 7),
+          r,
+          Paint()..color = const Color(0x38000000),
+        )
+        ..drawCircle(at, r, Paint()..color = const Color(0xFF2E2A26))
+        ..drawCircle(at, r - 4, Paint()..color = const Color(0xFFC08A3E))
+        ..drawCircle(at, r - 11, Paint()..color = const Color(0xFFF7EEDF))
+        // The day draining round the bezel. The clock is the run's timer, so
+        // the timer is drawn on the clock rather than as a bar somewhere
+        // else on the screen.
+        ..drawArc(
+          Rect.fromCircle(center: at, radius: r - 7.5),
+          -math.pi / 2,
+          math.pi * 2 * run.sureOrani,
+          false,
+          Paint()
+            ..color = face
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 7
+            ..strokeCap = StrokeCap.round,
+        );
+      for (var i = 0; i < 12; i++) {
+        final a = i * math.pi / 6;
+        final dir = Offset(math.sin(a), -math.cos(a));
+        canvas.drawLine(
+          at + dir * (r - 16),
+          at + dir * (r - (i % 3 == 0 ? 22 : 19)),
+          Paint()
+            ..color = const Color(0x442E2A26)
+            ..strokeWidth = i % 3 == 0 ? 2.4 : 1.4,
+        );
+      }
+
       final left = run.kalanSure.ceil();
       drawText(
         canvas,
         '${left ~/ 60}:${(left % 60).toString().padLeft(2, '0')}',
-        Offset(bounds.center.dx, bounds.top + bounds.height * 0.24),
-        size: bounds.height * 0.44,
+        Offset(at.dx, at.dy - r * 0.3),
+        size: r * 0.52,
         weight: 900,
         family: 'Rubik',
         center: true,
-        // Lit segments on dark glass, and red once the day is nearly out.
-        color: run.kalanSure < 20
+        // Beats once a second in the last ten, so the last stretch is felt
+        // without looking at the number.
+        color: late && _elapsed % 1 < 0.5
             ? const Color(0xFFFF5A45)
-            : const Color(0xFFFFC24A),
+            : const Color(0xFF2E2A26),
       );
     }
 
@@ -866,77 +1020,15 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     }
   }
 
-  /// The instrument the counter is read off: the pause, the till and the
-  /// tempo in one housing, with the run's clock threaded across the top of
-  /// the screen above it.
-  ///
-  /// Cream on charcoal with a hard offset shadow, because that is what every
-  /// other screen in the game is. A dark wooden plate was tried and it aged
-  /// the whole counter: the HUD is the one thing on screen at all times, so
-  /// it sets the tone for everything behind it.
-  void _renderHud(Canvas canvas) {
-    _renderThread(canvas);
-
-    final tempo = run.tempo;
-    final hot = tempo.hal == TempoHali.ates;
-
-    drawPanel(canvas, _plate, fill: const Color(0xFFF7EEDF));
-    drawGloss(canvas, _plate);
-    if (hot) _renderShine(canvas);
-
-    _renderPause(canvas);
-    _renderTill(canvas);
-    _renderTempo(canvas);
-  }
-
-  /// The run's clock, drained left to right. Five pixels at the very top of
-  /// the scene, above everything, so it is seen without being looked at.
-  void _renderThread(Canvas canvas) {
-    canvas
-      ..drawRect(
-        Rect.fromLTWH(0, 0, size.x, _thread),
-        Paint()..color = const Color(0x552E2A26),
-      )
-      ..drawRect(
-        Rect.fromLTWH(0, 0, size.x * run.sureOrani, _thread),
-        Paint()
-          ..color = run.kalanSure < 20
-              ? const Color(0xFFE0452A)
-              : const Color(0xFFF3A431),
-      );
-  }
-
-  /// A band of light sweeping the plate while the meter is pinned. Cheaper
-  /// and far less dated than drawn flames, and it says the same thing.
-  void _renderShine(Canvas canvas) {
-    final phase = (_elapsed * 0.55) % 1;
-    final x = _plate.left - 90 + phase * (_plate.width + 180);
-    canvas
-      ..save()
-      ..clipRRect(
-        RRect.fromRectAndRadius(_plate, const Radius.circular(18)),
-      )
-      ..drawPath(
-        Path()
-          ..moveTo(x, _plate.bottom)
-          ..lineTo(x + 34, _plate.bottom)
-          ..lineTo(x + 34 + 26, _plate.top)
-          ..lineTo(x + 26, _plate.top)
-          ..close(),
-        Paint()..color = const Color(0x33FFFFFF),
-      )
-      ..restore();
-  }
-
   void _renderPause(Canvas canvas) {
-    drawKey(canvas, _pause, const Color(0xFFE8641A));
-    for (final dx in [-8.0, 8.0]) {
+    drawKey(canvas, _pause, const Color(0xFF44403A));
+    for (final dx in [-7.0, 7.0]) {
       canvas.drawRRect(
         RRect.fromRectAndRadius(
           Rect.fromCenter(
             center: _pause.center + Offset(dx, 0),
-            width: 9,
-            height: 26,
+            width: 8,
+            height: 22,
           ),
           const Radius.circular(3),
         ),
@@ -945,33 +1037,106 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     }
   }
 
+  /// The money, as the box a counter keeps it in.
+  ///
+  /// It fills: the inset behind the number floods gold from the bottom as
+  /// the day's take climbs toward the next level, so the box is a progress
+  /// bar that nobody has to be told is a progress bar.
   void _renderTill(Canvas canvas) {
+    const ink = Color(0xFF2E2A26);
+    const brass = Color(0xFFC08A3E);
+    final body = RRect.fromRectAndRadius(_kasa, const Radius.circular(11));
+    final inset = Rect.fromLTWH(
+      _kasa.left + 13,
+      _kasa.top + 22,
+      _kasa.width - 26,
+      _kasa.height - 35,
+    );
+    final well = RRect.fromRectAndRadius(inset, const Radius.circular(6));
+
+    canvas
+      ..drawRRect(
+        body.shift(const Offset(4, 7)),
+        Paint()..color = const Color(0x3D000000),
+      )
+      ..drawRRect(body, Paint()..color = const Color(0xFF8A5A2B))
+      ..drawRRect(
+        body.deflate(1.5),
+        Paint()
+          ..color = ink
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 3,
+      );
+    // Grain, so it reads as wood and not as a rounded rectangle.
+    for (final dy in [0.3, 0.62, 0.86]) {
+      canvas.drawLine(
+        Offset(_kasa.left + 8, _kasa.top + _kasa.height * dy),
+        Offset(_kasa.right - 8, _kasa.top + _kasa.height * dy),
+        Paint()
+          ..color = const Color(0x1A2E2A26)
+          ..strokeWidth = 1.5,
+      );
+    }
+    // The coin slot, and the brass the corners of a box like this have.
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(_kasa.center.dx - 34, _kasa.top + 7, 68, 8),
+        const Radius.circular(4),
+      ),
+      Paint()..color = const Color(0xFF3A2A17),
+    );
+    for (final corner in [
+      Offset(_kasa.left + 7, _kasa.bottom - 7),
+      Offset(_kasa.right - 7, _kasa.bottom - 7),
+    ]) {
+      canvas.drawCircle(corner, 3.5, Paint()..color = brass);
+    }
+
+    canvas
+      ..drawRRect(well, Paint()..color = const Color(0xFF241F1A))
+      ..save()
+      ..clipRRect(well);
+    final filled = Balance.ratio(run.progress.xp, run.day);
+    canvas
+      ..drawRect(
+        Rect.fromLTWH(
+          inset.left,
+          inset.bottom - inset.height * filled,
+          inset.width,
+          inset.height * filled,
+        ),
+        Paint()..color = const Color(0xFF6A4A12),
+      )
+      ..restore();
+
     final coins = assets['altin'];
     if (coins != null) {
-      drawCentered(canvas, coins, Offset(_gold.left + 32, _gold.center.dy), 56);
+      drawCentered(canvas, coins, Offset(inset.left + 20, inset.center.dy), 34);
     }
     drawText(
       canvas,
-      '${run.progress.para}',
-      Offset(_gold.left + 66, _gold.top + 8),
-      size: 38,
+      '${_till.round()}',
+      Offset(inset.right - 8, inset.center.dy),
+      size: 30,
       weight: 900,
       family: 'Rubik',
-      color: const Color(0xFF2E2A26),
+      right: true,
+      middle: true,
+      color: const Color(0xFFF7EEDF),
     );
 
-    // What a full meter paid out, floating off the till it went into.
+    // What a full meter paid out, floating off the box it went into.
     if (run.tempoIkramiyeKalan <= 0) return;
     final fade = (run.tempoIkramiyeKalan / 1.2).clamp(0.0, 1.0);
     drawText(
       canvas,
       '+${run.tempoIkramiye}',
-      Offset(_gold.right - 16, _gold.top - 4 - (1 - fade) * 14),
-      size: 20,
+      Offset(_kasa.right - 16, _kasa.top - 10 - (1 - fade) * 14),
+      size: 22,
       weight: 900,
       family: 'Rubik',
       center: true,
-      color: const Color(0xFF2F8F3A).withValues(alpha: fade),
+      color: const Color(0xFF7BD98A).withValues(alpha: fade),
     );
   }
 
@@ -1099,12 +1264,11 @@ class CounterComponent extends PositionComponent with DragCallbacks {
 
     _ticketHeader(canvas, rect, customer);
     _ticketRail(canvas, rect, customer);
-    _ticketExtras(canvas, rect, customer);
 
     // Patience, printed along the torn edge.
     drawBar(
       canvas,
-      Rect.fromLTWH(rect.left + 8, rect.bottom - 12, rect.width - 16, 5),
+      Rect.fromLTWH(rect.left + 8, rect.bottom - 11, rect.width - 16, 6),
       customer.sabirOrani,
       color: Color.lerp(_avoid, _want, customer.sabirOrani)!,
       background: const Color(0x332E2A26),
@@ -1112,6 +1276,14 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     canvas.restore();
   }
 
+  /// The band across the top: what they came for, what else they asked for,
+  /// and what the lot is worth.
+  ///
+  /// The two extras used to have a row of their own under the ingredients,
+  /// which put them exactly where the patience bar is drawn — two things
+  /// printed on top of each other on the one card that has to be read in a
+  /// glance. There is room beside the product for both, and one row fewer is
+  /// one row fewer to scan.
   void _ticketHeader(Canvas canvas, Rect rect, Customer customer) {
     final order = customer.order;
     final durum = order.tip == UrunTipi.durum;
@@ -1119,28 +1291,53 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       rect.left + 5,
       rect.top + 5,
       rect.width - 10,
-      24,
+      26,
     );
     canvas.drawRRect(
       RRect.fromRectAndRadius(band, const Radius.circular(5)),
       Paint()
         ..color = durum ? const Color(0xFFE2A73C) : const Color(0xFF7C93A8),
     );
-    _icon(
+    _mark(
       canvas,
-      durum ? 'doner_bekleme' : 'porsiyon_hazirlama',
-      Offset(band.left + 18, band.center.dy),
-      22,
+      durum ? 'durum' : 'porsiyon',
+      Offset(band.left + 17, band.center.dy),
+      23,
       done: customer.anaUrunVerildi,
     );
+
+    // Dessert always first and drink always second, printed as an empty ring
+    // when there is none — so the eye learns one place to look rather than
+    // reading a row whose length changes.
+    for (final (i, entry) in [
+      (order.tatli?.id, customer.tatliVerildi),
+      (order.icecek?.id, customer.icecekVerildi),
+    ].indexed) {
+      final at = Offset(band.left + 40 + i * 22, band.center.dy);
+      final id = entry.$1;
+      if (id == null) {
+        canvas.drawCircle(
+          at,
+          8,
+          Paint()
+            ..color = const Color(0x33FFFFFF)
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 1.4,
+        );
+        continue;
+      }
+      _mark(canvas, id, at, 19, done: entry.$2);
+    }
+
     drawText(
       canvas,
       '${_ticketWorth(customer)}',
-      Offset(band.right - 8, band.top + 4),
-      size: 15,
+      Offset(band.right - 8, band.center.dy),
+      size: 16,
       weight: 900,
       family: 'Rubik',
       right: true,
+      middle: true,
       color: const Color(0xFF2E2A26),
     );
   }
@@ -1178,14 +1375,11 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     final pitch = (rect.width - 12) / ids.length;
     for (var i = 0; i < ids.length; i++) {
       final id = ids[i];
-      final at = Offset(
-        rect.left + 6 + pitch * (i + 0.5),
-        rect.top + 44,
-      );
+      final at = Offset(rect.left + 6 + pitch * (i + 0.5), rect.top + 50);
       final wanted = order.ister.contains(id);
       final banned = order.istemez.contains(id);
       final wrong = customer.hataKalan > 0 && customer.hatali.contains(id);
-      final well = Rect.fromCenter(center: at, width: pitch - 3, height: 26);
+      final well = Rect.fromCenter(center: at, width: pitch - 3, height: 32);
 
       canvas.drawRRect(
         RRect.fromRectAndRadius(well, const Radius.circular(5)),
@@ -1208,10 +1402,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
         );
       }
 
-      final image = assets[_iconAsset(order.tip, id)];
-      if (image != null) {
-        drawContained(canvas, image, at, 21);
-      }
+      drawGameGlyph(canvas, id, Offset(at.dx, at.dy - 3), 24);
       if (banned || wrong) {
         const r = 9.0;
         canvas
@@ -1233,8 +1424,8 @@ class CounterComponent extends PositionComponent with DragCallbacks {
         drawText(
           canvas,
           '+${Balance.income(0, run.day, ingredients: 1)}',
-          Offset(at.dx, well.bottom - 9),
-          size: 8,
+          Offset(at.dx, well.bottom - 11),
+          size: 9,
           weight: 800,
           family: 'Rubik',
           center: true,
@@ -1244,91 +1435,46 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     }
   }
 
-  /// Two fixed sockets, dessert always left and drink always right, printed
-  /// empty when there is none — so the eye learns one place to look.
-  void _ticketExtras(Canvas canvas, Rect rect, Customer customer) {
-    final order = customer.order;
-    for (final (i, entry) in [
-      (order.tatli?.asset, customer.tatliVerildi),
-      (order.icecek?.servedAsset, customer.icecekVerildi),
-    ].indexed) {
-      final at = Offset(
-        i == 0 ? rect.left + 22 : rect.right - 22,
-        rect.top + 66,
-      );
-      final asset = entry.$1;
-      if (asset == null) {
-        canvas.drawCircle(
-          at,
-          9,
-          Paint()
-            ..color = const Color(0x1A2E2A26)
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = 1.4,
-        );
-        continue;
-      }
-      _icon(canvas, asset, at, 19, done: entry.$2);
-    }
-  }
-
-  String _iconAsset(UrunTipi tip, String id) => tip == UrunTipi.durum
-      ? Malzeme.values.firstWhere((m) => m.id == id).portionAsset
-      : Bilesen.values.firstWhere((b) => b.id == id).portionAsset;
-
-  void _icon(
+  /// One mark on a ticket, dimmed and ticked once it has been handed over.
+  void _mark(
     Canvas canvas,
-    String asset,
+    String id,
     Offset center,
     double size, {
-    Color? ring,
-    bool crossed = false,
     bool done = false,
   }) {
-    final image = assets[asset];
-    if (image == null) return;
-    if (ring != null) {
-      canvas.drawCircle(
-        center,
-        size * 0.62,
-        Paint()
-          ..color = ring.withValues(alpha: 0.85)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.5,
-      );
-    }
-    // No saveLayer: drawImageRect modulates by the paint's alpha on its own,
-    // and for `done: false` — every constraint icon on every card — the layer
-    // was a render-target switch applying alpha 1.
-    drawCentered(
-      canvas,
-      image,
+    drawGameGlyph(canvas, id, center, size, alpha: done ? 0.3 : 1);
+    if (!done) return;
+    canvas.drawCircle(
       center,
-      size,
-      paint: done ? _faded : null,
+      size * 0.42,
+      Paint()..color = const Color(0xFF3E9D4C),
     );
-    if (crossed) {
-      final r = size * 0.5;
-      canvas.drawLine(
-        center + Offset(-r, r),
-        center + Offset(r, -r),
-        Paint()
-          ..color = const Color(0xFFE0574A)
-          ..strokeWidth = 2,
-      );
-    }
-    if (done) {
-      canvas.drawCircle(
-        center,
-        size * 0.62,
-        Paint()..color = const Color(0x554CAF50),
-      );
-    }
+    drawGlyph(
+      canvas,
+      Icons.check_rounded,
+      center,
+      size * 0.62,
+      const Color(0xFFFFF6E8),
+    );
   }
 
   void _renderCarried(Canvas canvas) {
     final held = run.carried;
     if (held == null) return;
+
+    // The paper is the one carryable whose source art is not what leaves it:
+    // what a hand takes off a roll is a sheet.
+    if (held is Kagit) {
+      drawTornSheet(
+        canvas,
+        run.carriedAt - const Offset(0, 14),
+        78,
+        math.sin(_elapsed * 5) * 0.06,
+      );
+      return;
+    }
+
     final image = assets[held.asset];
     if (image == null) return;
 
@@ -1348,75 +1494,112 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     canvas.restore();
   }
 
-  /// The run's momentum: a named band, a meter, and the last change still
-  /// floating off it. Everything the counter is worth passes through this
-  /// number, so it is drawn as large as the till it multiplies.
+  /// The run's momentum, as the gauge a grill would have.
+  ///
+  /// It hangs on the wall over the coals it reads, because that is what the
+  /// number is about: everything the counter earns is multiplied by it, and
+  /// what feeds it is working the grill. A needle sweeping a dial is also
+  /// the one meter shape a player has seen a thousand times and needs no
+  /// explaining — a bar would have to be learnt.
   void _renderTempo(Canvas canvas) {
     final tempo = run.tempo;
     final colour = _tempoColours[tempo.hal]!;
+    const at = _gauge;
+    const r = _gaugeRadius;
+    // Three quarters of a turn, opening downward: the gap at the bottom is
+    // what tells the eye where empty is and where full is.
+    const from = math.pi * 0.75;
+    const sweep = math.pi * 1.5;
 
-    // A track, not a socket: segmented like the grill dials, so the meter is
-    // read as steps rather than as a smear.
-    final track = RRect.fromRectAndRadius(
-      _tempo,
-      Radius.circular(_tempo.height / 2),
-    );
     canvas
-      ..drawRRect(
-        track.shift(const Offset(0, 2)),
-        Paint()..color = const Color(0x332E2A26),
+      ..drawLine(
+        Offset(at.dx, at.dy - r - 16),
+        Offset(at.dx, at.dy - r + 4),
+        Paint()
+          ..color = const Color(0xFF2E2A26)
+          ..strokeWidth = 3,
       )
-      ..drawRRect(track, Paint()..color = const Color(0xFF2E2A26))
-      ..save()
-      ..clipRRect(track)
-      ..drawRect(
-        Rect.fromLTWH(
-          _tempo.left,
-          _tempo.top,
-          _tempo.width * tempo.oran,
-          _tempo.height,
-        ),
-        Paint()..color = colour,
+      ..drawCircle(
+        Offset(at.dx, at.dy - r - 17),
+        4,
+        Paint()..color = const Color(0xFF6E6155),
       )
-      // A lit meter reads as filled; a bare rectangle of colour reads as a
-      // loading bar.
-      ..drawRect(
-        Rect.fromLTWH(
-          _tempo.left,
-          _tempo.top + 2,
-          _tempo.width * tempo.oran,
-          _tempo.height * 0.36,
-        ),
-        Paint()..color = const Color(0x4DFFFFFF),
+      ..drawCircle(
+        at + const Offset(4, 7),
+        r,
+        Paint()..color = const Color(0x38000000),
+      )
+      ..drawCircle(at, r, Paint()..color = const Color(0xFF2E2A26))
+      ..drawCircle(at, r - 4, Paint()..color = const Color(0xFFC08A3E))
+      ..drawCircle(at, r - 11, Paint()..color = const Color(0xFFF7EEDF))
+      ..drawArc(
+        Rect.fromCircle(center: at, radius: r - 20),
+        from,
+        sweep,
+        false,
+        Paint()
+          ..color = const Color(0x1F2E2A26)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 11
+          ..strokeCap = StrokeCap.round,
+      )
+      ..drawArc(
+        Rect.fromCircle(center: at, radius: r - 20),
+        from,
+        math.max(0.02, sweep * tempo.oran),
+        false,
+        Paint()
+          ..color = colour
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 11
+          ..strokeCap = StrokeCap.round,
       );
-    for (var i = 1; i < 10; i++) {
-      final x = _tempo.left + _tempo.width * i / 10;
+
+    // Ticks, so the needle is read against something.
+    for (var i = 0; i <= 10; i++) {
+      final a = from + sweep * i / 10;
+      final dir = Offset(math.cos(a), math.sin(a));
       canvas.drawLine(
-        Offset(x, _tempo.top + 2),
-        Offset(x, _tempo.bottom - 2),
+        at + dir * (r - 30),
+        at + dir * (r - (i % 5 == 0 ? 36 : 33)),
         Paint()
           ..color = const Color(0x552E2A26)
-          ..strokeWidth = 2,
+          ..strokeWidth = i % 5 == 0 ? 2.6 : 1.5,
       );
     }
-    canvas.restore();
 
-    // The stage is a glyph on a badge that sits proud of the plate, not a
-    // word: read faster, and needs no translating.
-    drawKey(
-      canvas,
-      Rect.fromCenter(center: _stage, width: 46, height: 40),
-      colour,
-    );
+    // The needle, trembling at the top of the scale rather than sitting
+    // still: pinned is a state, not a stop.
+    final pinned = tempo.oran > 0.98;
+    final angle =
+        from +
+        sweep * tempo.oran +
+        (pinned ? math.sin(_elapsed * 24) * 0.02 : 0);
+    final tip = at + Offset(math.cos(angle), math.sin(angle)) * (r - 26);
+    final back = at - Offset(math.cos(angle), math.sin(angle)) * 9;
+    canvas
+      ..drawLine(
+        back,
+        tip,
+        Paint()
+          ..color = const Color(0xFF2E2A26)
+          ..strokeWidth = 4.5
+          ..strokeCap = StrokeCap.round,
+      )
+      ..drawCircle(at, 8, Paint()..color = const Color(0xFF2E2A26))
+      ..drawCircle(at, 5, Paint()..color = colour);
+
+    // The band, as a glyph on the face. A word here would need translating
+    // and would not be read at a glance anyway.
     drawGlyph(
       canvas,
       _tempoGlyphs[tempo.hal]!,
-      _stage - const Offset(0, 1),
-      24,
-      const Color(0xFFFFF6E8),
+      Offset(at.dx, at.dy + r * 0.42),
+      20,
+      colour,
     );
 
-    // The change, floating off the meter. Without it the multiplier is
+    // The change, floating off the case. Without it the multiplier is
     // invisible and the player never learns what feeds it.
     if (tempo.degisimKalan <= 0) return;
     final delta = tempo.sonDegisim;
@@ -1424,11 +1607,12 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     drawText(
       canvas,
       '${delta > 0 ? '+' : ''}${delta.round()}',
-      Offset(_tempo.right - 18, _tempo.top - 22 - (1 - fade) * 12),
-      size: 17,
+      Offset(at.dx + r + 6, at.dy - 10 - (1 - fade) * 14),
+      size: 21,
       weight: 900,
       family: 'Rubik',
       center: true,
+      outline: const Color(0xCCFFF6E8),
       color: (delta > 0 ? const Color(0xFF2F8F3A) : const Color(0xFFC4321F))
           .withValues(alpha: fade),
     );

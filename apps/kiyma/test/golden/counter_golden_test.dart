@@ -20,6 +20,8 @@ import 'package:kiyma/presentation/render/halo.dart';
 
 import '../support/scene_from_disk.dart';
 
+import '../support/stations.dart';
+
 /// One frame of a fully open counter with something in every state.
 ///
 /// Placement here is arithmetic on measured quads — a wrong sign puts food
@@ -100,16 +102,19 @@ void main() {
     run.mangal[3].tick(30, 1);
 
     run
-      ..durumIstasyonu = (Durum()
-        ..etli = true
-        ..malzemeler.addAll(Malzeme.values))
-      ..tabakIstasyonu = (Porsiyon()
-        ..lavasli = true
-        ..etli = true
-        ..bilesenler.addAll(Bilesen.values))
-      ..bekleme[0] = DurumUrun(Durum()..kagitli = true)
-      ..bekleme[1] = DurumUrun(Durum()..kagitli = true)
-      ..bekleme[2] = PorsiyonUrun(Porsiyon())
+      ..durumIstasyonu = fullWrap()
+      ..tabakIstasyonu = fullPlate()
+      // Two wraps that look identical and are not: the chip under each is
+      // the only thing that says which is which.
+      ..bekleme[0] = DurumUrun(fullWrap()..kagitli = true)
+      ..bekleme[1] = DurumUrun(
+        Durum()
+          ..kagitli = true
+          ..malzemeEkle(Malzeme.tursu)
+          ..malzemeEkle(Malzeme.tursu)
+          ..malzemeEkle(Malzeme.tursu),
+      )
+      ..bekleme[2] = PorsiyonUrun(fullPlate())
       ..bardakBekletme[0] = (Bardak()..doldur(Icecek.ayran))
       ..bardakBekletme[1] = (Bardak()..icerik = Icecek.kola)
       ..bardakBekletme[2] = Bardak()
@@ -136,6 +141,12 @@ void main() {
     for (var i = 0; i < 40; i++) {
       component.update(1 / 60);
     }
+
+    // A sheet in the hand, drawn where the finger is: the paper is the one
+    // carryable whose source art is not what leaves it.
+    run
+      ..beginDrag(scene['kagit_kaynak'].quad.center)
+      ..carriedAt = const Offset(470, 330);
 
     late Image frame;
     await tester.runAsync(() async {

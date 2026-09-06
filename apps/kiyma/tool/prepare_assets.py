@@ -38,6 +38,9 @@ UNUSED = {
     "dereotu_porsiyon",
     "sutlac",
     "kunefe",
+    # The launcher icon. It is configured by the platform projects, never
+    # read at runtime, and shipping it put 300KB of nothing in the bundle.
+    "uygulama_ikonu",
     # Four per line, not five: see DROPPED_INGREDIENTS.
     "maydanoz_tepsi",
     "maydanoz_durum",
@@ -61,10 +64,28 @@ COP_ALANI = {
     "asset": "cop_kovasi_1.png",
     "asset_fit": "alt",
     "x": 0,
-    "y": 470,
-    "w": 104,
-    "h": 106,
-    "quad": [[0, 470], [92, 470], [104, 576], [0, 576]],
+    "y": 462,
+    "w": 132,
+    "h": 114,
+    # Wider at the floor than at the rim, which is both what a bucket looks
+    # like from here and what keeps it clear of the grill's own quad: the
+    # extra room is taken along the bottom, where nothing else is.
+    "quad": [[0, 462], [100, 462], [132, 576], [0, 576]],
+}
+
+# Regions the art repository cut to the painted object rather than to the
+# hand that has to hit it.
+#
+# The paper strip was 104x33 — a target the width of a finger and a third of
+# its height, in the middle of a counter where every other drop area is four
+# times the size. It now takes the empty steel under it, down to the plate
+# station's top edge. The clock is square because it is drawn as a round
+# case rather than pasted from a landscape sprite.
+RESIZED = {
+    "kagit_kaynak": {
+        "x": 528, "y": 396, "w": 118, "h": 52,
+        "quad": [[528, 396], [645, 398], [646, 448], [529, 446]],
+    },
 }
 
 # Where a customer leaves what they paid: the wooden ledge they stand at,
@@ -88,10 +109,10 @@ DEKOR = [
         "category": "dekor",
         "asset": "duvar_saati_2.png",
         "asset_fit": "orta",
-        # Above the rightmost order card, which reaches y95. Smaller than
-        # it was: the run's clock is now also a thread across the top of the
-        # screen, so this one is for reading rather than for glancing.
-        "x": 858, "y": 12, "w": 154, "h": 69,
+        # Square, and the only clock there is: the hairline timer that used
+        # to run across the top of the screen went with the HUD panel, so
+        # the run now drains around this bezel instead.
+        "x": 886, "y": 6, "w": 116, "h": 116,
     },
     {
         "name": "duvar_takvimi",
@@ -260,6 +281,7 @@ def customer_slots(regions):
 
 def slim_region(region):
     out = {k: region[k] for k in KEEP if k in region}
+    out.update(RESIZED.get(region["name"], {}))
     if "asset" in out:
         out["asset"] = strip_variant(out["asset"]) or out["asset"]
     if "kompozisyon" in out:

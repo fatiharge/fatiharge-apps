@@ -134,6 +134,7 @@ void drawText(
   String? family,
   Color? outline,
   bool right = false,
+  bool middle = false,
 }) {
   if (outline != null) {
     // Drawn four times around: a number thrown over a painted kitchen has no
@@ -155,6 +156,7 @@ void drawText(
         weight: weight,
         family: family,
         right: right,
+        middle: middle,
       );
     }
   }
@@ -174,14 +176,12 @@ void drawText(
     ),
     textDirection: TextDirection.ltr,
   )..layout();
-  painter.paint(
-    canvas,
-    center
-        ? at - Offset(painter.width / 2, 0)
-        : right
-        ? at - Offset(painter.width, 0)
-        : at,
-  );
+  final dx = center
+      ? painter.width / 2
+      : right
+      ? painter.width
+      : 0.0;
+  painter.paint(canvas, at - Offset(dx, middle ? painter.height / 2 : 0));
 }
 
 /// A cream panel with the design's dark outline and hard offset shadow — the
@@ -373,15 +373,6 @@ void drawTicket(
     );
 }
 
-/// Draws [image] so its longest side fits [box], centred.
-///
-/// Every icon then occupies the same square whatever its aspect, which is
-/// what stops a row of them looking like a shuffled pile.
-void drawContained(Canvas canvas, Image image, Offset centre, double box) {
-  final scale = math.min(box / image.width, box / image.height);
-  drawCentered(canvas, image, centre, image.width * scale);
-}
-
 /// A socket cut into a panel: a dark inset with a lighter bevel. The plate
 /// holds three of them and everything the HUD says is drawn inside one.
 void drawSocket(Canvas canvas, Rect rect) {
@@ -457,6 +448,63 @@ void drawBar(
         radius,
       ),
       Paint()..color = color,
+    )
+    ..restore();
+}
+
+/// A sheet torn off the roll.
+///
+/// Dragging the roll used to carry the roll: a fist-sized cylinder floating
+/// across the counter, which is not what a hand takes off a paper roll and
+/// read as picking up the dispenser. What moves is one sheet, so one sheet
+/// is what is drawn — the tear along the top edge is the whole point of it.
+void drawTornSheet(Canvas canvas, Offset centre, double width, double turn) {
+  final height = width * 0.74;
+  canvas
+    ..save()
+    ..translate(centre.dx, centre.dy)
+    ..rotate(turn);
+
+  // An irregular tear, from a fixed table rather than a random one: a
+  // regular sawtooth reads as a stamped edge, and paper does not tear evenly.
+  // Fixed so the sheet does not crawl from frame to frame — and so a golden
+  // that draws one is the same picture twice.
+  const tear = [0.0, 0.11, 0.02, 0.14, 0.05, 0.16, 0.03, 0.09, 0.0];
+  const drift = [0.0, 0.02, -0.03, 0.01, 0.03, -0.02, 0.02, -0.01, 0.0];
+  final path = Path()..moveTo(-width / 2, -height / 2);
+  for (var i = 1; i < tear.length; i++) {
+    path.lineTo(
+      width * (i / (tear.length - 1) - 0.5 + drift[i]),
+      -height / 2 + height * tear[i],
+    );
+  }
+  path
+    ..lineTo(width / 2, height * 0.44)
+    // The bottom edge hangs: a sheet held at the top is not a rectangle.
+    ..quadraticBezierTo(0, height * 0.56, -width / 2, height * 0.42)
+    ..close();
+
+  canvas
+    ..drawPath(
+      path.shift(const Offset(2, 4)),
+      Paint()..color = const Color(0x33000000),
+    )
+    ..drawPath(path, Paint()..color = const Color(0xFFFBF6EC))
+    ..drawPath(
+      path,
+      Paint()
+        ..color = const Color(0xFF2E2A26)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.2
+        ..strokeJoin = StrokeJoin.round,
+    )
+    // A fold, so the sheet has a front and a back rather than a shape.
+    ..drawLine(
+      Offset(width * 0.14, -height * 0.3),
+      Offset(width * 0.14, height * 0.46),
+      Paint()
+        ..color = const Color(0x1A2E2A26)
+        ..strokeWidth = 2,
     )
     ..restore();
 }
