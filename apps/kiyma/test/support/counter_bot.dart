@@ -13,9 +13,16 @@ import 'package:kiyma/domain/unlocks.dart';
 ///
 /// [DayRun] is pure Dart with no engine in it, which is what makes this
 /// possible: a whole day plays out in a loop with no canvas and no clock.
-/// The bot is not good — it does one thing at a time and only ever builds
-/// wraps — so what it earns is a **floor**, not a ceiling. Numbers derived
-/// from it should be read as "even a plodding player clears this".
+///
+/// It works every line the counter has — wraps, plates, drinks and desserts.
+/// It used to build wraps only, which was fine while wraps were all there
+/// was; the moment the plate line opened, half of every order was one the bot
+/// could not make, so the measured economy said that buying the plate line
+/// cost you nine tenths of your income. That was the measurement being wrong,
+/// not the game.
+///
+/// It is still not a good player — one decision per tick, no planning past
+/// the neediest customer — so what it earns is a **floor**.
 class CounterBot {
   CounterBot(this.run, {this.skill = 1});
 
@@ -59,6 +66,8 @@ class CounterBot {
 
   double _idle = 0;
 
+  Unlocks get _unlocks => run.progress.unlocks;
+
   /// One decision per tick, in the order a person would think of them.
   void act() {
     // Dawdling: a bot that never hesitates measures a player who does not
@@ -71,8 +80,9 @@ class CounterBot {
 
     if (_collect()) return;
     if (_bin()) return;
-    if (_serve()) return;
-    if (_wrap()) return;
+    if (_handOver()) return;
+    if (_pourDrinks()) return;
+    if (_build()) return;
     _grill();
   }
 
@@ -97,18 +107,72 @@ class CounterBot {
     return false;
   }
 
-  /// Hands the finished wrap to the first customer whose order it satisfies.
-  bool _serve() {
-    final station = run.durumIstasyonu;
-    if (station == null || !station.hazir) return false;
-    final urun = DurumUrun(station);
+  // --- Handing things over ---
+
+  /// Everything finished that somebody at the counter is waiting for: the
+  /// main product first, then the extras, because a main product occupies a
+  /// station and an extra does not.
+  bool _handOver() {
+    final durum = run.durumIstasyonu;
+    if (durum != null &&
+        durum.hazir &&
+        _give('durum_hazirlama', DurumUrun(durum))) {
+      return true;
+    }
+    final tabak = run.tabakIstasyonu;
+    if (tabak != null &&
+        tabak.hazir &&
+        _give('tabak_hazirlama', PorsiyonUrun(tabak))) {
+      return true;
+    }
+    for (var i = 0; i < run.bekleme.length; i++) {
+      final urun = run.bekleme[i];
+      if (urun == null) continue;
+      if (_give('bekleme_alani', urun, slot: i)) return true;
+    }
+    for (var i = 0; i < run.bardakBekletme.length; i++) {
+      final bardak = run.bardakBekletme[i];
+      if (bardak == null || !bardak.hazir) continue;
+      if (_give('bardak_bekletme', IcecekUrun(bardak.icerik!), slot: i)) {
+        return true;
+      }
+    }
+    // A dessert is never built, only fetched, so it is only worth picking up
+    // when somebody is already asking for it.
+    for (final tatli in _unlocks.tatlilar) {
+      final index = _wants((c) => c.bekliyorTatli && c.order.tatli == tatli);
+      if (index < 0) continue;
+      _drag(
+        run.scene[tatli.region].quad.center,
+        run.scene['musteri_slot_${index + 1}'].quad.center,
+      );
+      return true;
+    }
+    // Cola comes out of the crate and goes straight over: no glass, no pour.
+    if (_unlocks.icecekler.contains(Icecek.kola)) {
+      final index = _wants(
+        (c) => c.bekliyorIcecek && c.order.icecek == Icecek.kola,
+      );
+      if (index >= 0) {
+        _drag(
+          run.scene['kola_kaynak'].quad.center,
+          run.scene['musteri_slot_${index + 1}'].quad.center,
+        );
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /// Hands [urun] to the first customer it settles something for.
+  bool _give(String from, Urun urun, {int? slot}) {
     for (var i = 0; i < run.musteriler.length; i++) {
       final customer = run.musteriler[i];
       if (customer == null || !customer.yerinde) continue;
-      if (customer.anaUrunVerildi) continue;
-      if (!customer.order.anaUrunKabul(urun)) continue;
+      if (!_kabulEder(customer, urun)) continue;
+      final region = run.scene[from];
       _drag(
-        run.scene['durum_hazirlama'].quad.center,
+        slot == null ? region.quad.center : region.slots[slot].center,
         run.scene['musteri_slot_${i + 1}'].quad.center,
       );
       return true;
@@ -116,8 +180,69 @@ class CounterBot {
     return false;
   }
 
-  /// Builds towards whatever the longest-waiting customer asked for.
-  bool _wrap() {
+  bool _kabulEder(Customer customer, Urun urun) => switch (urun) {
+    IcecekUrun(:final icecek) =>
+      customer.bekliyorIcecek && customer.order.icecek == icecek,
+    TatliUrun(:final tatli) =>
+      customer.bekliyorTatli && customer.order.tatli == tatli,
+    _ => !customer.anaUrunVerildi && customer.order.anaUrunKabul(urun),
+  };
+
+  int _wants(bool Function(Customer) test) {
+    for (var i = 0; i < run.musteriler.length; i++) {
+      final customer = run.musteriler[i];
+      if (customer != null && customer.yerinde && test(customer)) return i;
+    }
+    return -1;
+  }
+
+  // --- Drinks ---
+
+  /// Starts a glass for the first poured drink somebody is waiting on.
+  bool _pourDrinks() {
+    if (!_unlocks.icecekHatti) return false;
+    for (final icecek in _unlocks.icecekler) {
+      if (!icecek.poured) continue;
+      if (_wants((c) => c.bekliyorIcecek && c.order.icecek == icecek) < 0) {
+        continue;
+      }
+      // Already on its way: pouring locks the glass, so there is nothing to
+      // do but let it finish.
+      if (run.bardakBekletme.any(
+        (b) => b != null && (b.icecek == icecek && !b.bos),
+      )) {
+        continue;
+      }
+      final empty = run.bardakBekletme.indexWhere((b) => b != null && b.bos);
+      if (empty >= 0) {
+        _drag(
+          run.scene[icecek.sourceRegion].quad.center,
+          run.scene['bardak_bekletme'].slots[empty].center,
+        );
+        return true;
+      }
+      if (run.bardakBekletme.any((b) => b == null)) {
+        run.tap(run.scene['bardak_kaynak'].quad.center);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // --- Building ---
+
+  /// Builds towards whoever is closest to walking out.
+  bool _build() {
+    final order = _target();
+    if (order == null) {
+      // Nobody to build for, so keep a wrap going: it is the line that is
+      // always open and the grill is running anyway.
+      return _wrap(null);
+    }
+    return order.tip == UrunTipi.porsiyon ? _plate(order) : _wrap(order);
+  }
+
+  bool _wrap(Order? order) {
     final station = run.durumIstasyonu;
     if (station == null) {
       run.tap(run.scene['lavas_kaynak'].quad.center);
@@ -128,8 +253,6 @@ class CounterBot {
       run.tap(run.scene['kagit_kaynak'].quad.center);
       return true;
     }
-
-    final order = _target();
     if (!station.etli) {
       final ready = run.mangal.indexWhere((s) => s.alinabilir);
       if (ready < 0) return false;
@@ -139,7 +262,7 @@ class CounterBot {
       );
       return true;
     }
-    for (final malzeme in run.progress.unlocks.malzemeler) {
+    for (final malzeme in _unlocks.malzemeler) {
       if (station.tutam(malzeme) >= Balance.tutamAdedi) continue;
       if (order != null && !order.ister.contains(malzeme.id)) continue;
       run.tap(run.scene[malzeme.region].quad.center);
@@ -149,18 +272,52 @@ class CounterBot {
     return true;
   }
 
+  bool _plate(Order order) {
+    final station = run.tabakIstasyonu;
+    if (station == null) {
+      run.tap(run.scene['tabak_kaynak'].quad.center);
+      return true;
+    }
+    if (!station.lavasli) {
+      _drag(
+        run.scene['lavas_kaynak'].quad.center,
+        run.scene['tabak_hazirlama'].quad.center,
+      );
+      return true;
+    }
+    if (!station.etli) {
+      final ready = run.mangal.indexWhere((s) => s.alinabilir);
+      if (ready < 0) return false;
+      _drag(
+        run.scene['mangal_alani'].slots[ready].center,
+        run.scene['tabak_hazirlama'].quad.center,
+      );
+      return true;
+    }
+    for (final bilesen in _unlocks.bilesenler) {
+      if (station.tutam(bilesen) >= Balance.tutamAdedi) continue;
+      if (!order.ister.contains(bilesen.id)) continue;
+      run.tap(run.scene[bilesen.region].quad.center);
+      return true;
+    }
+    // Nothing left to add: a plate is servable as soon as it has meat on
+    // bread, so it is already waiting to be handed over.
+    return false;
+  }
+
   /// Keeps the grill as full as it can.
   void _grill() {
     if (run.mangal.every((s) => !s.unlocked || !s.bos)) return;
     run.tap(run.scene['malzeme_kiyma'].quad.center);
   }
 
+  /// The order of whoever is closest to walking out without their main
+  /// product, whichever line it is on.
   Order? _target() {
     Customer? best;
     for (final customer in run.musteriler) {
       if (customer == null || !customer.yerinde) continue;
       if (customer.anaUrunVerildi) continue;
-      if (customer.order.tip != UrunTipi.durum) continue;
       if (best == null || customer.sabirKalan < best.sabirKalan) {
         best = customer;
       }
