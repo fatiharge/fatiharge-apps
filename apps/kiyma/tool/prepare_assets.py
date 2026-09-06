@@ -72,15 +72,6 @@ DROPPED_INGREDIENTS = {"maydanoz", "patlican"}
 # than the art the quad was measured on; the corners were re-derived by
 # mapping them through the ember bed in each image rather than by eye.
 RESIZED = {
-    "mangal_alani": {
-        "x": 51, "y": 390, "w": 208, "h": 130,
-        "quad": [[173.0, 390.2], [258.9, 447.6],
-                 [135.9, 520.0], [50.8, 443.3]],
-    },
-    # The chef stands at the grill, so he moves with it: left of centre his
-    # shoulders are under the highest part of the rim, which is what hides
-    # the rest of him.
-    "sef": {"x": 105, "y": 200, "w": 134, "h": 311},
     "kagit_kaynak": {
         "x": 528, "y": 396, "w": 118, "h": 52,
         "quad": [[528, 396], [645, 398], [646, 448], [529, 446]],
@@ -279,10 +270,11 @@ def customer_slots(regions):
     return out
 
 
-# The grill's top right corner was being sliced by the counter's own left
-# edge, which is a straight vertical line in the art: an object crossing it
-# reads as cut rather than as standing behind it. Moved left until it clears.
-LAYERS_MOVED = {"mangal_katman": {"x": 26}}
+# The grill's far corner ran off the edge of its own picture, so the art was
+# extended to complete it. The replacement is a different size, and this rect
+# is what puts its coal bed exactly where the old one's was — which is what
+# lets `mangal_alani` stay the quad it has always been.
+LAYERS_MOVED = {"mangal_katman": {"x": 48, "y": 351, "w": 266, "h": 326}}
 
 
 def slim_region(region):
