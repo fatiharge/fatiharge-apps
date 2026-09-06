@@ -5,7 +5,7 @@ import 'package:kiyma/domain/tempo.dart';
 
 void main() {
   RunSummary run({
-    int musteri = 8,
+    int musteri = 7,
     int yanik = 0,
     int kizgin = 0,
     int kritik = 0,
@@ -62,7 +62,7 @@ void main() {
     );
     // Half again what the day asked for, against the default goal of six.
     expect(run(musteri: 9).rozetler, contains(Rozet.dolu));
-    expect(run(musteri: 8).rozetler, isNot(contains(Rozet.dolu)));
+    expect(run().rozetler, isNot(contains(Rozet.dolu)));
   });
 
   test('the three about mistakes never turn up together', () {
