@@ -8,6 +8,7 @@ import 'package:kiyma/application/kiyma_cubit.dart';
 import 'package:kiyma/config/injectable.dart';
 import 'package:kiyma/domain/balance.dart';
 import 'package:kiyma/domain/progress.dart';
+import 'package:kiyma/domain/tanitim.dart';
 import 'package:kiyma/infrastructure/bootstrap/bootstrap_adapter.dart';
 import 'package:kiyma/infrastructure/world.dart';
 import 'package:kiyma/presentation/day_page.dart';
@@ -37,6 +38,9 @@ void main() {
     await configureDependencies();
     await getIt<GameWorld>().loadScene();
     await getIt<GameWorld>().loadArt();
+    // A returning player, so the day card is the day card. The usta's first
+    // visit has a test of its own.
+    getIt<Progress>().gordum(Tanitim.katalog.map((tanitim) => tanitim.id));
     router = AppRouter();
   });
 
@@ -106,6 +110,24 @@ void main() {
   });
 
   group('the day card', () {
+    testWidgets('is where the usta says his piece, once and skippably', (
+      tester,
+    ) async {
+      final progress = getIt<Progress>()..gorulen.clear();
+      await open(tester, const DayRoute());
+
+      expect(find.text('tanitim.hosgeldin.baslik'.tr()), findsOneWidget);
+      await tester.tap(find.text('tanitim.atla'.tr()));
+      await tester.pumpAndSettle();
+
+      expect(find.text('tanitim.hosgeldin.baslik'.tr()), findsNothing);
+      expect(progress.gordu('hosgeldin'), isTrue);
+
+      // And it stays gone: the day card is not a lecture hall.
+      await open(tester, const DayRoute());
+      expect(find.text('tanitim.hosgeldin.baslik'.tr()), findsNothing);
+    });
+
     testWidgets('shows the level and reaches the shop', (tester) async {
       await open(tester, const DayRoute());
       expect(find.text('Gün 1'), findsOneWidget);

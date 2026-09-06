@@ -43,6 +43,12 @@ class ProgressStore {
       (saved['acik'] as List<dynamic>).cast<String>().forEach(
         progress.unlocks.open,
       );
+      // Read defensively rather than behind a version bump: a save written
+      // before the usta had anything to say is still a good save, and
+      // dropping it would cost somebody their week.
+      progress.gorulen.addAll(
+        (saved['gorulen'] as List<dynamic>? ?? const []).cast<String>(),
+      );
     } on Object {
       // Unreadable now is unreadable on the next launch too.
       unawaited(_preferences.remove(_key));
@@ -57,6 +63,7 @@ class ProgressStore {
       'xp': progress.xp,
       'gun': progress.gun,
       'acik': progress.unlocks.opened.toList(),
+      'gorulen': progress.gorulen.toList(),
     }),
   );
 

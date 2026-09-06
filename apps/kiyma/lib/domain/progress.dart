@@ -18,6 +18,18 @@ class Progress {
 
   final Unlocks unlocks = Unlocks();
 
+  /// Which of the usta's lines have been heard. Kept here rather than on the
+  /// screen that shows them so that skipping one survives the run.
+  final Set<String> gorulen = {};
+
+  bool gordu(String id) => gorulen.contains(id);
+
+  void gordum(Iterable<String> ids) {
+    if (gorulen.containsAll(ids)) return;
+    gorulen.addAll(ids);
+    _duyur();
+  }
+
   RunSummary? _sonOturum;
 
   /// The run that just ended. Held here rather than on the cubit because the

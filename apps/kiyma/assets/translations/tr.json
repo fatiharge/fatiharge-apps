@@ -99,5 +99,40 @@
     "ogle": "Öğle patlaması",
     "cift_servis": "İki servis",
     "aksamustu": "Akşamüstü yoğunluğu"
+  },
+  "tanitim": {
+    "hosgeldin": {
+      "baslik": "Tezgah senin",
+      "1": "Hoş geldin usta. Bugünden sonrası sana kalmış.",
+      "2": "Lavaşı dürüm alanına koy, kıymayı mangala at. Pişen eti dürümün üstüne al.",
+      "3": "Sonra yukarı fiske at — sarılır. Kâğıdı da koy, müşteriye öyle ver."
+    },
+    "tempo": {
+      "baslik": "Tempo",
+      "1": "Mangalın üstündeki kadran tempo. Her doğru hareket yükseltir, her yanlış düşürür.",
+      "2": "Yükseldikçe her şey daha çok para eder. Soğursa yarı fiyatına çalışırsın."
+    },
+    "altin": {
+      "baslik": "Altın",
+      "1": "Müşteri parayı tezgaha bırakır. Dokunmazsan on saniyede süpürülür.",
+      "2": "Süpürülenin %30’u gider. Elini uzatman bedava."
+    },
+    "gidis": {
+      "baslik": "Günün gidişi",
+      "1": "Her günün bir gidişi var: yoğunluk gelir, geçer, bazen geri döner.",
+      "2": "Gün kartında yazıyor. Sakin dakikalarda önden hazırlan."
+    },
+    "porsiyon": {
+      "baslik": "Porsiyon",
+      "1": "Tabak açıldı. Önce lavaş, sonra et — sarma da yok, kâğıt da.",
+      "2": "Bileşenler fazladan para eder; istemeyene koyarsan müşteri kızar."
+    },
+    "icecek": {
+      "baslik": "İçecek",
+      "1": "Bardağı raftan al, sürahiyi üstüne götür. Dolması zaman alır.",
+      "2": "Kola şişeden gider, beklemez."
+    },
+    "devam": "Anladım",
+    "atla": "Atla"
   }
 }
