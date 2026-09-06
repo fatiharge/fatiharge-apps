@@ -61,7 +61,7 @@ DROPPED_INGREDIENTS = {"maydanoz", "patlican"}
 COP_ALANI = {
     "name": "cop_alani",
     "category": "cop",
-    "asset": "cop_kovasi_1.png",
+    "asset": "cop_kovasi_2.png",
     "asset_fit": "alt",
     "x": 0,
     "y": 462,
