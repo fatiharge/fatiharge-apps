@@ -1506,15 +1506,36 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     }
   }
 
-  /// The ones standing at the counter, with everything they came with.
+  /// How far in somebody has to be before their ticket is readable.
+  static const _erkenBilet = 0.3;
+
+  /// The ones standing at the counter, with everything they came with — and
+  /// the ticket of whoever is still walking to it.
+  ///
+  /// The order used to appear only once somebody had arrived, which made the
+  /// waiting shelf a guess: there was no way to know what to build ahead
+  /// except to build the commonest thing and hope. Reading the ticket on the
+  /// way in is what turns the shelf from storage into a plan.
   void _renderSeated(Canvas canvas) {
     for (var i = 0; i < run.musteriler.length; i++) {
       final customer = run.musteriler[i];
-      if (customer == null || !customer.yerinde) continue;
+      if (customer == null) continue;
       final quad = scene['musteri_slot_${i + 1}'].quad;
-      _renderBody(canvas, quad, customer);
       final head = Offset(quad.bounds.center.dx, quad.bounds.top + 26);
-      _renderOrder(canvas, head, customer, i);
+      if (customer.yerinde) {
+        _renderBody(canvas, quad, customer);
+        _renderOrder(canvas, head, customer, i);
+      } else if (customer.varis > _erkenBilet) {
+        _renderOrder(
+          canvas,
+          head,
+          customer,
+          i,
+          solgun:
+              ((customer.varis - _erkenBilet) / (1 - _erkenBilet)).clamp(0, 1) *
+              0.7,
+        );
+      }
     }
   }
 
@@ -1559,7 +1580,13 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   /// pressure: what they want, the four ingredients as wanted / forbidden /
   /// unmentioned, and the two extras. The rail is iterated in enum order
   /// rather than set order — a shuffled row cannot be scanned.
-  void _renderOrder(Canvas canvas, Offset head, Customer customer, int slot) {
+  void _renderOrder(
+    Canvas canvas,
+    Offset head,
+    Customer customer,
+    int slot, {
+    double solgun = 1,
+  }) {
     final rect = Rect.fromLTWH(
       math.max(306, head.dx - _ticket.width / 2),
       _ticketTop,
@@ -1580,7 +1607,10 @@ class CounterComponent extends PositionComponent with DragCallbacks {
         : 0.0;
 
     canvas
-      ..save()
+      ..saveLayer(
+        rect.inflate(28),
+        Paint()..color = const Color(0xFFFFFFFF).withValues(alpha: solgun),
+      )
       ..translate(rect.center.dx + shake, rect.center.dy - drop)
       ..rotate(tilt * settle + (panic ? math.sin(_elapsed * 7) * 0.012 : 0))
       ..scale(0.7 + 0.3 * Curves.easeOutBack.transform(settle))
@@ -2007,6 +2037,37 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   /// what feeds it is working the grill. A needle sweeping a dial is also
   /// the one meter shape a player has seen a thousand times and needs no
   /// explaining — a bar would have to be learnt.
+  /// How many in a row, under the gauge.
+  ///
+  /// The streak already pays — a tip every fifth — and already feeds the
+  /// needle, but neither of those says what the number is. Three is where it
+  /// starts showing: below that it is not a run, it is two customers.
+  static const _seriEsigi = 3;
+
+  void _renderSeri(Canvas canvas, Offset at, double r) {
+    final seri = run.tempo.seri;
+    if (seri < _seriEsigi) return;
+    // Swells on the step that pays, so the tip is seen rather than banked.
+    final odul = seri % Balance.seriIkramiyeAdimi == 0;
+    final rect = Rect.fromCenter(
+      center: Offset(at.dx, at.dy + r + 13),
+      width: 54 + (odul ? 6 : 0),
+      height: 24 + (odul ? 3 : 0),
+    );
+    drawPanel(canvas, rect, fill: const Color(0xFF2E2A26));
+    drawText(
+      canvas,
+      '×$seri',
+      rect.center,
+      size: 14,
+      weight: 900,
+      family: 'Rubik',
+      center: true,
+      middle: true,
+      color: odul ? const Color(0xFFFFC24A) : const Color(0xFFF7EEDF),
+    );
+  }
+
   void _renderTempo(Canvas canvas) {
     final tempo = run.tempo;
     final colour = _tempoColours[tempo.hal]!;
@@ -2141,6 +2202,8 @@ class CounterComponent extends PositionComponent with DragCallbacks {
           ..strokeWidth = 2.5,
       );
     }
+
+    _renderSeri(canvas, at, r);
 
     if (chill > 0) _renderGaugeFrost(canvas, at, r, chill);
 

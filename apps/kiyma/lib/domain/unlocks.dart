@@ -73,8 +73,8 @@ class Unlocks {
     _open.forEach(_say);
   }
 
-  /// Design doc 10.1. Day one is one line, two ingredients, two customers —
-  /// a training day that needs no tutorial.
+  /// Day one: one line, two ingredients, two places. Not markers the shop
+  /// sells — they are open before it opens.
   static const _startOpen = {
     'mangal_2',
     'musteri_2',
@@ -83,13 +83,12 @@ class Unlocks {
     'bekleme_1',
   };
 
-  /// Design doc 10.3, rebuilt as ladders.
+  /// Every rung, priced against the purse rather than against a day.
   ///
-  /// Within a group each rung is about 2.2x the one under it — a little
-  /// under a day's compounding squared, so the next rung is one or two runs
-  /// away and never the same run. Across groups a rung is priced at roughly
-  /// half of what the day it is meant for pays, so buying one is a decision
-  /// inside a single day rather than a saving-up project.
+  /// Each one costs a share of everything banked by the day it belongs to,
+  /// which is what makes the day it first becomes affordable the day it was
+  /// written for. The forty-seven are spread one or two to a day across the
+  /// thirty, and each of the heavy days carries exactly one.
   static const catalogue = [
     Unlock('mangal_3', 520, UnlockGroup.mangal, 1),
     Unlock('mangal_4', 1500000, UnlockGroup.mangal, 2),

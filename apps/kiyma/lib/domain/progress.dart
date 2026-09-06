@@ -16,6 +16,11 @@ class Progress {
   int xp = 0;
   int gun = 1;
 
+  /// The best single run, in gold. The only number the game keeps that is not
+  /// spent, levelled or reset — past the last day of the table there is no
+  /// new thing to unlock, so a record is what a run is still for.
+  int rekor = 0;
+
   final Unlocks unlocks = Unlocks();
 
   /// Which of the usta's lines have been heard. Kept here rather than on the
@@ -85,6 +90,19 @@ class Progress {
     xp += miktar;
     _duyur();
   }
+
+  /// True when this run beat the best one. Asked once, when the day closes.
+  bool rekorKir(int kazanc) {
+    if (kazanc <= rekor) return false;
+    rekor = kazanc;
+    _duyur();
+    return true;
+  }
+
+  /// Past the last day the table was measured for. Nothing new opens; the
+  /// counter is simply as fast as it will ever be, and the run is for the
+  /// record.
+  bool get ustaModu => gun > Balance.targets.length;
 
   /// Debug only: money with no XP behind it, so the level stays whatever was
   /// actually played.

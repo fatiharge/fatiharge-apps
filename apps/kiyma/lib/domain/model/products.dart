@@ -104,7 +104,7 @@ class CoinPile {
 
 /// A wrap being built, then carried.
 class Wrap {
-  Wrap({this.gerekenTutam = Balance.tutamAdedi});
+  Wrap({this.gerekenTutam = Balance.tutamBasi});
 
   /// How many handfuls make one whole ingredient on *this* wrap.
   ///
@@ -120,7 +120,7 @@ class Wrap {
   bool sarili = false;
   bool kagitli = false;
 
-  /// How much of [malzeme] is on, `0..`[Balance.tutamAdedi].
+  /// How much of [malzeme] is on, `0..`[Balance.tutamBasi].
   int tutam(Ingredient malzeme) => _tutamlar[malzeme] ?? 0;
 
   /// Only the finished ones. A third of an onion is not an onion: it does
@@ -149,7 +149,7 @@ class Wrap {
 
 /// A plate being built, then carried.
 class Plate {
-  Plate({this.gerekenTutam = Balance.tutamAdedi});
+  Plate({this.gerekenTutam = Balance.tutamBasi});
 
   /// See [Wrap.gerekenTutam].
   final int gerekenTutam;

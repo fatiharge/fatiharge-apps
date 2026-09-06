@@ -465,6 +465,7 @@ class DayRun {
           order: _maker.make(),
           day: day,
           ikram: progress.unlocks.ikramKademesi,
+          kural: kural.sabirCarpani,
           hiz:
               Balance.slowestWalk +
               _random.nextDouble() * (1 - Balance.slowestWalk),

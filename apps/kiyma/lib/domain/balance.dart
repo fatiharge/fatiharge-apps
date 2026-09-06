@@ -4,39 +4,28 @@ import 'package:kiyma/domain/model/items.dart';
 
 /// Every tunable number in the game, in one place.
 ///
-/// The design doc marks these `[ÖNERİ]`: they are starting values waiting for
-/// playtest, not mechanics. Three of them carry the difficulty — the cooked
-/// window, the patience curve and the money target table — and the table was
-/// derived from [income], so changing the income formula means recomputing
-/// the table rather than nudging it.
+/// [targets] is measured, not chosen: `test/economy_test.dart` plays whole
+/// runs and the table is fitted to what they take. Changing [income] or any
+/// curve above it means refitting the table rather than nudging it.
 abstract final class Balance {
   // --- Cooking (design doc 2.1) ---
 
   static const rawSeconds = 2.0;
   static const cookingSeconds = 4.0;
 
-  /// The window where meat can be taken off, narrowing with the day.
-  ///
-  /// Day one opens at twice what it used to and closes on the old floor by
-  /// day ten. A first run is where the player is still looking for the bin,
-  /// and a window that shuts while they look teaches nothing except that the
-  /// grill is unfair. What it costs is nothing: day one barely pays, so the
-  /// slack is spent on somebody learning rather than on somebody farming.
+  /// How long meat stays good, narrowing slowly and stopping well short of
+  /// tight. A later day is harder because it wants more people through the
+  /// counter, not because it gives less time per skewer.
   static double cookedWindow(int day, {int komur = 0}) =>
       math.max(16, 34 - day * 0.6) + komur * komurPencere;
 
-  /// How many handfuls make one ingredient.
-  ///
-  /// One drag used to fill a well, which made a loaded wrap four flicks and
-  /// no decision. Three turns each ingredient into something being *built*:
-  /// the strip grows a third at a time, so a half-finished wrap is visible
-  /// and abandoning one has a cost.
-  static const tutamAdedi = 3;
+  /// Handfuls per ingredient before any knife. Three, so a wrap is built
+  /// rather than flicked together and abandoning a half-made one costs.
+  static const tutamBasi = 3;
 
-  /// What a sharper knife takes it down to, one handful per rung. One is the
-  /// floor: an ingredient that goes on in a single touch is a tray again,
-  /// not a build.
-  static int tutam(int bicak) => math.max(1, tutamAdedi - bicak);
+  /// What a sharper knife takes it down to, one per rung. One is the floor:
+  /// an ingredient that goes on in a single touch is a tray again.
+  static int tutam(int bicak) => math.max(1, tutamBasi - bicak);
 
   /// Coal, per rung: the cook shortens and the window widens. The grill
   /// feeds every other line, which is why this is the one ladder that raises
@@ -58,29 +47,17 @@ abstract final class Balance {
 
   // --- Income (design doc 10.2) ---
 
-  /// What a day is worth, compounding.
-  ///
-  /// It used to be `1 + day * 0.08`, and the level targets were fitted to
-  /// cancel it out — a treadmill by construction, where day ten paid 2.6x
-  /// day one and nothing ever felt like progress. Compounding is the whole
-  /// point of a progression: the numbers have to run away.
-  ///
-  /// The base is 1.79 because that is the curve through the three points the
-  /// game was asked for — a day worth 30 pays 90 on day three and 560 on day
-  /// six. Every other number here is measured; this one was specified.
+  /// What a day is worth, compounding. Over thirty days it comes to about a
+  /// million times day one, which is the point: the numbers have to run away
+  /// or the shop is a treadmill.
   static double dayMultiplier(int day) => math.pow(1.62, day - 1).toDouble();
 
   static const durumBase = 1;
   static const porsiyonBase = 2;
 
-  /// Flat, unscaled by the day: otherwise "stuff everything in" becomes the
-  /// dominant late strategy.
-  ///
-  /// Rides the day with everything else, or the ingredients a player just
-  /// paid a compounding price for would be worth less every day.
-  ///
-  /// Still flat *within* a day, so "stuff everything in" never becomes the
-  /// dominant late strategy — the customer's `istemez` is what pushes back.
+  /// What one named ingredient adds, as a share of the base — so the shop
+  /// can say "+80%" and mean it on every day. Rides the day with everything
+  /// else; what stops "stuff everything in" is the customer's `istemez`.
   static const ingredientBonus = 0.8;
 
   static const Map<Dessert, int> tatliBase = {Dessert.baklava: 1};
@@ -100,13 +77,12 @@ abstract final class Balance {
 
   // --- Patience (design doc 8.4) ---
 
-  /// A courtesy the counter can buy: flat seconds rather than a fraction,
-  /// because a late day cuts the bar to a twelve-second floor and a
-  /// percentage of a floor is nothing.
+  /// A courtesy the counter can buy: flat seconds rather than a fraction, so
+  /// it is worth the same on the day the bar is shortest.
   static const ikramSaniye = 3.0;
 
-  /// Also doubled at the top and converging on the same floor, for the same
-  /// reason as [cookedWindow]: the first days are the ones being learnt.
+  /// How long somebody waits, on the same slow curve as [cookedWindow] and
+  /// for the same reason.
   static double patience(int day, {int ikram = 0}) =>
       math.max(34, 80 - day * 1.5) + ikram * ikramSaniye;
 
@@ -142,22 +118,13 @@ abstract final class Balance {
 
   // --- The day (design doc 11) ---
 
-  /// How long the counter stays open. A run is a clock, not a queue:
-  /// customers keep arriving as seats free until the time is up.
-  /// A minute, not two. Two minutes of the same four gestures is where a
-  /// run stops being a push and becomes a shift; the day ends while the
-  /// player still wants one more customer, which is the point.
+  /// How long the counter stays open — a clock, not a queue. A minute on
+  /// day one, four by day thirty: the first is short enough to learn on and
+  /// the last long enough to be worth the counter it is played on.
   static Duration runLength(int day) => Duration(seconds: 60 + day * 6);
 
-  /// Gap between one customer leaving and the next taking the place.
-  /// How long the quickest customer takes to walk in and settle, and how
-  /// slow the slowest one is as a fraction of that. Everybody gets a speed
-  /// somewhere in between, so a queue does not move as one body.
-  /// Gold for a push the tempo meter had no room left to take.
-  ///
-  /// At the top of the meter a good move would otherwise be worth nothing;
-  /// this turns the overflow into money, so playing well at full tempo keeps
-  /// paying rather than going quiet.
+  /// Gold for a push the meter had no room left to take, so playing well at
+  /// full tempo keeps paying rather than going quiet.
   static const tempoBonus = 2.5;
 
   static const arrivalWalk = 2.0;
@@ -207,15 +174,9 @@ abstract final class Balance {
   static double dokumSuresi(int kademe) =>
       pourSeconds * math.pow(surahiHizi, kademe);
 
-  /// Gap between arrivals, closing with the day.
-  ///
-  /// It was a flat three seconds, which made day one a firehose: the bot
-  /// clears forty customers in a 185-second run and is limited by supply, not
-  /// by its own hands. Day one should be teachable.
   /// A sign outside brings people in faster. Applied to the floor too, or it
-  /// would be dead from day ten on — and it can never fill a place the
-  /// counter does not have, which is what stops it being the only rung worth
-  /// buying.
+  /// would be dead from the day the gap bottoms out — and it can never fill
+  /// a place the counter does not have.
   static const tabelaCarpani = 0.9;
 
   static double arrivalGap(int day, {int tabela = 0}) =>
@@ -290,6 +251,16 @@ abstract final class Balance {
   static const tatliSansi = 0.35;
   static const icecekSansi = 0.4;
 
+  /// A day played at speed: two thirds of the patience, half again the pay.
+  /// The trade has to be worth taking or it is only a worse day.
+  static const kosuSabri = 0.65;
+  static const kosuOdemesi = 1.5;
+
+  /// The other end of the same trade — time instead of money.
+  static const sakinPenceresi = 1.4;
+  static const sakinSabri = 1.35;
+  static const sakinOdemesi = 0.85;
+
   /// A holiday means everybody, not most. The bend is that every visit needs
   /// two handovers, so seats turn over slower; that is reward enough.
   static const bayramTatliSansi = 1.0;
@@ -321,14 +292,11 @@ abstract final class Balance {
   static int gunlukOdul(int day) =>
       ((target(day) - floor(day)) * gunlukOdulPayi).round();
 
-  /// XP needed to reach each day. Earned money is what feeds it, but the
-  /// player is never shown that link — they see a level bar.
+  /// XP needed to reach each day. Earned money feeds it; the player sees a
+  /// level bar and never the link.
   ///
-  /// Measured, not guessed: `test/economy_test.dart` plays whole runs with a
-  /// scripted player and reports what they take. Each step is about what a
-  /// plodding player clears in one run, so an ordinary day is one run and a
-  /// good one is faster. The old table was out by a factor of twelve — a
-  /// single day-one run cleared the first three days at once.
+  /// Measured, not guessed, and fitted to [gunKosusu]: each step is what a
+  /// plodding player takes in that many runs.
   static const targets = [
     18,
     56,
@@ -394,12 +362,11 @@ abstract final class Balance {
 
   static int target(int day) {
     if (day <= targets.length) return targets[day - 1];
-    // Past the hand-checked table, keep the second difference the table has.
+    // Past the table, compounding at the rate the income does — anything
+    // slower and every later day would clear on its first run.
     var value = targets.last;
     var step = targets.last - targets[targets.length - 2];
     for (var d = targets.length; d < day; d++) {
-      // Compounds past the table at the rate the income does: anything
-      // slower and every day after the tenth would clear on its first run.
       step = (step * 1.62).round();
       value += step;
     }
@@ -409,12 +376,9 @@ abstract final class Balance {
   /// Where the level [day] starts, in XP.
   static int floor(int day) => day <= 1 ? 0 : target(day - 1);
 
-  /// How far through level [day] an XP total is, `0..1`.
-  ///
-  /// Here rather than on Progress or on a state object because the summary
-  /// animates across days: it needs the curve as a function of an arbitrary
-  /// day, not two scalars for the current one. It was written out three times
-  /// before this, and only one copy was ever asserted.
+  /// How far through level [day] an XP total is, `0..1`. Here rather than on
+  /// Progress because the summary animates across days and needs the curve
+  /// for an arbitrary one.
   static double ratio(int xp, int day) {
     final span = target(day) - floor(day);
     return span <= 0 ? 1 : ((xp - floor(day)) / span).clamp(0, 1);

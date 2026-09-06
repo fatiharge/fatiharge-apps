@@ -126,6 +126,7 @@ class _SummaryPageState extends State<SummaryPage>
                             amount: _run?.kazanc ?? 0,
                             served: _run?.musteri ?? 0,
                             rozetler: _run?.rozetler ?? const [],
+                            rekor: _run?.rekor ?? false,
                             day: _run?.gunOnce ?? _progress.gun,
                             stars: _stars,
                             zirve: _run?.zirveTempo ?? TempoBand.normal,
@@ -420,6 +421,7 @@ class _Takings extends StatelessWidget {
     required this.amount,
     required this.served,
     required this.rozetler,
+    required this.rekor,
     required this.day,
     required this.stars,
     required this.zirve,
@@ -433,6 +435,9 @@ class _Takings extends StatelessWidget {
   /// What the day earned. At most four are drawn — a wall of chips says
   /// nothing, and a day that earned five was a very good day either way.
   final List<DayBadge> rozetler;
+
+  /// Whether this run beat every run before it.
+  final bool rekor;
 
   static const _gosterilen = 4;
 
@@ -459,7 +464,7 @@ class _Takings extends StatelessWidget {
           // Held to one short line and scaled into it. The column is
           // `spaceBetween` inside a fixed box, so anything with a natural
           // height of its own pushes the takings off the bottom.
-          if (rozetler.isNotEmpty)
+          if (rozetler.isNotEmpty || rekor)
             SizedBox(
               height: 22,
               child: FittedBox(
@@ -468,6 +473,13 @@ class _Takings extends StatelessWidget {
                 child: Row(
                   spacing: 6,
                   children: [
+                    // First, and in the accent colour: past the last day of
+                    // the table it is the only thing left to beat.
+                    if (rekor)
+                      BrandChip(
+                        label: 'ozet.rekor'.tr(),
+                        icon: Icons.emoji_events_rounded,
+                      ),
                     for (final rozet in rozetler.take(_gosterilen))
                       BrandChip(
                         label: 'rozet.${rozet.name}'.tr(),

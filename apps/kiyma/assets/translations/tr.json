@@ -36,7 +36,8 @@
     "tempo": "Bugünün gidişi",
     "kural": "Bugünün kuralı",
     "hedef": "Günün hedefi",
-    "hedef_ne": "{} mutlu müşteri  →  +{} altın"
+    "hedef_ne": "{} mutlu müşteri  →  +{} altın",
+    "usta": "Usta modu · rekor {}"
   },
   "magaza": {
     "baslik": "Dükkanı büyüt",
@@ -171,7 +172,8 @@
     "hazir": "Siparişler hazır, servise başla!",
     "gun_rozet": "GÜN",
     "zirve": "EN İYİ TEMPO",
-    "yildiz": "{} / 3 yıldız"
+    "yildiz": "{} / 3 yıldız",
+    "rekor": "REKOR"
   },
   "duraklat": {
     "baslik": "Duraklatıldı",
@@ -270,7 +272,11 @@
     "titiz_gun": "Titiz gün",
     "titiz_gun_ne": "Herkes bir malzeme fazla istiyor.",
     "bayram": "Bayram",
-    "bayram_ne": "Herkes tatlı istiyor."
+    "bayram_ne": "Herkes tatlı istiyor.",
+    "kosu_gunu": "Koşu günü",
+    "kosu_gunu_ne": "Herkes acele ediyor: sabır %35 az, ama her şey %50 fazla eder.",
+    "sakin_gun": "Sakin gün",
+    "sakin_gun_ne": "Kimse acele etmiyor: sabır ve pencere geniş, ama %15 az eder."
   },
   "rozet": {
     "kusursuz": "Kusursuz gün",

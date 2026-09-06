@@ -98,4 +98,21 @@ void main() {
       expect(Balance.ratio(progress.xp, progress.gun), 0);
     });
   });
+
+  test('the record only moves when a run beats it', () {
+    final progress = Progress();
+    expect(progress.rekor, 0);
+    expect(progress.rekorKir(120), isTrue);
+    expect(progress.rekor, 120);
+    expect(progress.rekorKir(120), isFalse, reason: 'equalling is not beating');
+    expect(progress.rekorKir(90), isFalse);
+    expect(progress.rekor, 120);
+  });
+
+  test('usta mode starts where the measured table ends', () {
+    final progress = Progress()..gun = Balance.targets.length;
+    expect(progress.ustaModu, isFalse);
+    progress.gun++;
+    expect(progress.ustaModu, isTrue);
+  });
 }

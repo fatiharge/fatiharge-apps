@@ -149,6 +149,9 @@ class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
     final xpOnce = progress.xp - kazanc;
     final gunOnce = progress.gun;
     final atlanan = progress.seviyeleriIsle();
+    // Asked after the levelling and before the summary is built, so a run
+    // that both levels up and sets a record says so once each.
+    final rekor = progress.rekorKir(kazanc);
     run = null;
     progress.sonOturum = RunSummary(
       kazanc: kazanc,
@@ -163,6 +166,7 @@ class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
       enUzunSeri: current.tempo.enUzunSeri,
       hedef: current.gunlukHedef,
       hedefTamam: current.hedefTamam,
+      rekor: rekor,
     );
     if (emitAfter) _emit();
   }

@@ -111,8 +111,11 @@ class Customer {
     required this.day,
     this.hiz = 1,
     int ikram = 0,
-  }) : sabirToplam = Balance.patience(day, ikram: ikram) * _sabirCarpani(order),
-       sabirKalan = Balance.patience(day, ikram: ikram) * _sabirCarpani(order);
+    double kural = 1,
+  }) : sabirToplam =
+           Balance.patience(day, ikram: ikram) * _sabirCarpani(order) * kural,
+       sabirKalan =
+           Balance.patience(day, ikram: ikram) * _sabirCarpani(order) * kural;
 
   static double _sabirCarpani(Order order) =>
       order.musteriTipi == CustomerKind.aceleci ? Balance.aceleciSabir : 1;

@@ -4,13 +4,13 @@ import 'package:kiyma/domain/model/products.dart';
 
 /// A wrap with every ingredient fully on it.
 ///
-/// An ingredient is [Balance.tutamAdedi] handfuls, so "loaded" is a loop
+/// An ingredient is [Balance.tutamBasi] handfuls, so "loaded" is a loop
 /// rather than a set literal, and two tests plus the goldens all wanted the
 /// same loop.
 Wrap fullWrap() {
   final durum = Wrap()..etli = true;
   for (final malzeme in Ingredient.values) {
-    for (var i = 0; i < Balance.tutamAdedi; i++) {
+    for (var i = 0; i < Balance.tutamBasi; i++) {
       durum.malzemeEkle(malzeme);
     }
   }
@@ -22,7 +22,7 @@ Plate fullPlate() {
     ..lavasli = true
     ..etli = true;
   for (final bilesen in PlateItem.values) {
-    for (var i = 0; i < Balance.tutamAdedi; i++) {
+    for (var i = 0; i < Balance.tutamBasi; i++) {
       porsiyon.bilesenEkle(bilesen);
     }
   }

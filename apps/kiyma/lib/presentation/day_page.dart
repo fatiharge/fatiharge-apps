@@ -82,6 +82,18 @@ class _Today extends StatelessWidget {
       ..maximumFractionDigits = 1;
     final was = day - 1;
 
+    // The card is a promise, so it has to say what today will actually be
+    // like: a race day is not the patience curve, it is the patience curve
+    // times two thirds.
+    final kural = DayRule.forDay(day);
+    final onceki = DayRule.forDay(was);
+    double sabir(int gun, DayRule kural) =>
+        Balance.patience(gun) * kural.sabirCarpani;
+    double pencere(int gun, DayRule kural) =>
+        Balance.cookedWindow(gun) * kural.pencereCarpani;
+    double carpan(int gun, DayRule kural) =>
+        Balance.dayMultiplier(gun) * kural.odeme;
+
     String seconds(double value) => '${number.format(value)} sn';
 
     String clock(Duration length) {
@@ -113,8 +125,8 @@ class _Today extends StatelessWidget {
       _Dial(
         icon: Icons.local_fire_department_rounded,
         label: 'gun.yanma'.tr(),
-        value: seconds(Balance.cookedWindow(day)),
-        delta: Balance.cookedWindow(day) - Balance.cookedWindow(was),
+        value: seconds(pencere(day, kural)),
+        delta: pencere(day, kural) - pencere(was, onceki),
         unit: 'sn',
         moreIsBetter: true,
         number: number,
@@ -122,8 +134,8 @@ class _Today extends StatelessWidget {
       _Dial(
         icon: Icons.hourglass_bottom_rounded,
         label: 'gun.sabir'.tr(),
-        value: seconds(Balance.patience(day)),
-        delta: Balance.patience(day) - Balance.patience(was),
+        value: seconds(sabir(day, kural)),
+        delta: sabir(day, kural) - sabir(was, onceki),
         unit: 'sn',
         moreIsBetter: true,
         number: number,
@@ -131,8 +143,8 @@ class _Today extends StatelessWidget {
       _Dial(
         icon: Icons.payments_rounded,
         label: 'gun.carpan'.tr(),
-        value: '×${number.format(Balance.dayMultiplier(day))}',
-        delta: (Balance.dayMultiplier(day) - Balance.dayMultiplier(was)) * 100,
+        value: '×${number.format(carpan(day, kural))}',
+        delta: (carpan(day, kural) - carpan(was, onceki)) * 100,
         unit: '%',
         moreIsBetter: true,
         number: number,
@@ -336,6 +348,19 @@ class _Start extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 10),
+        // Past the last measured day the bar is still there and still moves,
+        // but nothing new is behind it. The record is what a run is for from
+        // here, so it takes the line the bar was explaining.
+        if (context.read<KiymaCubit>().progress.ustaModu)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: BrandChip(
+              icon: Icons.emoji_events_rounded,
+              label: 'gun.usta'.tr(
+                args: [goldText(context.read<KiymaCubit>().progress.rekor)],
+              ),
+            ),
+          ),
         LevelBar(value: state.seviyeOrani),
         const SizedBox(height: 14),
         _Tip(index: state.gun % _tips + 1),

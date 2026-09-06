@@ -29,7 +29,7 @@ import 'package:kiyma/route/app_router.gr.dart';
 /// inside a dashed outline — which is the one place in the game they should
 /// be, because seeing what you do not have is the whole point of a shop.
 ///
-/// Eleven rungs have no object to stand on. Those are on [ShopListRoute],
+/// Fourteen rungs have no object to stand on. Those are on [ShopListRoute],
 /// reached from here.
 @RoutePage()
 class ShopPage extends StatelessWidget {

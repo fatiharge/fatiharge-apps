@@ -3,9 +3,9 @@ import 'package:kiyma/domain/progress.dart';
 import 'package:kiyma/infrastructure/progress_store.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// What survives a cold start. Nothing did before this: the shop's whole
-/// catalogue runs to about nine thousand gold and day one takes twenty-four,
-/// so a grind that only lasted one process lifetime was not a grind at all.
+/// What survives a cold start. Nothing did before this, and the shop is
+/// two thirds of everything the game ever pays — a grind that lasted one
+/// process lifetime was not a grind at all.
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -74,5 +74,18 @@ void main() {
     final progress = Progress();
     store.restore(progress);
     expect(progress.para, 0);
+  });
+
+  test('the record survives a restart', () async {
+    final store = await open();
+    await store.save(
+      Progress()
+        ..kazan(90)
+        ..rekor = 512,
+    );
+
+    final geri = Progress();
+    store.restore(geri);
+    expect(geri.rekor, 512);
   });
 }

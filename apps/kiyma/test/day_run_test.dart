@@ -76,7 +76,7 @@ void main() {
 
   /// Drags [region] onto [target] enough times to make one whole ingredient.
   void loadUp(DayRun run, String region, String target) {
-    for (var i = 0; i < Balance.tutamAdedi; i++) {
+    for (var i = 0; i < Balance.tutamBasi; i++) {
       expect(drag(run, at(region), at(target)), isTrue);
     }
   }
@@ -92,7 +92,7 @@ void main() {
       isTrue,
     );
     for (final malzeme in malzemeler) {
-      for (var i = 0; i < Balance.tutamAdedi; i++) {
+      for (var i = 0; i < Balance.tutamBasi; i++) {
         expect(drag(run, at(malzeme.region), at('durum_hazirlama')), isTrue);
       }
     }
@@ -161,7 +161,7 @@ void main() {
       expect(drag(run, at('lavas_kaynak'), at('durum_hazirlama')), isTrue);
       final station = run.durumIstasyonu!;
 
-      for (var i = 1; i < Balance.tutamAdedi; i++) {
+      for (var i = 1; i < Balance.tutamBasi; i++) {
         expect(drag(run, at('malzeme_domates'), at('durum_hazirlama')), isTrue);
         expect(station.tutam(Ingredient.domates), i);
         expect(
@@ -177,7 +177,7 @@ void main() {
       // And a finished one takes no more: the well is full, not bottomless.
       // `drag` reports the pickup, not the drop, so the count is the check.
       drag(run, at('malzeme_domates'), at('durum_hazirlama'));
-      expect(station.tutam(Ingredient.domates), Balance.tutamAdedi);
+      expect(station.tutam(Ingredient.domates), Balance.tutamBasi);
     });
 
     test('will not take an ingredient after the roll', () {
@@ -650,7 +650,7 @@ void main() {
         ..tap(at('malzeme_kiyma'));
       cook(run, Balance.rawSeconds + Balance.cookingSeconds + 0.2);
       run.tap(slot('mangal_alani', 0));
-      for (var i = 0; i < Balance.tutamAdedi; i++) {
+      for (var i = 0; i < Balance.tutamBasi; i++) {
         run.tap(at('malzeme_domates'));
       }
       expect(run.durumIstasyonu!.malzemeler, {Ingredient.domates});

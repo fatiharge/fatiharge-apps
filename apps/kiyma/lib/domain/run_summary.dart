@@ -17,6 +17,7 @@ class RunSummary {
     this.enUzunSeri = 0,
     this.hedef = 0,
     this.hedefTamam = false,
+    this.rekor = false,
   });
 
   /// What the day is judged on. Counted during the run because none of it
@@ -30,6 +31,9 @@ class RunSummary {
   /// How many happy customers the day asked for, and whether it got them.
   final int hedef;
   final bool hedefTamam;
+
+  /// Whether this run beat every run before it.
+  final bool rekor;
 
   /// What the day earned, in the order the summary should read them out.
   List<DayBadge> get rozetler => [

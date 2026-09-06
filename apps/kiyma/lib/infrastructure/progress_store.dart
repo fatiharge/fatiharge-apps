@@ -39,7 +39,8 @@ class ProgressStore {
       progress
         ..para = (saved['para'] as num).toInt()
         ..xp = (saved['xp'] as num).toInt()
-        ..gun = (saved['gun'] as num).toInt();
+        ..gun = (saved['gun'] as num).toInt()
+        ..rekor = (saved['rekor'] as num? ?? 0).toInt();
       (saved['acik'] as List<dynamic>).cast<String>().forEach(
         progress.unlocks.open,
       );
@@ -62,6 +63,7 @@ class ProgressStore {
       'para': progress.para,
       'xp': progress.xp,
       'gun': progress.gun,
+      'rekor': progress.rekor,
       'acik': progress.unlocks.opened.toList(),
       'gorulen': progress.gorulen.toList(),
     }),

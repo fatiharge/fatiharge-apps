@@ -17,6 +17,7 @@ class DayRule {
     this.sadeDurum = false,
     this.ekMalzeme = 0,
     this.tatliSansi = Balance.tatliSansi,
+    this.sabirCarpani = 1,
   });
 
   /// Names `kural.<id>` in the translations, and nothing else.
@@ -42,6 +43,9 @@ class DayRule {
 
   /// How often an order comes with a dessert.
   final double tatliSansi;
+
+  /// How long everybody waits today, as a fraction of the usual.
+  final double sabirCarpani;
 
   bool get adsiz => id == 'yok';
 
@@ -75,11 +79,30 @@ class DayRule {
     tatliSansi: Balance.bayramTatliSansi,
   );
 
+  /// The whole queue is in a hurry. Nothing about the counter changes — the
+  /// day is simply played at a different speed, and paid for at one.
+  static const kosuGunu = DayRule(
+    'kosu_gunu',
+    sabirCarpani: Balance.kosuSabri,
+    odeme: Balance.kosuOdemesi,
+  );
+
+  /// The other end of the same trade: time instead of money. Nobody hurries
+  /// and the grill forgives, but the day pays less for it.
+  static const sakinGun = DayRule(
+    'sakin_gun',
+    pencereCarpani: Balance.sakinPenceresi,
+    sabirCarpani: Balance.sakinSabri,
+    odeme: Balance.sakinOdemesi,
+  );
+
   static const List<DayRule> dongu = [
     denetim,
     komurAz,
+    kosuGunu,
     durumGunu,
     titizGun,
+    sakinGun,
     bayram,
   ];
 

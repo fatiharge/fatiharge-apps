@@ -104,4 +104,29 @@ void main() {
       );
     }
   });
+
+  test('a rule that takes time gives money, and the other way round', () {
+    // The two are a trade, not a punishment and a gift: neither may be
+    // strictly worse than an ordinary day.
+    expect(DayRule.kosuGunu.sabirCarpani, lessThan(1));
+    expect(DayRule.kosuGunu.odeme, greaterThan(1));
+    expect(DayRule.sakinGun.sabirCarpani, greaterThan(1));
+    expect(DayRule.sakinGun.odeme, lessThan(1));
+
+    for (final kural in DayRule.dongu) {
+      expect(kural.sabirCarpani, greaterThan(0.5), reason: kural.id);
+    }
+  });
+
+  test('every rule turns up, and the cycle never repeats inside itself', () {
+    final gorulen = <String>{};
+    for (
+      var day = Balance.ilkKuralGunu;
+      day < Balance.ilkKuralGunu + DayRule.dongu.length;
+      day++
+    ) {
+      gorulen.add(DayRule.forDay(day).id);
+    }
+    expect(gorulen, hasLength(DayRule.dongu.length));
+  });
 }
