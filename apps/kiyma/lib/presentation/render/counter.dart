@@ -64,6 +64,10 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   /// The band above the heads, which the hand never enters. The tickets used
   /// to sit beside each face, in the middle of every drag.
   static const _ticket = Size(148, 78);
+
+  /// What a card with nothing to constrain shrinks to: the band and the
+  /// torn edge, and no empty room between them.
+  static const _ticketBare = 46.0;
   static const _ticketTop = 10.0;
 
   /// One colour and one glyph per band. Four states are learnable where a
@@ -1228,7 +1232,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       math.max(306, head.dx - _ticket.width / 2),
       _ticketTop,
       _ticket.width,
-      _ticket.height,
+      _wanted(customer.order).isEmpty ? _ticketBare : _ticket.height,
     );
 
     // Arrives rather than appears, and leans a little so a row of them reads
@@ -1361,25 +1365,36 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     return worth;
   }
 
-  /// Four wells, always, in enum order: wanted, forbidden, or neither.
+  /// Only what was actually asked for: wanted, then forbidden, in enum order.
   ///
-  /// The empty ones carry the bonus an unmentioned ingredient is worth, which
-  /// is the one economy rule a player had no way of discovering.
+  /// It printed all four wells always, so a customer who cared about one
+  /// ingredient still handed over a card with three grey boxes on it. The
+  /// bonus an unmentioned ingredient earns was printed in those boxes and it
+  /// is not worth the clutter — three quarters of every card said nothing.
+  static List<String> _wanted(Order order) => [
+    for (final id
+        in order.tip == UrunTipi.durum
+            ? Malzeme.values.map((m) => m.id)
+            : Bilesen.values.map((b) => b.id))
+      if (order.ister.contains(id) || order.istemez.contains(id)) id,
+  ];
+
   void _ticketRail(Canvas canvas, Rect rect, Customer customer) {
     final order = customer.order;
-    final durum = order.tip == UrunTipi.durum;
-    final ids = durum
-        ? Malzeme.values.map((m) => m.id).toList()
-        : Bilesen.values.map((b) => b.id).toList();
+    final ids = _wanted(order);
+    if (ids.isEmpty) return;
 
-    final pitch = (rect.width - 12) / ids.length;
+    // Centred rather than spread across the card: the row is one to four
+    // wide now, and a stretched pair reads as a card with holes in it.
+    const pitch = 34.0;
+    final left = rect.center.dx - pitch * ids.length / 2;
     for (var i = 0; i < ids.length; i++) {
       final id = ids[i];
-      final at = Offset(rect.left + 6 + pitch * (i + 0.5), rect.top + 50);
+      final at = Offset(left + pitch * (i + 0.5), rect.top + 50);
       final wanted = order.ister.contains(id);
       final banned = order.istemez.contains(id);
       final wrong = customer.hataKalan > 0 && customer.hatali.contains(id);
-      final well = Rect.fromCenter(center: at, width: pitch - 3, height: 32);
+      final well = Rect.fromCenter(center: at, width: pitch - 4, height: 32);
 
       canvas.drawRRect(
         RRect.fromRectAndRadius(well, const Radius.circular(5)),
@@ -1420,17 +1435,6 @@ class CounterComponent extends PositionComponent with DragCallbacks {
               ..color = const Color(0xFFC4321F)
               ..strokeWidth = 2.6,
           );
-      } else if (!wanted) {
-        drawText(
-          canvas,
-          '+${Balance.income(0, run.day, ingredients: 1)}',
-          Offset(at.dx, well.bottom - 11),
-          size: 9,
-          weight: 800,
-          family: 'Rubik',
-          center: true,
-          color: const Color(0x772E2A26),
-        );
       }
     }
   }
@@ -1494,6 +1498,49 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     canvas.restore();
   }
 
+  /// Tongues licking round the bezel once the meter is pinned.
+  ///
+  /// Behind the case, so they come out from under it rather than sitting on
+  /// top of it, and each one on its own phase — five copies of one sine is a
+  /// throbbing ring, not a fire.
+  void _renderGaugeFlames(
+    Canvas canvas,
+    Offset at,
+    double r,
+    double strength,
+  ) {
+    final image = assets['alev'];
+    if (image == null) return;
+    for (var i = 0; i < 7; i++) {
+      // Only the top half: flames go up, and a tongue under the case would
+      // have to be coming out of the wall.
+      final a = -math.pi * (0.12 + 0.76 * i / 6);
+      final phase = _elapsed * 7 + i * 1.9;
+      final lick = 0.55 + 0.45 * math.sin(phase);
+      final size = (20 + 16 * lick) * (0.7 + 0.3 * strength);
+      canvas
+        ..save()
+        ..translate(
+          at.dx + math.cos(a) * (r - 4),
+          at.dy + math.sin(a) * (r - 4),
+        )
+        ..rotate(a + math.pi / 2)
+        ..scale(1, 1 + 0.25 * lick);
+      drawCentered(
+        canvas,
+        image,
+        Offset(0, -size * 0.35),
+        size,
+        paint: Paint()
+          ..color = const Color(
+            0xFFFFFFFF,
+          ).withValues(alpha: (0.5 + 0.5 * lick) * (0.4 + 0.6 * strength))
+          ..filterQuality = FilterQuality.medium,
+      );
+      canvas.restore();
+    }
+  }
+
   /// The run's momentum, as the gauge a grill would have.
   ///
   /// It hangs on the wall over the coals it reads, because that is what the
@@ -1510,6 +1557,24 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     // what tells the eye where empty is and where full is.
     const from = math.pi * 0.75;
     const sweep = math.pi * 1.5;
+
+    // Above sixty the case starts to glow, and at ninety it is on fire.
+    // The multiplier is the one number the whole counter is worth, and it
+    // was being read off a needle angle; heat is what a player feels without
+    // reading anything.
+    final heat = ((tempo.deger - 60) / 30).clamp(0.0, 1.0);
+    if (heat > 0) {
+      canvas.drawCircle(
+        at,
+        r + 6 + heat * 16,
+        Paint()
+          ..color = colour.withValues(alpha: (0.16 + 0.26 * heat) * _pulse)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 16),
+      );
+    }
+    if (tempo.deger >= 90) {
+      _renderGaugeFlames(canvas, at, r, (tempo.deger - 90) / 10);
+    }
 
     canvas
       ..drawLine(
@@ -1588,6 +1653,23 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       )
       ..drawCircle(at, 8, Paint()..color = const Color(0xFF2E2A26))
       ..drawCircle(at, 5, Paint()..color = colour);
+    // Every move the counter took or refused, however small, lands here. The
+    // needle answers too, but a single handful moves it about a degree.
+    if (tempo.dokunusKalan > 0) {
+      final left = (tempo.dokunusKalan / 0.3).clamp(0.0, 1.0);
+      canvas.drawCircle(
+        at,
+        5 + (1 - left) * 13,
+        Paint()
+          ..color =
+              (tempo.sonDokunusIyi
+                      ? const Color(0xFF5FD070)
+                      : const Color(0xFFE0574A))
+                  .withValues(alpha: left * 0.75)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2.5,
+      );
+    }
 
     // The band, as a glyph on the face. A word here would need translating
     // and would not be read at a glance anyway.

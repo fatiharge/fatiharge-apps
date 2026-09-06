@@ -50,14 +50,21 @@ void main() {
       expect(warm.deger - fromWarm, lessThan(cheap / 2));
     });
 
-    test('the first two mis-moves are free and the third is not', () {
+    test('the first two mis-moves are cheap and the third is not', () {
       final tempo = Tempo()
         ..gecersizHareket()
         ..gecersizHareket();
-      expect(tempo.deger, Tempo.baslangic, reason: 'a slipping finger');
+      // Forgiveness is about the punishment, not about pretending nothing
+      // happened: every wrong move moves the needle.
+      expect(
+        tempo.deger,
+        closeTo(Tempo.baslangic + Tempo.hataDokunusu * 2, 0.001),
+        reason: 'a slipping finger, but not a free one',
+      );
 
+      final before = tempo.deger;
       tempo.gecersizHareket();
-      expect(tempo.deger, Tempo.baslangic + Tempo.hataBirim);
+      expect(tempo.deger, closeTo(before + Tempo.hataBirim, 0.001));
 
       final third = tempo.deger;
       tempo.gecersizHareket();
@@ -69,13 +76,35 @@ void main() {
     });
 
     test('anything that works resets the run of mis-moves', () {
-      final tempo = Tempo()
-        ..gecersizHareket()
-        ..gecersizHareket()
-        ..basarili()
-        ..gecersizHareket()
-        ..gecersizHareket();
-      expect(tempo.deger, Tempo.baslangic);
+      final punished = Tempo();
+      for (var i = 0; i < 5; i++) {
+        punished.gecersizHareket();
+      }
+
+      final forgiven = Tempo();
+      for (var i = 0; i < 5; i++) {
+        forgiven.gecersizHareket();
+        if (i == 1) forgiven.basarili();
+      }
+
+      // Same five mis-moves; the one that got a move right in the middle of
+      // them never reaches the graded penalty.
+      expect(forgiven.deger, greaterThan(punished.deger));
+    });
+
+    test('every accepted move is worth something on its own', () {
+      final tempo = Tempo();
+      final before = tempo.deger;
+      tempo.basarili();
+      expect(tempo.deger, greaterThan(before));
+      // Quiet: a floating number on every touch is noise, so only the
+      // needle and the hub report it.
+      expect(tempo.degisimKalan, 0);
+      expect(tempo.dokunusKalan, greaterThan(0));
+      expect(tempo.sonDokunusIyi, isTrue);
+
+      tempo.gecersizHareket();
+      expect(tempo.sonDokunusIyi, isFalse);
     });
 
     test('it cannot leave the meter', () {

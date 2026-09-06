@@ -142,6 +142,12 @@ void main() {
       component.update(1 / 60);
     }
 
+    // A counter running hot: the gauge glows past sixty and burns at ninety,
+    // and neither state is reachable without working the meter up to it.
+    for (var i = 0; i < 8; i++) {
+      run.tempo.servisEdildi(tamami: true, sabirOrani: 1);
+    }
+
     // A sheet in the hand, drawn where the finger is: the paper is the one
     // carryable whose source art is not what leaves it.
     run

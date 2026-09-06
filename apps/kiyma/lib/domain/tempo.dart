@@ -29,6 +29,15 @@ class Tempo {
   static const supuruldu = -6.0;
   static const reddedildi = -6.0;
 
+  /// What one correct move is worth on its own.
+  ///
+  /// Small on purpose: a wrap is a dozen of these and serving it is worth
+  /// [servis] on top, so the steps are the floor under the meter rather than
+  /// the way up it. What they buy is that the needle answers every single
+  /// touch — before this it sat still through the whole build and jumped
+  /// once at the handover, which reads as a meter that is not listening.
+  static const adim = 1.0;
+
   /// How many invalid moves in a row are free.
   ///
   /// A leaning counter under a moving finger produces mis-drops that are not
@@ -37,6 +46,13 @@ class Tempo {
   static const bagislanan = 2;
   static const hataBirim = -2.0;
   static const hataTaban = -8.0;
+
+  /// What a forgiven mis-drop costs anyway.
+  ///
+  /// Forgiveness is about the *punishment*, not about the meter pretending
+  /// nothing happened: every wrong move moves the needle down, and the third
+  /// in a row is where it starts to hurt.
+  static const hataDokunusu = -0.8;
 
   /// The top of the meter is the hardest part to earn: a gain is worth this
   /// much less the higher tempo already is.
@@ -63,6 +79,11 @@ class Tempo {
   /// the whole of the teaching.
   double sonDegisim = 0;
   double degisimKalan = 0;
+
+  /// A step's worth of feedback: too small for a floating number, big enough
+  /// that the gauge should twitch. Counts down in [tick].
+  double dokunusKalan = 0;
+  bool sonDokunusIyi = true;
 
   /// Pushes the meter had no room to take. Drained by the run and paid out as
   /// gold, so a full meter does not make good play worthless.
@@ -120,6 +141,7 @@ class Tempo {
   /// to half takings for a gap the game chose, not one they caused.
   void tick(double dt, {required bool bekleyen}) {
     if (degisimKalan > 0) degisimKalan -= dt;
+    if (dokunusKalan > 0) dokunusKalan -= dt;
     if (!bekleyen) return;
     _sonServis += dt;
     final idle = math.max(0, _sonServis - bosluk);
@@ -138,14 +160,30 @@ class Tempo {
     _uygula(toplama);
   }
 
-  void basarili() => _ustuste = 0;
+  /// Any move the counter accepted: bread down, a handful on, a skewer
+  /// turned. Quiet, because a floating "+1" on every touch is noise — the
+  /// needle moving is the message.
+  void basarili() {
+    _ustuste = 0;
+    _dokunus(iyi: true);
+    _uygula(adim, quiet: true);
+  }
 
   /// The third mis-move in a row and every one after it, worth more each
   /// time. The first two are free.
   void gecersizHareket() {
     _ustuste++;
-    if (_ustuste <= bagislanan) return;
+    _dokunus(iyi: false);
+    if (_ustuste <= bagislanan) {
+      _uygula(hataDokunusu, quiet: true);
+      return;
+    }
     _uygula(math.max(hataTaban, hataBirim * (_ustuste - bagislanan)));
+  }
+
+  void _dokunus({required bool iyi}) {
+    dokunusKalan = 0.3;
+    sonDokunusIyi = iyi;
   }
 
   void etYandi() => _uygula(yanik);
