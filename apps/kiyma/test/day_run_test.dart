@@ -50,6 +50,10 @@ void main() {
     return true;
   }
 
+  /// Past the point where a day-one skewer is ruined.
+  final burnsAt =
+      Balance.rawSeconds + Balance.cookingSeconds + Balance.cookedWindow(1) + 1;
+
   /// Runs the grill clock without letting the day-end check fire.
   void cook(DayRun run, double seconds) {
     for (var t = 0.0; t < seconds; t += 0.1) {
@@ -289,7 +293,7 @@ void main() {
       waiting(run, wrapFor(const {}));
       drag(run, at('lavas_kaynak'), at('durum_hazirlama'));
       drag(run, at('malzeme_kiyma'), slot('mangal_alani', 0));
-      cook(run, 34);
+      cook(run, burnsAt);
       expect(run.mangal[0].yanmis, isTrue);
 
       drag(run, slot('mangal_alani', 0), at('durum_hazirlama'));
@@ -352,7 +356,7 @@ void main() {
       final run = build(unlock: ['mangal_3']);
       waiting(run, wrapFor(const {}));
       run.mangal[0].koy();
-      cook(run, 30);
+      cook(run, burnsAt);
       expect(run.mangal[0].yanmis, isTrue);
 
       run.mangal[2].koy();
@@ -369,7 +373,7 @@ void main() {
       final run = build();
       waiting(run, wrapFor(const {}));
       run.mangal[0].koy();
-      cook(run, 30);
+      cook(run, burnsAt);
 
       run.beginDrag(slot('mangal_alani', 1));
       final held = run.carried! as PismisEt;
@@ -963,10 +967,13 @@ void main() {
       expect(run.bitti, isFalse, reason: 'somebody is still at the counter');
       expect(run.kapaniyor, isTrue);
 
-      // And it closes the moment the last of them has gone.
-      run
-        ..musteriler[0] = null
-        ..tick(0.1);
+      // And it closes the moment the last of them has gone. Every place,
+      // not just the first: patience now outlasts the day, so whoever sat
+      // down early is still there when the buzzer goes.
+      for (var i = 0; i < run.musteriler.length; i++) {
+        run.musteriler[i] = null;
+      }
+      run.tick(0.1);
       expect(run.bitti, isTrue);
     });
 

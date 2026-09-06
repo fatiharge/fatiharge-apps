@@ -65,10 +65,11 @@ void main() {
     expect(unlocks.kademe(Grup.komur), 3);
   });
 
-  test('the shop is more than ten days of play and less than twenty', () {
+  test('the shop is half of everything the game ever pays', () {
     final total = Unlocks.catalogue.fold(0, (sum, u) => sum + u.price);
-    expect(total, greaterThan(Balance.target(10)));
-    expect(total, lessThan(Balance.target(10) * 2));
+    final son = Balance.targets.length;
+    expect(total, lessThan(Balance.target(son)));
+    expect(total, greaterThan(Balance.target(son) * 0.4));
     // Every rung costs more than the one under it, so a ladder is a climb
     // rather than a list. The two lines are the exception: opening the plate
     // or the drinks line is the big purchase and the things that go on it

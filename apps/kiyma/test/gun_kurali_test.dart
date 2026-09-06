@@ -90,8 +90,10 @@ void main() {
 
   test('the goal is reachable and pays a share of the day', () {
     for (var day = 1; day <= 12; day++) {
+      // The count grows with the day because the day gets longer; what is
+      // capped is the rate it asks for.
       expect(
-        Balance.gunlukHedef(day),
+        Balance.hedefTempo(day),
         lessThanOrEqualTo(Balance.gunlukHedefTavan),
       );
       expect(Balance.gunlukOdul(day), greaterThan(0));

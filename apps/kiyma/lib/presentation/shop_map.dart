@@ -10,9 +10,10 @@ import 'package:kiyma/domain/unlocks.dart';
 ///
 /// Fourteen rungs have no object — a sharper knife, an apprentice, a sign
 /// outside, tea for the queue, and the till, which is chalk on a slate this
-/// screen does not draw. Those go to the list. That is a property of the
-/// kitchen, not a failure: the shop is honest about which of its goods you
-/// can point at.
+/// screen does not draw. Those go to the list. Hanging their tags off the
+/// nearest surface was tried and looked exactly like what it was: a price on
+/// a thing that is not the thing. The shop is honest instead about which of
+/// its goods you can point at.
 abstract final class ShopMap {
   static const _yerler = <String, String>{
     // The grill carries two ladders: the slots across it and the coal in it.

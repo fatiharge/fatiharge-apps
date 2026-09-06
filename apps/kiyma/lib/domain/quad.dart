@@ -11,7 +11,6 @@ import 'dart:ui';
 /// top edge, height along the left edge, angle from the top edge's slope.
 class Quad {
   const Quad(this.topLeft, this.topRight, this.bottomRight, this.bottomLeft);
-
   factory Quad.fromJson(List<dynamic> corners) {
     Offset at(int i) {
       final pair = (corners[i] as List<dynamic>).cast<num>();

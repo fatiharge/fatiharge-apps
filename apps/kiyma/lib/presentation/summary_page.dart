@@ -11,6 +11,7 @@ import 'package:kiyma/domain/run_summary.dart';
 import 'package:kiyma/domain/tempo.dart';
 import 'package:kiyma/infrastructure/world.dart';
 import 'package:kiyma/presentation/brand.dart';
+import 'package:kiyma/presentation/gold_text.dart';
 import 'package:kiyma/presentation/level_bar.dart';
 import 'package:kiyma/presentation/palette.dart';
 import 'package:kiyma/route/app_router.gr.dart';
@@ -286,7 +287,8 @@ class _Fitted extends StatelessWidget {
 /// says so. Printing "+0" instead would have been the other honest option;
 /// this one keeps the level bar, which tweens backwards, telling the same
 /// story as the number above it.
-String _signed(int amount) => amount < 0 ? '$amount' : '+$amount';
+String _signed(int amount) =>
+    amount < 0 ? '-${goldText(-amount)}' : '+${goldText(amount)}';
 
 /// The counter the run happened on, dimmed. The result belongs to the
 /// kitchen, not to a card floating over nothing.
@@ -725,7 +727,7 @@ class _Level extends StatelessWidget {
             ),
             const Spacer(),
             Text(
-              'ozet.xp'.tr(args: ['$xp', '$target']),
+              'ozet.xp'.tr(args: [goldText(xp), goldText(target)]),
               style: const TextStyle(
                 fontFamily: 'Rubik',
                 fontVariations: [FontVariation('wght', 900)],

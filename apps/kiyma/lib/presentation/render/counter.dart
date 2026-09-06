@@ -16,6 +16,7 @@ import 'package:kiyma/domain/quad.dart';
 import 'package:kiyma/domain/scene.dart';
 import 'package:kiyma/domain/tempo.dart';
 import 'package:kiyma/infrastructure/assets.dart';
+import 'package:kiyma/presentation/gold_text.dart';
 import 'package:kiyma/presentation/render/effects.dart';
 import 'package:kiyma/presentation/render/glyphs.dart';
 import 'package:kiyma/presentation/render/halo.dart';
@@ -1386,7 +1387,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     ]) {
       drawText(
         canvas,
-        '${run.progress.para}',
+        goldText(run.progress.para),
         centre + offset,
         size: 26,
         weight: 800,

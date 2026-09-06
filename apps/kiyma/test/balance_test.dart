@@ -3,16 +3,30 @@ import 'package:kiyma/domain/balance.dart';
 
 void main() {
   group('Balance', () {
-    test('the cooked window narrows and then holds at 5s', () {
-      expect(Balance.cookedWindow(1), closeTo(22, 0.001));
-      expect(Balance.cookedWindow(9), closeTo(6, 0.001));
-      expect(Balance.cookedWindow(60), 5);
+    // The two timers stay generous on purpose. A later day is harder
+    // because it wants more people through the counter, not because it gives
+    // less time per person — so both of these decay slowly and stop well
+    // above the point where they would be played by luck.
+    test('the cooked window narrows slowly and never gets tight', () {
+      expect(Balance.cookedWindow(1), closeTo(33.4, 0.001));
+      expect(Balance.cookedWindow(30), closeTo(16, 0.001));
+      expect(Balance.cookedWindow(100), 16);
     });
 
-    test('patience shortens and then holds at 12s', () {
-      expect(Balance.patience(1), closeTo(56.5, 0.001));
-      expect(Balance.patience(30), 12);
-      expect(Balance.patience(100), 12);
+    test('patience shortens slowly and holds above half a minute', () {
+      expect(Balance.patience(1), closeTo(78.5, 0.001));
+      expect(Balance.patience(30), closeTo(35, 0.001));
+      expect(Balance.patience(100), 34);
+    });
+
+    test('the goal saturates below what a full counter can serve', () {
+      expect(Balance.hedefTempo(1), closeTo(Balance.gunlukHedefTaban, 0.001));
+      // Measured: a bought-out counter tops out near nine a minute, so the
+      // curve has to converge under that rather than climb through it.
+      expect(Balance.hedefTempo(30), lessThan(Balance.gunlukHedefTavan));
+      expect(Balance.gunlukHedefTavan, lessThan(9));
+      expect(Balance.gunlukHedef(1), 3);
+      expect(Balance.gunlukHedef(30), greaterThan(Balance.gunlukHedef(10)));
     });
 
     test('everything a day is worth compounds together', () {
@@ -23,13 +37,15 @@ void main() {
       final full = Balance.income(Balance.durumBase, 1, ingredients: 3);
       expect(full, greaterThan(bare));
 
-      final lateBare = Balance.income(Balance.durumBase, 10);
-      final lateFull = Balance.income(Balance.durumBase, 10, ingredients: 3);
-      // Rounding at day one makes this approximate, not exact: the point is
-      // that the gap grows with the day rather than staying flat.
+      // Stated as a share rather than a gap, which is how the shop says it
+      // too: three ingredients are worth the same multiple of a bare wrap on
+      // day thirty as on day one.
+      const pay = 1 + 3 * Balance.ingredientBonus / Balance.durumBase;
+      expect(full / bare, closeTo(pay, 0.5));
       expect(
-        (lateFull - lateBare) / (full - bare),
-        closeTo(Balance.dayMultiplier(10), Balance.dayMultiplier(10) * 0.1),
+        Balance.income(Balance.durumBase, 30, ingredients: 3) /
+            Balance.income(Balance.durumBase, 30),
+        closeTo(pay, 0.01),
       );
     });
 
@@ -43,18 +59,20 @@ void main() {
       );
     });
 
-    test('a run is a minute plus five seconds a day', () {
-      expect(Balance.runLength(1), const Duration(seconds: 65));
-      expect(Balance.runLength(10), const Duration(seconds: 110));
+    test('a run is a minute on day one and four by day thirty', () {
+      expect(Balance.runLength(1), const Duration(seconds: 66));
+      expect(Balance.runLength(10), const Duration(seconds: 120));
+      expect(Balance.runLength(30), const Duration(seconds: 240));
     });
 
     test('the target table climbs, and keeps climbing past its end', () {
       expect(Balance.target(1), Balance.targets.first);
-      expect(Balance.target(10), Balance.targets.last);
-      expect(Balance.target(11), greaterThan(Balance.target(10)));
+      expect(Balance.target(Balance.targets.length), Balance.targets.last);
+      final n = Balance.targets.length;
+      expect(Balance.target(n + 1), greaterThan(Balance.target(n)));
       expect(
-        Balance.target(12) - Balance.target(11),
-        greaterThan(Balance.target(11) - Balance.target(10)),
+        Balance.target(n + 2) - Balance.target(n + 1),
+        greaterThan(Balance.target(n + 1) - Balance.target(n)),
       );
     });
 

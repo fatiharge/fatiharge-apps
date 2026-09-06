@@ -1,4 +1,3 @@
-import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart' show mapEquals;
@@ -7,7 +6,9 @@ import 'package:kiyma/domain/quad.dart';
 import 'package:kiyma/domain/scene.dart';
 import 'package:kiyma/domain/unlocks.dart';
 import 'package:kiyma/infrastructure/assets.dart';
+import 'package:kiyma/presentation/gold_text.dart';
 import 'package:kiyma/presentation/render/painter.dart';
+import 'package:kiyma/presentation/render/tag_layout.dart';
 
 /// The kitchen, drawn with nothing happening in it.
 ///
@@ -97,49 +98,11 @@ class ShopScenePainter extends CustomPainter {
   ///
   /// Two ladders can be live on neighbouring objects — the ayran jug and the
   /// şalgam jug sit 46 units apart and a tag is about fifty wide — so the
-  /// tags are laid out left to right and anything landing on one already
-  /// placed is lifted a row. Without this the two jugs print one price over
-  /// the other and neither is readable.
   void _etiketleriCiz(Canvas canvas) {
-    final sirali = etiketler.keys.toList()
-      ..sort((a, b) {
-        final ax = scene.maybe(a)?.quad.bounds.center.dx ?? 0;
-        final bx = scene.maybe(b)?.quad.bounds.center.dx ?? 0;
-        return ax.compareTo(bx);
-      });
-
-    final yerlesen = <Rect>[];
-    for (final ad in sirali) {
-      final region = scene.maybe(ad);
-      if (region == null) continue;
-      var rect = _etiketYeri(region, etiketler[ad]!);
-      var kacis = 0;
-      while (kacis < 4 &&
-          yerlesen.any((other) => other.overlaps(rect.inflate(2)))) {
-        rect = rect.translate(0, -30);
-        kacis++;
-      }
-      yerlesen.add(rect);
-      _etiket(canvas, region, etiketler[ad]!, rect);
+    for (final tag in TagLayout.of(scene, etiketler).tags) {
+      final region = scene.maybe(tag.region);
+      if (region != null) _etiket(canvas, region, tag.price, tag.rect);
     }
-  }
-
-  Rect _etiketYeri(SceneRegion region, int fiyat) {
-    final bounds = region.quad.bounds;
-    // Near enough square: the tag art is a paper docket with a loop of
-    // string above it, and the loop is most of what makes it read as a tag.
-    final genislik = 30.0 + '$fiyat'.length * 10;
-    // Nudged back inside the design box: the top row of wells is close
-    // enough to the ceiling that a tag would hang off the picture.
-    final x = bounds.center.dx.clamp(
-      genislik / 2 + 2,
-      scene.size.width - genislik / 2 - 2,
-    );
-    return Rect.fromCenter(
-      center: Offset(x, math.max<double>(28, bounds.top - 26)),
-      width: genislik,
-      height: genislik,
-    );
   }
 
   /// A price on a string, hung off the top of the thing it is for.
@@ -181,7 +144,7 @@ class ShopScenePainter extends CustomPainter {
     }
     drawText(
       canvas,
-      '$fiyat',
+      goldText(fiyat),
       // Into the paper, which is the lower two thirds of the art — above it
       // is the string the tag hangs by.
       rect.center + Offset(0, rect.height * 0.14),

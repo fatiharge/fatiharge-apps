@@ -6,6 +6,7 @@ import 'package:kiyma/application/kiyma_cubit.dart';
 import 'package:kiyma/config/injectable.dart';
 import 'package:kiyma/domain/unlocks.dart';
 import 'package:kiyma/presentation/brand.dart';
+import 'package:kiyma/presentation/gold_text.dart';
 import 'package:kiyma/presentation/palette.dart';
 import 'package:kiyma/presentation/shop_ladder.dart';
 import 'package:kiyma/presentation/shop_map.dart';
@@ -61,7 +62,7 @@ class ShopListPage extends StatelessWidget {
                     ),
                     BrandChip(
                       icon: Icons.payments_outlined,
-                      label: 'hud.para'.tr(args: ['${state.para}']),
+                      label: 'hud.para'.tr(args: [goldText(state.para)]),
                     ),
                   ],
                 ),

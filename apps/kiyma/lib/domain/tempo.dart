@@ -140,7 +140,7 @@ class Tempo {
   // --- What it is worth ---
 
   /// The takings, halved at nothing and half again at full.
-  double get paraCarpani => 0.5 + _deger / 100;
+  double get paraCarpani => 0.4 + _deger / 100 * 1.2;
 
   /// Above halfway the cooked window widens; below it, it does not narrow.
   ///
@@ -148,7 +148,7 @@ class Tempo {
   /// meat burn faster *and* is pushed down by burnt meat is a spiral: one bad
   /// stretch compounds into a run that cannot be recovered, only sat out. The
   /// punishment for a cold counter is that it pays half.
-  double get pismeCarpani => 1 + math.max(0, _deger - 50) / 50 * 0.35;
+  double get pismeCarpani => 1 + math.max(0, _deger - 50) / 50 * 0.5;
 
   double get sabirCarpani =>
       _deger < 50 ? 0.9 + _deger / 50 * 0.1 : 1 + (_deger - 50) / 50 * 0.25;

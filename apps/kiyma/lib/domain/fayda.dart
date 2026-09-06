@@ -29,18 +29,23 @@ class Fayda {
     // Checked by id rather than by group because the plate line's own rung
     // sits in the same ladder as its components and is worth something else.
     if (unlock.id.startsWith('malzeme_') || unlock.id.startsWith('bilesen_')) {
-      return Fayda('malzeme', ['${Balance.income(0, day, ingredients: 1)}']);
+      return Fayda.yuzde(
+        'malzeme',
+        Balance.ingredientBonus / Balance.durumBase,
+      );
     }
 
     return switch (unlock.grup) {
       Grup.porsiyon ||
       Grup.icecek when unlock.id.endsWith('_hatti') => const Fayda('hat', []),
-      Grup.icecek => Fayda('icecek', [
-        '${Balance.income(Balance.icecekBase.values.first, day)}',
-      ]),
-      Grup.tatli => Fayda('tatli', [
-        '${Balance.income(Balance.tatliBase.values.first, day)}',
-      ]),
+      Grup.icecek => Fayda.yuzde(
+        'icecek',
+        Balance.icecekBase.values.first / Balance.durumBase,
+      ),
+      Grup.tatli => Fayda.yuzde(
+        'tatli',
+        Balance.tatliBase.values.first / Balance.durumBase,
+      ),
 
       Grup.mangal => Fayda.adet(unlocks.mangalSlots),
       Grup.musteri => Fayda.adet(unlocks.musteriSlots),

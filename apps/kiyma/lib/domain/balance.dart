@@ -23,7 +23,7 @@ abstract final class Balance {
   /// grill is unfair. What it costs is nothing: day one barely pays, so the
   /// slack is spent on somebody learning rather than on somebody farming.
   static double cookedWindow(int day, {int komur = 0}) =>
-      math.max(5, 24 - day * 2.0) + komur * komurPencere;
+      math.max(16, 34 - day * 0.6) + komur * komurPencere;
 
   /// How many handfuls make one ingredient.
   ///
@@ -68,7 +68,7 @@ abstract final class Balance {
   /// The base is 1.79 because that is the curve through the three points the
   /// game was asked for — a day worth 30 pays 90 on day three and 560 on day
   /// six. Every other number here is measured; this one was specified.
-  static double dayMultiplier(int day) => math.pow(1.79, day - 1).toDouble();
+  static double dayMultiplier(int day) => math.pow(1.62, day - 1).toDouble();
 
   static const durumBase = 1;
   static const porsiyonBase = 2;
@@ -81,7 +81,7 @@ abstract final class Balance {
   ///
   /// Still flat *within* a day, so "stuff everything in" never becomes the
   /// dominant late strategy — the customer's `istemez` is what pushes back.
-  static const ingredientBonus = 0.7;
+  static const ingredientBonus = 0.8;
 
   static const Map<Tatli, int> tatliBase = {Tatli.baklava: 1};
   static const Map<Icecek, int> icecekBase = {
@@ -108,7 +108,7 @@ abstract final class Balance {
   /// Also doubled at the top and converging on the same floor, for the same
   /// reason as [cookedWindow]: the first days are the ones being learnt.
   static double patience(int day, {int ikram = 0}) =>
-      math.max(12, 60 - day * 3.5) + ikram * ikramSaniye;
+      math.max(34, 80 - day * 1.5) + ikram * ikramSaniye;
 
   // --- Who walked in ---
 
@@ -147,7 +147,7 @@ abstract final class Balance {
   /// A minute, not two. Two minutes of the same four gestures is where a
   /// run stops being a push and becomes a shift; the day ends while the
   /// player still wants one more customer, which is the point.
-  static Duration runLength(int day) => Duration(seconds: 60 + day * 5);
+  static Duration runLength(int day) => Duration(seconds: 60 + day * 6);
 
   /// Gap between one customer leaving and the next taking the place.
   /// How long the quickest customer takes to walk in and settle, and how
@@ -219,7 +219,7 @@ abstract final class Balance {
   static const tabelaCarpani = 0.9;
 
   static double arrivalGap(int day, {int tabela = 0}) =>
-      math.max(2.2, 8 - day * 0.6) * math.pow(tabelaCarpani, tabela);
+      math.max(1.5, 6 - day * 0.15) * math.pow(tabelaCarpani, tabela);
 
   /// How far into the day the doors shut.
   ///
@@ -297,15 +297,26 @@ abstract final class Balance {
   /// How many customers a day asks to be sent away happy, and what hitting
   /// it pays. The reward is a share of the day's own level step, so it keeps
   /// its worth forever without a second table to maintain.
-  static const gunlukHedefTaban = 5.0;
-  static const gunlukHedefEgim = 0.9;
-  static const gunlukHedefTavan = 14;
+  static const gunlukHedefTaban = 2.5;
+  static const gunlukHedefTavan = 8.0;
+  static const gunlukHedefYari = 12.0;
   static const gunlukOdulPayi = 0.15;
 
-  static int gunlukHedef(int day) => math.min(
-    gunlukHedefTavan,
-    (gunlukHedefTaban + gunlukHedefEgim * (day - 1)).round(),
-  );
+  /// Customers a minute the day asks for. The one number the player is
+  /// actually playing against: the timers are generous and stay generous, so
+  /// a later day is harder because it wants more people through the counter,
+  /// not because it gives less time per person.
+  /// Saturating, not linear. A fully bought counter tops out near nine
+  /// customers a minute whoever is holding the phone — the grill and the
+  /// three places are the ceiling, not the hands — so a goal that kept
+  /// climbing would stop being a goal and start being a wall.
+  static double hedefTempo(int day) =>
+      gunlukHedefTavan -
+      (gunlukHedefTavan - gunlukHedefTaban) *
+          math.exp(-(day - 1) / gunlukHedefYari);
+
+  static int gunlukHedef(int day) =>
+      (hedefTempo(day) * runLength(day).inSeconds / 60).round();
 
   static int gunlukOdul(int day) =>
       ((target(day) - floor(day)) * gunlukOdulPayi).round();
@@ -319,17 +330,67 @@ abstract final class Balance {
   /// good one is faster. The old table was out by a factor of twelve — a
   /// single day-one run cleared the first three days at once.
   static const targets = [
-    11,
-    34,
-    80,
-    180,
-    395,
-    875,
-    1825,
-    3700,
-    7060,
-    13060,
+    18,
+    56,
+    187,
+    363,
+    715,
+    1338,
+    3198,
+    5738,
+    10688,
+    20408,
+    46608,
+    80408,
+    146408,
+    274408,
+    786408,
+    1164408,
+    1847408,
+    3847408,
+    6487408,
+    13387408,
+    21557408,
+    53857408,
+    95057408,
+    142557408,
+    264557408,
+    404557408,
+    807557408,
+    1907557408,
+    2741557408,
+    3921557408,
   ];
+
+  /// How many runs a day is worth, already baked into [targets].
+  ///
+  /// A game where every day is one run is a straight line, so this climbs:
+  /// day one clears in a single unhurried run and day thirty takes three.
+  /// Every fifth day is heavier again, which is where the player replays,
+  /// banks the second run and walks into the shop with something to spend.
+  static const gunKosuTabani = 0.9;
+  static const kosuEgimi = 0.045;
+
+  /// The days that are worth replaying for. Each one carries exactly one
+  /// thing in the shop: the player grinds the day, banks the second run and
+  /// buys it. Listed rather than derived — the rhythm is the design, and a
+  /// modulus would space them evenly, which is the one thing it must not do.
+  static const agirGunler = {3, 7, 11, 15, 18, 20, 22, 23, 25, 27, 28};
+  static const agirGunPayi = 1.5;
+
+  /// The three the run bends around, each in front of one expensive thing.
+  static const fazlaGunler = {15, 22, 28};
+  static const fazlaGunPayi = 2.2;
+
+  static bool agirGun(int day) => agirGunler.contains(day);
+
+  static double gunKosusu(int day) =>
+      (gunKosuTabani + (day - 1) * kosuEgimi) *
+      (fazlaGunler.contains(day)
+          ? fazlaGunPayi
+          : agirGun(day)
+          ? agirGunPayi
+          : 1);
 
   static int target(int day) {
     if (day <= targets.length) return targets[day - 1];
@@ -339,7 +400,7 @@ abstract final class Balance {
     for (var d = targets.length; d < day; d++) {
       // Compounds past the table at the rate the income does: anything
       // slower and every day after the tenth would clear on its first run.
-      step = (step * 1.79).round();
+      step = (step * 1.62).round();
       value += step;
     }
     return value;

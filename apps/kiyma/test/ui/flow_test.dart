@@ -193,9 +193,9 @@ void main() {
     testWidgets('is the kitchen, and a thing is bought where it stands', (
       tester,
     ) async {
-      earn(65);
+      earn(165);
       await open(tester, const ShopRoute());
-      expect(find.text('65 altın'), findsOneWidget);
+      expect(find.text('165 altın'), findsOneWidget);
 
       // The empty steel well that would hold peppers.
       await touch(tester, const Offset(499, 329));
@@ -210,7 +210,7 @@ void main() {
     });
 
     testWidgets('a touch on scenery opens nothing', (tester) async {
-      earn(65);
+      earn(165);
       await open(tester, const ShopRoute());
       // The bare counter sells nothing, and a card that opened empty would
       // teach the player to stop touching things.
@@ -221,7 +221,7 @@ void main() {
     testWidgets('what has nowhere to stand is on the back page', (
       tester,
     ) async {
-      earn(200);
+      earn(2000);
       await open(tester, const ShopRoute());
       await tester.tap(find.text('Gerisi'));
       await tester.pumpAndSettle();
@@ -231,11 +231,26 @@ void main() {
       // Neither is anything the shop sells at an object.
       expect(find.text('Biber'), findsNothing);
 
-      await tester.scrollUntilVisible(find.text('100'), 140);
-      await tester.ensureVisible(find.text('100'));
+      await buy(tester, 'bicak_1');
+      expect(getIt<Progress>().unlocks.has('bicak_1'), isTrue);
+    });
+
+    testWidgets('a rung is offered even when the one before it is not', (
+      tester,
+    ) async {
+      earn(23000000);
+      getIt<Progress>().unlocks.open('porsiyon_hatti');
+      await open(tester, const ShopRoute());
+      // Potatoes are not a better pilaf, so the shop prices them both and
+      // lets the player pick. And the price is readable rather than a smear
+      // of noughts.
+      // The potato well, with the pilaf well beside it still unbought.
+      await touch(tester, const Offset(760, 328));
       await tester.pumpAndSettle();
-      await buy(tester, 'cirak_1');
-      expect(getIt<Progress>().unlocks.has('cirak_1'), isTrue);
+      expect(find.text('23m altın'), findsOneWidget);
+      expect(getIt<Progress>().unlocks.has('bilesen_pilav'), isFalse);
+      await buy(tester, 'bilesen_patates');
+      expect(getIt<Progress>().unlocks.has('bilesen_patates'), isTrue);
     });
 
     testWidgets('a purchase reaches the menu underneath it', (tester) async {
@@ -243,9 +258,9 @@ void main() {
       // cubit. Progress is what both read, so Progress is what has to say it
       // moved — otherwise the hub's money chip shows the old balance for the
       // rest of the session.
-      earn(65);
+      earn(165);
       await open(tester, const MenuRoute());
-      expect(find.text('65 altın'), findsOneWidget);
+      expect(find.text('165 altın'), findsOneWidget);
 
       await tester.tap(find.text('Yükselt'));
       await tester.pumpAndSettle();

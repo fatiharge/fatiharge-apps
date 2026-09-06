@@ -282,10 +282,10 @@
     "dolu": "Dolu tezgah"
   },
   "fayda": {
-    "malzeme": "İçine koyduğun her üründe +{} altın",
+    "malzeme": "İçine koyduğun her üründe +%{}",
     "hat": "Tezgahta yeni bir hat açılır",
-    "icecek": "Her satışta +{} altın",
-    "tatli": "Her satışta +{} altın",
+    "icecek": "Her satışta ana ürünün +%{} kadarı",
+    "tatli": "Her satışta ana ürünün +%{} kadarı",
     "adet": "{} yerine {}",
     "bicak": "Bir malzeme {} tutam yerine {} tutam",
     "kasap": "Ana ürün %{} daha çok eder",

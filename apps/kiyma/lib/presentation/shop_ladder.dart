@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:kiyma/domain/fayda.dart';
 import 'package:kiyma/domain/unlocks.dart';
 import 'package:kiyma/presentation/brand.dart';
+import 'package:kiyma/presentation/gold_text.dart';
 import 'package:kiyma/presentation/palette.dart';
 
 /// One ladder, drawn whole.
@@ -196,7 +197,7 @@ class UrunKarti extends StatelessWidget {
           // one clips its own ink, which leaves the button drawn and dead.
           ChunkyButton(
             key: ValueKey('al_${unlock.id}'),
-            label: '${unlock.price}',
+            label: goldText(unlock.price),
             icon: Icons.paid_rounded,
             onPressed: affordable ? onBuy : null,
           ),
@@ -291,7 +292,7 @@ class KademeKarti extends StatelessWidget {
               key: ValueKey('al_${unlock.id}'),
               // No currency symbol anywhere: the game pays in gold, and
               // Rubik has no lira glyph, so it came out as a box.
-              label: '${unlock.price}',
+              label: goldText(unlock.price),
               icon: Icons.paid_rounded,
               onPressed: sirada && affordable ? onBuy : null,
             ),

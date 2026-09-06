@@ -32,7 +32,9 @@ void main() {
         final order = maker.make();
         expect(order.ister.intersection(order.istemez), isEmpty);
         expect(order.ister, isNotEmpty);
-        expect(order.ister.length + order.istemez.length, lessThanOrEqualTo(3));
+        // Four, not three: an order names as much of the counter as it
+        // holds, so that what is on the shelf is what gets asked for.
+        expect(order.ister.length + order.istemez.length, lessThanOrEqualTo(4));
       }
     });
 
@@ -85,12 +87,16 @@ void main() {
       unlocks
         ..open('porsiyon_hatti')
         ..open('icecek_hatti');
-      // A ladder opens one rung at a time: the line first, then the
-      // components above it in order.
+      // The line gates the rest, and after that they are separate goods:
+      // ezme is not a better içli köfte, so both are offered at once and the
+      // prices decide which comes first.
       final open = unlocks.forSale.map((u) => u.id);
       expect(open, contains('bilesen_icli_kofte'));
-      expect(open, isNot(contains('bilesen_ezme')));
+      expect(open, contains('bilesen_ezme'));
       expect(open, contains('icecek_salgam'));
+      // The ladders that really are tiers still open one rung at a time.
+      expect(open, contains('komur_1'));
+      expect(open, isNot(contains('komur_2')));
     });
 
     test('the catalogue and the counter agree on what exists', () {

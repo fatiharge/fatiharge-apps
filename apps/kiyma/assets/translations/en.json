@@ -282,10 +282,10 @@
     "dolu": "A full counter"
   },
   "fayda": {
-    "malzeme": "+{} gold on everything you put it in",
+    "malzeme": "+{}% on every product it goes into",
     "hat": "A new line opens on the counter",
-    "icecek": "+{} gold on every sale",
-    "tatli": "+{} gold on every sale",
+    "icecek": "+{}% of the main product on every sale",
+    "tatli": "+{}% of the main product on every sale",
     "adet": "{} becomes {}",
     "bicak": "An ingredient takes {} handfuls instead of {}",
     "kasap": "The main product is worth {}% more",

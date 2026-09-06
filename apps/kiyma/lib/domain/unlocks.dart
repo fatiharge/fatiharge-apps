@@ -14,7 +14,7 @@ enum Grup {
   mangal('mangal'),
   bicak('bicak'),
   komur('komur'),
-  malzeme('malzeme'),
+  malzeme('malzeme', sirasiz: true),
   bekleme('bekleme'),
   musteri('musteri'),
   ikram('ikram'),
@@ -22,14 +22,14 @@ enum Grup {
   cirak('cirak'),
   tabela('tabela'),
   kasap('kasap'),
-  porsiyon('porsiyon'),
-  tatli('tatli'),
-  icecek('icecek'),
+  porsiyon('porsiyon', sirasiz: true),
+  tatli('tatli', sirasiz: true),
+  icecek('icecek', sirasiz: true),
   bardak('bardak', gerek: 'icecek_hatti'),
   ayranSurahisi('ayran_surahisi', gerek: 'icecek_ayran'),
   salgamSurahisi('salgam_surahisi', gerek: 'icecek_salgam');
 
-  const Grup(this.id, {this.gerek});
+  const Grup(this.id, {this.gerek, this.sirasiz = false});
 
   /// Names `grup.<id>` in the translations, and nothing else.
   final String id;
@@ -37,6 +37,11 @@ enum Grup {
   /// A lock nothing in the group sells before. Only the drink shelves need
   /// one: a faster ayran jug means nothing on a counter with no ayran.
   final String? gerek;
+
+  /// Separate goods rather than tiers of one thing. Pickles are not a better
+  /// pepper, so the shop offers them all at once and lets the prices decide
+  /// the order; the first rung still gates the rest where it is a line.
+  final bool sirasiz;
 }
 
 /// One buyable rung: what it opens, what it costs, and where it sits.
@@ -75,69 +80,69 @@ class Unlocks {
   /// half of what the day it is meant for pays, so buying one is a decision
   /// inside a single day rather than a saving-up project.
   static const catalogue = [
-    Unlock('mangal_3', 380, Grup.mangal, 1),
-    Unlock('mangal_4', 1660, Grup.mangal, 2),
+    Unlock('mangal_3', 520, Grup.mangal, 1),
+    Unlock('mangal_4', 1500000, Grup.mangal, 2),
 
-    Unlock('bicak_1', 490, Grup.bicak, 1),
-    Unlock('bicak_2', 1920, Grup.bicak, 2),
+    Unlock('bicak_1', 2000, Grup.bicak, 1),
+    Unlock('bicak_2', 770000, Grup.bicak, 2),
 
-    Unlock('komur_1', 65, Grup.komur, 1),
-    Unlock('komur_2', 140, Grup.komur, 2),
-    Unlock('komur_3', 310, Grup.komur, 3),
-    Unlock('komur_4', 540, Grup.komur, 4),
-    Unlock('komur_5', 960, Grup.komur, 5),
+    Unlock('komur_1', 54, Grup.komur, 1),
+    Unlock('komur_2', 2200, Grup.komur, 2),
+    Unlock('komur_3', 350000, Grup.komur, 3),
+    Unlock('komur_4', 17000000, Grup.komur, 4),
+    Unlock('komur_5', 830000000, Grup.komur, 5),
 
-    Unlock('malzeme_biber', 60, Grup.malzeme, 1),
-    Unlock('malzeme_tursu', 150, Grup.malzeme, 2),
+    Unlock('malzeme_biber', 160, Grup.malzeme, 1),
+    Unlock('malzeme_tursu', 9900, Grup.malzeme, 2),
 
-    Unlock('bekleme_2', 190, Grup.bekleme, 1),
-    Unlock('bekleme_3', 640, Grup.bekleme, 2),
+    Unlock('bekleme_2', 140, Grup.bekleme, 1),
+    Unlock('bekleme_3', 210000, Grup.bekleme, 2),
 
-    Unlock('musteri_3', 1790, Grup.musteri, 1),
+    Unlock('musteri_3', 4000, Grup.musteri, 1),
 
-    Unlock('ikram_1', 120, Grup.ikram, 1),
-    Unlock('ikram_2', 260, Grup.ikram, 2),
-    Unlock('ikram_3', 490, Grup.ikram, 3),
+    Unlock('ikram_1', 27000, Grup.ikram, 1),
+    Unlock('ikram_2', 16000000, Grup.ikram, 2),
+    Unlock('ikram_3', 370000000, Grup.ikram, 3),
 
-    Unlock('kasa_1', 90, Grup.kasa, 1),
-    Unlock('kasa_2', 200, Grup.kasa, 2),
-    Unlock('kasa_3', 380, Grup.kasa, 3),
+    Unlock('kasa_1', 20000, Grup.kasa, 1),
+    Unlock('kasa_2', 5300000, Grup.kasa, 2),
+    Unlock('kasa_3', 420000000, Grup.kasa, 3),
 
-    Unlock('cirak_1', 100, Grup.cirak, 1),
-    Unlock('cirak_2', 230, Grup.cirak, 2),
-    Unlock('cirak_3', 440, Grup.cirak, 3),
+    Unlock('cirak_1', 14000, Grup.cirak, 1),
+    Unlock('cirak_2', 3600000, Grup.cirak, 2),
+    Unlock('cirak_3', 150000000, Grup.cirak, 3),
 
-    Unlock('tabela_1', 140, Grup.tabela, 1),
-    Unlock('tabela_2', 320, Grup.tabela, 2),
-    Unlock('tabela_3', 590, Grup.tabela, 3),
+    Unlock('tabela_1', 190000, Grup.tabela, 1),
+    Unlock('tabela_2', 23000000, Grup.tabela, 2),
+    Unlock('tabela_3', 290000000, Grup.tabela, 3),
 
-    Unlock('kasap_1', 190, Grup.kasap, 1),
-    Unlock('kasap_2', 440, Grup.kasap, 2),
-    Unlock('kasap_3', 770, Grup.kasap, 3),
+    Unlock('kasap_1', 680, Grup.kasap, 1),
+    Unlock('kasap_2', 1100000, Grup.kasap, 2),
+    Unlock('kasap_3', 98000000, Grup.kasap, 3),
 
-    Unlock('porsiyon_hatti', 700, Grup.porsiyon, 1),
-    Unlock('bilesen_icli_kofte', 230, Grup.porsiyon, 2),
-    Unlock('bilesen_pilav', 380, Grup.porsiyon, 3),
-    Unlock('bilesen_patates', 770, Grup.porsiyon, 4),
-    Unlock('bilesen_ezme', 1150, Grup.porsiyon, 5),
+    Unlock('porsiyon_hatti', 14, Grup.porsiyon, 1),
+    Unlock('bilesen_icli_kofte', 98, Grup.porsiyon, 2),
+    Unlock('bilesen_pilav', 110000, Grup.porsiyon, 3),
+    Unlock('bilesen_patates', 23000000, Grup.porsiyon, 4),
+    Unlock('bilesen_ezme', 43000000, Grup.porsiyon, 5),
 
-    Unlock('tatli_baklava', 330, Grup.tatli, 1),
+    Unlock('tatli_baklava', 2700, Grup.tatli, 1),
 
-    Unlock('icecek_hatti', 410, Grup.icecek, 1),
-    Unlock('icecek_salgam', 150, Grup.icecek, 2),
-    Unlock('icecek_ayran', 280, Grup.icecek, 3),
-    Unlock('icecek_kola', 440, Grup.icecek, 4),
+    Unlock('icecek_hatti', 30, Grup.icecek, 1),
+    Unlock('icecek_salgam', 470, Grup.icecek, 2),
+    Unlock('icecek_ayran', 130000, Grup.icecek, 3),
+    Unlock('icecek_kola', 12000000, Grup.icecek, 4),
 
-    Unlock('bardak_2', 120, Grup.bardak, 1),
-    Unlock('bardak_3', 270, Grup.bardak, 2),
+    Unlock('bardak_2', 1300, Grup.bardak, 1),
+    Unlock('bardak_3', 2400000, Grup.bardak, 2),
 
-    Unlock('surahi_ayran_1', 75, Grup.ayranSurahisi, 1),
-    Unlock('surahi_ayran_2', 180, Grup.ayranSurahisi, 2),
-    Unlock('surahi_ayran_3', 360, Grup.ayranSurahisi, 3),
+    Unlock('surahi_ayran_1', 300000, Grup.ayranSurahisi, 1),
+    Unlock('surahi_ayran_2', 110000000, Grup.ayranSurahisi, 2),
+    Unlock('surahi_ayran_3', 300000000, Grup.ayranSurahisi, 3),
 
-    Unlock('surahi_salgam_1', 75, Grup.salgamSurahisi, 1),
-    Unlock('surahi_salgam_2', 180, Grup.salgamSurahisi, 2),
-    Unlock('surahi_salgam_3', 360, Grup.salgamSurahisi, 3),
+    Unlock('surahi_salgam_1', 19000, Grup.salgamSurahisi, 1),
+    Unlock('surahi_salgam_2', 62000000, Grup.salgamSurahisi, 2),
+    Unlock('surahi_salgam_3', 240000000, Grup.salgamSurahisi, 3),
   ];
 
   static final Map<String, Unlock> _byId = {
@@ -182,8 +187,14 @@ class Unlocks {
   /// A rung is for sale once the one under it is open. Nothing is hidden any
   /// more — the shop draws the whole ladder — so this only answers what
   /// money is allowed to reach next.
-  bool available(Unlock unlock) =>
-      grupAcik(unlock.grup) && kademe(unlock.grup) == unlock.kademe - 1;
+  bool available(Unlock unlock) {
+    if (!grupAcik(unlock.grup)) return false;
+    if (!unlock.grup.sirasiz) {
+      return kademe(unlock.grup) == unlock.kademe - 1;
+    }
+    final ilk = kademeler(unlock.grup).first;
+    return unlock.id == ilk.id || has(ilk.id);
+  }
 
   Iterable<Unlock> get forSale =>
       catalogue.where((u) => !has(u.id) && available(u));

@@ -9,8 +9,10 @@ import 'package:kiyma/config/injectable.dart';
 import 'package:kiyma/domain/unlocks.dart';
 import 'package:kiyma/infrastructure/world.dart';
 import 'package:kiyma/presentation/brand.dart';
+import 'package:kiyma/presentation/gold_text.dart';
 import 'package:kiyma/presentation/palette.dart';
 import 'package:kiyma/presentation/render/shop_scene.dart';
+import 'package:kiyma/presentation/render/tag_layout.dart';
 import 'package:kiyma/presentation/shop_ladder.dart';
 import 'package:kiyma/presentation/shop_map.dart';
 import 'package:kiyma/route/app_router.gr.dart';
@@ -65,6 +67,23 @@ class _DukkanState extends State<_Dukkan> {
     return out;
   }
 
+  /// A touch lands on the tag first and the object second.
+  ///
+  /// The tag is often lifted clear of what it belongs to so two of them do
+  /// not print over each other, and an ingredient well is a small target in
+  /// its own right. Testing the region alone left tags that could be read
+  /// and not pressed.
+  void _dokun(Offset point, Unlocks unlocks) {
+    final scene = getIt<GameWorld>().scene;
+    final vurulan =
+        TagLayout.of(scene, _etiketler(unlocks)).at(point) ??
+        scene.at(point)?.name;
+    // Everything else in the kitchen is scenery here. A touch on the counter
+    // opening an empty card would teach the player to stop touching things.
+    if (vurulan == null || !ShopMap.bolgeler.contains(vurulan)) return;
+    setState(() => _secili = vurulan);
+  }
+
   @override
   Widget build(BuildContext context) => BlocBuilder<KiymaCubit, KiymaState>(
     builder: (context, state) {
@@ -90,7 +109,8 @@ class _DukkanState extends State<_Dukkan> {
                 );
                 return Center(
                   child: GestureDetector(
-                    onTapUp: (details) => _dokun(details.localPosition / scale),
+                    onTapUp: (details) =>
+                        _dokun(details.localPosition / scale, unlocks),
                     child: CustomPaint(
                       size: Size(
                         scene.size.width * scale,
@@ -136,7 +156,7 @@ class _DukkanState extends State<_Dukkan> {
                   const SizedBox(width: 8),
                   BrandChip(
                     icon: Icons.payments_outlined,
-                    label: 'hud.para'.tr(args: ['${state.para}']),
+                    label: 'hud.para'.tr(args: [goldText(state.para)]),
                   ),
                 ],
               ),
@@ -155,14 +175,6 @@ class _DukkanState extends State<_Dukkan> {
       );
     },
   );
-
-  void _dokun(Offset point) {
-    final region = getIt<GameWorld>().scene.at(point);
-    // Everything else in the kitchen is scenery here. A touch on the counter
-    // opening an empty card would teach the player to stop touching things.
-    if (region == null || !ShopMap.bolgeler.contains(region.name)) return;
-    setState(() => _secili = region.name);
-  }
 }
 
 /// A small round button that can sit over the room without being a bar.

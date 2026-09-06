@@ -10,6 +10,7 @@ import 'package:kiyma/domain/gun_kurali.dart';
 import 'package:kiyma/domain/gun_profili.dart';
 import 'package:kiyma/domain/unlocks.dart';
 import 'package:kiyma/presentation/brand.dart';
+import 'package:kiyma/presentation/gold_text.dart';
 import 'package:kiyma/presentation/level_bar.dart';
 import 'package:kiyma/presentation/palette.dart';
 import 'package:kiyma/route/app_router.gr.dart';
@@ -350,7 +351,7 @@ class _Start extends StatelessWidget {
           label: buy == null
               ? 'menu.yukselt'.tr()
               : 'gun.alinabilir'.tr(
-                  args: ['kilit.${buy.id}'.tr(), '${buy.price}'],
+                  args: ['kilit.${buy.id}'.tr(), goldText(buy.price)],
                 ),
           icon: buy == null
               ? Icons.upgrade_rounded

@@ -101,10 +101,15 @@ class OrderMaker {
     // One constraint while two things are open, three once the counter is
     // full. Half the pool, because an order asking for everything open is
     // not a choice.
-    final limit = math.min(3, math.max(1, pool.length ~/ 2));
+    // Everything open, up to four. An order that asked for one or two
+    // whatever the counter held is what made buying an ingredient feel
+    // optional: nothing on the shelf was ever needed to fill it.
+    final limit = math.min(4, math.max(1, pool.length));
+    // Never the whole pool when somebody has to be left something to refuse.
+    final tavan = math.max(1, pool.length - enAzIstemez);
     final count = pool.isEmpty
         ? 0
-        : math.min(pool.length, 1 + _random.nextInt(limit) + kural.ekMalzeme);
+        : math.min(tavan, 1 + _random.nextInt(limit) + kural.ekMalzeme);
 
     final ister = <String>{};
     final istemez = <String>{};

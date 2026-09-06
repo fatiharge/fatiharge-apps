@@ -7,6 +7,7 @@ import 'package:kiyma/application/kiyma_cubit.dart';
 import 'package:kiyma/config/injectable.dart';
 import 'package:kiyma/infrastructure/world.dart';
 import 'package:kiyma/presentation/brand.dart';
+import 'package:kiyma/presentation/gold_text.dart';
 import 'package:kiyma/presentation/palette.dart';
 import 'package:kiyma/route/app_router.gr.dart';
 
@@ -36,7 +37,7 @@ class MenuPage extends StatelessWidget {
                 children: [
                   BrandChip(
                     icon: Icons.paid_rounded,
-                    label: 'hud.para'.tr(args: ['${state.para}']),
+                    label: 'hud.para'.tr(args: [goldText(state.para)]),
                   ),
                   const SizedBox(width: 8),
                   BrandChip(label: 'hud.gun'.tr(args: ['${state.gun}'])),

@@ -128,7 +128,7 @@ void main() {
       for (var i = 0; i < 20; i++) {
         cold.musteriKizdi();
       }
-      expect(cold.paraCarpani, 0.5, reason: 'the punishment is the money');
+      expect(cold.paraCarpani, 0.4, reason: 'the punishment is the money');
       expect(
         cold.pismeCarpani,
         1,
@@ -142,8 +142,8 @@ void main() {
       for (var i = 0; i < 20; i++) {
         hot.servisEdildi(tamami: true, sabirOrani: 1);
       }
-      expect(hot.paraCarpani, 1.5);
-      expect(hot.pismeCarpani, closeTo(1.35, 0.001));
+      expect(hot.paraCarpani, 1.6);
+      expect(hot.pismeCarpani, closeTo(1.5, 0.001));
       expect(hot.sabirCarpani, closeTo(1.25, 0.001));
     });
 
