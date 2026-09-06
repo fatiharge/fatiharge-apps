@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kiyma/domain/balance.dart';
 import 'package:kiyma/domain/day_run.dart';
+import 'package:kiyma/domain/gun_profili.dart';
 import 'package:kiyma/domain/model/carried.dart';
 import 'package:kiyma/domain/model/items.dart';
 import 'package:kiyma/domain/model/order.dart';
@@ -904,6 +905,73 @@ void main() {
       }
       expect(run.bitti, isFalse);
       expect(run.musteriler.where((c) => c != null), isNotEmpty);
+    });
+
+    test('nobody new comes in after last orders', () {
+      final run = build();
+      while (!run.sonSiparisZamani) {
+        run.tick(0.1);
+      }
+      events.clear();
+      for (var i = 0; i < 120; i++) {
+        run.tick(0.1);
+      }
+      expect(events, isNot(contains(DayEvent.musteriGeldi)));
+    });
+
+    test('the buzzer does not cut somebody off mid-order', () {
+      final run = build();
+      while (run.kalanSure > 1) {
+        run.tick(0.5);
+      }
+      waiting(run, wrapFor(const {}));
+      run.tick(1.2);
+
+      expect(run.kalanSure, 0);
+      expect(run.bitti, isFalse, reason: 'somebody is still at the counter');
+      expect(run.kapaniyor, isTrue);
+
+      // And it closes the moment the last of them has gone.
+      run
+        ..musteriler[0] = null
+        ..tick(0.1);
+      expect(run.bitti, isTrue);
+    });
+
+    test('a day nobody finishes closes on its own anyway', () {
+      final run = build();
+      while (run.kalanSure > 1) {
+        run.tick(0.5);
+      }
+      waiting(run, wrapFor(const {}));
+      // Long past the grace, doing nothing: putting the phone down does not
+      // hold the shop open.
+      for (var i = 0; i < (Balance.kapanisPayi / 0.5).ceil() + 6; i++) {
+        run.tick(0.5);
+      }
+      expect(run.bitti, isTrue);
+    });
+
+    test('the rush comes and goes instead of ticking like a metronome', () {
+      final run = DayRun(
+        scene: scene,
+        progress: Progress()..gun = 3,
+        onEvent: (_) {},
+        onChanged: () {},
+        random: math.Random(4),
+      );
+      expect(run.profil, GunProfili.ciftServis);
+
+      // Counted in windows across the run: two busy stretches with a
+      // quieter one between them is the shape, not a flat line.
+      final gaps = <double>[];
+      for (final oran in [0.05, 0.30, 0.50, 0.65, 0.80]) {
+        gaps.add(run.profil.yogunlukAt(oran).aralikCarpani);
+      }
+      expect(gaps[1], lessThan(gaps[0]));
+      expect(gaps[2], greaterThan(gaps[1]));
+      expect(gaps[3], greaterThan(gaps[2]));
+      expect(gaps[4], lessThan(gaps[3]));
     });
 
     test('seats arrivals only in the places that are open', () {

@@ -139,6 +139,18 @@ abstract final class Balance {
   /// by its own hands. Day one should be teachable.
   static double arrivalGap(int day) => math.max(2.2, 8 - day * 0.6);
 
+  /// How far into the day the doors shut.
+  ///
+  /// Nobody new comes in after this; whoever is already at the counter still
+  /// has to be served. A run that simply stops mid-order is a run that ends
+  /// by taking something away from the player.
+  static const sonSiparis = 0.88;
+
+  /// How long past the buzzer the last orders may take before the day is
+  /// closed anyway. Without a cap a player who puts the phone down holds the
+  /// day open for as long as the customers' patience lasts.
+  static const kapanisPayi = 25.0;
+
   /// XP needed to reach each day. Earned money is what feeds it, but the
   /// player is never shown that link — they see a level bar.
   ///

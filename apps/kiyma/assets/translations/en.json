@@ -31,7 +31,8 @@
     "ipucu_3": "Gold on the ledge is swept in ten seconds, and 30% of it goes.",
     "ipucu_4": "Ingredients do not wait for the meat: the bread is enough.",
     "ipucu_5": "The higher the tempo, the more everything pays.",
-    "ipucu_6": "Leave the grill empty and the mince tray starts blinking."
+    "ipucu_6": "Leave the grill empty and the mince tray starts blinking.",
+    "tempo": "Today's trade"
   },
   "magaza": {
     "baslik": "Grow the shop",
@@ -43,7 +44,8 @@
     "mangal_dolu": "No room on the grill",
     "altin_supuruldu": "30% of the gold got swept up",
     "gecersiz": "Not there",
-    "musteri_kizgin": "A customer left"
+    "musteri_kizgin": "A customer left",
+    "son_siparis": "Last orders!"
   },
   "kilit": {
     "malzeme_biber": "Pepper",
@@ -91,5 +93,11 @@
     "normal": "STEADY",
     "isiniyor": "WARMING",
     "ates": "ON FIRE"
+  },
+  "gidis": {
+    "duz": "A quiet day",
+    "ogle": "The lunch rush",
+    "cift_servis": "Two sittings",
+    "aksamustu": "A heavy evening"
   }
 }

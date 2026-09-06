@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:kiyma/domain/balance.dart';
+import 'package:kiyma/domain/gun_profili.dart';
 import 'package:kiyma/domain/model/carried.dart';
 import 'package:kiyma/domain/model/order.dart';
 import 'package:kiyma/domain/model/products.dart';
@@ -23,6 +24,9 @@ enum DayEvent {
   musteriMemnun,
   musteriKizgin,
   gunBitti,
+
+  /// The doors are shut: whoever is at the counter is the last of them.
+  sonSiparis,
 }
 
 /// Something that happened, and where.
@@ -168,6 +172,20 @@ class DayRun {
       (kalanSure / Balance.runLength(day).inSeconds).clamp(0, 1);
   double _sonrakiGelis = 0;
   bool bitti = false;
+
+  /// The shape of this particular day, and how far through it we are.
+  late final GunProfili profil = GunProfili.forDay(day);
+
+  double get gunOrani => 1 - sureOrani;
+
+  /// Past the last order, before the buzzer.
+  bool get sonSiparisZamani => gunOrani >= Balance.sonSiparis;
+
+  /// After the buzzer, while the counter empties.
+  bool get kapaniyor => kalanSure <= 0 && !bitti;
+
+  double _kapanisKalan = Balance.kapanisPayi;
+  bool _sonSiparisBildirildi = false;
 
   /// How long every open grill slot has been empty. Past
   /// [Balance.idleGrill] the mince tray starts blinking: an empty grill is
@@ -349,7 +367,9 @@ class DayRun {
     ayrilanlar.removeWhere((leaving) => leaving.gitti);
 
     _sonrakiGelis -= dt;
-    if (_sonrakiGelis <= 0) {
+    // Nobody new past the last order, and nobody at all once the buzzer has
+    // gone: the closing stretch is for finishing what is already ordered.
+    if (_sonrakiGelis <= 0 && !sonSiparisZamani) {
       final free = _bosMusteriSlotu();
       if (free != null) {
         musteriler[free] = Customer(
@@ -359,20 +379,36 @@ class DayRun {
               Balance.slowestWalk +
               _random.nextDouble() * (1 - Balance.slowestWalk),
         );
-        _sonrakiGelis = Balance.arrivalGap(day);
+        _sonrakiGelis = _gelisAraligi;
         onEvent(DayEvent.musteriGeldi);
         onChanged();
       }
     }
 
-    kalanSure -= dt;
-    if (kalanSure <= 0) {
-      kalanSure = 0;
-      bitti = true;
-      onEvent(DayEvent.gunBitti);
-      onChanged();
+    if (sonSiparisZamani && !_sonSiparisBildirildi) {
+      _sonSiparisBildirildi = true;
+      onEvent(DayEvent.sonSiparis);
     }
+
+    kalanSure -= dt;
+    if (kalanSure > 0) return;
+    kalanSure = 0;
+    // The buzzer is not the end. Whoever is at the counter is still owed
+    // what they ordered, and a day that cuts mid-order ends by taking
+    // something away from the player. It closes when the last of them has
+    // gone — or when the grace runs out, so putting the phone down does not
+    // hold the shop open.
+    _kapanisKalan -= dt;
+    if (_kapanisKalan > 0 && musteriler.any((c) => c != null)) return;
+    bitti = true;
+    onEvent(DayEvent.gunBitti);
+    onChanged();
   }
+
+  /// The gap to the next arrival: the day's base, stretched or squeezed by
+  /// whichever stretch of the shift we are in.
+  double get _gelisAraligi =>
+      Balance.arrivalGap(day) * profil.yogunlukAt(gunOrani).aralikCarpani;
 
   /// A meter with no room left still has to pay for good play, or the last
   /// stretch of a strong run goes quiet. What it could not absorb becomes
@@ -1007,7 +1043,7 @@ class DayRun {
       _cue(DayEvent.musteriKizgin, yeri(index));
     }
     onEvent(memnun ? DayEvent.musteriMemnun : DayEvent.musteriKizgin);
-    _sonrakiGelis = math.max(_sonrakiGelis, Balance.arrivalGap(day));
+    _sonrakiGelis = math.max(_sonrakiGelis, _gelisAraligi);
     onChanged();
   }
 

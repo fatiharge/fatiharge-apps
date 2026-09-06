@@ -1016,8 +1016,20 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       final bounds = clock.quad.bounds;
       final at = bounds.center;
       final r = math.min(bounds.width, bounds.height) / 2;
-      final late = run.kalanSure < 20;
-      final face = late ? const Color(0xFFFF5A45) : const Color(0xFFE8641A);
+      // Last orders is the one thing the clock has to say that the number on
+      // it cannot: the doors are shut, and whoever is at the counter is all
+      // there is left to earn from.
+      final son = run.sonSiparisZamani;
+      final late = son || run.kalanSure < 20;
+      final face = son
+          ? Color.lerp(
+              const Color(0xFFFF5A45),
+              const Color(0xFFFFC24A),
+              _pulse,
+            )!
+          : late
+          ? const Color(0xFFFF5A45)
+          : const Color(0xFFE8641A);
 
       canvas
         // Hung, not floating: a nail, a cord, and the shadow the wall casts

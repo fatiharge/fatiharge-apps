@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kiyma/application/kiyma_cubit.dart';
 import 'package:kiyma/config/injectable.dart';
 import 'package:kiyma/domain/balance.dart';
+import 'package:kiyma/domain/gun_profili.dart';
 import 'package:kiyma/domain/unlocks.dart';
 import 'package:kiyma/presentation/brand.dart';
 import 'package:kiyma/presentation/level_bar.dart';
@@ -141,7 +141,19 @@ class _Today extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        BrandChip(label: 'gun.bugun'.tr(), icon: Icons.today_rounded),
+        Wrap(
+          spacing: 8,
+          runSpacing: 6,
+          children: [
+            BrandChip(label: 'gun.bugun'.tr(), icon: Icons.today_rounded),
+            // The shape of the day, named before it starts. A rush that can
+            // be planned for is a shift; one that just happens is noise.
+            BrandChip(
+              label: 'gidis.${GunProfili.forDay(day).ad}'.tr(),
+              icon: Icons.show_chart_rounded,
+            ),
+          ],
+        ),
         const SizedBox(height: 10),
         for (final row in rows) ...[
           row,

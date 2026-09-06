@@ -31,7 +31,8 @@
     "ipucu_3": "Tezgahtaki altın 10 saniyede süpürülür ve %30'u gider.",
     "ipucu_4": "Malzeme eti beklemez: lavaş konar konmaz eklenebilir.",
     "ipucu_5": "Tempo yükseldikçe her şey daha çok para eder.",
-    "ipucu_6": "Mangal boş kalırsa kıyma tepsisi yanıp söner."
+    "ipucu_6": "Mangal boş kalırsa kıyma tepsisi yanıp söner.",
+    "tempo": "Bugünün gidişi"
   },
   "magaza": {
     "baslik": "Dükkanı büyüt",
@@ -43,7 +44,8 @@
     "mangal_dolu": "Mangalda yer yok",
     "altin_supuruldu": "Altının %30'u gitti",
     "gecersiz": "Olmaz",
-    "musteri_kizgin": "Müşteri gitti"
+    "musteri_kizgin": "Müşteri gitti",
+    "son_siparis": "Son sipariş!"
   },
   "kilit": {
     "malzeme_biber": "Biber",
@@ -91,5 +93,11 @@
     "normal": "NORMAL",
     "isiniyor": "ISINIYOR",
     "ates": "ATEŞ"
+  },
+  "gidis": {
+    "duz": "Sakin bir gün",
+    "ogle": "Öğle patlaması",
+    "cift_servis": "İki servis",
+    "aksamustu": "Akşamüstü yoğunluğu"
   }
 }
