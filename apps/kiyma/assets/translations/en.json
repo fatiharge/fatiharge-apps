@@ -163,7 +163,7 @@
     "yeniden": "New run",
     "menu": "Main menu",
     "hasilat": "TODAY'S TAKINGS",
-    "gun_basarili": "DAY #{} DONE",
+    "gun_basarili": "DAY #{}",
     "altin": "GOLD",
     "musteri": "{} customers left happy",
     "ilerleme": "GRILL MASTER PROGRESS",
@@ -275,8 +275,8 @@
     "bayram_ne": "Everybody wants dessert.",
     "kosu_gunu": "Race day",
     "kosu_gunu_ne": "Everyone is in a hurry: 35% less patience, but everything pays 50% more.",
-    "sakin_gun": "Slow day",
-    "sakin_gun_ne": "Nobody is rushing: more patience and a wider grill, but 15% less pay."
+    "yavas_gun": "Unhurried",
+    "yavas_gun_ne": "Nobody is rushing: more patience and a wider grill, but 15% less pay."
   },
   "rozet": {
     "kusursuz": "A perfect day",

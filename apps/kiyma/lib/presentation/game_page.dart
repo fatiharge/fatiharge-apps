@@ -203,7 +203,9 @@ class _PauseOverlayState extends State<_PauseOverlay> {
                 ChunkyButton(
                   label: 'hiz  ${Dev.hiz.toStringAsFixed(0)}x',
                   icon: Icons.fast_forward_rounded,
-                  color: KiymaPalette.komur,
+                  // Not the ink colour: the button draws its label and icon
+                  // in it, so a dark fill was a dark label on a dark button.
+                  color: KiymaPalette.celik,
                   onPressed: () => setState(Dev.sonrakiHiz),
                 ),
               ],

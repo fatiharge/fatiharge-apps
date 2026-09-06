@@ -498,6 +498,8 @@ class _Takings extends StatelessWidget {
               BrandChip(label: 'ozet.hasilat'.tr()),
               const Spacer(),
               Text(
+                // Which day this was, not how it went — the badges above
+                // say that, and a run that served nobody was not a success.
                 'ozet.gun_basarili'.tr(args: ['$day']),
                 style: const TextStyle(
                   fontFamily: 'Rubik',

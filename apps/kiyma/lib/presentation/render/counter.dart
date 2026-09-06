@@ -542,20 +542,27 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     // It was a full-width band that flipped top to bottom with the target,
     // so "hand it over" — a target at the customers — laid the bubble across
     // the prep area, over the wrap the player was being told to pick up.
+    // Everything the player has to be able to see while the usta talks. The
+    // gauge and the slate are on the list because they are drawn here rather
+    // than in the scene, so nothing else knows they are in the way; the wall
+    // pair is on it because a step with nothing to touch has no target to
+    // avoid. The prep areas count only while they hold something — an empty
+    // board is not work, and treating it as work leaves the bubble nowhere.
     final dolu = <Rect>[
       if (hedef != null) hedef.quad.bounds,
-      // Everything the player has to be able to see while the usta talks.
-      // The clock and the calendar are on the list because a step with
-      // nothing to touch — "the clock on the wall counts the day" — has no
-      // target to avoid, and the bubble settled straight over the clock.
-      for (final ad in const [
-        'durum_hazirlama',
-        'tabak_hazirlama',
-        'bekleme_alani',
-        'duvar_saati',
-        'duvar_takvimi',
-      ])
+      Rect.fromCircle(center: _gauge, radius: _gaugeRadius),
+      _tahta,
+      // The one control on the counter. A bubble over it is a run that
+      // cannot be paused until the usta has finished talking.
+      _pause,
+      for (final ad in const ['duvar_saati', 'duvar_takvimi'])
         if (scene.maybe(ad) case final bolge?) bolge.quad.bounds,
+      if (run.durumIstasyonu != null)
+        if (scene.maybe('durum_hazirlama') case final bolge?) bolge.quad.bounds,
+      if (run.tabakIstasyonu != null)
+        if (scene.maybe('tabak_hazirlama') case final bolge?) bolge.quad.bounds,
+      if (run.bekleme.any((urun) => urun != null))
+        if (scene.maybe('bekleme_alani') case final bolge?) bolge.quad.bounds,
       for (var i = 0; i < run.musteriler.length; i++)
         if (run.musteriler[i] != null)
           if (scene.maybe('musteri_slot_${i + 1}') case final bolge?)
@@ -567,7 +574,9 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     var enAz = double.infinity;
     for (final aday in [
       for (final x in [20.0, size.x - genislik - 20])
-        for (final y in [12.0, size.y - yukseklik - 12])
+        // The portrait leans past the panel top and bottom, so the lower
+        // row sits high enough to keep the usta's feet on the picture.
+        for (final y in [18.0, size.y - yukseklik - 30])
           Rect.fromLTWH(x, y, genislik, yukseklik),
     ]) {
       var ortusme = 0.0;
@@ -588,7 +597,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
         canvas,
         usta,
         Offset(rect.left + 2, rect.center.dy + 4),
-        96,
+        88,
       );
     }
 

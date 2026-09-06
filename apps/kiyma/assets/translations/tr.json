@@ -163,7 +163,7 @@
     "yeniden": "Yeni oyun",
     "menu": "Ana menü",
     "hasilat": "GÜNÜN HASILATI",
-    "gun_basarili": "GÜN #{} BAŞARILI",
+    "gun_basarili": "GÜN #{}",
     "altin": "ALTIN",
     "musteri": "{} müşteri memnun ayrıldı",
     "ilerleme": "OCAKBAŞI İLERLEMESİ",
@@ -275,8 +275,8 @@
     "bayram_ne": "Herkes tatlı istiyor.",
     "kosu_gunu": "Koşu günü",
     "kosu_gunu_ne": "Herkes acele ediyor: sabır %35 az, ama her şey %50 fazla eder.",
-    "sakin_gun": "Sakin gün",
-    "sakin_gun_ne": "Kimse acele etmiyor: sabır ve pencere geniş, ama %15 az eder."
+    "yavas_gun": "Yavaş gün",
+    "yavas_gun_ne": "Kimse acele etmiyor: sabır ve pencere geniş, ama %15 az eder."
   },
   "rozet": {
     "kusursuz": "Kusursuz gün",

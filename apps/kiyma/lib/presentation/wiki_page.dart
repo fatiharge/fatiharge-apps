@@ -137,6 +137,11 @@ class WikiPage extends StatelessWidget {
 class _Bolum extends StatelessWidget {
   const _Bolum(this.baslik, this.satirlar);
 
+  /// Below this a row gets the whole width; above it, two share it. The game
+  /// is played in landscape, where one column of full-width rows is a page
+  /// of short sentences with a hand's width of nothing beside each.
+  static const _ikiSutun = 780.0;
+
   final String baslik;
   final List<Widget> satirlar;
 
@@ -159,7 +164,19 @@ class _Bolum extends StatelessWidget {
             ),
           ),
         ),
-        ...satirlar,
+        LayoutBuilder(
+          builder: (context, box) {
+            final sutun = box.maxWidth >= _ikiSutun ? 2 : 1;
+            final genislik = (box.maxWidth - (sutun - 1) * 10) / sutun;
+            return Wrap(
+              spacing: 10,
+              children: [
+                for (final satir in satirlar)
+                  SizedBox(width: genislik, child: satir),
+              ],
+            );
+          },
+        ),
       ],
     ),
   );

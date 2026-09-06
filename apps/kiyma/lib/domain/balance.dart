@@ -265,9 +265,9 @@ abstract final class Balance {
   static const kosuOdemesi = 1.5;
 
   /// The other end of the same trade — time instead of money.
-  static const sakinPenceresi = 1.4;
-  static const sakinSabri = 1.35;
-  static const sakinOdemesi = 0.85;
+  static const yavasPenceresi = 1.4;
+  static const yavasSabri = 1.35;
+  static const yavasOdemesi = 0.85;
 
   /// A holiday means everybody, not most. The bend is that every visit needs
   /// two handovers, so seats turn over slower; that is reward enough.

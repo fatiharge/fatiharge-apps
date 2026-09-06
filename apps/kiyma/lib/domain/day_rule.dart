@@ -99,11 +99,11 @@ class DayRule {
 
   /// The other end of the same trade: time instead of money. Nobody hurries
   /// and the grill forgives, but the day pays less for it.
-  static const sakinGun = DayRule(
-    'sakin_gun',
-    pencereCarpani: Balance.sakinPenceresi,
-    sabirCarpani: Balance.sakinSabri,
-    odeme: Balance.sakinOdemesi,
+  static const yavasGun = DayRule(
+    'yavas_gun',
+    pencereCarpani: Balance.yavasPenceresi,
+    sabirCarpani: Balance.yavasSabri,
+    odeme: Balance.yavasOdemesi,
   );
 
   static const List<DayRule> dongu = [
@@ -112,7 +112,7 @@ class DayRule {
     kosuGunu,
     durumGunu,
     titizGun,
-    sakinGun,
+    yavasGun,
     bayram,
   ];
 

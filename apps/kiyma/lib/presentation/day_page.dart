@@ -106,9 +106,10 @@ class _Today extends StatelessWidget {
         icon: Icons.schedule_rounded,
         label: 'gun.sure'.tr(),
         value: clock(Balance.runLength(day)),
-        delta:
-            Balance.runLength(day).inSeconds -
-            Balance.runLength(was).inSeconds.toDouble(),
+        delta: day <= 1
+            ? null
+            : Balance.runLength(day).inSeconds -
+                  Balance.runLength(was).inSeconds.toDouble(),
         unit: 'sn',
         moreIsBetter: true,
         number: number,
@@ -117,7 +118,9 @@ class _Today extends StatelessWidget {
         icon: Icons.groups_rounded,
         label: 'gun.gelis'.tr(),
         value: seconds(Balance.arrivalGap(day)),
-        delta: Balance.arrivalGap(day) - Balance.arrivalGap(was),
+        delta: day <= 1
+            ? null
+            : Balance.arrivalGap(day) - Balance.arrivalGap(was),
         unit: 'sn',
         moreIsBetter: true,
         number: number,
@@ -126,7 +129,7 @@ class _Today extends StatelessWidget {
         icon: Icons.local_fire_department_rounded,
         label: 'gun.yanma'.tr(),
         value: seconds(pencere(day, kural)),
-        delta: pencere(day, kural) - pencere(was, onceki),
+        delta: day <= 1 ? null : pencere(day, kural) - pencere(was, onceki),
         unit: 'sn',
         moreIsBetter: true,
         number: number,
@@ -135,7 +138,7 @@ class _Today extends StatelessWidget {
         icon: Icons.hourglass_bottom_rounded,
         label: 'gun.sabir'.tr(),
         value: seconds(sabir(day, kural)),
-        delta: sabir(day, kural) - sabir(was, onceki),
+        delta: day <= 1 ? null : sabir(day, kural) - sabir(was, onceki),
         unit: 'sn',
         moreIsBetter: true,
         number: number,
@@ -144,7 +147,9 @@ class _Today extends StatelessWidget {
         icon: Icons.payments_rounded,
         label: 'gun.carpan'.tr(),
         value: '×${number.format(carpan(day, kural))}',
-        delta: (carpan(day, kural) - carpan(was, onceki)) * 100,
+        delta: day <= 1
+            ? null
+            : (carpan(day, kural) - carpan(was, onceki)) * 100,
         unit: '%',
         moreIsBetter: true,
         number: number,
@@ -251,7 +256,9 @@ class _Dial extends StatelessWidget {
   final IconData icon;
   final String label;
   final String value;
-  final double delta;
+
+  /// Against yesterday, or null on the first day — there is no yesterday.
+  final double? delta;
   final String unit;
   final bool moreIsBetter;
   final NumberFormat number;
@@ -260,8 +267,9 @@ class _Dial extends StatelessWidget {
   Widget build(BuildContext context) {
     // Day one has no yesterday, and every dial eventually hits its floor and
     // stops moving. Neither is worth a row of "±0".
-    final moved = delta.abs() >= 0.05;
-    final good = delta > 0 == moreIsBetter;
+    final fark = delta;
+    final moved = fark != null && fark.abs() >= 0.05;
+    final good = (fark ?? 0) > 0 == moreIsBetter;
     return Row(
       children: [
         Icon(icon, size: 15, color: KiymaPalette.ahsap),
@@ -290,8 +298,8 @@ class _Dial extends StatelessWidget {
           width: 58,
           child: moved
               ? Text(
-                  '${delta > 0 ? '+' : '−'}'
-                  '${number.format(delta.abs())} $unit',
+                  '${fark > 0 ? '+' : '−'}'
+                  '${number.format(fark.abs())} $unit',
                   textAlign: TextAlign.right,
                   style: TextStyle(
                     fontFamily: 'Rubik',

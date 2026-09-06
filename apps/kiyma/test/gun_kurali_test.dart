@@ -110,8 +110,8 @@ void main() {
     // strictly worse than an ordinary day.
     expect(DayRule.kosuGunu.sabirCarpani, lessThan(1));
     expect(DayRule.kosuGunu.odeme, greaterThan(1));
-    expect(DayRule.sakinGun.sabirCarpani, greaterThan(1));
-    expect(DayRule.sakinGun.odeme, lessThan(1));
+    expect(DayRule.yavasGun.sabirCarpani, greaterThan(1));
+    expect(DayRule.yavasGun.odeme, lessThan(1));
 
     for (final kural in DayRule.dongu) {
       expect(kural.sabirCarpani, greaterThan(0.5), reason: kural.id);
