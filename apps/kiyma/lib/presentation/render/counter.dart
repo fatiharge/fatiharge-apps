@@ -9,6 +9,7 @@ import 'package:kiyma/domain/day_run.dart';
 import 'package:kiyma/domain/gesture.dart';
 import 'package:kiyma/domain/model/carried.dart';
 import 'package:kiyma/domain/model/items.dart';
+import 'package:kiyma/domain/model/musteri_tipi.dart';
 import 'package:kiyma/domain/model/order.dart';
 import 'package:kiyma/domain/model/products.dart';
 import 'package:kiyma/domain/quad.dart';
@@ -752,7 +753,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
         canvas,
         region.quad,
         composition.ingredient(malzeme.id),
-        portion: tutam / Balance.tutamAdedi,
+        portion: tutam / station.gerekenTutam,
       );
     }
   }
@@ -778,7 +779,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
         canvas,
         region.quad,
         composition.ingredient(bilesen.id),
-        portion: tutam / Balance.tutamAdedi,
+        portion: tutam / station.gerekenTutam,
       );
     }
   }
@@ -1404,7 +1405,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       math.max(306, head.dx - _ticket.width / 2),
       _ticketTop,
       _ticket.width,
-      _wanted(customer.order).isEmpty ? _ticketBare : _ticket.height,
+      _wantedAll(customer.order).isEmpty ? _ticketBare : _ticket.height,
     );
 
     // Arrives rather than appears, and leans a little so a row of them reads
@@ -1438,6 +1439,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
           : const Color(0xFFF7EEDF),
     );
 
+    _ticketTab(canvas, rect, customer.order.musteriTipi);
     _ticketHeader(canvas, rect, customer);
     _ticketRail(canvas, rect, customer);
 
@@ -1450,6 +1452,50 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       background: const Color(0x332E2A26),
     );
     canvas.restore();
+  }
+
+  /// One glyph per kind of customer, an actual character.
+  ///
+  /// Material rather than the drawn set: these are the card saying something
+  /// about the person, not about the food, and an icon reads as an
+  /// annotation where a painted mark would read as an ingredient.
+  static const Map<MusteriTipi, ({Color renk, IconData glif})> _tipRozeti = {
+    MusteriTipi.aceleci: (renk: Color(0xFFE0452A), glif: Icons.bolt_rounded),
+    MusteriTipi.titiz: (
+      renk: Color(0xFF5B7C99),
+      glif: Icons.checklist_rounded,
+    ),
+    MusteriTipi.comert: (
+      renk: Color(0xFF3E9D4C),
+      glif: Icons.volunteer_activism_rounded,
+    ),
+    MusteriTipi.kararsiz: (
+      renk: Color(0xFF8A63B5),
+      glif: Icons.swap_horiz_rounded,
+    ),
+    MusteriTipi.kalabalik: (
+      renk: Color(0xFF9A6A2E),
+      glif: Icons.groups_rounded,
+    ),
+  };
+
+  /// The kind of customer, clipped to the top corner of their ticket.
+  ///
+  /// Outside the paper rather than on it: the card is already three bands of
+  /// what they want, and this is not a want — it is who is asking.
+  void _ticketTab(Canvas canvas, Rect rect, MusteriTipi tipi) {
+    final rozet = _tipRozeti[tipi];
+    if (rozet == null) return;
+    final at = Offset(rect.left + 15, rect.top - 3);
+    canvas
+      ..drawCircle(
+        at + const Offset(1, 2),
+        14,
+        Paint()..color = const Color(0x552E2A26),
+      )
+      ..drawCircle(at, 14, Paint()..color = const Color(0xFF2E2A26))
+      ..drawCircle(at, 11.5, Paint()..color = rozet.renk);
+    drawGlyph(canvas, rozet.glif, at, 15, const Color(0xFFFFF6E8));
   }
 
   /// The band across the top: what they came for, what else they asked for,
@@ -1481,6 +1527,17 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       23,
       done: customer.anaUrunVerildi,
     );
+    // A big order is two products on one ticket, so the band carries two
+    // marks and each one is ticked off on its own.
+    if (order.ikinci case final ikinci?) {
+      _mark(
+        canvas,
+        ikinci.tip == UrunTipi.durum ? 'durum' : 'porsiyon',
+        Offset(band.left + 38, band.center.dy),
+        23,
+        done: customer.ikinciVerildi,
+      );
+    }
 
     // Dessert always first and drink always second, printed as an empty ring
     // when there is none — so the eye learns one place to look rather than
@@ -1489,7 +1546,10 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       (order.tatli?.id, customer.tatliVerildi),
       (order.icecek?.id, customer.icecekVerildi),
     ].indexed) {
-      final at = Offset(band.left + 40 + i * 22, band.center.dy);
+      final at = Offset(
+        band.left + (order.ikinci == null ? 40 : 62) + i * 22,
+        band.center.dy,
+      );
       final id = entry.$1;
       if (id == null) {
         canvas.drawCircle(
@@ -1520,12 +1580,10 @@ class CounterComponent extends PositionComponent with DragCallbacks {
 
   int _ticketWorth(Customer customer) {
     final order = customer.order;
-    final base = order.tip == UrunTipi.durum
-        ? Balance.durumBase
-        : Balance.porsiyonBase;
-    var worth = customer.anaUrunVerildi
-        ? 0
-        : Balance.income(base, run.day, ingredients: order.ister.length);
+    var worth = customer.anaUrunVerildi ? 0 : _urunDegeri(order);
+    if (order.ikinci case final ikinci? when !customer.ikinciVerildi) {
+      worth += _urunDegeri(ikinci);
+    }
     final tatli = order.tatli;
     if (tatli != null && !customer.tatliVerildi) {
       worth += Balance.income(Balance.tatliBase[tatli]!, run.day);
@@ -1536,6 +1594,17 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     }
     return worth;
   }
+
+  int _urunDegeri(Order order) =>
+      (Balance.income(
+                order.tip == UrunTipi.durum
+                    ? Balance.durumBase
+                    : Balance.porsiyonBase,
+                run.day,
+                ingredients: order.ister.length,
+              ) *
+              order.musteriTipi.odemeCarpani)
+          .round();
 
   /// Only what was actually asked for: wanted, then forbidden, in enum order.
   ///
@@ -1551,20 +1620,36 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       if (order.ister.contains(id) || order.istemez.contains(id)) id,
   ];
 
+  /// Both products' constraints on one rail.
+  ///
+  /// Wrap ingredients and plate components are disjoint sets, so a tomato
+  /// can only belong to the wrap and ezme can only belong to the plate —
+  /// which is what lets one row carry a big order without having to say
+  /// which line each well is for.
+  static List<String> _wantedAll(Order order) => [
+    ..._wanted(order),
+    if (order.ikinci case final ikinci?) ..._wanted(ikinci),
+  ];
+
   void _ticketRail(Canvas canvas, Rect rect, Customer customer) {
     final order = customer.order;
-    final ids = _wanted(order);
+    final ids = _wantedAll(order);
     if (ids.isEmpty) return;
 
     // Centred rather than spread across the card: the row is one to four
-    // wide now, and a stretched pair reads as a card with holes in it.
-    const pitch = 34.0;
+    // wide normally, and a stretched pair reads as a card with holes in it.
+    // A big order brings more, so the pitch closes rather than the row
+    // running off the paper.
+    final pitch = math.min<double>(34, (rect.width - 14) / ids.length);
     final left = rect.center.dx - pitch * ids.length / 2;
     for (var i = 0; i < ids.length; i++) {
       final id = ids[i];
       final at = Offset(left + pitch * (i + 0.5), rect.top + 50);
-      final wanted = order.ister.contains(id);
-      final banned = order.istemez.contains(id);
+      final ikinci = order.ikinci;
+      final wanted =
+          order.ister.contains(id) || (ikinci?.ister.contains(id) ?? false);
+      final banned =
+          order.istemez.contains(id) || (ikinci?.istemez.contains(id) ?? false);
       final wrong = customer.hataKalan > 0 && customer.hatali.contains(id);
       final well = Rect.fromCenter(center: at, width: pitch - 4, height: 32);
 
@@ -1589,7 +1674,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
         );
       }
 
-      drawGameGlyph(canvas, id, Offset(at.dx, at.dy - 3), 24);
+      drawGameGlyph(canvas, id, Offset(at.dx, at.dy - 3), pitch * 0.72);
       if (banned || wrong) {
         const r = 9.0;
         canvas

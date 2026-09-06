@@ -45,7 +45,9 @@
     "altin_supuruldu": "Altının %30'u gitti",
     "gecersiz": "Olmaz",
     "musteri_kizgin": "Müşteri gitti",
-    "son_siparis": "Son sipariş!"
+    "son_siparis": "Son sipariş!",
+    "fikir_degisti": "Fikir değiştirdi",
+    "bahsis": "Bahşiş bıraktı"
   },
   "kilit": {
     "malzeme_biber": "Biber",

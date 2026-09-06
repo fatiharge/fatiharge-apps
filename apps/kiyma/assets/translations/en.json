@@ -45,7 +45,9 @@
     "altin_supuruldu": "30% of the gold got swept up",
     "gecersiz": "Not there",
     "musteri_kizgin": "A customer left",
-    "son_siparis": "Last orders!"
+    "son_siparis": "Last orders!",
+    "fikir_degisti": "Changed their mind",
+    "bahsis": "Left a tip"
   },
   "kilit": {
     "malzeme_biber": "Pepper",

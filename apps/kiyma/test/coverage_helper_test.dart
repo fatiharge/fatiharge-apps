@@ -19,6 +19,7 @@ import 'package:kiyma/domain/gesture.dart';
 import 'package:kiyma/domain/gun_profili.dart';
 import 'package:kiyma/domain/model/carried.dart';
 import 'package:kiyma/domain/model/items.dart';
+import 'package:kiyma/domain/model/musteri_tipi.dart';
 import 'package:kiyma/domain/model/order.dart';
 import 'package:kiyma/domain/model/products.dart';
 import 'package:kiyma/domain/order_maker.dart';

@@ -9,7 +9,7 @@ void main() {
   group('OrderMaker', () {
     test('never asks for anything the counter cannot make', () {
       final unlocks = Unlocks();
-      final maker = OrderMaker(unlocks, random: math.Random(1));
+      final maker = OrderMaker(unlocks, day: 1, random: math.Random(1));
       final open = unlocks.malzemeler.map((m) => m.id).toSet();
 
       for (var i = 0; i < 300; i++) {
@@ -26,7 +26,7 @@ void main() {
       for (final unlock in Unlocks.catalogue) {
         unlocks.open(unlock.id);
       }
-      final maker = OrderMaker(unlocks, random: math.Random(2));
+      final maker = OrderMaker(unlocks, day: 1, random: math.Random(2));
 
       for (var i = 0; i < 300; i++) {
         final order = maker.make();
@@ -38,7 +38,7 @@ void main() {
 
     test('asks for both lines once both are open', () {
       final unlocks = Unlocks()..open('porsiyon_hatti');
-      final maker = OrderMaker(unlocks, random: math.Random(3));
+      final maker = OrderMaker(unlocks, day: 1, random: math.Random(3));
       final tipler = {for (var i = 0; i < 40; i++) maker.make().tip};
       expect(tipler, UrunTipi.values.toSet());
     });
@@ -48,7 +48,7 @@ void main() {
         ..open('porsiyon_hatti')
         ..open('bilesen_ezme')
         ..open('bilesen_pilav');
-      final maker = OrderMaker(unlocks, random: math.Random(4));
+      final maker = OrderMaker(unlocks, day: 1, random: math.Random(4));
       final plate = {Bilesen.ezme.id, Bilesen.pilav.id};
 
       for (var i = 0; i < 200; i++) {

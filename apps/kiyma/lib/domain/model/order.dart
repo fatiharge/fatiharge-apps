@@ -1,5 +1,6 @@
 import 'package:kiyma/domain/balance.dart';
 import 'package:kiyma/domain/model/items.dart';
+import 'package:kiyma/domain/model/musteri_tipi.dart';
 import 'package:kiyma/domain/model/products.dart';
 
 /// What one customer wants. `ister` and `istemez` never overlap.
@@ -13,7 +14,17 @@ class Order {
     required this.istemez,
     this.tatli,
     this.icecek,
+    this.musteriTipi = MusteriTipi.siradan,
+    this.ikinci,
   });
+
+  /// Who is asking. It changes how long they wait and what they pay, not
+  /// what the counter has to make.
+  final MusteriTipi musteriTipi;
+
+  /// A second main product on the same ticket, for [MusteriTipi.kalabalik].
+  /// It carries no extras of its own — one ticket, one dessert, one drink.
+  final Order? ikinci;
 
   final UrunTipi tip;
 
@@ -42,6 +53,15 @@ class Order {
       porsiyon.bilesenler.map((b) => b.id).toSet(),
     _ => null,
   };
+
+  /// The one thing an order ever changes about itself: an indecisive
+  /// customer swapping one wanted ingredient for another, once.
+  void fikirDegistir(String cikan, String giren) {
+    ister
+      ..remove(cikan)
+      ..add(giren);
+    istemez.remove(giren);
+  }
 
   bool anaUrunKabul(Urun urun) {
     final icerik = _icerik(urun);
@@ -87,8 +107,11 @@ class Ayrilan {
 /// line items have already been handed over.
 class Customer {
   Customer({required this.order, required this.day, this.hiz = 1})
-    : sabirToplam = Balance.patience(day),
-      sabirKalan = Balance.patience(day);
+    : sabirToplam = Balance.patience(day) * _sabirCarpani(order),
+      sabirKalan = Balance.patience(day) * _sabirCarpani(order);
+
+  static double _sabirCarpani(Order order) =>
+      order.musteriTipi == MusteriTipi.aceleci ? Balance.aceleciSabir : 1;
 
   final Order order;
   final int day;
@@ -117,8 +140,14 @@ class Customer {
   double sabirKalan;
 
   bool anaUrunVerildi = false;
+
+  /// The second product on a big order. Always false where there is none.
+  bool ikinciVerildi = false;
   bool tatliVerildi = false;
   bool icecekVerildi = false;
+
+  /// An indecisive customer only changes their mind once.
+  bool fikirDegisti = false;
 
   /// Paid as items arrive rather than at the end, so closing the app never
   /// costs money already earned (design doc 11.4).
@@ -129,7 +158,10 @@ class Customer {
   bool get bekliyorTatli => order.tatli != null && !tatliVerildi;
   bool get bekliyorIcecek => order.icecek != null && !icecekVerildi;
 
-  bool get tamamlandi => anaUrunVerildi && !bekliyorTatli && !bekliyorIcecek;
+  bool get bekliyorIkinci => order.ikinci != null && !ikinciVerildi;
+
+  bool get tamamlandi =>
+      anaUrunVerildi && !bekliyorIkinci && !bekliyorTatli && !bekliyorIcecek;
 
   bool get hicAlmadi => odenen == 0;
 

@@ -1,3 +1,4 @@
+import 'package:kiyma/domain/balance.dart';
 import 'package:kiyma/domain/model/items.dart';
 
 /// One buyable lock: what it opens and what it costs.
@@ -85,6 +86,10 @@ class Unlocks {
 
   /// One shelf for both lines, one to three deep.
   int get bekleme => _shelfLocks.where(has).length + 1;
+
+  /// How many handfuls one ingredient takes, here rather than on the
+  /// products so that a run reads it once and every station it opens agrees.
+  int get tutamAdedi => Balance.tutamAdedi;
 
   bool get porsiyonHatti => has('porsiyon_hatti');
 

@@ -4,6 +4,8 @@ import 'dart:ui';
 import 'package:kiyma/domain/balance.dart';
 import 'package:kiyma/domain/gun_profili.dart';
 import 'package:kiyma/domain/model/carried.dart';
+import 'package:kiyma/domain/model/items.dart';
+import 'package:kiyma/domain/model/musteri_tipi.dart';
 import 'package:kiyma/domain/model/order.dart';
 import 'package:kiyma/domain/model/products.dart';
 import 'package:kiyma/domain/order_maker.dart';
@@ -27,6 +29,12 @@ enum DayEvent {
 
   /// The doors are shut: whoever is at the counter is the last of them.
   sonSiparis,
+
+  /// Somebody changed their mind about what they wanted.
+  fikirDegisti,
+
+  /// A generous customer left something on top.
+  bahsis,
 }
 
 /// Something that happened, and where.
@@ -60,7 +68,11 @@ class DayRun {
     math.Random? random,
   }) : day = progress.gun,
        _random = random ?? math.Random(),
-       _maker = OrderMaker(progress.unlocks, random: random) {
+       _maker = OrderMaker(
+         progress.unlocks,
+         day: progress.gun,
+         random: random,
+       ) {
     final unlocks = progress.unlocks;
     mangal = [
       for (var i = 0; i < 4; i++) MangalSlot(unlocked: i < unlocks.mangalSlots),
@@ -142,6 +154,12 @@ class DayRun {
 
   /// How many customers left with everything they asked for.
   int memnunMusteri = 0;
+
+  /// What the day is judged on afterwards. Counted here rather than derived
+  /// from the summary because nothing else sees a skewer burn: by the time a
+  /// run is over the grill has been emptied and the evidence is gone.
+  int yanikSayisi = 0;
+  int kizginSayisi = 0;
 
   /// What just happened and where, waiting to be drawn. Capped, because the
   /// headless simulator plays thousands of runs and nothing drains it there.
@@ -304,6 +322,7 @@ class DayRun {
       if (slot.tick(dt, day, tempo.pismeCarpani)) {
         final penalty = Balance.burnPenalty(day).round();
         progress.cezalandir(penalty);
+        yanikSayisi++;
         tempo.etYandi();
         _cue(
           DayEvent.yandi,
@@ -356,6 +375,7 @@ class DayRun {
       customer.yerindeSure += dt;
       if (customer.hataKalan > 0) customer.hataKalan -= dt;
       customer.sabirKalan -= dt / tempo.sabirCarpani;
+      _fikirDegisirMi(customer);
       if (customer.sabirKalan <= 0) {
         _ayril(i, memnun: false);
       }
@@ -409,6 +429,38 @@ class DayRun {
   /// whichever stretch of the shift we are in.
   double get _gelisAraligi =>
       Balance.arrivalGap(day) * profil.yogunlukAt(gunOrani).aralikCarpani;
+
+  /// Halfway through the wait, an indecisive customer swaps one ingredient
+  /// for another.
+  ///
+  /// It reuses the refusal marks: the two wells flash and the ticket shakes,
+  /// which is already the language for "look at the card again". Silently
+  /// editing the order would be the game cheating.
+  void _fikirDegisirMi(Customer customer) {
+    final order = customer.order;
+    if (order.musteriTipi != MusteriTipi.kararsiz) return;
+    if (customer.fikirDegisti || !customer.yerinde) return;
+    if (customer.sabirOrani > Balance.kararsizAn) return;
+
+    customer.fikirDegisti = true;
+    final havuz = [
+      for (final id
+          in order.tip == UrunTipi.durum
+              ? progress.unlocks.malzemeler.map((m) => m.id)
+              : progress.unlocks.bilesenler.map((b) => b.id))
+        if (!order.ister.contains(id) && !order.istemez.contains(id)) id,
+    ];
+    if (havuz.isEmpty || order.ister.isEmpty) return;
+
+    final cikan = order.ister.first;
+    final giren = havuz[_random.nextInt(havuz.length)];
+    order.fikirDegistir(cikan, giren);
+    customer
+      ..hatali = {cikan, giren}
+      ..hataKalan = 1.8;
+    onEvent(DayEvent.fikirDegisti);
+    onChanged();
+  }
 
   /// A meter with no room left still has to pay for good play, or the last
   /// stretch of a strong run goes quiet. What it could not absorb becomes
@@ -516,7 +568,7 @@ class DayRun {
         }
       case 'tabak_kaynak':
         if (tabakIstasyonu == null) {
-          tabakIstasyonu = Porsiyon();
+          tabakIstasyonu = Porsiyon(gerekenTutam: progress.unlocks.tutamAdedi);
           _flash('tabak_kaynak');
           return;
         }
@@ -834,7 +886,7 @@ class DayRun {
   bool _durumaBirak(Carried held) {
     if (held is Lavas) {
       if (durumIstasyonu != null) return false;
-      durumIstasyonu = Durum();
+      durumIstasyonu = Durum(gerekenTutam: progress.unlocks.tutamAdedi);
       return true;
     }
     final station = durumIstasyonu;
@@ -948,6 +1000,16 @@ class DayRun {
 
   bool _servis(int index, Customer customer, HazirUrun held, Offset point) {
     final order = customer.order;
+    // Which line of the ticket this settles. A big order has two, and the
+    // first one it fits is the one it goes against.
+    final ikinci = order.ikinci;
+    final anaUyar = !customer.anaUrunVerildi && order.anaUrunKabul(held.urun);
+    final ikinciUyar =
+        !anaUyar &&
+        ikinci != null &&
+        !customer.ikinciVerildi &&
+        ikinci.anaUrunKabul(held.urun);
+
     final kazanc = switch (held.urun) {
       TatliUrun(:final tatli)
           when order.tatli == tatli && !customer.tatliVerildi =>
@@ -955,15 +1017,21 @@ class DayRun {
       IcecekUrun(:final icecek)
           when order.icecek == icecek && !customer.icecekVerildi =>
         Balance.income(Balance.icecekBase[icecek]!, day),
-      final urun when !customer.anaUrunVerildi && order.anaUrunKabul(urun) =>
-        _anaUrunGeliri(urun),
+      final urun when anaUyar || ikinciUyar => _anaUrunGeliri(
+        urun,
+        order.musteriTipi,
+      ),
       _ => null,
     };
 
     if (kazanc == null) {
       customer
         ..reddet()
-        ..hatali = order.ihlal(held.urun)
+        // Blamed on whichever line is still owed, or the ticket would
+        // explain the half already handed over.
+        ..hatali = (customer.anaUrunVerildi ? ikinci ?? order : order).ihlal(
+          held.urun,
+        )
         ..hataKalan = 1.2;
       tempo.urunReddedildi();
       _cue(DayEvent.reddedildi, yeri(index));
@@ -981,7 +1049,11 @@ class DayRun {
       case IcecekUrun():
         customer.icecekVerildi = true;
       case _:
-        customer.anaUrunVerildi = true;
+        if (anaUyar) {
+          customer.anaUrunVerildi = true;
+        } else {
+          customer.ikinciVerildi = true;
+        }
     }
 
     _consume(held);
@@ -1000,23 +1072,44 @@ class DayRun {
     );
     onEvent(DayEvent.kabul);
 
-    if (customer.tamamlandi) _ayril(index, memnun: true);
+    if (customer.tamamlandi) {
+      _bahsis(index, customer);
+      _ayril(index, memnun: true);
+    }
     return true;
   }
 
-  int _anaUrunGeliri(Urun urun) => switch (urun) {
-    DurumUrun(:final durum) => Balance.income(
-      Balance.durumBase,
-      day,
-      ingredients: durum.malzemeler.length,
-    ),
-    PorsiyonUrun(:final porsiyon) => Balance.income(
-      Balance.porsiyonBase,
-      day,
-      ingredients: porsiyon.bilesenler.length,
-    ),
-    _ => 0,
-  };
+  /// A generous customer served while they are still calm leaves something
+  /// on top. Paid at the end rather than per item, so it reads as a tip and
+  /// not as a better price.
+  void _bahsis(int index, Customer customer) {
+    if (customer.order.musteriTipi != MusteriTipi.comert) return;
+    if (customer.sabirOrani < Balance.comertEsigi) return;
+    final miktar = (customer.odenen * Balance.comertBahsis).round();
+    if (miktar <= 0) return;
+    customer.odenen += miktar;
+    _cue(DayEvent.bahsis, yeri(index), amount: miktar, asset: 'altin');
+    onEvent(DayEvent.bahsis);
+  }
+
+  int _anaUrunGeliri(Urun urun, MusteriTipi tipi) {
+    final taban = switch (urun) {
+      DurumUrun(:final durum) => Balance.income(
+        Balance.durumBase,
+        day,
+        ingredients: durum.malzemeler.length,
+      ),
+      PorsiyonUrun(:final porsiyon) => Balance.income(
+        Balance.porsiyonBase,
+        day,
+        ingredients: porsiyon.bilesenler.length,
+      ),
+      _ => 0,
+    };
+    // Applied to the main product only: an extra is the same baklava
+    // whoever asked for it.
+    return (taban * tipi.odemeCarpani).round();
+  }
 
   void _ayril(int index, {required bool memnun}) {
     final customer = musteriler[index];
@@ -1039,6 +1132,7 @@ class DayRun {
     if (memnun) {
       memnunMusteri++;
     } else {
+      kizginSayisi++;
       tempo.musteriKizdi();
       _cue(DayEvent.musteriKizgin, yeri(index));
     }

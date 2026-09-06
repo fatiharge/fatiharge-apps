@@ -84,6 +84,31 @@ abstract final class Balance {
   /// reason as [cookedWindow]: the first days are the ones being learnt.
   static double patience(int day) => math.max(12, 60 - day * 3.5);
 
+  // --- Who walked in ---
+
+  /// How much less time a hurried customer gives you, and how much more they
+  /// pay for it. The pair has to be worth taking: a shorter bar that paid the
+  /// same would just be a worse customer.
+  static const aceleciSabir = 0.6;
+  static const aceleciOdeme = 1.4;
+
+  /// A fussy customer names two things they will not have. Worth more
+  /// because two forbidden ingredients is a real constraint on a wrap that
+  /// only holds four.
+  static const titizIstemez = 2;
+  static const titizOdeme = 1.3;
+
+  /// A generous customer tips this much of the main product on top, but only
+  /// if the bar is still above [comertEsigi] when it lands. Nothing to read:
+  /// serve them early and the coins say so.
+  static const comertBahsis = 0.45;
+  static const comertEsigi = 0.55;
+
+  /// Where in the wait an indecisive customer changes their mind. Late
+  /// enough that the first build is usually underway, early enough that
+  /// there is time to fix it.
+  static const kararsizAn = 0.55;
+
   /// Applied to what is *left*, not to the maximum: two refusals cost 36% of
   /// the remaining bar, not 40% of the whole one, so back-to-back refusals do
   /// not kill instantly.
