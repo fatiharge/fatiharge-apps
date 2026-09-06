@@ -106,8 +106,16 @@ class DayRun {
 
   static const _flashFor = 0.28;
 
-  void _flash(String region, {bool ok = true}) {
+  /// [sayilir] is false where the flash is only saying "you touched this".
+  ///
+  /// Picking something up is not a move. It used to count as one, so lifting
+  /// a pinch of tomato paid tempo before anyone knew whether there was
+  /// anywhere to put it — and a tap on a tray with a full wrap behind it was
+  /// a clean gain for an impossible action. What counts is where a thing
+  /// lands, or that it could not land anywhere.
+  void _flash(String region, {bool ok = true, bool sayilir = true}) {
     parlama[region] = (left: _flashFor, ok: ok);
+    if (!sayilir) return;
     // Every success and every refusal in the game passes through here, which
     // makes it the one place that can count a run of mis-moves.
     ok ? tempo.basarili() : tempo.gecersizHareket();
@@ -402,7 +410,7 @@ class DayRun {
     switch (region?.name) {
       case 'altin_alani':
         if (_altinTopla(_slotAt(region!, point))) {
-          _flash('altin_alani');
+          _flash('altin_alani', sayilir: false);
           return;
         }
       case 'tabak_kaynak':
@@ -431,9 +439,37 @@ class DayRun {
       onEvent(DayEvent.gecersiz);
       return;
     }
-    _flash(region.name);
-    if (_yerlestir(held)) onChanged();
+    _flash(region.name, sayilir: false);
+    if (_yerlestir(held)) {
+      onChanged();
+      return;
+    }
+    // A tap on something with no single destination is not a wrong move, it
+    // is an unfinished one: the source lights up and the drag says who for.
+    // And the grill announces its own refusal — it is four small slots at
+    // the edge of the scene and a skewer that quietly fails to appear reads
+    // as a lost input — so raw meat has already been answered by now.
+    if (held is CigKiyma || !_tekYer(held)) return;
+    _flash(region.name, ok: false);
+    onEvent(DayEvent.gecersiz);
   }
+
+  /// Whether a touch alone is enough to say where [held] goes.
+  ///
+  /// A pinch of onion has exactly one destination, so a tap can place it and
+  /// a tap that cannot is a refusal worth saying out loud. A baklava, a
+  /// finished wrap or a poured glass could be for any of three people, so a
+  /// tap on one of those only lifts it and costs nothing.
+  static bool _tekYer(Carried held) => switch (held) {
+    CigKiyma() ||
+    Lavas() ||
+    PismisEt(yanik: false) ||
+    MalzemeTutami() ||
+    Kagit() ||
+    BilesenTutami() ||
+    Surahi() => true,
+    _ => false,
+  };
 
   /// The one place the thing in [held] can go, if there is only one.
   bool _yerlestir(Carried held) {
@@ -543,7 +579,7 @@ class DayRun {
     if (region == null) return false;
     carried = _pickUp(region, point);
     carriedAt = point;
-    if (carried != null) _flash(region.name);
+    if (carried != null) _flash(region.name, sayilir: false);
     return carried != null;
   }
 

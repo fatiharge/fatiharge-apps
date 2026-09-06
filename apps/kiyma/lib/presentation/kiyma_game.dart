@@ -50,7 +50,16 @@ class KiymaGame extends FlameGame {
 
   /// Never let the box touch the glass, even where the system says it may:
   /// rounded corners eat the last few pixels on every modern phone.
-  static const _gutter = 20.0;
+  /// No breathing room of its own: the only inset is what the platform
+  /// actually reserves.
+  ///
+  /// It was 20 on every side, from when the margin was decoration and the
+  /// design box wanted to sit off the screen edge. With the room painted
+  /// through it does the opposite — it forces a strip of painted room above
+  /// and below the counter on a phone that would otherwise have none, and
+  /// two versions of the same kitchen meeting in a straight line is exactly
+  /// what a margin must never look like.
+  static const _gutter = 0.0;
 
   @override
   Color backgroundColor() => KiymaPalette.zemin;
@@ -67,6 +76,7 @@ class KiymaGame extends FlameGame {
     await world.addAll([
       Backdrop(
         blurred: backdrop,
+        room: art['oda.jpg'],
         stage: Offset.zero & Size(scene.size.width, scene.size.height),
         visible: () => camera.visibleWorldRect,
       ),

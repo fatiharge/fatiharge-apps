@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flame/components.dart' hide Quad;
 import 'package:flame/events.dart';
 import 'package:flutter/material.dart' show Curves, IconData, Icons;
+import 'package:kiyma/config/dev.dart';
 import 'package:kiyma/domain/balance.dart';
 import 'package:kiyma/domain/day_run.dart';
 import 'package:kiyma/domain/gesture.dart';
@@ -168,12 +169,13 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     _elapsed += dt;
 
     // Hit-stop: the world crawls for a few frames on a hit while the pulses
-    // keep breathing, which is what makes a serve land.
+    // keep breathing, which is what makes a serve land. `Dev.hiz` is 1 in
+    // anything but a debug build.
     if (_freeze > 0) {
       _freeze -= dt;
-      run.tick(dt * 0.12);
+      run.tick(dt * 0.12 * Dev.hiz);
     } else {
-      run.tick(dt);
+      run.tick(dt * Dev.hiz);
     }
 
     if (_shake > 0) _shake -= dt;

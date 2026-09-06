@@ -1,11 +1,11 @@
 import 'dart:async';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kiyma/application/kiyma_cubit.dart';
+import 'package:kiyma/config/dev.dart';
 import 'package:kiyma/config/injectable.dart';
 import 'package:kiyma/domain/day_run.dart';
 import 'package:kiyma/infrastructure/world.dart';
@@ -140,10 +140,17 @@ class _GameView extends StatelessWidget {
 }
 
 /// Everything is stopped behind this, so it swallows what it covers.
-class _PauseOverlay extends StatelessWidget {
+class _PauseOverlay extends StatefulWidget {
   const _PauseOverlay({required this.onResume});
 
   final VoidCallback onResume;
+
+  @override
+  State<_PauseOverlay> createState() => _PauseOverlayState();
+}
+
+class _PauseOverlayState extends State<_PauseOverlay> {
+  VoidCallback get onResume => widget.onResume;
 
   @override
   Widget build(BuildContext context) => GestureDetector(
@@ -183,6 +190,18 @@ class _PauseOverlay extends StatelessWidget {
                 onPressed: () =>
                     unawaited(context.router.replaceAll([const MenuRoute()])),
               ),
+              // Debug builds only, and behind the pause card so it is never
+              // in a screenshot of the game: playing ten days at normal speed
+              // to check the tenth is most of an hour.
+              if (Dev.acik) ...[
+                const SizedBox(height: 12),
+                ChunkyButton(
+                  label: 'hiz  ${Dev.hiz.toStringAsFixed(0)}x',
+                  icon: Icons.fast_forward_rounded,
+                  color: KiymaPalette.komur,
+                  onPressed: () => setState(Dev.sonrakiHiz),
+                ),
+              ],
             ],
           ),
         ),

@@ -82,6 +82,16 @@ COP_ALANI = {
 # station's top edge. The clock is square because it is drawn as a round
 # case rather than pasted from a landscape sprite.
 RESIZED = {
+    # The grill was redrawn without the skewers painted into it, and the new
+    # body sits differently in its frame: the trough is narrower and lower.
+    # The quad was measured on the old art, so the four skewers hung off the
+    # front rim. Re-derived by mapping the old corners onto the new ember bed
+    # rather than by eye.
+    "mangal_alani": {
+        "x": 100, "y": 402, "w": 156, "h": 110,
+        "quad": [[192.0, 402.4], [256.0, 450.3],
+                 [164.1, 511.1], [100.6, 447.1]],
+    },
     "kagit_kaynak": {
         "x": 528, "y": 396, "w": 118, "h": 52,
         "quad": [[528, 396], [645, 398], [646, 448], [529, 446]],
@@ -344,6 +354,14 @@ def main():
         "-resize", f"{SCENE[0]}x{SCENE[1]}!", "-strip", f"{DST}/scene/back_scene.jpg")
     run("magick", f"{SRC}/base_table.png",
         "-resize", "1548x706>", "-strip", f"{DST}/scene/base_table.png")
+
+    # The room the counter stands in, painted a half-box wider and taller
+    # than the counter itself. Phones are not 16:9 and the margin used to be
+    # the scene blurred and knocked down, which reads as a screensaver behind
+    # a game. This is the same room, continued.
+    run("magick", f"{SRC}/oda.jpg",
+        "-resize", "2064x1152>", "-strip", "-quality", "84",
+        f"{DST}/scene/oda.jpg")
 
     scene = {
         "coordinate_space": regions["coordinate_space"],

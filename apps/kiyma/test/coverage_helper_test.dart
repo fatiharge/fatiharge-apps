@@ -10,6 +10,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kiyma/app.dart';
 import 'package:kiyma/application/kiyma_cubit.dart';
+import 'package:kiyma/config/dev.dart';
 import 'package:kiyma/config/app_crash_listener.dart';
 import 'package:kiyma/config/injectable.dart';
 import 'package:kiyma/config/storage_module.dart';

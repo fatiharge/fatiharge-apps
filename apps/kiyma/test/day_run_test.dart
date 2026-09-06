@@ -1,5 +1,4 @@
 import 'dart:math' as math;
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kiyma/domain/balance.dart';
 import 'package:kiyma/domain/day_run.dart';
@@ -9,7 +8,7 @@ import 'package:kiyma/domain/model/order.dart';
 import 'package:kiyma/domain/model/products.dart';
 import 'package:kiyma/domain/progress.dart';
 import 'package:kiyma/domain/scene.dart';
-
+import 'package:kiyma/domain/tempo.dart';
 import 'support/scene_from_disk.dart';
 
 void main() {
@@ -202,6 +201,31 @@ void main() {
       buildWrap(run, malzemeler: {Malzeme.domates});
       drag(run, at('malzeme_domates'), at('durum_hazirlama'));
       expect(run.durumIstasyonu!.malzemeler, hasLength(1));
+    });
+
+    test('reaching for an ingredient with nowhere to put it costs', () {
+      final run = build();
+      expect(drag(run, at('lavas_kaynak'), at('durum_hazirlama')), isTrue);
+      loadUp(run, 'malzeme_domates', 'durum_hazirlama');
+
+      // The wrap has all the tomato it will take. Asking for more is a wrong
+      // move, and it used to be a *paid* one: picking the pinch up counted
+      // as an accepted action before anything knew where it was going.
+      final before = run.tempo.deger;
+      run.tap(at('malzeme_domates'));
+      expect(run.tempo.deger, lessThan(before));
+      expect(events, contains(DayEvent.gecersiz));
+    });
+
+    test('a tap that lands is worth exactly one move', () {
+      final run = build();
+      expect(drag(run, at('lavas_kaynak'), at('durum_hazirlama')), isTrue);
+
+      final before = run.tempo.deger;
+      run.tap(at('malzeme_domates'));
+      expect(run.durumIstasyonu!.tutam(Malzeme.domates), 1);
+      // One handful, one step — not two for lifting it and putting it down.
+      expect(run.tempo.deger - before, closeTo(Tempo.adim * 0.5, 0.2));
     });
 
     test('locked ingredients cannot be picked up at all', () {
@@ -644,11 +668,22 @@ void main() {
   });
 
   group('touch feedback', () {
-    test('touching a live source lights it up rather than refusing', () {
-      final run = build()..tap(at('malzeme_domates'));
+    test('a source lights up green when the thing it gives has a home', () {
+      final run = build();
+      expect(drag(run, at('lavas_kaynak'), at('durum_hazirlama')), isTrue);
+      run.tap(at('malzeme_domates'));
+
       expect(run.flashAt('malzeme_domates'), greaterThan(0));
       expect(run.parlama['malzeme_domates']!.ok, isTrue);
       expect(events, isNot(contains(DayEvent.gecersiz)));
+    });
+
+    test('and red when it does not', () {
+      // No bread down, so there is no wrap for a pinch of tomato to go on.
+      // This used to light green and pay tempo for it.
+      final run = build()..tap(at('malzeme_domates'));
+      expect(run.parlama['malzeme_domates']!.ok, isFalse);
+      expect(events, contains(DayEvent.gecersiz));
     });
 
     test('a locked area is not on the counter at all', () {
@@ -681,6 +716,7 @@ void main() {
 
     test('a touch that picked something up puts it back', () {
       final run = build();
+      expect(drag(run, at('lavas_kaynak'), at('durum_hazirlama')), isTrue);
       expect(run.beginDrag(at('malzeme_domates')), isTrue);
       run
         ..cancelDrag()
