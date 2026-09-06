@@ -60,8 +60,9 @@ void main() {
       run(zirve: TempoHali.ates).rozetler,
       contains(Rozet.ates),
     );
-    expect(run(musteri: 9, hedef: 6).rozetler, contains(Rozet.dolu));
-    expect(run(musteri: 8, hedef: 6).rozetler, isNot(contains(Rozet.dolu)));
+    // Half again what the day asked for, against the default goal of six.
+    expect(run(musteri: 9).rozetler, contains(Rozet.dolu));
+    expect(run(musteri: 8).rozetler, isNot(contains(Rozet.dolu)));
   });
 
   test('the three about mistakes never turn up together', () {
