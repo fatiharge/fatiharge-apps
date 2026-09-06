@@ -102,39 +102,39 @@
     "cift_servis": "Two sittings",
     "aksamustu": "A heavy evening"
   },
-  "tanitim": {
-    "hosgeldin": {
-      "baslik": "The counter is yours",
-      "1": "Welcome, usta. From today it is on you.",
-      "2": "Bread on the wrap station, mince on the grill. Cooked meat goes on the bread.",
-      "3": "Then flick up to roll it, add the paper, and hand it over."
+  "ders": {
+    "ilk_gun": {
+      "lavas": "Take a flatbread and put it on the wrap station.",
+      "kiyma": "Put mince on the grill.",
+      "bekle": "Wait for it to brown. The yellow tick means ready.",
+      "eti_al": "Take the meat and put it on the bread.",
+      "malzeme": "Add tomato. One ingredient is three handfuls.",
+      "sar": "Flick up over the wrap to roll it.",
+      "kagit": "Take paper and put it on the rolled wrap.",
+      "ver": "Hand it over.",
+      "altin": "Take the money off the counter. Leave it and some of it goes.",
+      "bitti": "The counter is yours. Good luck."
     },
-    "tempo": {
-      "baslik": "Tempo",
-      "1": "The dial above the grill is tempo. Every right move lifts it, every wrong one drops it.",
-      "2": "The higher it runs the more everything pays. Let it go cold and you work at half price."
-    },
-    "altin": {
-      "baslik": "Gold",
-      "1": "Customers leave their money on the counter. Untouched, it is swept in ten seconds.",
-      "2": "Sweeping costs you 30% of it. Reaching for it costs nothing."
+    "olculer": {
+      "tempo": "The dial above the grill is tempo. Right moves lift it, mistakes drop it.",
+      "saat": "The clock counts the day. When its rim empties, the doors shut."
     },
     "gidis": {
-      "baslik": "How the day runs",
-      "1": "Every day has a shape: the rush arrives, passes, and sometimes comes back.",
-      "2": "The card tells you which. Get ahead during the quiet stretches."
+      "gidis": "Every day has a shape: the rush arrives, passes, sometimes returns."
     },
     "porsiyon": {
-      "baslik": "Plates",
-      "1": "The plate line is open. Bread first, then meat — no rolling, no paper.",
-      "2": "Components pay extra; putting one on somebody who said no does not."
+      "tabak": "Take an empty plate.",
+      "lavas": "Put bread on the plate.",
+      "et": "Put meat on the plate. No rolling, no paper.",
+      "bitti": "Components pay extra."
     },
     "icecek": {
-      "baslik": "Drinks",
-      "1": "Take a glass off the shelf and bring the jug to it. Filling takes a moment.",
-      "2": "Cola comes from the bottle and waits for nothing."
-    },
-    "devam": "Got it",
-    "atla": "Skip"
+      "bardak": "Take an empty glass off the shelf.",
+      "dok": "Bring the jug to the glass. Filling takes a moment.",
+      "bitti": "Cola comes from the bottle and waits for nothing."
+    }
+  },
+  "tanitim": {
+    "atla": "Atla"
   }
 }

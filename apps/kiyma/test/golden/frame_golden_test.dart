@@ -66,6 +66,7 @@ void main() {
         data: MediaQueryData(size: surface, viewPadding: insets),
         child: GameWidget(
           game: KiymaGame(
+            ceviri: (key) => key,
             scene: scene,
             art: assets,
             halos: halos,

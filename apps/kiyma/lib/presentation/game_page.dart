@@ -239,6 +239,7 @@ class _GameHostState extends State<_GameHost> {
   KiymaGame _build() {
     final world = getIt<GameWorld>();
     return KiymaGame(
+      ceviri: (key) => key.tr(),
       scene: world.scene,
       art: world.art,
       halos: world.halos,

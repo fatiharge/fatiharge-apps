@@ -1,6 +1,5 @@
 import 'dart:math' as math;
 import 'dart:ui';
-
 import 'package:kiyma/domain/balance.dart';
 import 'package:kiyma/domain/gun_profili.dart';
 import 'package:kiyma/domain/model/carried.dart';
@@ -8,6 +7,7 @@ import 'package:kiyma/domain/model/items.dart';
 import 'package:kiyma/domain/model/musteri_tipi.dart';
 import 'package:kiyma/domain/model/order.dart';
 import 'package:kiyma/domain/model/products.dart';
+import 'package:kiyma/domain/ogretmen.dart';
 import 'package:kiyma/domain/order_maker.dart';
 import 'package:kiyma/domain/progress.dart';
 import 'package:kiyma/domain/scene.dart';
@@ -65,6 +65,7 @@ class DayRun {
     required this.progress,
     required this.onEvent,
     required this.onChanged,
+    this.ogretmen,
     math.Random? random,
   }) : day = progress.gun,
        _random = random ?? math.Random(),
@@ -190,6 +191,34 @@ class DayRun {
       (kalanSure / Balance.runLength(day).inSeconds).clamp(0, 1);
   double _sonrakiGelis = 0;
   bool bitti = false;
+
+  /// The lesson being taught on this run, if one is owed.
+  ///
+  /// While it is running the clock is stopped and nobody comes through the
+  /// door unless the step asks for somebody: a first lesson played against a
+  /// ticking day teaches only that the game does not wait.
+  final Ogretmen? ogretmen;
+
+  bool get ogretiliyor => ogretmen != null && !ogretmen!.bitti;
+
+  /// Walking out of a lesson, and stepping through the parts of one that are
+  /// only the usta talking. Here rather than on [Ogretmen] so that the screen
+  /// is told to redraw and the shop is told the lesson is over.
+  void dersiAtla() {
+    ogretmen?.atla();
+    onChanged();
+  }
+
+  void dersiIlerlet() {
+    ogretmen?.ilerlet();
+    onChanged();
+  }
+
+  void _kilometre(Kilometre kilometre) {
+    if (!ogretiliyor) return;
+    ogretmen!.ulasildi(kilometre);
+    onChanged();
+  }
 
   /// The shape of this particular day, and how far through it we are.
   late final GunProfili profil = GunProfili.forDay(day);
@@ -319,6 +348,7 @@ class DayRun {
     _tempoTasmasi();
 
     for (final slot in mangal) {
+      final pismisti = slot.alinabilir;
       if (slot.tick(dt, day, tempo.pismeCarpani)) {
         final penalty = Balance.burnPenalty(day).round();
         progress.cezalandir(penalty);
@@ -332,10 +362,13 @@ class DayRun {
         onEvent(DayEvent.yandi);
         onChanged();
       }
+      if (!pismisti && slot.alinabilir) _kilometre(Kilometre.etPisti);
     }
 
     for (final bardak in bardakBekletme) {
+      final doluyordu = bardak?.doluyor ?? false;
       bardak?.tick(dt);
+      if (doluyordu && !bardak!.doluyor) _kilometre(Kilometre.bardakDoldu);
     }
 
     parlama
@@ -374,7 +407,8 @@ class DayRun {
       }
       customer.yerindeSure += dt;
       if (customer.hataKalan > 0) customer.hataKalan -= dt;
-      customer.sabirKalan -= dt / tempo.sabirCarpani;
+      // Nothing runs out mid-lesson: being taught is not being tested.
+      if (!ogretiliyor) customer.sabirKalan -= dt / tempo.sabirCarpani;
       _fikirDegisirMi(customer);
       if (customer.sabirKalan <= 0) {
         _ayril(i, memnun: false);
@@ -385,6 +419,15 @@ class DayRun {
       leaving.gidis += dt * leaving.hiz / Balance.arrivalWalk;
     }
     ayrilanlar.removeWhere((leaving) => leaving.gitti);
+
+    // A lesson holds the door and stops the clock. The counter still cooks
+    // — a step that says "wait for it to brown" has to be able to happen —
+    // but nothing arrives and no time is lost, because a first run played
+    // against a ticking day teaches only that the game does not wait.
+    if (ogretiliyor) {
+      _dersMusterisi();
+      return;
+    }
 
     _sonrakiGelis -= dt;
     // Nobody new past the last order, and nobody at all once the buzzer has
@@ -422,6 +465,24 @@ class DayRun {
     if (_kapanisKalan > 0 && musteriler.any((c) => c != null)) return;
     bitti = true;
     onEvent(DayEvent.gunBitti);
+    onChanged();
+  }
+
+  /// Seats somebody the moment a step needs one, rather than waiting for
+  /// the door: the lesson decides when the shop is busy.
+  void _dersMusterisi() {
+    final adim = ogretmen!.adim;
+    if (adim == null || !adim.musteri) return;
+    if (musteriler.any((c) => c != null)) return;
+    musteriler[0] = Customer(
+      order: Order(
+        tip: UrunTipi.durum,
+        ister: {...adim.ister},
+        istemez: {},
+      ),
+      day: day,
+    )..varis = 1;
+    onEvent(DayEvent.musteriGeldi);
     onChanged();
   }
 
@@ -568,7 +629,10 @@ class DayRun {
         }
       case 'tabak_kaynak':
         if (tabakIstasyonu == null) {
-          tabakIstasyonu = Porsiyon(gerekenTutam: progress.unlocks.tutamAdedi);
+          tabakIstasyonu = Porsiyon(
+            gerekenTutam: progress.unlocks.tutamAdedi,
+          );
+          _kilometre(Kilometre.tabakBasladi);
           _flash('tabak_kaynak');
           return;
         }
@@ -576,6 +640,7 @@ class DayRun {
         final free = bardakBekletme.indexWhere((b) => b == null);
         if (free >= 0) {
           bardakBekletme[free] = Bardak();
+          _kilometre(Kilometre.bardakAlindi);
           _flash('bardak_kaynak');
           return;
         }
@@ -672,6 +737,7 @@ class DayRun {
     );
     altin[pick] = null;
     tempo.altinAlindi();
+    _kilometre(Kilometre.altinToplandi);
     onChanged();
     return true;
   }
@@ -692,6 +758,7 @@ class DayRun {
     final target = _bosSlot(0);
     if (target == null) return false;
     mangal[target].koy();
+    _kilometre(Kilometre.kiymaMangalda);
     return true;
   }
 
@@ -718,6 +785,7 @@ class DayRun {
         station != null &&
         station.sarilabilir) {
       station.sarili = true;
+      _kilometre(Kilometre.durumSarildi);
       _flash('durum_hazirlama');
       onChanged();
       return;
@@ -859,6 +927,7 @@ class DayRun {
         final target = _bosSlot(_slotAt(region, point));
         if (target == null) return false;
         mangal[target].koy();
+        _kilometre(Kilometre.kiymaMangalda);
         return true;
 
       case 'durum_hazirlama':
@@ -887,6 +956,7 @@ class DayRun {
     if (held is Lavas) {
       if (durumIstasyonu != null) return false;
       durumIstasyonu = Durum(gerekenTutam: progress.unlocks.tutamAdedi);
+      _kilometre(Kilometre.durumBasladi);
       return true;
     }
     final station = durumIstasyonu;
@@ -895,12 +965,17 @@ class DayRun {
       case PismisEt(yanik: false):
         if (station.etli || station.sarili) return false;
         station.etli = true;
+        _kilometre(Kilometre.etDurumda);
       case MalzemeTutami(:final malzeme):
         if (!station.malzemeKabul(malzeme)) return false;
         station.malzemeEkle(malzeme);
+        if (station.malzemeler.contains(malzeme)) {
+          _kilometre(Kilometre.malzemeTam);
+        }
       case Kagit():
         if (!station.kagitBekliyor) return false;
         station.kagitli = true;
+        _kilometre(Kilometre.durumKagitlandi);
       case _:
         return false;
     }
@@ -915,9 +990,11 @@ class DayRun {
       case Lavas():
         if (!station.lavasBekliyor) return false;
         station.lavasli = true;
+        _kilometre(Kilometre.tabagaLavas);
       case PismisEt(yanik: false):
         if (!station.lavasli || station.etli) return false;
         station.etli = true;
+        _kilometre(Kilometre.tabagaEt);
       case BilesenTutami(:final bilesen):
         if (!station.bilesenKabul(bilesen)) return false;
         station.bilesenEkle(bilesen);
@@ -1071,6 +1148,7 @@ class DayRun {
       sabirOrani: customer.sabirOrani,
     );
     onEvent(DayEvent.kabul);
+    _kilometre(Kilometre.servisEdildi);
 
     if (customer.tamamlandi) {
       _bahsis(index, customer);

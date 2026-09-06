@@ -132,6 +132,7 @@ void main() {
     // Something in the air: the counter emits and the pool ages on update,
     // so a still frame shows none of it unless it is asked for.
     final component = CounterComponent(
+      ceviri: (key) => key,
       scene: scene,
       assets: assets,
       halos: halos,
@@ -197,6 +198,7 @@ void main() {
       final recorder = PictureRecorder();
       final canvas = Canvas(recorder);
       CounterComponent(
+        ceviri: (key) => key,
         scene: scene,
         assets: assets,
         halos: halos,

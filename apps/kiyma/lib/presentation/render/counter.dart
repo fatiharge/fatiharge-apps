@@ -34,6 +34,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     required this.halos,
     required this.run,
     required this.onPause,
+    required this.ceviri,
     this.visible,
   }) : super(size: Vector2(scene.size.width, scene.size.height));
 
@@ -141,6 +142,14 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     dark: Color(0xFF2A1310),
     icon: Icons.priority_high_rounded,
   );
+
+  /// Turns a key into the player's own language. The counter draws its own
+  /// text and must not carry any: a hardcoded line here is a line that never
+  /// gets translated, and there is a test that says so.
+  final String Function(String) ceviri;
+
+  /// Where the lesson's skip button was last drawn, so a touch can find it.
+  Rect _atlaKutusu = Rect.zero;
 
   /// What the camera can see, in scene units. The bin corners are placed
   /// against this rather than against the design box, so they land in the
@@ -391,6 +400,18 @@ class CounterComponent extends PositionComponent with DragCallbacks {
         // already been picked up. Put it back before treating it as a tap, or
         // every touch on a tray reads as a drop onto itself.
         run.cancelDrag();
+        // A lesson owns the touch before the counter does: its own button,
+        // and then the whole screen while the usta is only talking.
+        if (run.ogretiliyor) {
+          if (_atlaKutusu.contains(_start)) {
+            run.dersiAtla();
+            return;
+          }
+          if (run.ogretmen!.dokunusBekliyor) {
+            run.dersiIlerlet();
+            return;
+          }
+        }
         if (_pause.contains(_start)) {
           onPause();
           return;
@@ -480,6 +501,101 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     // Outside the clip on purpose: the corners belong to the screen, not to
     // the design box, and on a wide phone the box does not reach the edge.
     _renderCopKoseleri(canvas);
+    _renderDers(canvas);
+  }
+
+  /// The usta, teaching on the counter rather than on a card.
+  ///
+  /// A card between runs can only say things; here he can point, and the run
+  /// waits until the thing is actually done. The bubble crosses to the other
+  /// end of the scene when the target is under it — a tutorial that covers
+  /// what it is pointing at is worse than none.
+  void _renderDers(Canvas canvas) {
+    final ogretmen = run.ogretmen;
+    if (ogretmen == null || ogretmen.bitti) {
+      _atlaKutusu = Rect.zero;
+      return;
+    }
+    final adim = ogretmen.adim!;
+    final hedef = adim.hedef == null ? null : scene.maybe(adim.hedef!);
+
+    if (hedef != null) {
+      _breathing(canvas, hedef.quad.bounds.center, () {
+        canvas.drawRRect(
+          RRect.fromRectAndRadius(
+            hedef.quad.bounds.inflate(7),
+            const Radius.circular(12),
+          ),
+          Paint()
+            ..color = const Color(
+              0xFFFFC24A,
+            ).withValues(alpha: 0.55 + _pulse * 0.45)
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 4,
+        );
+      });
+    }
+
+    // Low target, high bubble. Nothing to point at means it stays low, out
+    // of the tickets' way.
+    final asagida = hedef != null && hedef.quad.bounds.center.dy < size.y / 2;
+    final rect = Rect.fromLTWH(148, asagida ? size.y - 116 : 14, 736, 100);
+    drawPanel(canvas, rect, fill: const Color(0xFFF7EEDF));
+
+    final usta = assets['usta'];
+    if (usta != null) {
+      drawCentered(
+        canvas,
+        usta,
+        Offset(rect.left + 4, rect.center.dy + 6),
+        118,
+      );
+    }
+
+    drawText(
+      canvas,
+      ceviri('ders.${ogretmen.ders.id}.${adim.id}'),
+      Offset(rect.left + 78, rect.center.dy - 4),
+      size: 21,
+      weight: 800,
+      family: 'Rubik',
+      middle: true,
+      color: const Color(0xFF2E2A26),
+    );
+    drawText(
+      canvas,
+      '${ogretmen.sira + 1}/${ogretmen.toplam}',
+      Offset(rect.left + 78, rect.bottom - 24),
+      size: 13,
+      weight: 700,
+      family: 'Rubik',
+      color: const Color(0x992E2A26),
+    );
+
+    _atlaKutusu = Rect.fromLTWH(rect.right - 106, rect.center.dy - 20, 88, 40);
+    drawKey(canvas, _atlaKutusu, const Color(0xFF6E6155));
+    drawText(
+      canvas,
+      ceviri('tanitim.atla'),
+      _atlaKutusu.center,
+      size: 16,
+      weight: 800,
+      family: 'Rubik',
+      center: true,
+      middle: true,
+      color: const Color(0xFFFFF6E8),
+    );
+
+    // A step with nothing to do is the usta talking: the whole screen is the
+    // button.
+    if (!ogretmen.dokunusBekliyor) return;
+    drawGlyph(
+      canvas,
+      Icons.touch_app_rounded,
+      Offset(rect.right - 132, rect.center.dy),
+      26,
+      const Color(0x662E2A26),
+    );
   }
 
   /// The bin, as two corners that open when there is something to throw.

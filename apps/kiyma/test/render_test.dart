@@ -116,6 +116,7 @@ void main() {
       MaterialApp(
         home: GameWidget(
           game: KiymaGame(
+            ceviri: (key) => key,
             scene: scene,
             art: assets,
             halos: halos,
@@ -150,6 +151,7 @@ void main() {
       MaterialApp(
         home: GameWidget(
           game: KiymaGame(
+            ceviri: (key) => key,
             scene: scene,
             art: assets,
             halos: halos,

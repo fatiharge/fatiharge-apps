@@ -7,6 +7,7 @@ import 'package:kiyma/domain/model/carried.dart';
 import 'package:kiyma/domain/model/items.dart';
 import 'package:kiyma/domain/model/order.dart';
 import 'package:kiyma/domain/model/products.dart';
+import 'package:kiyma/domain/ogretmen.dart';
 import 'package:kiyma/domain/progress.dart';
 import 'package:kiyma/domain/scene.dart';
 import 'package:kiyma/domain/tempo.dart';
@@ -905,6 +906,37 @@ void main() {
       }
       expect(run.bitti, isFalse);
       expect(run.musteriler.where((c) => c != null), isNotEmpty);
+    });
+
+    test('a lesson holds the door and stops the clock', () {
+      final run = DayRun(
+        scene: scene,
+        progress: Progress(),
+        onEvent: events.add,
+        onChanged: () {},
+        random: math.Random(5),
+        ogretmen: Ogretmen(Ders.ilkGun),
+      );
+      final before = run.kalanSure;
+      for (var i = 0; i < 200; i++) {
+        run.tick(0.5);
+      }
+      expect(run.kalanSure, before, reason: 'no time is lost being taught');
+      expect(run.bitti, isFalse);
+      // The first step wants nobody, so nobody is there.
+      expect(run.musteriler.every((c) => c == null), isTrue);
+
+      // And the counter still cooks, or "wait for it to brown" could not
+      // happen. In the order the lesson asks for, because it only moves on
+      // the milestone the step actually named.
+      run
+        ..tap(at('lavas_kaynak'))
+        ..tap(at('malzeme_kiyma'));
+      for (var i = 0; i < 80; i++) {
+        run.tick(0.1);
+      }
+      expect(run.mangal[0].alinabilir, isTrue);
+      expect(run.ogretmen!.adim!.id, 'eti_al');
     });
 
     test('nobody new comes in after last orders', () {

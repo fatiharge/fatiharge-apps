@@ -1,8 +1,8 @@
 import 'dart:async';
-
 import 'package:injectable/injectable.dart';
 import 'package:kiyma/domain/balance.dart';
 import 'package:kiyma/domain/day_run.dart';
+import 'package:kiyma/domain/ogretmen.dart';
 import 'package:kiyma/domain/progress.dart';
 import 'package:kiyma/domain/run_summary.dart';
 import 'package:kiyma/domain/unlocks.dart';
@@ -58,6 +58,11 @@ class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
 
   final ProgressStore _store;
 
+  void _dersVeEmit() {
+    _dersiIsaretle();
+    _emit();
+  }
+
   /// Written on every change rather than at chosen moments: `Progress`
   /// already announces them, and a game that is killed mid-run should lose
   /// the run, never the shop.
@@ -81,13 +86,22 @@ class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
 
   void startDay() {
     progress.sonOturum = null;
+    final ders = Ders.bekleyen(progress);
     run = DayRun(
       scene: _world.scene,
       progress: progress,
-      onChanged: _emit,
+      onChanged: _dersVeEmit,
       onEvent: _onEvent,
+      ogretmen: ders == null ? null : Ogretmen(ders),
     );
     _emit();
+  }
+
+  /// A lesson counts as heard the moment it ends, however it ended.
+  void _dersiIsaretle() {
+    final ogretmen = run?.ogretmen;
+    if (ogretmen == null || !ogretmen.bitti) return;
+    progress.gordum([ogretmen.ders.id]);
   }
 
   void _onEvent(DayEvent event) {

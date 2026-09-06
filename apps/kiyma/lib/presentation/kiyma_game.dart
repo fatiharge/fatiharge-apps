@@ -19,6 +19,7 @@ import 'package:kiyma/presentation/render/halo.dart';
 /// nothing — the images live in [GameAssets] and are never reloaded.
 class KiymaGame extends FlameGame {
   KiymaGame({
+    required this.ceviri,
     required this.scene,
     required this.art,
     required this.halos,
@@ -32,6 +33,10 @@ class KiymaGame extends FlameGame {
 
   /// Not named `assets`: [FlameGame] already has a field by that name.
   final GameAssets art;
+
+  /// Turns a key into the player's own language, handed down from the widget
+  /// tree: the game draws its own text and owns none of it.
+  final String Function(String) ceviri;
 
   /// The hint glows, blurred once at startup rather than every frame.
   final Halos halos;
@@ -81,6 +86,7 @@ class KiymaGame extends FlameGame {
         visible: () => camera.visibleWorldRect,
       ),
       CounterComponent(
+        ceviri: ceviri,
         visible: () => camera.visibleWorldRect,
         scene: scene,
         assets: art,

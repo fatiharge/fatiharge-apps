@@ -7,8 +7,6 @@ import 'package:kiyma/application/kiyma_cubit.dart';
 import 'package:kiyma/config/injectable.dart';
 import 'package:kiyma/domain/balance.dart';
 import 'package:kiyma/domain/gun_profili.dart';
-import 'package:kiyma/domain/progress.dart';
-import 'package:kiyma/domain/tanitim.dart';
 import 'package:kiyma/domain/unlocks.dart';
 import 'package:kiyma/presentation/brand.dart';
 import 'package:kiyma/presentation/level_bar.dart';
@@ -63,139 +61,11 @@ class DayPage extends StatelessWidget {
                 ),
               ),
             ),
-            const _Usta(),
           ],
         ),
       ),
     ),
   );
-}
-
-/// The usta, saying one thing at a time, the first time it is true.
-///
-/// On the day card rather than over the counter: the counter is where the
-/// hands are, and stopping a run to read is how a tutorial gets hated. Every
-/// line can be skipped, and skipping skips all of them — a player who does
-/// not want to be taught should have to say so once.
-class _Usta extends StatefulWidget {
-  const _Usta();
-
-  @override
-  State<_Usta> createState() => _UstaState();
-}
-
-class _UstaState extends State<_Usta> {
-  final Progress _progress = getIt<Progress>();
-  late final List<Tanitim> _sira = Tanitim.bekleyenler(_progress);
-  int _index = 0;
-  bool _kapali = false;
-
-  void _bitir() {
-    _progress.gordum(_sira.map((tanitim) => tanitim.id));
-    setState(() => _kapali = true);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (_kapali || _sira.isEmpty) return const SizedBox.shrink();
-    final tanitim = _sira[_index];
-    final son = _index == _sira.length - 1;
-
-    return Positioned.fill(
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () {},
-        child: ColoredBox(
-          color: const Color(0xD90B0908),
-          child: Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
-              child: BrandCard(
-                width: 600,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Image.asset(
-                      'assets/items/usta.png',
-                      width: 116,
-                    ),
-                    const SizedBox(width: 18),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'tanitim.${tanitim.id}.baslik'.tr(),
-                            style: const TextStyle(
-                              fontFamily: 'Rubik',
-                              fontSize: 19,
-                              fontWeight: FontWeight.w800,
-                              color: KiymaPalette.komur,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          for (var i = 1; i <= tanitim.satir; i++) ...[
-                            Text(
-                              'tanitim.${tanitim.id}.$i'.tr(),
-                              style: const TextStyle(
-                                fontFamily: 'Rubik',
-                                fontSize: 14,
-                                height: 1.35,
-                                color: KiymaPalette.komur,
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                          ],
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              if (_sira.length > 1)
-                                Text(
-                                  '${_index + 1}/${_sira.length}',
-                                  style: const TextStyle(
-                                    fontFamily: 'Rubik',
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w700,
-                                    color: KiymaPalette.celik,
-                                  ),
-                                ),
-                              const SizedBox(width: 12),
-                              // Both bounded and both the same width:
-                              // `ChunkyButton` fills its row, so it cannot be
-                              // laid out where the width is unbounded.
-                              Expanded(
-                                child: ChunkyButton(
-                                  label: 'tanitim.atla'.tr(),
-                                  icon: Icons.skip_next_rounded,
-                                  color: KiymaPalette.celik,
-                                  onPressed: _bitir,
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: ChunkyButton(
-                                  label: 'tanitim.devam'.tr(),
-                                  icon: Icons.check_rounded,
-                                  onPressed: son
-                                      ? _bitir
-                                      : () => setState(() => _index++),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 }
 
 /// The five dials, with how far each moved since yesterday.
