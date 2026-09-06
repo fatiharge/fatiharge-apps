@@ -57,7 +57,11 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   /// instruments hang there, one above the other, beside the calendar.
   static const _gauge = Offset(196, 84);
   static const _gaugeRadius = 62.0;
-  static const _tahta = Rect.fromLTWH(132, 152, 150, 78);
+
+  /// Above the calendar, and small: it is a tally, not a headline. The wall
+  /// already carries a gauge and a calendar, and a third large object on it
+  /// was reading as a row of panels.
+  static const _tahta = Rect.fromLTWH(24, 52, 102, 62);
 
   /// The one control that is not a kitchen object, so it is put where no
   /// drag ever goes: the bottom corner, past the end of the counter.
@@ -1239,7 +1243,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
             (1 - _yazma / _yazmaSuresi).clamp(0.0, 1.0),
           );
     final scale = _yazma <= 0 ? 1.0 : 1.22 - 0.22 * pop;
-    final centre = Offset(_tahta.center.dx, _tahta.center.dy - 6);
+    final centre = Offset(_tahta.center.dx, _tahta.center.dy - 5);
     canvas
       ..save()
       ..translate(centre.dx, centre.dy)
@@ -1255,7 +1259,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
         canvas,
         '${run.progress.para}',
         centre + offset,
-        size: 34,
+        size: 26,
         weight: 800,
         family: 'Rubik',
         center: true,
@@ -1268,10 +1272,10 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     // A chalk line under it, filled as far as the day has come. The box used
     // to flood with gold to say the same thing.
     final line = Rect.fromLTWH(
-      _tahta.left + 22,
-      _tahta.bottom - 20,
-      _tahta.width - 44,
-      3,
+      _tahta.left + 17,
+      _tahta.bottom - 16,
+      _tahta.width - 34,
+      2.5,
     );
     canvas
       ..drawRect(line, Paint()..color = chalk.withValues(alpha: 0.18))
