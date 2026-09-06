@@ -616,29 +616,12 @@ class DayRun {
 
   // --- Hit testing ---
 
-  /// The region under [point], smallest first.
+  /// The region under [point] that money has already opened.
   ///
-  /// The counter's own surface is a region too and it covers half the scene,
-  /// so a first-match search would swallow everything on it. Area order makes
-  /// the specific area win without any z ordering to maintain.
-  ///
-  /// Areas money has not opened are skipped: nothing is drawn there, so a
-  /// touch that hit one would light up a patch of bare counter.
-  SceneRegion? regionAt(Offset point) {
-    SceneRegion? best;
-    var bestArea = double.infinity;
-    for (final region in scene.interactive) {
-      if (!region.quad.contains(point)) continue;
-      if (!progress.unlocks.shows(region.name)) continue;
-      final bounds = region.quad.bounds;
-      final area = bounds.width * bounds.height;
-      if (area < bestArea) {
-        best = region;
-        bestArea = area;
-      }
-    }
-    return best;
-  }
+  /// Areas the shop has not sold yet are skipped: nothing is drawn there, so
+  /// a touch that hit one would light up a patch of bare counter.
+  SceneRegion? regionAt(Offset point) =>
+      scene.at(point, kabul: (region) => progress.unlocks.shows(region.name));
 
   int _slotAt(SceneRegion region, Offset point) {
     final slots = region.slots;

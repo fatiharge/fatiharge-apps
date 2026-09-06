@@ -254,6 +254,32 @@ class SceneData {
       if (region.category != 'sef' && region.category != 'dekor') region,
   ];
 
+  /// The region under [point], smallest first.
+  ///
+  /// The counter's own surface is a region too and it covers half the scene,
+  /// so a first-match search would swallow everything on it. Area order makes
+  /// the specific area win without any z ordering to maintain.
+  ///
+  /// The arithmetic lives here rather than on the run because a run is not
+  /// the only thing that points at the kitchen: the shop is the same room
+  /// with different rules about what may be touched, which is exactly what
+  /// [kabul] is for.
+  SceneRegion? at(Offset point, {bool Function(SceneRegion)? kabul}) {
+    SceneRegion? best;
+    var bestArea = double.infinity;
+    for (final region in interactive) {
+      if (!region.quad.contains(point)) continue;
+      if (kabul != null && !kabul(region)) continue;
+      final bounds = region.quad.bounds;
+      final area = bounds.width * bounds.height;
+      if (area < bestArea) {
+        best = region;
+        bestArea = area;
+      }
+    }
+    return best;
+  }
+
   /// Every item asset the scene references, so they can be preloaded in one
   /// bootstrap job instead of popping in mid-game.
   Set<String> get itemAssets => {
