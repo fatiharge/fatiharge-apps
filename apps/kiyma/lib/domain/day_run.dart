@@ -211,7 +211,10 @@ class DayRun {
 
   /// How many customers the day asks to be sent away happy, and whether it
   /// has happened yet.
-  late final int gunlukHedef = Balance.gunlukHedef(day);
+  late final int gunlukHedef = math.max(
+    1,
+    (Balance.gunlukHedef(day) * kural.hedefCarpani).round(),
+  );
 
   bool hedefTamam = false;
 

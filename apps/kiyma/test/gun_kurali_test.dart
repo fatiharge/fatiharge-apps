@@ -129,4 +129,17 @@ void main() {
     }
     expect(gorulen, hasLength(DayRule.dongu.length));
   });
+
+  test('a rule that slows the counter moves the goal it promises', () {
+    // The day card names a number of customers. A rule that adds a handover
+    // or takes a grill slot away has to move that number, or the card is
+    // promising something the day cannot do.
+    expect(DayRule.bayram.hedefCarpani, lessThan(1));
+    expect(DayRule.titizGun.hedefCarpani, lessThan(1));
+    expect(DayRule.komurAz.hedefCarpani, lessThan(1));
+    for (final kural in [DayRule.yok, ...DayRule.dongu]) {
+      expect(kural.hedefCarpani, greaterThan(0.7), reason: kural.id);
+      expect(kural.hedefCarpani, lessThanOrEqualTo(1), reason: kural.id);
+    }
+  });
 }

@@ -18,6 +18,7 @@ class DayRule {
     this.ekMalzeme = 0,
     this.tatliSansi = Balance.tatliSansi,
     this.sabirCarpani = 1,
+    this.hedefCarpani = 1,
   });
 
   /// Names `kural.<id>` in the translations, and nothing else.
@@ -47,6 +48,12 @@ class DayRule {
   /// How long everybody waits today, as a fraction of the usual.
   final double sabirCarpani;
 
+  /// What today's rule does to how many people can be put through the
+  /// counter. A holiday hands everybody a dessert as well, which is a second
+  /// handover per visit — the goal has to know that, or the card promises a
+  /// number the day cannot reach.
+  final double hedefCarpani;
+
   bool get adsiz => id == 'yok';
 
   static const yok = DayRule('yok');
@@ -61,6 +68,7 @@ class DayRule {
     'komur_az',
     mangalKesintisi: Balance.komurKesintisi,
     pencereCarpani: Balance.komurPenceresi,
+    hedefCarpani: Balance.komurHedefi,
   );
 
   static const durumGunu = DayRule(
@@ -72,11 +80,13 @@ class DayRule {
   static const titizGun = DayRule(
     'titiz_gun',
     ekMalzeme: Balance.titizEkMalzeme,
+    hedefCarpani: Balance.titizHedefi,
   );
 
   static const bayram = DayRule(
     'bayram',
     tatliSansi: Balance.bayramTatliSansi,
+    hedefCarpani: Balance.bayramHedefi,
   );
 
   /// The whole queue is in a hurry. Nothing about the counter changes — the

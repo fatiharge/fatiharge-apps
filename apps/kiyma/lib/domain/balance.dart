@@ -251,6 +251,14 @@ abstract final class Balance {
   static const tatliSansi = 0.35;
   static const icecekSansi = 0.4;
 
+  /// What a rule costs in throughput, measured against a plain day of the
+  /// same length. A dessert is a second handover, a fourth named ingredient
+  /// is more handfuls, and one grill slot fewer is one skewer fewer in the
+  /// air — all three show up as customers not served.
+  static const bayramHedefi = 0.8;
+  static const titizHedefi = 0.9;
+  static const komurHedefi = 0.9;
+
   /// A day played at speed: two thirds of the patience, half again the pay.
   /// The trade has to be worth taking or it is only a worse day.
   static const kosuSabri = 0.65;

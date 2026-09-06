@@ -192,7 +192,7 @@ class _Today extends StatelessWidget {
           icon: Icons.flag_rounded,
           text: 'gun.hedef_ne'.tr(
             args: [
-              '${Balance.gunlukHedef(day)}',
+              '${(Balance.gunlukHedef(day) * kural.hedefCarpani).round()}',
               '${Balance.gunlukOdul(day)}',
             ],
           ),
