@@ -33,6 +33,11 @@ void main() {
   }
 
   Offset at(String region) => scene[region].quad.center;
+
+  /// A point inside the left bin corner. The corners are placed against
+  /// what the camera can see; with none set that is the design box.
+  Offset cop(DayRun run) => run.copKoseleri.first.center;
+
   Offset slot(String region, int index) => scene[region].slots[index].center;
 
   bool drag(DayRun run, Offset from, Offset to) {
@@ -273,7 +278,7 @@ void main() {
       drag(run, at('malzeme_kiyma'), slot('mangal_alani', 0));
       expect(run.mangal[0].yanmis, isTrue);
 
-      expect(drag(run, slot('mangal_alani', 0), at('cop_alani')), isTrue);
+      expect(drag(run, slot('mangal_alani', 0), cop(run)), isTrue);
       expect(run.mangal[0].bos, isTrue);
     });
 
@@ -1026,7 +1031,7 @@ void main() {
       run.tick(0.3);
       expect(run.copCagiriyor, isTrue);
 
-      expect(drag(run, slot('mangal_alani', 0), at('cop_alani')), isTrue);
+      expect(drag(run, slot('mangal_alani', 0), cop(run)), isTrue);
       run.tick(0.1);
       expect(run.copCagiriyor, isFalse);
     });
@@ -1059,7 +1064,7 @@ void main() {
       buildWrap(run);
       run.flickUp(at('durum_hazirlama'));
       drag(run, at('kagit_kaynak'), at('durum_hazirlama'));
-      expect(drag(run, at('durum_hazirlama'), at('cop_alani')), isTrue);
+      expect(drag(run, at('durum_hazirlama'), cop(run)), isTrue);
       expect(run.durumIstasyonu, isNull);
     });
   });

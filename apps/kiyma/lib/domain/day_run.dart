@@ -189,6 +189,71 @@ class DayRun {
 
   bool get copCagiriyor => bekleyenYanik >= Balance.idleBurnt;
 
+  /// What the camera can see, in scene units, kept current by the renderer.
+  ///
+  /// The bin is not a bucket on the floor any more. A painted bin has to
+  /// stand somewhere, and the only free floor was in front of the grill —
+  /// which put it behind the grill in depth and half a counter away from the
+  /// shelf. Two corners of the screen are within reach of the thumb already
+  /// holding the thing, on every shape of phone, and they cost no space at
+  /// all when the hand is empty.
+  Rect gorunurAlan = Rect.zero;
+
+  static const _copKose = Size(176, 124);
+
+  /// The two places a binnable thing can be dropped, in the corners of what
+  /// is actually on screen rather than of the design box.
+  List<Rect> get copKoseleri {
+    final area = gorunurAlan.isEmpty
+        ? Offset.zero & Size(scene.size.width, scene.size.height)
+        : gorunurAlan;
+    // Horizontally against what is on screen, vertically against the design
+    // box: the camera reports a visible rect a little taller than the window
+    // actually is, and a corner anchored to that hangs off the bottom.
+    final bottom = math.min(area.bottom, scene.size.height);
+    return [
+      Rect.fromLTWH(
+        area.left,
+        bottom - _copKose.height,
+        _copKose.width,
+        _copKose.height,
+      ),
+      Rect.fromLTWH(
+        area.right - _copKose.width,
+        bottom - _copKose.height,
+        _copKose.width,
+        _copKose.height,
+      ),
+    ];
+  }
+
+  /// Whether the corners are open.
+  ///
+  /// Three things go in the bin and nothing else: a finished wrap, a
+  /// finished plate, and a burnt skewer. Opening them for every pinch of
+  /// onion put two panels over the counter for most of the run, and none of
+  /// those is a thing anybody throws away — a handful goes back to its tray
+  /// on its own the moment the drop is refused.
+  bool get copeAtilabilir => carried != null && copeGider(carried!);
+
+  static bool copeGider(Carried held) => switch (held) {
+    HazirUrun() => true,
+    PismisEt(yanik: true) => true,
+    _ => false,
+  };
+
+  bool copKosesinde(Offset point) =>
+      copeAtilabilir && copKoseleri.any((kose) => kose.contains(point));
+
+  /// The same test at drop time, when [carried] has already been let go of.
+  bool _copKoselerindeDusen(Offset point) =>
+      copKoseleri.any((kose) => kose.contains(point));
+
+  /// The key the bin flashes under. Not a region any more — there is nothing
+  /// on the counter to light up — but the flash map and the run of mis-moves
+  /// are both keyed by name.
+  static const copAdi = 'cop';
+
   /// Seconds left on the paper's answer to somebody reaching for a wrap that
   /// has not been papered yet.
   double kagitCagiriyor = 0;
@@ -678,15 +743,18 @@ class DayRun {
   }
 
   bool _drop(Carried held, Offset point) {
-    final region = regionAt(point);
-    if (region == null) return false;
-
     // The bin takes everything, always open. Without it burnt meat would hold
-    // a grill slot for the rest of the day.
-    if (region.name == 'cop_alani') {
+    // a grill slot for the rest of the day. Checked before the scene: the
+    // corners sit over whatever the counter has there, and while something is
+    // in the hand they win.
+    if (copeGider(held) && _copKoselerindeDusen(point)) {
       _consume(held);
+      _flash(copAdi);
       return true;
     }
+
+    final region = regionAt(point);
+    if (region == null) return false;
 
     if (region.name.startsWith('musteri_slot_')) {
       final index = int.parse(region.name.split('_').last) - 1;

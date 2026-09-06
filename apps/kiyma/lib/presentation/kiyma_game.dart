@@ -81,6 +81,7 @@ class KiymaGame extends FlameGame {
         visible: () => camera.visibleWorldRect,
       ),
       CounterComponent(
+        visible: () => camera.visibleWorldRect,
         scene: scene,
         assets: art,
         halos: halos,

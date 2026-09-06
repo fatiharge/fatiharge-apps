@@ -26,7 +26,6 @@ void main() {
       'malzeme_kiyma',
       'lavas_kaynak',
       'kagit_kaynak',
-      'cop_alani',
     ];
     for (final name in hints) {
       expect(halos[name], isNotNull, reason: name);

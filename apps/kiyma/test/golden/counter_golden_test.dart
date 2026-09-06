@@ -186,6 +186,11 @@ void main() {
           // An idle counter: the two sources that unblock it are asking.
           ..bosMangal = Balance.idleGrill
           ..bosDurum = Balance.idleWrap;
+    // A counter that has gone cold, so the frost end of the gauge is drawn
+    // by something: the hot end is covered by the other golden.
+    for (var i = 0; i < 3; i++) {
+      run.tempo.musteriKizdi();
+    }
 
     late Image frame;
     await tester.runAsync(() async {

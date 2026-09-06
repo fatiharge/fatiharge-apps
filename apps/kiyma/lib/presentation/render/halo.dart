@@ -32,7 +32,6 @@ class Halos {
       'malzeme_kiyma',
       'lavas_kaynak',
       'kagit_kaynak',
-      'cop_alani',
     ]) {
       final region = scene.maybe(name);
       final asset = region?.asset;

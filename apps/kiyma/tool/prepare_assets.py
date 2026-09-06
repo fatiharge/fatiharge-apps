@@ -38,6 +38,12 @@ UNUSED = {
     "dereotu_porsiyon",
     "sutlac",
     "kunefe",
+    # The bin stopped being a thing on the floor: it is two corners of the
+    # screen that open while something is in the hand. A painted bucket has
+    # to stand somewhere, and the only free floor was in front of the grill,
+    # which put it behind the grill in depth and half a counter from the
+    # shelf.
+    "cop_kovasi",
     # The launcher icon. It is configured by the platform projects, never
     # read at runtime, and shipping it put 300KB of nothing in the bundle.
     "uygulama_ikonu",
@@ -55,48 +61,32 @@ UNUSED = {
 # come out with them, and the two wells they leave are empty steel.
 DROPPED_INGREDIENTS = {"maydanoz", "patlican"}
 
-# Design doc section 7 makes the bin mandatory and the art repository had no
-# region for it. The floor in front of the grill is the only free ground in
-# the scene and it is where burnt meat already is, so the drag is short.
-COP_ALANI = {
-    "name": "cop_alani",
-    "category": "cop",
-    "asset": "cop_kovasi_2.png",
-    "asset_fit": "alt",
-    "x": 0,
-    "y": 462,
-    "w": 132,
-    "h": 114,
-    # Wider at the floor than at the rim, which is both what a bucket looks
-    # like from here and what keeps it clear of the grill's own quad: the
-    # extra room is taken along the bottom, where nothing else is.
-    "quad": [[0, 462], [100, 462], [132, 576], [0, 576]],
-}
-
 # Regions the art repository cut to the painted object rather than to the
-# hand that has to hit it.
+# hand that has to hit them.
 #
 # The paper strip was 104x33 — a target the width of a finger and a third of
 # its height, in the middle of a counter where every other drop area is four
 # times the size. It now takes the empty steel under it, down to the plate
-# station's top edge. The clock is square because it is drawn as a round
-# case rather than pasted from a landscape sprite.
+# station's top edge. The grill was redrawn without the skewers painted into
+# it and with the whole body inside the frame, so its trough sits differently
+# than the art the quad was measured on; the corners were re-derived by
+# mapping them through the ember bed in each image rather than by eye.
 RESIZED = {
-    # The grill was redrawn without the skewers painted into it, and the new
-    # body sits differently in its frame: the trough is narrower and lower.
-    # The quad was measured on the old art, so the four skewers hung off the
-    # front rim. Re-derived by mapping the old corners onto the new ember bed
-    # rather than by eye.
     "mangal_alani": {
-        "x": 100, "y": 402, "w": 156, "h": 110,
-        "quad": [[192.0, 402.4], [256.0, 450.3],
-                 [164.1, 511.1], [100.6, 447.1]],
+        "x": 51, "y": 390, "w": 208, "h": 130,
+        "quad": [[173.0, 390.2], [258.9, 447.6],
+                 [135.9, 520.0], [50.8, 443.3]],
     },
+    # The chef stands at the grill, so he moves with it: left of centre his
+    # shoulders are under the highest part of the rim, which is what hides
+    # the rest of him.
+    "sef": {"x": 105, "y": 200, "w": 134, "h": 311},
     "kagit_kaynak": {
         "x": 528, "y": 396, "w": 118, "h": 52,
         "quad": [[528, 396], [645, 398], [646, 448], [529, 446]],
     },
 }
+
 
 # Where a customer leaves what they paid: the wooden ledge they stand at,
 # one pile under each of the four places. Derived from `tezgah_ust_kenari` and
@@ -289,6 +279,12 @@ def customer_slots(regions):
     return out
 
 
+# The grill's top right corner was being sliced by the counter's own left
+# edge, which is a straight vertical line in the art: an object crossing it
+# reads as cut rather than as standing behind it. Moved left until it clears.
+LAYERS_MOVED = {"mangal_katman": {"x": 26}}
+
+
 def slim_region(region):
     out = {k: region[k] for k in KEEP if k in region}
     out.update(RESIZED.get(region["name"], {}))
@@ -297,6 +293,12 @@ def slim_region(region):
     if "kompozisyon" in out:
         out["kompozisyon"] = slim_composition(out["kompozisyon"])
     return out
+
+
+def move_layer(layer):
+    layer = dict(layer)
+    layer.update(LAYERS_MOVED.get(layer["name"], {}))
+    return layer
 
 
 def main():
@@ -314,7 +316,7 @@ def main():
 
     for layer in regions["layers"]:
         note(layer.get("src"))
-    for region in regions["regions"] + DEKOR + [COP_ALANI]:
+    for region in regions["regions"] + DEKOR:
         note(region.get("asset"))
         comp = region.get("kompozisyon") or {}
         for entry in comp.get("taban", []) + comp.get("malzemeler", []):
@@ -365,7 +367,7 @@ def main():
 
     scene = {
         "coordinate_space": regions["coordinate_space"],
-        "layers": [slim_layer(layer) for layer in regions["layers"]],
+        "layers": [slim_layer(move_layer(l)) for l in regions["layers"]],
         "regions": [
             slim_region(r)
             for r in regions["regions"]
@@ -375,7 +377,6 @@ def main():
         + [
             merged_shelf(regions["regions"]),
             gold_area(regions["regions"]),
-            slim_region(COP_ALANI),
         ]
         + [slim_region(d) for d in DEKOR],
     }

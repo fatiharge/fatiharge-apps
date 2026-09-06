@@ -33,6 +33,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     required this.halos,
     required this.run,
     required this.onPause,
+    this.visible,
   }) : super(size: Vector2(scene.size.width, scene.size.height));
 
   final SceneData scene;
@@ -136,6 +137,15 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     icon: Icons.priority_high_rounded,
   );
 
+  /// What the camera can see, in scene units. The bin corners are placed
+  /// against this rather than against the design box, so they land in the
+  /// corners of the screen on a phone whose shape is not 16:9.
+  final Rect Function()? visible;
+
+  /// How open the bin corners are, 0..1. Eased rather than switched: two
+  /// panels appearing the instant a finger closes reads as a glitch.
+  double _cop = 0;
+
   /// Everything short-lived the counter draws.
   /// Seeded: a golden that renders a pool has to be the same picture twice.
   late final Effects fx = Effects(assets, random: math.Random(7));
@@ -177,6 +187,11 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     } else {
       run.tick(dt * Dev.hiz);
     }
+
+    final area = visible?.call();
+    if (area != null) run.gorunurAlan = area;
+    final wanted = run.copeAtilabilir ? 1.0 : 0.0;
+    _cop += (wanted - _cop) * (1 - math.exp(-16 * dt));
 
     if (_shake > 0) _shake -= dt;
     fx.update(dt);
@@ -450,6 +465,59 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     // place every frame is the button that stops the game.
     _renderPause(canvas);
     canvas.restore();
+
+    // Outside the clip on purpose: the corners belong to the screen, not to
+    // the design box, and on a wide phone the box does not reach the edge.
+    _renderCopKoseleri(canvas);
+  }
+
+  /// The bin, as two corners that open when there is something to throw.
+  ///
+  /// It used to be a bucket painted on the floor by the grill. A bucket has
+  /// to stand somewhere: the only free floor put it behind the grill in
+  /// depth and half a counter away from the shelf, so binning a refused wrap
+  /// was a drag across the whole scene. These are under the thumb already
+  /// holding the thing, and they cost nothing when the hand is empty.
+  void _renderCopKoseleri(Canvas canvas) {
+    if (_cop <= 0.01) return;
+    final corners = run.copKoseleri;
+    for (final (i, kose) in corners.indexed) {
+      final over = kose.contains(run.carriedAt);
+      // Slides in from its own corner, so each one reads as belonging to the
+      // edge it came from.
+      final slide = (1 - _cop) * 46;
+      final rect = kose.translate(i == 0 ? -slide : slide, slide);
+      final inner = Radius.circular(26 * _cop);
+      final shape = RRect.fromRectAndCorners(
+        rect,
+        topLeft: i == 0 ? Radius.zero : inner,
+        topRight: i == 0 ? inner : Radius.zero,
+      );
+      final lit = over || run.copCagiriyor;
+      canvas
+        ..drawRRect(
+          shape,
+          Paint()
+            ..color = (over ? const Color(0xFFE0452A) : const Color(0xFF241D18))
+                .withValues(alpha: (over ? 0.94 : 0.8) * _cop),
+        )
+        ..drawRRect(
+          shape.deflate(6),
+          Paint()
+            ..color = const Color(
+              0xFFF7EEDF,
+            ).withValues(alpha: (lit ? 0.9 : 0.4) * _cop * (lit ? _pulse : 1))
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 2.5,
+        );
+      drawGlyph(
+        canvas,
+        Icons.delete_outline_rounded,
+        rect.center,
+        52 * (over ? 1.15 : 1),
+        const Color(0xFFF7EEDF).withValues(alpha: _cop),
+      );
+    }
   }
 
   /// What the room is made of besides its paint: a vignette that pulls the
@@ -503,6 +571,9 @@ class CounterComponent extends PositionComponent with DragCallbacks {
 
   void _renderScene(Canvas canvas) {
     for (final layer in scene.layers) {
+      // Between the wall and the grill: the mangal is painted over him, and
+      // that is the whole of what puts him behind it.
+      if (layer.name == 'mangal_katman') _renderSef(canvas);
       final image = assets[layer.src];
       if (image == null) continue;
       // The painted room bleeds a little, so a knock cannot expose a strip
@@ -540,7 +611,6 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     'malzeme_kiyma' => run.mangalCagiriyor,
     'lavas_kaynak' => run.lavasCagiriyor,
     'kagit_kaynak' => run.kagitCagiriyor > 0,
-    'cop_alani' => run.copCagiriyor,
     _ => false,
   };
 
@@ -1146,6 +1216,57 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     );
   }
 
+  /// Whoever is actually cooking.
+  ///
+  /// A placeholder, like the customers: the characters are the one part of
+  /// the art meant to be animated, so until they are, this is a jacket and a
+  /// hat filling the chef's place. He is drawn from inside the scene pass,
+  /// between the back wall and the grill, so the mangal is painted over his
+  /// waist — which is what puts him behind it instead of standing in it.
+  void _renderSef(Canvas canvas) {
+    final region = scene.maybe('sef');
+    if (region == null) return;
+    final bounds = region.quad.bounds;
+    // Breathing, so a still figure is not a cardboard cut-out.
+    final sway = math.sin(_elapsed * 1.7) * 2.0;
+    final x = bounds.center.dx + sway;
+    const skin = Color(0xFF7A6350);
+    const jacket = Color(0xFFF3EADA);
+
+    canvas
+      ..drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromCenter(center: Offset(x, 252), width: 58, height: 36),
+          const Radius.circular(17),
+        ),
+        Paint()..color = jacket,
+      )
+      ..drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromCenter(center: Offset(x, 272), width: 64, height: 14),
+          const Radius.circular(6),
+        ),
+        Paint()..color = const Color(0xFFDCCFB8),
+      )
+      ..drawCircle(Offset(x, 296), 26, Paint()..color = skin)
+      ..drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTRB(x - 62, 320, x + 62, bounds.bottom),
+          const Radius.circular(26),
+        ),
+        Paint()..color = jacket,
+      )
+      // A collar, which is the one line that says jacket rather than sack.
+      ..drawPath(
+        Path()
+          ..moveTo(x - 17, 320)
+          ..lineTo(x, 346)
+          ..lineTo(x + 17, 320)
+          ..close(),
+        Paint()..color = const Color(0xFFDCCFB8),
+      );
+  }
+
   /// Everybody crossing the shop, in or out.
   ///
   /// Drawn before what stands on the counter, because that is where they are
@@ -1543,6 +1664,49 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     }
   }
 
+  /// Rime creeping in from the bezel once the counter has gone cold.
+  ///
+  /// Drawn over the face rather than under the case: it is frost on the
+  /// glass, so it has to be in front of the needle it is obscuring. It never
+  /// reaches the middle — a gauge you cannot read is a bug, not a mood.
+  void _renderGaugeFrost(Canvas canvas, Offset at, double r, double strength) {
+    const ice = Color(0xFFDDF2FB);
+    // Fixed spokes rather than random: the same frost every frame, growing.
+    for (var i = 0; i < 14; i++) {
+      final a = i * math.pi * 2 / 14;
+      final dir = Offset(math.cos(a), math.sin(a));
+      // Uneven, from the index rather than a die: rime is not a starburst.
+      final reach = (0.34 + 0.3 * (((i * 7) % 5) / 4)) * strength;
+      final root = at + dir * (r - 9);
+      final tip = at + dir * (r - 9 - r * reach);
+      final side = Offset(-dir.dy, dir.dx) * (r * 0.09);
+      canvas.drawPath(
+        Path()
+          ..moveTo(root.dx + side.dx, root.dy + side.dy)
+          ..lineTo(tip.dx, tip.dy)
+          ..lineTo(root.dx - side.dx, root.dy - side.dy)
+          ..close(),
+        Paint()..color = ice.withValues(alpha: 0.5 * strength),
+      );
+    }
+    canvas
+      ..drawCircle(
+        at,
+        r - 9,
+        Paint()
+          ..color = ice.withValues(alpha: 0.3 * strength)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = r * 0.16,
+      )
+      // A breath of fog over the whole face, so the glass reads as cold
+      // rather than as a decorated bezel.
+      ..drawCircle(
+        at,
+        r - 11,
+        Paint()..color = ice.withValues(alpha: 0.16 * strength),
+      );
+  }
+
   /// The run's momentum, as the gauge a grill would have.
   ///
   /// It hangs on the wall over the coals it reads, because that is what the
@@ -1576,6 +1740,18 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     }
     if (tempo.deger >= 90) {
       _renderGaugeFlames(canvas, at, r, (tempo.deger - 90) / 10);
+    }
+    // And the other end of the same meter. A cold counter pays half, which
+    // was a number nobody read; ice on the glass is not a number.
+    final chill = ((25 - tempo.deger) / 25).clamp(0.0, 1.0);
+    if (chill > 0) {
+      canvas.drawCircle(
+        at,
+        r + 4 + chill * 12,
+        Paint()
+          ..color = const Color(0xFF9FD8F0).withValues(alpha: 0.3 * chill)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 14),
+      );
     }
 
     canvas
@@ -1672,6 +1848,8 @@ class CounterComponent extends PositionComponent with DragCallbacks {
           ..strokeWidth = 2.5,
       );
     }
+
+    if (chill > 0) _renderGaugeFrost(canvas, at, r, chill);
 
     // The band, as a glyph on the face. A word here would need translating
     // and would not be read at a glance anyway.

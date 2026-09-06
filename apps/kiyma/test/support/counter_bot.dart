@@ -90,7 +90,7 @@ class CounterBot {
       if (!run.mangal[i].yanmis) continue;
       _drag(
         run.scene['mangal_alani'].slots[i].center,
-        run.scene['cop_alani'].quad.center,
+        run.copKoseleri.first.center,
       );
       return true;
     }

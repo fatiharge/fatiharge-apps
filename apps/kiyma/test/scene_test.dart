@@ -30,7 +30,6 @@ void main() {
         'tabak_hazirlama',
         'bardak_kaynak',
         'bardak_bekletme',
-        'cop_alani',
         'musteri_slot_1',
         'musteri_slot_3',
       ];

@@ -36,7 +36,6 @@ void main() {
       'kola_sise_grup',
       'mangal_govde',
       'duvar_saati',
-      'cop_kovasi',
       'duman',
       'alev',
       'buhar',
