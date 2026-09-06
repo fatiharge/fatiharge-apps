@@ -60,9 +60,13 @@ class TagLayout {
     // string it read as floating — a tag on a low tray or a big grill ended
     // up over bare wall — and sitting on the top edge it covered the one
     // thing the player is there to look at.
+    // Overlapping the lip by a third of the thing's own height, so a deep
+    // tray keeps its tag tucked against it and a plate of baklava — shorter
+    // than the tag itself — is not covered by its own price.
+    final bindirme = math.min(size * 0.6, bounds.height * 0.35);
     final y = math.min(
       scene.size.height - size / 2 - 4,
-      bounds.bottom - size * 0.35,
+      bounds.bottom + size / 2 - bindirme,
     );
     return Rect.fromCenter(
       center: Offset(x, math.max<double>(size / 2 + 4, y)),

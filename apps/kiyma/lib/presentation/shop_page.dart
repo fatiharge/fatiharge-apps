@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:auto_route/auto_route.dart';
@@ -6,15 +7,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kiyma/application/kiyma_cubit.dart';
 import 'package:kiyma/config/injectable.dart';
+import 'package:kiyma/domain/shop_map.dart';
 import 'package:kiyma/domain/unlocks.dart';
 import 'package:kiyma/infrastructure/world.dart';
 import 'package:kiyma/presentation/brand.dart';
 import 'package:kiyma/presentation/gold_text.dart';
 import 'package:kiyma/presentation/palette.dart';
+import 'package:kiyma/presentation/render/confetti.dart';
 import 'package:kiyma/presentation/render/shop_scene.dart';
 import 'package:kiyma/presentation/render/tag_layout.dart';
 import 'package:kiyma/presentation/shop_ladder.dart';
-import 'package:kiyma/presentation/shop_map.dart';
 import 'package:kiyma/route/app_router.gr.dart';
 
 /// The shop is the kitchen.
@@ -47,7 +49,36 @@ class _Dukkan extends StatefulWidget {
   State<_Dukkan> createState() => _DukkanState();
 }
 
-class _DukkanState extends State<_Dukkan> {
+class _DukkanState extends State<_Dukkan> with SingleTickerProviderStateMixin {
+  /// A burst over whatever was just bought. Plays once and stops — a
+  /// repeating controller on this page is a `pumpAndSettle` that never ends.
+  late final AnimationController _konfeti = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 900),
+  );
+
+  /// Where the burst comes from, in scene coordinates.
+  Offset? _patlama;
+
+  @override
+  void dispose() {
+    _konfeti.dispose();
+    super.dispose();
+  }
+
+  void _satinAl(KiymaCubit cubit, Unlock unlock) {
+    final bolge = ShopMap.yeri(unlock.id);
+    final yer = bolge == null
+        ? null
+        : TagLayout.of(
+            getIt<GameWorld>().scene,
+            _etiketler(cubit.progress.unlocks),
+          ).tags.where((tag) => tag.region == bolge).firstOrNull;
+    cubit.buy(unlock);
+    setState(() => _patlama = yer?.rect.center);
+    if (_patlama != null) unawaited(_konfeti.forward(from: 0));
+  }
+
   /// The object whose card is open.
   ///
   /// Deliberately the only thing on this page that moves. A tag that breathed
@@ -103,32 +134,42 @@ class _DukkanState extends State<_Dukkan> {
           // is the same kitchen the game is played in, and a header would
           // make it a page about the kitchen instead.
           Positioned.fill(
-            child: LayoutBuilder(
-              builder: (context, box) {
-                final scale = math.min(
-                  box.maxWidth / scene.size.width,
-                  box.maxHeight / scene.size.height,
-                );
-                return Center(
-                  child: GestureDetector(
-                    onTapUp: (details) =>
-                        _dokun(details.localPosition / scale, unlocks),
-                    child: CustomPaint(
-                      size: Size(
-                        scene.size.width * scale,
-                        scene.size.height * scale,
-                      ),
-                      painter: ShopScenePainter(
-                        scene: scene,
-                        assets: world.art,
-                        unlocks: unlocks,
-                        etiketler: _etiketler(unlocks),
-                        secili: _secili,
+            child: AnimatedBuilder(
+              animation: _konfeti,
+              builder: (context, _) => LayoutBuilder(
+                builder: (context, box) {
+                  final scale = math.min(
+                    box.maxWidth / scene.size.width,
+                    box.maxHeight / scene.size.height,
+                  );
+                  return Center(
+                    child: GestureDetector(
+                      onTapUp: (details) =>
+                          _dokun(details.localPosition / scale, unlocks),
+                      child: CustomPaint(
+                        size: Size(
+                          scene.size.width * scale,
+                          scene.size.height * scale,
+                        ),
+                        painter: ShopScenePainter(
+                          scene: scene,
+                          assets: world.art,
+                          unlocks: unlocks,
+                          etiketler: _etiketler(unlocks),
+                          secili: _secili,
+                        ),
+                        foregroundPainter: _patlama == null
+                            ? null
+                            : ConfettiPainter(
+                                origin: _patlama!,
+                                t: _konfeti.value,
+                                design: scene.size,
+                              ),
                       ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
           SafeArea(
@@ -170,7 +211,7 @@ class _DukkanState extends State<_Dukkan> {
               unlocks: unlocks,
               gun: state.gun,
               para: state.para,
-              onBuy: cubit.buy,
+              onBuy: (unlock) => _satinAl(cubit, unlock),
               onClose: () => setState(() => _secili = null),
             ),
         ],

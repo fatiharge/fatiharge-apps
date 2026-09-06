@@ -544,12 +544,22 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     // the prep area, over the wrap the player was being told to pick up.
     final dolu = <Rect>[
       if (hedef != null) hedef.quad.bounds,
+      // Everything the player has to be able to see while the usta talks.
+      // The clock and the calendar are on the list because a step with
+      // nothing to touch — "the clock on the wall counts the day" — has no
+      // target to avoid, and the bubble settled straight over the clock.
       for (final ad in const [
         'durum_hazirlama',
         'tabak_hazirlama',
         'bekleme_alani',
+        'duvar_saati',
+        'duvar_takvimi',
       ])
         if (scene.maybe(ad) case final bolge?) bolge.quad.bounds,
+      for (var i = 0; i < run.musteriler.length; i++)
+        if (run.musteriler[i] != null)
+          if (scene.maybe('musteri_slot_${i + 1}') case final bolge?)
+            bolge.quad.bounds,
     ];
     const genislik = 500.0;
     const yukseklik = 92.0;
@@ -577,8 +587,8 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       drawCentered(
         canvas,
         usta,
-        Offset(rect.left + 2, rect.center.dy + 6),
-        104,
+        Offset(rect.left + 2, rect.center.dy + 4),
+        96,
       );
     }
 
@@ -586,7 +596,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     // sentence long enough to say something ran off the end of the panel.
     drawText(
       canvas,
-      ceviri('ders.${ogretmen.ders.id}.${adim.id}'),
+      ceviri(adim.metin ?? 'ders.${ogretmen.ders.id}.${adim.id}'),
       Offset(rect.left + 68, rect.center.dy - 6),
       size: 17,
       weight: 800,

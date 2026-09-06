@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kiyma/domain/progress.dart';
+import 'package:kiyma/domain/shop_map.dart';
 import 'package:kiyma/domain/tutor.dart';
 
 void main() {
@@ -59,5 +60,39 @@ void main() {
         if (adim.musteri) expect(adim.bekler, isNotNull, reason: adim.id);
       }
     }
+  });
+
+  test('what was bought gets read out on the next run', () {
+    final progress = Progress()..gun = 5;
+    expect(Lesson.alimlar(progress), isNull, reason: 'nothing bought yet');
+
+    progress.unlocks
+      ..open('komur_1')
+      ..open('mangal_3');
+    final ders = Lesson.alimlar(progress)!;
+    expect(ders.adimlar, hasLength(2));
+    // The sentence the shop already showed, not a second copy of it.
+    // Catalogue order, not purchase order — the usta works along the counter.
+    expect(
+      ders.adimlar.map((adim) => adim.metin),
+      containsAll(['kilit.komur_1_ne', 'kilit.mangal_3_ne']),
+    );
+    for (final adim in ders.adimlar) {
+      expect(adim.hedef, ShopMap.yeri(adim.id));
+    }
+
+    // Heard once, and only the ones that were actually covered.
+    progress.gordum(ders.gorulenler);
+    expect(Lesson.alimlar(progress), isNull);
+    progress.unlocks.open('bekleme_2');
+    expect(Lesson.alimlar(progress)!.adimlar, hasLength(1));
+  });
+
+  test('anything with a lesson of its own is left to it', () {
+    final progress = Progress()
+      ..gordum(['ilk_gun'])
+      ..unlocks.open('porsiyon_hatti');
+    expect(Lesson.alimlar(progress), isNull);
+    expect(Lesson.bekleyen(progress)?.id, 'porsiyon');
   });
 }

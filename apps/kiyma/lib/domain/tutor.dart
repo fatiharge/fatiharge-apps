@@ -1,4 +1,6 @@
 import 'package:kiyma/domain/progress.dart';
+import 'package:kiyma/domain/shop_map.dart';
+import 'package:kiyma/domain/unlocks.dart';
 
 /// Something the counter did that a lesson might be waiting for.
 ///
@@ -31,10 +33,16 @@ class LessonStep {
     this.bekler,
     this.musteri = false,
     this.ister = const {},
+    this.metin,
   });
 
   /// Names the line: `ders.<lesson>.<id>`.
   final String id;
+
+  /// A line of its own, where the step is generated rather than written.
+  /// A purchase already has a sentence saying what it does; the usta reads
+  /// that one rather than a second copy of it kept in step form.
+  final String? metin;
 
   /// The region to point at while this step is up, if any.
   final String? hedef;
@@ -55,7 +63,7 @@ class LessonStep {
 
 /// A lesson: what is taught, when it is owed, and in what order.
 class Lesson {
-  const Lesson(this.id, this.adimlar, {this.gun, this.kilit});
+  const Lesson(this.id, this.adimlar, {this.gun, this.kilit, this.isaretler});
 
   final String id;
   final List<LessonStep> adimlar;
@@ -65,6 +73,13 @@ class Lesson {
 
   /// Owed once this is bought. Nothing is explained before it exists.
   final String? kilit;
+
+  /// What to write down as heard when this ends. A generated lesson marks
+  /// each purchase it covered, so buying two things and skipping the first
+  /// line does not silently swallow the second.
+  final List<String>? isaretler;
+
+  List<String> get gorulenler => isaretler ?? [id];
 
   /// The first run. Everything the counter is for, in the order a wrap is
   /// built — which is also the order somebody would be shown it.
@@ -123,6 +138,39 @@ class Lesson {
     LessonStep('dok', hedef: 'surahi_ayran', bekler: Milestone.bardakDoldu),
     LessonStep('bitti'),
   ], kilit: 'icecek_hatti');
+
+  /// One line for each thing bought since it was last explained.
+  ///
+  /// Generated rather than written: there are forty-seven rungs and each one
+  /// already carries the sentence that says what it does. Anything with a
+  /// lesson of its own is left to that lesson, which teaches the mechanic
+  /// rather than describing it.
+  static Lesson? alimlar(Progress progress) {
+    final dersli = {
+      for (final ders in katalog)
+        if (ders.kilit != null) ders.kilit,
+    };
+    final yeni = [
+      for (final unlock in Unlocks.catalogue)
+        if (progress.unlocks.has(unlock.id) &&
+            !dersli.contains(unlock.id) &&
+            !progress.gordu('alim_${unlock.id}'))
+          unlock,
+    ];
+    if (yeni.isEmpty) return null;
+    return Lesson(
+      'alim',
+      [
+        for (final unlock in yeni)
+          LessonStep(
+            unlock.id,
+            hedef: ShopMap.yeri(unlock.id),
+            metin: 'kilit.${unlock.id}_ne',
+          ),
+      ],
+      isaretler: [for (final unlock in yeni) 'alim_${unlock.id}'],
+    );
+  }
 
   /// The first lesson that is owed and has not been heard.
   static Lesson? bekleyen(Progress progress) {

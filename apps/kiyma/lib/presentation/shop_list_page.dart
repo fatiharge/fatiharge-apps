@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kiyma/application/kiyma_cubit.dart';
 import 'package:kiyma/config/injectable.dart';
+import 'package:kiyma/domain/shop_map.dart';
 import 'package:kiyma/domain/unlocks.dart';
 import 'package:kiyma/presentation/brand.dart';
 import 'package:kiyma/presentation/gold_text.dart';
 import 'package:kiyma/presentation/palette.dart';
 import 'package:kiyma/presentation/shop_ladder.dart';
-import 'package:kiyma/presentation/shop_map.dart';
 
 /// The things with nowhere to stand.
 ///

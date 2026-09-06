@@ -86,7 +86,9 @@ class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
 
   void startDay() {
     progress.sonOturum = null;
-    final ders = Lesson.bekleyen(progress);
+    // A written lesson first; otherwise the usta reads out whatever was
+    // bought since he last spoke.
+    final ders = Lesson.bekleyen(progress) ?? Lesson.alimlar(progress);
     run = DayRun(
       scene: _world.scene,
       progress: progress,
@@ -101,7 +103,7 @@ class KiymaCubit extends EffectCubit<KiymaState, DayEvent> {
   void _dersiIsaretle() {
     final ogretmen = run?.ogretmen;
     if (ogretmen == null || !ogretmen.bitti) return;
-    progress.gordum([ogretmen.ders.id]);
+    progress.gordum(ogretmen.ders.gorulenler);
   }
 
   void _onEvent(DayEvent event) {
