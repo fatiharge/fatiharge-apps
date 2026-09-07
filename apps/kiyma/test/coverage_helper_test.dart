@@ -6,6 +6,7 @@
 // ignore_for_file: unused_import
 
 import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kiyma/app.dart';
 import 'package:kiyma/application/kiyma_cubit.dart';
@@ -52,7 +53,9 @@ import 'package:kiyma/presentation/palette.dart';
 import 'package:kiyma/presentation/render/backdrop.dart';
 import 'package:kiyma/presentation/render/confetti.dart';
 import 'package:kiyma/presentation/render/counter.dart';
+import 'package:kiyma/presentation/render/customer_figure.dart';
 import 'package:kiyma/presentation/render/effects.dart';
+import 'package:kiyma/presentation/render/figure.dart';
 import 'package:kiyma/presentation/render/glyphs.dart';
 import 'package:kiyma/presentation/render/halo.dart';
 import 'package:kiyma/presentation/render/painter.dart';

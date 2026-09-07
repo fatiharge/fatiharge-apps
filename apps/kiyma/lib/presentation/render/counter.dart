@@ -17,7 +17,9 @@ import 'package:kiyma/domain/scene.dart';
 import 'package:kiyma/domain/tempo.dart';
 import 'package:kiyma/infrastructure/assets.dart';
 import 'package:kiyma/presentation/gold_text.dart';
+import 'package:kiyma/presentation/render/customer_figure.dart';
 import 'package:kiyma/presentation/render/effects.dart';
+import 'package:kiyma/presentation/render/figure.dart';
 import 'package:kiyma/presentation/render/glyphs.dart';
 import 'package:kiyma/presentation/render/halo.dart';
 import 'package:kiyma/presentation/render/painter.dart';
@@ -119,21 +121,6 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     dark: Color(0xFF3D2E05),
     icon: Icons.check_rounded,
   );
-
-  /// Placeholder for art nobody has drawn: the customer's state as a flat
-  /// colour. Green is patient, red is not, and the three leaving colours say
-  /// how the visit went.
-  static const Map<CustomerMood, Color> _mood = {
-    CustomerMood.yuruyor: Color(0xFF7C8794),
-    CustomerMood.bekliyorCokSakin: Color(0xFF3E8F52),
-    CustomerMood.bekliyorSakin: Color(0xFF7FB86A),
-    CustomerMood.bekliyorStabil: Color(0xFFE0B341),
-    CustomerMood.bekliyorSupheli: Color(0xFFE07C2E),
-    CustomerMood.bekliyorKizgin: Color(0xFFC93B2B),
-    CustomerMood.gidiyorMutlu: Color(0xFF35C46E),
-    CustomerMood.gidiyorStabil: Color(0xFF5E7FA8),
-    CustomerMood.gidiyorKizgin: Color(0xFF7A1F16),
-  };
 
   static const _want = Color(0xFF6FCF7C);
   static const _avoid = Color(0xFFE0574A);
@@ -1498,7 +1485,12 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       // In from the right, decelerating into the slot.
       final left = 1 - customer.varis;
       final from = scene.size.width - home.bounds.left + 40;
-      _renderBody(canvas, home.shift(Offset(from * left * left, 0)), customer);
+      _renderBody(
+        canvas,
+        home.shift(Offset(from * left * left, 0)),
+        customer.hal,
+        customer.hiz + i * 0.317,
+      );
     }
 
     for (final leaving in run.ayrilanlar) {
@@ -1509,8 +1501,8 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       _renderBody(
         canvas,
         home.shift(Offset(door * gone, 0)),
-        null,
-        hal: leaving.hal,
+        leaving.hal,
+        leaving.hiz + leaving.slot * 0.317,
       );
     }
   }
@@ -1532,7 +1524,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       final quad = scene['musteri_slot_${i + 1}'].quad;
       final head = Offset(quad.bounds.center.dx, quad.bounds.top + 26);
       if (customer.yerinde) {
-        _renderBody(canvas, quad, customer);
+        _renderBody(canvas, quad, customer.hal, customer.hiz + i * 0.317);
         _renderOrder(canvas, head, customer, i);
       } else if (customer.varis > _erkenBilet) {
         _renderOrder(
@@ -1548,39 +1540,57 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     }
   }
 
-  /// A stand-in body in the colour of whatever the person is doing.
+  /// Where the counter's ink line runs. The rail art is solid from here down
+  /// across the whole width anybody walks, so a body cut here is a body
+  /// standing behind it.
+  static const _tezgahCizgisi = 226.6;
+
+  /// One customer, drawn rather than blocked in.
   ///
-  /// The characters are the one part of the art that was never drawn — they
-  /// are meant to be animated — so until they are, the nine states of a visit
-  /// are nine colours. What the player actually has to read is the order and
-  /// how long it has, and those are drawn beside the body rather than on it.
-  void _renderBody(
-    Canvas canvas,
-    Quad quad,
-    Customer? customer, {
-    CustomerMood? hal,
-  }) {
+  /// The body used to be a coloured rectangle: the characters were the one
+  /// part of the art nobody had drawn. They are geometry now — the same paths
+  /// the rig deforms — so the nine states of a visit are a pose and a flush
+  /// rather than nine flat colours.
+  ///
+  /// The counter is a scene layer, painted before anybody has walked in, so
+  /// it cannot paint over a body drawn later; the cut does from this side
+  /// what the rail cannot do from its own.
+  void _renderBody(Canvas canvas, Quad quad, CustomerMood hal, double tohum) {
     final bounds = quad.bounds;
-    final colour = _mood[hal ?? customer!.hal]!;
     canvas
-      ..drawCircle(
-        Offset(bounds.center.dx, bounds.top + 26),
-        19,
-        Paint()..color = Color.lerp(colour, const Color(0xFF2E2A26), 0.35)!,
-      )
-      ..drawRRect(
-        RRect.fromRectAndRadius(
-          Rect.fromLTWH(
-            bounds.left + 14,
-            bounds.top + 46,
-            bounds.width - 28,
-            46,
-          ),
-          const Radius.circular(14),
-        ),
-        Paint()..color = colour,
+      ..save()
+      ..clipRect(
+        Rect.fromLTRB(bounds.left, bounds.top, bounds.right, _tezgahCizgisi),
       );
+    musteriCiz(
+      canvas,
+      kokta: bounds.topLeft,
+      figur: _figuru(tohum),
+      hal: hal,
+      palet: _paleti(tohum),
+      t: _elapsed,
+      faz: tohum * 6.28,
+    );
+    canvas.restore();
   }
+
+  /// Which of the seven silhouettes this person is. Keyed off the walk speed,
+  /// which is already a stable random number the domain hands out per
+  /// customer and carries through the walk out.
+  String _figuru(double tohum) {
+    final f = tohum * 5.77;
+    return figurAdlari[((f - f.floorToDouble()) * figurAdlari.length).floor()];
+  }
+
+  final Map<double, CustomerPalette> _paletler = {};
+
+  CustomerPalette _paleti(double tohum) => _paletler.putIfAbsent(
+    tohum,
+    () => CustomerPalette.forSeed(
+      tohum,
+      ak: figurler[_figuru(tohum)]!.ak,
+    ),
+  );
 
   /// The order, as the paper a kebab shop writes it on.
   ///
