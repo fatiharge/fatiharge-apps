@@ -1557,11 +1557,13 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   /// what the rail cannot do from its own.
   void _renderBody(Canvas canvas, Quad quad, CustomerMood hal, double tohum) {
     final bounds = quad.bounds;
+    // Only the counter line clips. Cutting to the seat's own box as well
+    // sheared off a swinging arm at the shoulder and took the top off a fez:
+    // a body is wider and taller than the slot it stands in. The sides are
+    // the scene's, so nothing spills into the letterbox.
     canvas
       ..save()
-      ..clipRect(
-        Rect.fromLTRB(bounds.left, bounds.top, bounds.right, _tezgahCizgisi),
-      );
+      ..clipRect(Rect.fromLTRB(0, 0, scene.size.width, _tezgahCizgisi));
     musteriCiz(
       canvas,
       kokta: bounds.topLeft,
@@ -1574,8 +1576,8 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     canvas.restore();
   }
 
-  /// Which of the seven silhouettes this person is. Keyed off the walk speed,
-  /// which is already a stable random number the domain hands out per
+  /// Which of the fourteen silhouettes this person is. Keyed off the walk
+  /// speed, which is already a stable random number the domain hands out per
   /// customer and carries through the walk out.
   String _figuru(double tohum) {
     final f = tohum * 5.77;
