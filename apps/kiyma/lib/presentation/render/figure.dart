@@ -477,6 +477,84 @@ List<Offset> _sakal(
   ]);
 }
 
+/// Hair falling past the shoulders. Drawn before the head, so the face lands
+/// on top of it and only the sides show.
+List<Offset> _uzunSac(double cy, double rx, double ry) => _yol(
+  Offset(cx - rx * 1.22, cy + ry * 1.85),
+  [
+    [
+      Offset(cx - rx * 1.32, cy + ry * .30),
+      Offset(cx - rx * 1.20, cy - ry * 1.06),
+      Offset(cx, cy - ry * 1.24),
+    ],
+    [
+      Offset(cx + rx * 1.20, cy - ry * 1.06),
+      Offset(cx + rx * 1.32, cy + ry * .30),
+      Offset(cx + rx * 1.22, cy + ry * 1.85),
+    ],
+    [
+      Offset(cx + rx * .80, cy + ry * 1.70),
+      Offset(cx - rx * .80, cy + ry * 1.70),
+      Offset(cx - rx * 1.22, cy + ry * 1.85),
+    ],
+  ],
+);
+
+/// A headscarf: the path runs round the outside, then back in around the
+/// opening the face shows through, and closes where it started. Two shapes
+/// with a hole between them would need a fill rule; one boundary that
+/// doubles back does the same job with the same machinery as a shadow.
+///
+/// The opening has to start at the hairline. Set higher it left the crown
+/// bare and the scarf came out as a band round the face.
+List<Offset> _esarp(double cy, double rx, double ry) => _yol(
+  Offset(cx - rx * 1.14, cy + ry * .72),
+  [
+    [
+      Offset(cx - rx * 1.24, cy - ry * 1.12),
+      Offset(cx + rx * 1.24, cy - ry * 1.12),
+      Offset(cx + rx * 1.14, cy + ry * .72),
+    ],
+    [
+      Offset(cx + rx * .98, cy + ry * .38),
+      Offset(cx + rx * .90, cy + ry * .06),
+      Offset(cx + rx * .86, cy - ry * .18),
+    ],
+    [
+      Offset(cx + rx * .58, cy - ry * .44),
+      Offset(cx - rx * .58, cy - ry * .44),
+      Offset(cx - rx * .86, cy - ry * .18),
+    ],
+    [
+      Offset(cx - rx * .90, cy + ry * .06),
+      Offset(cx - rx * .98, cy + ry * .38),
+      Offset(cx - rx * 1.14, cy + ry * .72),
+    ],
+  ],
+);
+
+/// A goatee: chin only, where the full beard takes the whole jaw.
+List<Offset> _keciSakal(double cy, double rx, double ry, double cene) {
+  final ck = rx * cene;
+  return _yol(Offset(cx - ck * .38, cy + ry * .60), [
+    [
+      Offset(cx - ck * .46, cy + ry * .94),
+      Offset(cx - ck * .36, cy + ry * 1.24),
+      Offset(cx, cy + ry * 1.28),
+    ],
+    [
+      Offset(cx + ck * .36, cy + ry * 1.24),
+      Offset(cx + ck * .46, cy + ry * .94),
+      Offset(cx + ck * .38, cy + ry * .60),
+    ],
+    [
+      Offset(cx + ck * .20, cy + ry * .74),
+      Offset(cx - ck * .20, cy + ry * .74),
+      Offset(cx - ck * .38, cy + ry * .60),
+    ],
+  ]);
+}
+
 List<Offset> _topuz(double cy, double rx, double ry) =>
     _elips(cx + rx * .26, cy - ry * 1.20, rx * .36, ry * .32);
 
@@ -526,6 +604,9 @@ class FigureSpec {
     this.sac = false,
     this.topuz = false,
     this.sakal = false,
+    this.keci = false,
+    this.uzunSac = false,
+    this.gozluk = false,
     this.yelek = false,
     this.biyik,
     this.ak = false,
@@ -554,6 +635,12 @@ class FigureSpec {
   final bool sac;
   final bool topuz;
   final bool sakal;
+  final bool keci;
+  final bool uzunSac;
+
+  /// Drawn with the face rather than with the head: glasses sit over the
+  /// eyes, and the eyes are the one part redrawn every frame.
+  final bool gozluk;
   final bool yelek;
 
   /// 'buyuk' | 'kucuk', or none.
@@ -576,6 +663,7 @@ class FigureSpec {
       switch (sapka) {
         'fes' => 19.0,
         'bere' => 17.0,
+        'esarp' => 4.0,
         final s? when s.isNotEmpty => 13.0,
         _ => 0.0,
       };
@@ -701,6 +789,129 @@ const figurler = <String, FigureSpec>{
     kasBoy: 4.2,
     sapka: 'kasket',
   ),
+  'gozluklu': FigureSpec(
+    kafaGen: 23,
+    kafaBoy: 26,
+    cene: .68,
+    yanak: .98,
+    omuzY: 76,
+    omuzYari: 28,
+    altYari: 34,
+    gozR: 4.4,
+    gozAralik: 9.8,
+    burun: 5.6,
+    burunY: 7,
+    kasKalin: 3,
+    kasBoy: 4.6,
+    sac: true,
+    gozluk: true,
+  ),
+  'kel': FigureSpec(
+    kafaGen: 29,
+    kafaBoy: 25,
+    cene: .96,
+    yanak: 1.10,
+    omuzY: 72,
+    omuzYari: 33,
+    altYari: 40,
+    gozR: 3.8,
+    gozAralik: 10.2,
+    burun: 8.6,
+    burunY: 6.2,
+    kasKalin: 4.4,
+    kasBoy: 5.6,
+    biyik: 'buyuk',
+    ak: true,
+  ),
+  'teyze': FigureSpec(
+    kafaGen: 25,
+    kafaBoy: 25,
+    cene: .82,
+    yanak: 1.08,
+    omuzY: 78,
+    omuzYari: 29,
+    altYari: 36,
+    gozR: 4.8,
+    gozAralik: 10,
+    burun: 5.2,
+    burunY: 6.4,
+    kasKalin: 2.8,
+    kasBoy: 4.4,
+    sapka: 'esarp',
+  ),
+  'genckiz': FigureSpec(
+    kafaGen: 23,
+    kafaBoy: 25,
+    cene: .70,
+    yanak: 1.02,
+    omuzY: 78,
+    omuzYari: 26,
+    altYari: 32,
+    gozR: 6.2,
+    gozAralik: 10.6,
+    burun: 4.2,
+    burunY: 6,
+    kasKalin: 2.4,
+    kasBoy: 4.6,
+    sac: true,
+    uzunSac: true,
+  ),
+  'keci': FigureSpec(
+    kafaGen: 24,
+    kafaBoy: 26,
+    cene: .64,
+    yanak: 1,
+    omuzY: 75,
+    omuzYari: 29,
+    altYari: 35,
+    gozR: 5,
+    gozAralik: 10.4,
+    burun: 5.8,
+    burunY: 6.8,
+    kasKalin: 3.4,
+    sac: true,
+    keci: true,
+    biyik: 'kucuk',
+  ),
+  // Tall: the head sits high and the shoulders drop, so the neck is long
+  // even at rest — which is exactly the part of the rig that stretches.
+  'uzunBoylu': FigureSpec(
+    kafaY: 32,
+    kafaGen: 23,
+    kafaBoy: 25,
+    cene: .70,
+    yanak: .96,
+    omuzY: 72,
+    omuzYari: 27,
+    altYari: 32,
+    gozR: 4.2,
+    gozAralik: 9.4,
+    burun: 5.4,
+    burunY: 7,
+    kasKalin: 3,
+    kasBoy: 4.8,
+    sac: true,
+    biyik: 'kucuk',
+  ),
+  // Short, but an adult: the moustache and the small eyes are what keep them
+  // from reading as the child.
+  'kisa': FigureSpec(
+    kafaY: 50,
+    kafaGen: 26,
+    kafaBoy: 24,
+    cene: .90,
+    yanak: 1.06,
+    omuzY: 92,
+    omuzYari: 28,
+    altYari: 33,
+    gozR: 3.6,
+    gozAralik: 9.6,
+    burun: 6.4,
+    burunY: 6,
+    kasKalin: 3.8,
+    sapka: 'kasket',
+    biyik: 'buyuk',
+  ),
 };
 
 /// The still parts of one figure, split the way the rig draws them: the body
@@ -739,6 +950,7 @@ class FigureParts {
       }
     }
 
+    if (spec.uzunSac) kafa.add(sekil(_uzunSac(cy, rx, ry), 'sac', orta));
     final kx = rx * spec.yanak - 1;
     for (final s in const [-1.0, 1.0]) {
       kafa.add(sekil(_elips(cx + s * kx, cy + 3, 6.4, 7.4), 'ten', orta));
@@ -756,6 +968,9 @@ class FigureParts {
       kafa.add(
         sekil(_sakal(cy, rx, ry, spec.cene, spec.yanak), 'biyikR', orta),
       );
+    }
+    if (spec.keci) {
+      kafa.add(sekil(_keciSakal(cy, rx, ry, spec.cene), 'biyikR', orta));
     }
     if (spec.sac) {
       if (spec.topuz) kafa.add(sekil(_topuz(cy, rx, ry), 'sac', orta));
@@ -783,6 +998,11 @@ class FigureParts {
         kafa
           ..add(sekil(b, 'sapkaR', orta))
           ..add(sekil(hilal(b, a0: -58, a1: 46, kalinlik: .26), 'sapkaG', yok));
+      case 'esarp':
+        final e = _esarp(cy, rx, ry);
+        kafa
+          ..add(sekil(e, 'sapkaR', orta))
+          ..add(sekil(hilal(e, a0: -40, a1: 70, kalinlik: .20), 'sapkaG', yok));
       case 'kasket':
         final k = _kasket(cy - ry + 5, rx * .84, 13);
         kafa
@@ -827,4 +1047,11 @@ const figurAdlari = [
   'sakalli',
   'kadin',
   'cocuk',
+  'gozluklu',
+  'kel',
+  'teyze',
+  'genckiz',
+  'keci',
+  'uzunBoylu',
+  'kisa',
 ];

@@ -524,6 +524,36 @@ void _yuz(
     }
   }
 
+  // Glasses go over the eyes and under everything the anger adds, so they
+  // are drawn here rather than with the still parts of the head.
+  if (K.gozluk) {
+    final r = gr * 1.34;
+    final cam = kalem
+      ..color = const Color(0xFF3A322C)
+      ..strokeWidth = 1.9;
+    for (final yon in const [-1.0, 1.0]) {
+      final ex = cx + yon * ar;
+      canvas
+        ..drawCircle(
+          Offset(ex, cy - 4),
+          r,
+          Paint()..color = const Color(0x14FFFFFF),
+        )
+        ..drawCircle(Offset(ex, cy - 4), r, cam)
+        // The temple, off to the ear.
+        ..drawLine(
+          Offset(ex + yon * r, cy - 5),
+          Offset(cx + yon * (K.kafaGen * K.yanak - 1), cy - 2),
+          cam,
+        );
+    }
+    canvas.drawLine(
+      Offset(cx - ar + r, cy - 5.5),
+      Offset(cx + ar - r, cy - 5.5),
+      cam,
+    );
+  }
+
   // A big handlebar already covers the mouth; a line under it says nothing.
   if (K.biyik != 'buyuk') {
     canvas.drawPath(
