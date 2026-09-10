@@ -63,8 +63,6 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   /// The left wall above the grill is the only large clear area in the
   /// scene — the counter surface is booked end to end — so the two
   /// instruments hang there, one above the other, beside the calendar.
-  static const _gauge = Offset(196, 84);
-  static const _gaugeRadius = 62.0;
 
   /// Above the calendar, and small: it is a tally, not a headline. The wall
   /// already carries a gauge and a calendar, and a third large object on it
@@ -92,13 +90,6 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     TempoBand.normal: Color(0xFFCBA23C),
     TempoBand.isiniyor: Color(0xFFE8862A),
     TempoBand.ates: Color(0xFFE0452A),
-  };
-
-  static const Map<TempoBand, IconData> _tempoGlyphs = {
-    TempoBand.soguk: Icons.ac_unit_rounded,
-    TempoBand.normal: Icons.thermostat_rounded,
-    TempoBand.isiniyor: Icons.whatshot_rounded,
-    TempoBand.ates: Icons.local_fire_department_rounded,
   };
 
   /// Areas whose contents change during play, so their idle art is never the
@@ -459,9 +450,6 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     }
     _renderScene(canvas);
     _renderWall(canvas);
-    // Room objects, so they are inside the knock: a gauge bolted to a wall
-    // that jumps is an impact, where a HUD that jumps is a broken screen.
-    _renderTempo(canvas);
     _renderTahta(canvas);
     // Somebody still crossing the shop passes behind what is standing on the
     // counter; by the time they are at their place nothing is in front of
@@ -483,6 +471,9 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     _renderLight(canvas);
     canvas.restore();
 
+    // Welded to the frame, so it is drawn outside the knock: the room jumps,
+    // the edge of the screen does not.
+    _renderTempoBar(canvas);
     fx.render(canvas, EffectLayer.over);
     // Outside the knock, alone: the one thing that has to be in the same
     // place every frame is the button that stops the game.
@@ -540,7 +531,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     // board is not work, and treating it as work leaves the bubble nowhere.
     final dolu = <Rect>[
       if (hedef != null) hedef.quad.bounds,
-      Rect.fromCircle(center: _gauge, radius: _gaugeRadius),
+      Rect.fromLTWH(0, 0, scene.size.width, _barBoy + 34),
       _tahta,
       // The one control on the counter. A bubble over it is a run that
       // cannot be paused until the usta has finished talking.
@@ -1961,113 +1952,200 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     canvas.restore();
   }
 
-  /// Tongues licking round the bezel once the meter is pinned.
+  /// The run's momentum, welded to the top edge of the screen.
   ///
-  /// Behind the case, so they come out from under it rather than sitting on
-  /// top of it, and each one on its own phase — five copies of one sine is a
-  /// throbbing ring, not a fire.
-  void _renderGaugeFlames(
-    Canvas canvas,
-    Offset at,
-    double r,
-    double strength,
-  ) {
-    final image = assets['alev'];
-    if (image == null) return;
-    for (var i = 0; i < 7; i++) {
-      // Only the top half: flames go up, and a tongue under the case would
-      // have to be coming out of the wall.
-      final a = -math.pi * (0.12 + 0.76 * i / 6);
-      final phase = _elapsed * 7 + i * 1.9;
-      final lick = 0.55 + 0.45 * math.sin(phase);
-      final size = (20 + 16 * lick) * (0.7 + 0.3 * strength);
-      canvas
-        ..save()
-        ..translate(
-          at.dx + math.cos(a) * (r - 4),
-          at.dy + math.sin(a) * (r - 4),
-        )
-        ..rotate(a + math.pi / 2)
-        ..scale(1, 1 + 0.25 * lick);
-      drawCentered(
-        canvas,
-        image,
-        Offset(0, -size * 0.35),
-        size,
-        paint: Paint()
-          ..color = const Color(
-            0xFFFFFFFF,
-          ).withValues(alpha: (0.5 + 0.5 * lick) * (0.4 + 0.6 * strength))
-          ..filterQuality = FilterQuality.medium,
+  /// It was a needle on a dial bolted to the wall over the coals, and the
+  /// argument for that shape was that a dial needs no explaining. What it
+  /// actually cost was a fifth of the top-left corner, a spot the usta now
+  /// stands in, and a reading the player had to turn their eyes to take. A
+  /// bar on the frame is read without looking at it.
+  ///
+  /// Drawn outside the knock, unlike the dial: this is the frame, and a frame
+  /// that jumps with the room reads as a broken screen rather than an impact.
+  static const _barBoy = 13.0;
+
+  void _renderTempoBar(Canvas canvas) {
+    final tempo = run.tempo;
+    final renk = _tempoColours[tempo.hal]!;
+    final w = size.x;
+    final dolu = w * tempo.oran;
+    final rect = Rect.fromLTWH(0, 0, w, _barBoy);
+
+    // Above sixty it starts to throw light into the room; at ninety it is on
+    // fire. Heat is what the multiplier feels like without being read.
+    final isi = ((tempo.deger - 60) / 30).clamp(0.0, 1.0);
+    final soguk = ((25 - tempo.deger) / 25).clamp(0.0, 1.0);
+
+    canvas
+      // The track: what is still to earn, and dark enough that the fill is
+      // the only lit thing along the top of the screen.
+      ..drawRect(rect, Paint()..color = const Color(0xF0221C18))
+      ..drawRect(
+        Rect.fromLTWH(0, _barBoy - 2, w, 2),
+        Paint()..color = const Color(0x66000000),
       );
-      canvas.restore();
+
+    if (dolu > 1) {
+      canvas
+        ..drawRect(
+          Rect.fromLTWH(0, 0, dolu, _barBoy),
+          Paint()
+            ..shader = Gradient.linear(
+              const Offset(0, _barBoy),
+              Offset.zero,
+              [
+                Color.lerp(renk, const Color(0xFF1A120E), .18)!,
+                renk,
+                Color.lerp(renk, const Color(0xFFFFF0C8), .28 + .34 * isi)!,
+              ],
+              const [0, .55, 1],
+            ),
+        )
+        // A lit line along the whole of the fill, not just its end. In the
+        // cold band the fill is a dark blue against a dark track and the
+        // level could not be read at all — which is the one thing the bar is
+        // for.
+        ..drawRect(
+          Rect.fromLTWH(0, 0, dolu, 2),
+          Paint()..color = Color.lerp(renk, const Color(0xFFFFF4DC), .55)!,
+        )
+        // The head. A bar with a soft end reads as a gradient; a bar with a
+        // bright edge reads as a level.
+        ..drawRect(
+          Rect.fromLTWH(dolu - 2.5, 0, 2.5, _barBoy),
+          Paint()..color = const Color(0xFFFFF4DC),
+        )
+        ..drawRect(
+          Rect.fromLTWH(dolu - 22, 0, 22, _barBoy),
+          Paint()
+            ..blendMode = BlendMode.plus
+            ..shader = Gradient.linear(
+              Offset(dolu - 22, 0),
+              Offset(dolu, 0),
+              [const Color(0x00000000), renk.withValues(alpha: .55)],
+            ),
+        );
     }
+
+    // Every touch answers here. The meter used to sit still through a whole
+    // build and jump once at the handover, which reads as a meter that is not
+    // listening; this is the same promise the step scoring makes.
+    if (tempo.dokunusKalan > 0) {
+      final can = (tempo.dokunusKalan / 0.3).clamp(0.0, 1.0);
+      canvas.drawRect(
+        Rect.fromLTWH(math.max(0, dolu - 46), 0, 46, _barBoy),
+        Paint()
+          ..blendMode = BlendMode.plus
+          ..color = const Color(0xFFFFF0C8).withValues(alpha: .38 * can),
+      );
+    }
+
+    // The light it throws down into the room, and the fire on it.
+    if (isi > 0) {
+      canvas.drawRect(
+        Rect.fromLTWH(0, _barBoy, dolu, 26 + 34 * isi),
+        Paint()
+          ..blendMode = BlendMode.plus
+          ..shader = Gradient.linear(
+            const Offset(0, _barBoy),
+            Offset(0, _barBoy + 26 + 34 * isi),
+            [
+              renk.withValues(alpha: (.16 + .22 * isi) * _pulse),
+              const Color(0x00000000),
+            ],
+          ),
+      );
+    }
+    if (tempo.deger >= 90) _barAlevi(canvas, dolu, (tempo.deger - 90) / 10);
+    if (soguk > 0) _barBuzu(canvas, dolu, w, soguk);
+
+    // The change, floating under the head. Without it the multiplier is
+    // invisible and the player never learns what feeds it.
+    if (tempo.degisimKalan > 0) {
+      final delta = tempo.sonDegisim;
+      final fade = (tempo.degisimKalan / 1.1).clamp(0.0, 1.0);
+      drawText(
+        canvas,
+        '${delta > 0 ? '+' : ''}${delta.round()}',
+        Offset(
+          dolu.clamp(24.0, w - 24),
+          _barBoy + 6 + (1 - fade) * 12,
+        ),
+        size: 20,
+        weight: 900,
+        family: 'Rubik',
+        center: true,
+        outline: const Color(0xCC221C18),
+        color: (delta > 0 ? const Color(0xFF6FCF7C) : const Color(0xFFE0574A))
+            .withValues(alpha: fade),
+      );
+    }
+    _renderSeri(canvas);
   }
 
-  /// Rime creeping in from the bezel once the counter has gone cold.
+  /// Flame licking along the lit part of the bar. It burns downward into the
+  /// screen, because the bar is the ceiling of the picture and that is the
+  /// only direction there is.
+  void _barAlevi(Canvas canvas, double dolu, double guc) {
+    // Curves, not spikes. Straight lines to a point gave a row of triangles
+    // eighteen pixels tall on a thirteen pixel bar — a paper crown, and the
+    // level underneath it stopped being readable at all.
+    final path = Path()..moveTo(0, _barBoy);
+    const adim = 34.0;
+    for (var x = 0.0; x < dolu; x += adim) {
+      final h =
+          (2.5 + 6 * guc) *
+          (.45 + .55 * (.5 + .5 * math.sin(_elapsed * 6 + x * .075)));
+      final son = math.min(x + adim, dolu);
+      path.quadraticBezierTo((x + son) / 2, _barBoy + h, son, _barBoy);
+    }
+    canvas.drawPath(
+      path
+        ..lineTo(0, _barBoy)
+        ..close(),
+      Paint()
+        ..blendMode = BlendMode.plus
+        ..color = const Color(0xFFFF9426).withValues(alpha: .22 + .26 * guc),
+    );
+  }
+
+  /// Frost creeping in along what is left to earn. A cold counter pays half,
+  /// which was a number nobody read; ice on the bar is not a number.
   ///
-  /// Drawn over the face rather than under the case: it is frost on the
-  /// glass, so it has to be in front of the needle it is obscuring. It never
-  /// reaches the middle — a gauge you cannot read is a bug, not a mood.
-  void _renderGaugeFrost(Canvas canvas, Offset at, double r, double strength) {
-    const ice = Color(0xFFDDF2FB);
-    // Fixed spokes rather than random: the same frost every frame, growing.
-    for (var i = 0; i < 14; i++) {
-      final a = i * math.pi * 2 / 14;
-      final dir = Offset(math.cos(a), math.sin(a));
-      // Uneven, from the index rather than a die: rime is not a starburst.
-      final reach = (0.34 + 0.3 * (((i * 7) % 5) / 4)) * strength;
-      final root = at + dir * (r - 9);
-      final tip = at + dir * (r - 9 - r * reach);
-      final side = Offset(-dir.dy, dir.dx) * (r * 0.09);
+  /// Only on the empty part, and hanging from the top edge. Across the whole
+  /// track and rising from the bottom it read as a row of teeth, and it was
+  /// the loudest thing on a bar whose job is to show a level.
+  void _barBuzu(Canvas canvas, double dolu, double w, double guc) {
+    final buz = Paint()
+      ..color = const Color(0xFFBFE3F2).withValues(alpha: .18 + .28 * guc);
+    const adim = 26.0;
+    for (var x = dolu + 6; x < w; x += adim) {
+      final h = _barBoy * (.28 + .42 * guc) * (.5 + .5 * math.sin(x * .17));
       canvas.drawPath(
         Path()
-          ..moveTo(root.dx + side.dx, root.dy + side.dy)
-          ..lineTo(tip.dx, tip.dy)
-          ..lineTo(root.dx - side.dx, root.dy - side.dy)
+          ..moveTo(x - 6, 0)
+          ..lineTo(x, h)
+          ..lineTo(x + 6, 0)
           ..close(),
-        Paint()..color = ice.withValues(alpha: 0.5 * strength),
+        buz,
       );
     }
-    canvas
-      ..drawCircle(
-        at,
-        r - 9,
-        Paint()
-          ..color = ice.withValues(alpha: 0.3 * strength)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = r * 0.16,
-      )
-      // A breath of fog over the whole face, so the glass reads as cold
-      // rather than as a decorated bezel.
-      ..drawCircle(
-        at,
-        r - 11,
-        Paint()..color = ice.withValues(alpha: 0.16 * strength),
-      );
   }
 
-  /// The run's momentum, as the gauge a grill would have.
-  ///
-  /// It hangs on the wall over the coals it reads, because that is what the
-  /// number is about: everything the counter earns is multiplied by it, and
-  /// what feeds it is working the grill. A needle sweeping a dial is also
-  /// the one meter shape a player has seen a thousand times and needs no
-  /// explaining — a bar would have to be learnt.
-  /// How many in a row, under the gauge.
-  ///
-  /// The streak already pays — a tip every fifth — and already feeds the
-  /// needle, but neither of those says what the number is. Three is where it
-  /// starts showing: below that it is not a run, it is two customers.
+  /// How many in a row. Parked at the left under the bar rather than sliding
+  /// with the level: it is not a reading of the level, and a chip that moved
+  /// would cross the order tickets, which are the one thing on that edge that
+  /// must never be covered.
   static const _seriEsigi = 3;
+  static const _seriYeri = Offset(52, 27);
 
-  void _renderSeri(Canvas canvas, Offset at, double r) {
+  void _renderSeri(Canvas canvas) {
     final seri = run.tempo.seri;
     if (seri < _seriEsigi) return;
     // Swells on the step that pays, so the tip is seen rather than banked.
     final odul = seri % Balance.seriIkramiyeAdimi == 0;
     final rect = Rect.fromCenter(
-      center: Offset(at.dx, at.dy + r + 13),
+      center: _seriYeri,
       width: 54 + (odul ? 6 : 0),
       height: 24 + (odul ? 3 : 0),
     );
@@ -2082,174 +2160,6 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       center: true,
       middle: true,
       color: odul ? const Color(0xFFFFC24A) : const Color(0xFFF7EEDF),
-    );
-  }
-
-  void _renderTempo(Canvas canvas) {
-    final tempo = run.tempo;
-    final colour = _tempoColours[tempo.hal]!;
-    const at = _gauge;
-    const r = _gaugeRadius;
-    // Three quarters of a turn, opening downward: the gap at the bottom is
-    // what tells the eye where empty is and where full is.
-    const from = math.pi * 0.75;
-    const sweep = math.pi * 1.5;
-
-    // Above sixty the case starts to glow, and at ninety it is on fire.
-    // The multiplier is the one number the whole counter is worth, and it
-    // was being read off a needle angle; heat is what a player feels without
-    // reading anything.
-    final heat = ((tempo.deger - 60) / 30).clamp(0.0, 1.0);
-    if (heat > 0) {
-      canvas.drawCircle(
-        at,
-        r + 6 + heat * 16,
-        Paint()
-          ..color = colour.withValues(alpha: (0.16 + 0.26 * heat) * _pulse)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 16),
-      );
-    }
-    if (tempo.deger >= 90) {
-      _renderGaugeFlames(canvas, at, r, (tempo.deger - 90) / 10);
-    }
-    // And the other end of the same meter. A cold counter pays half, which
-    // was a number nobody read; ice on the glass is not a number.
-    final chill = ((25 - tempo.deger) / 25).clamp(0.0, 1.0);
-    if (chill > 0) {
-      canvas.drawCircle(
-        at,
-        r + 4 + chill * 12,
-        Paint()
-          ..color = const Color(0xFF9FD8F0).withValues(alpha: 0.3 * chill)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 14),
-      );
-    }
-
-    canvas
-      ..drawLine(
-        Offset(at.dx, at.dy - r - 16),
-        Offset(at.dx, at.dy - r + 4),
-        Paint()
-          ..color = const Color(0xFF2E2A26)
-          ..strokeWidth = 3,
-      )
-      ..drawCircle(
-        Offset(at.dx, at.dy - r - 17),
-        4,
-        Paint()..color = const Color(0xFF6E6155),
-      )
-      ..drawCircle(
-        at + const Offset(4, 7),
-        r,
-        Paint()..color = const Color(0x38000000),
-      )
-      ..drawCircle(at, r, Paint()..color = const Color(0xFF2E2A26))
-      ..drawCircle(at, r - 4, Paint()..color = const Color(0xFFC08A3E))
-      ..drawCircle(at, r - 11, Paint()..color = const Color(0xFFF7EEDF))
-      ..drawArc(
-        Rect.fromCircle(center: at, radius: r - 20),
-        from,
-        sweep,
-        false,
-        Paint()
-          ..color = const Color(0x1F2E2A26)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 11
-          ..strokeCap = StrokeCap.round,
-      )
-      ..drawArc(
-        Rect.fromCircle(center: at, radius: r - 20),
-        from,
-        math.max(0.02, sweep * tempo.oran),
-        false,
-        Paint()
-          ..color = colour
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 11
-          ..strokeCap = StrokeCap.round,
-      );
-
-    // Ticks, so the needle is read against something.
-    for (var i = 0; i <= 10; i++) {
-      final a = from + sweep * i / 10;
-      final dir = Offset(math.cos(a), math.sin(a));
-      canvas.drawLine(
-        at + dir * (r - 30),
-        at + dir * (r - (i % 5 == 0 ? 36 : 33)),
-        Paint()
-          ..color = const Color(0x552E2A26)
-          ..strokeWidth = i % 5 == 0 ? 2.6 : 1.5,
-      );
-    }
-
-    // The needle, trembling at the top of the scale rather than sitting
-    // still: pinned is a state, not a stop.
-    final pinned = tempo.oran > 0.98;
-    final angle =
-        from +
-        sweep * tempo.oran +
-        (pinned ? math.sin(_elapsed * 24) * 0.02 : 0);
-    final tip = at + Offset(math.cos(angle), math.sin(angle)) * (r - 26);
-    final back = at - Offset(math.cos(angle), math.sin(angle)) * 9;
-    canvas
-      ..drawLine(
-        back,
-        tip,
-        Paint()
-          ..color = const Color(0xFF2E2A26)
-          ..strokeWidth = 4.5
-          ..strokeCap = StrokeCap.round,
-      )
-      ..drawCircle(at, 8, Paint()..color = const Color(0xFF2E2A26))
-      ..drawCircle(at, 5, Paint()..color = colour);
-    // Every move the counter took or refused, however small, lands here. The
-    // needle answers too, but a single handful moves it about a degree.
-    if (tempo.dokunusKalan > 0) {
-      final left = (tempo.dokunusKalan / 0.3).clamp(0.0, 1.0);
-      canvas.drawCircle(
-        at,
-        5 + (1 - left) * 13,
-        Paint()
-          ..color =
-              (tempo.sonDokunusIyi
-                      ? const Color(0xFF5FD070)
-                      : const Color(0xFFE0574A))
-                  .withValues(alpha: left * 0.75)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2.5,
-      );
-    }
-
-    _renderSeri(canvas, at, r);
-
-    if (chill > 0) _renderGaugeFrost(canvas, at, r, chill);
-
-    // The band, as a glyph on the face. A word here would need translating
-    // and would not be read at a glance anyway.
-    drawGlyph(
-      canvas,
-      _tempoGlyphs[tempo.hal]!,
-      Offset(at.dx, at.dy + r * 0.42),
-      20,
-      colour,
-    );
-
-    // The change, floating off the case. Without it the multiplier is
-    // invisible and the player never learns what feeds it.
-    if (tempo.degisimKalan <= 0) return;
-    final delta = tempo.sonDegisim;
-    final fade = (tempo.degisimKalan / 1.1).clamp(0.0, 1.0);
-    drawText(
-      canvas,
-      '${delta > 0 ? '+' : ''}${delta.round()}',
-      Offset(at.dx + r + 6, at.dy - 10 - (1 - fade) * 14),
-      size: 21,
-      weight: 900,
-      family: 'Rubik',
-      center: true,
-      outline: const Color(0xCCFFF6E8),
-      color: (delta > 0 ? const Color(0xFF2F8F3A) : const Color(0xFFC4321F))
-          .withValues(alpha: fade),
     );
   }
 }
