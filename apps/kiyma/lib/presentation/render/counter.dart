@@ -23,6 +23,7 @@ import 'package:kiyma/presentation/render/figure.dart';
 import 'package:kiyma/presentation/render/glyphs.dart';
 import 'package:kiyma/presentation/render/halo.dart';
 import 'package:kiyma/presentation/render/painter.dart';
+import 'package:kiyma/presentation/render/skewer.dart';
 import 'package:kiyma/presentation/render/usta_figure.dart';
 
 /// The whole counter: every pixel of the game world and every gesture on it.
@@ -845,16 +846,20 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       final durum = slot.durum;
       if (durum == null || run.lifted('mangal_alani', i)) continue;
 
-      final image =
-          assets[switch (durum) {
-            Doneness.cig => 'sis_cig',
-            Doneness.pisiyor => 'sis_pisiyor',
-            Doneness.pismis => 'sis_pismis',
-            Doneness.yanmis => 'sis_yanmis',
-          }];
-      if (image != null) {
-        drawInQuad(canvas, image, slots[i], AssetFit.orta);
-      }
+      // Drawn, not picked from four pictures: cooking is continuous and the
+      // pictures were not. `kavrulma` is the second ramp — how far into the
+      // window to take it we are — so the meat visibly darkens toward burnt
+      // instead of switching to a burnt sprite.
+      sisCiz(
+        canvas,
+        slots[i],
+        kizarma: slot.pismeOrani,
+        kavrulma: switch (durum) {
+          Doneness.pismis => slot.ilerleme(run.day),
+          Doneness.yanmis => 1,
+          _ => 0,
+        },
+      );
       // Filling while it cooks, draining while it is worth taking, and full
       // red once it is only taking up a slot.
       final (dial, value) = switch (durum) {
