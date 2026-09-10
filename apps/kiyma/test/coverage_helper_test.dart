@@ -57,6 +57,7 @@ import 'package:kiyma/presentation/render/customer_figure.dart';
 import 'package:kiyma/presentation/render/effects.dart';
 import 'package:kiyma/presentation/render/figure.dart';
 import 'package:kiyma/presentation/render/glyphs.dart';
+import 'package:kiyma/presentation/render/grill.dart';
 import 'package:kiyma/presentation/render/halo.dart';
 import 'package:kiyma/presentation/render/painter.dart';
 import 'package:kiyma/presentation/render/shop_scene.dart';

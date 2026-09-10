@@ -21,6 +21,7 @@ import 'package:kiyma/presentation/render/customer_figure.dart';
 import 'package:kiyma/presentation/render/effects.dart';
 import 'package:kiyma/presentation/render/figure.dart';
 import 'package:kiyma/presentation/render/glyphs.dart';
+import 'package:kiyma/presentation/render/grill.dart';
 import 'package:kiyma/presentation/render/halo.dart';
 import 'package:kiyma/presentation/render/painter.dart';
 import 'package:kiyma/presentation/render/skewer.dart';
@@ -741,7 +742,19 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     for (final layer in scene.layers) {
       // Between the wall and the grill: the mangal is painted over him, and
       // that is the whole of what puts him behind it.
-      if (layer.name == 'mangal_katman') _renderSef(canvas);
+      if (layer.name == 'mangal_katman') {
+        _renderSef(canvas);
+        // The grill is drawn, not blitted: the region used to be fitted to
+        // the picture, so moving a skewer meant refitting art. Now the top
+        // face IS the region and the slots are that face divided.
+        mangalCiz(
+          canvas,
+          scene['mangal_alani'].quad,
+          t: _elapsed,
+          isi: _mangalIsisi,
+        );
+        continue;
+      }
       final image = assets[layer.src];
       if (image == null) continue;
       // The painted room bleeds a little, so a knock cannot expose a strip
@@ -809,6 +822,14 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       ..translate(-centre.dx, -centre.dy);
     draw();
     canvas.restore();
+  }
+
+  /// How hard the fire is going: a lit grill with meat on it, hotter the
+  /// fuller it is. One number so the coals, the flames and the room's glow
+  /// cannot disagree about it.
+  double get _mangalIsisi {
+    final busy = run.mangal.where((s) => s.unlocked && !s.bos).length;
+    return (0.34 + busy * 0.18).clamp(0.0, 1.0);
   }
 
   void _renderMangal(Canvas canvas) {
@@ -882,6 +903,10 @@ class CounterComponent extends PositionComponent with DragCallbacks {
         icon: dial.icon,
       );
     }
+
+    // Flames last, over the meat: that is where a flame on a mangal is, and
+    // drawn under the skewers they read as a glow behind glass.
+    alevCiz(canvas, region.quad, _elapsed, _mangalIsisi);
   }
 
   void _renderDurum(Canvas canvas) {

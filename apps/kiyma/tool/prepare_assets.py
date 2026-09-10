@@ -72,6 +72,17 @@ DROPPED_INGREDIENTS = {"maydanoz", "patlican"}
 # than the art the quad was measured on; the corners were re-derived by
 # mapping them through the ember bed in each image rather than by eye.
 RESIZED = {
+    # The grill is drawn now, so this quad is the source and the picture is
+    # gone: the top face IS this shape and the four slots are it divided.
+    # Leaned back from 32 deg to 18: the room is drawn nearly square on, and a
+    # box rotated to a vanishing point nothing else in it uses read as dropped
+    # in afterwards. It cannot go flat — `Quad.slots` splits along the longer
+    # edge, and only a trough running away from the camera keeps the four
+    # skewers full length and stacked.
+    "mangal_alani": {
+        "x": 42, "y": 350, "w": 256, "h": 136,
+        "quad": [[188, 350], [298, 386], [152, 486], [42, 450]],
+    },
     "kagit_kaynak": {
         "x": 528, "y": 396, "w": 118, "h": 52,
         "quad": [[528, 396], [645, 398], [646, 448], [529, 446]],
