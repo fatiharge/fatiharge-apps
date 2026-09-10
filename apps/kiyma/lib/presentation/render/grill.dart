@@ -60,13 +60,15 @@ void _korCiz(Canvas canvas, Quad ust, double t, double isi) {
   // A unit circle in (u, v) lands on screen as an ellipse, because the quad's
   // two axes are not the same length. This is the correction, and it was
   // inverted the first time — the coals came out as carrot slices.
-  final oran =
-      (ust.at(1, .5) - ust.at(0, .5)).distance /
-      (ust.at(.5, 1) - ust.at(.5, 0)).distance;
+  final boyu = (ust.at(1, .5) - ust.at(0, .5)).distance;
+  final oran = boyu / (ust.at(.5, 1) - ust.at(.5, 0)).distance;
   for (var i = 0; i < adet; i++) {
     final u = .06 + _rast(i * 3) * .88;
     final v = .08 + _rast(i * 3 + 1) * .84;
-    final r = .026 + _rast(i * 3 + 2) * .034;
+    // Sized in screen pixels rather than in u: a coal is a coal whatever
+    // shape the trough is, and as a fraction of the length it grew with the
+    // trough until the bed read as one pool.
+    final r = (3.0 + _rast(i * 3 + 2) * 3.8) / boyu;
     // Its own frequency and phase, so no two crest together for long.
     final atim =
         .5 +
@@ -74,7 +76,12 @@ void _korCiz(Canvas canvas, Quad ust, double t, double isi) {
     // Hotter in the middle, ashy at the rim, which is where a real bed is
     // coldest. The falloff is gentle: a sharp one left the whole bed grey
     // except a spot in the centre, and the coals read as gravel.
-    final orta = (1 - ((u - .5).abs() + (v - .5).abs()) * .9).clamp(0.0, 1.0);
+    // Banked along the trough rather than in a spot at its middle: the two
+    // ends go ashy, the near and far rims cool faster than the length does.
+    final orta = (1 - (u - .5).abs() * .75 - (v - .5).abs() * 1.05).clamp(
+      0.0,
+      1.0,
+    );
     final sicak = (isi * (.45 + .55 * orta) * (.42 + .58 * atim)).clamp(
       0.0,
       1.0,
@@ -214,12 +221,14 @@ void mangalCiz(
     ..strokeJoin = StrokeJoin.round
     ..strokeWidth = 2.8;
 
+  final merkez = kenar.reduce((a, b) => a + b) / 4;
+
   // --- legs, behind everything ----------------------------------------
-  for (final i in const [0, 1, 2, 3]) {
-    final a = kenar[i];
+  for (final a in kenar) {
     // The two back legs are shorter on screen because the floor they stand
-    // on is further up it.
-    final boy = i == 0 || i == 1 ? _ayakBoyu * .72 : _ayakBoyu;
+    // on is further up it. Which two those are is read off the screen, not
+    // off the corner order — the quad gets relabelled to steer the slots.
+    final boy = a.dy < merkez.dy ? _ayakBoyu * .72 : _ayakBoyu;
     canvas
       ..drawPath(
         _yol([
@@ -242,22 +251,30 @@ void mangalCiz(
   }
 
   // --- the box --------------------------------------------------------
-  // Which edges face the viewer is read off the screen rather than assumed
-  // from the corner order: the quad gets relabelled to steer how the slots
-  // are cut, and an assumption about which corner is "bottom left" breaks the
-  // moment it does.
-  final merkez = kenar.reduce((a, b) => a + b) / 4;
-  final duvarlar = <List<Offset>>[];
+  // Which walls the viewer can see, from each edge's outward normal. The
+  // top face is a rectangle lying on the room's floor, which on screen is a
+  // parallelogram — so both end edges have their midpoint at exactly the
+  // centre's height, and comparing the two heights finds neither of them.
+  // The box is extruded straight down, so a wall is visible when its normal
+  // has any of that direction in it.
+  final duvarlar = <({List<Offset> yuz, bool uzun})>[];
   for (var i = 0; i < 4; i++) {
     final a = kenar[i];
     final b = kenar[(i + 1) % 4];
-    if ((a.dy + b.dy) / 2 <= merkez.dy) continue;
-    duvarlar.add([a, b, asagi(b, _derinlik), asagi(a, _derinlik)]);
+    var disa = Offset(b.dy - a.dy, a.dx - b.dx);
+    final govdeden = (a + b) / 2 - merkez;
+    if (disa.dx * govdeden.dx + disa.dy * govdeden.dy < 0) disa = -disa;
+    if (disa.dy <= 0) continue;
+    duvarlar.add((
+      yuz: [a, b, asagi(b, _derinlik), asagi(a, _derinlik)],
+      // The long wall faces the room and the end wall turns away from it.
+      uzun: (b.dx - a.dx).abs() > (b.dy - a.dy).abs(),
+    ));
   }
-  for (var i = 0; i < duvarlar.length; i++) {
+  for (final d in duvarlar) {
     canvas.drawPath(
-      _yol(duvarlar[i]),
-      Paint()..color = i.isEven ? _celikGolge : _celikKoyu,
+      _yol(d.yuz),
+      Paint()..color = d.uzun ? _celikGolge : _celikKoyu,
     );
   }
   canvas
@@ -280,30 +297,18 @@ void mangalCiz(
   // --- the rim --------------------------------------------------------
   // Its own band rather than a stroke on the bed: a skewer lies ON it, and a
   // line has no top for anything to lie on.
-  canvas
-    ..drawPath(
-      _yol([
-        kenar[0],
-        kenar[1],
-        kenar[2],
-        kenar[3],
-      ]),
-      ink,
-    )
-    // A lit top edge on every wall the viewer can see: it is the one surface
-    // the fire under it actually reaches.
-    ..drawPath(
-      _yol([
-        for (final d in duvarlar) ...[
-          d[0],
-          d[1],
-          asagi(d[1], 5),
-          asagi(d[0], 5),
-        ],
-      ]),
-      Paint()..color = Color.lerp(_celikUst, _kor, .25 * isi)!,
-    );
+  canvas.drawPath(_yol(kenar), ink);
+  // A lit top edge on every wall the viewer can see: it is the one surface
+  // the fire under it actually reaches. One path per wall — run into a
+  // single one, the two bands join across the corner and fill the gap
+  // between them.
+  final tepe = Paint()..color = Color.lerp(_celikUst, _kor, .25 * isi)!;
   for (final d in duvarlar) {
-    canvas.drawPath(_yol(d), ink);
+    canvas
+      ..drawPath(
+        _yol([d.yuz[0], d.yuz[1], asagi(d.yuz[1], 5), asagi(d.yuz[0], 5)]),
+        tepe,
+      )
+      ..drawPath(_yol(d.yuz), ink);
   }
 }

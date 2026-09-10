@@ -719,32 +719,33 @@
     },
     {
       "name": "mangal_alani",
-      "x": 54,
-      "y": 414,
-      "w": 204,
-      "h": 110,
+      "x": 36,
+      "y": 438,
+      "w": 243,
+      "h": 86,
       "quad": [
         [
-          68,
-          414
+          104,
+          438
         ],
         [
-          54,
-          500
+          279,
+          438
         ],
         [
-          258,
+          240,
           524
         ],
         [
-          249,
-          438
+          36,
+          524
         ]
       ],
       "category": "sis",
       "kapasite": 4,
       "asset": "sis_cig",
-      "asset_fit": "orta"
+      "asset_fit": "orta",
+      "slot_yon": "yatay"
     },
     {
       "name": "tatli_baklava",

@@ -869,12 +869,14 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       // instead of switching to a burnt sprite.
       sisCiz(
         canvas,
-        // u reversed, so the flat tang lands at the near end. The slots run
-        // back to front and the handle is the end you would reach for.
+        // Transposed: the slot is cut across the trough's length, so its u
+        // is the width of one bay and a skewer lies along its v. Turned, and
+        // turned near-end-first, so the flat tang lands at the front — the
+        // end you would reach for.
         Quad(
-          slots[i].topRight,
-          slots[i].topLeft,
           slots[i].bottomLeft,
+          slots[i].topLeft,
+          slots[i].topRight,
           slots[i].bottomRight,
         ),
         kizarma: slot.pismeOrani,

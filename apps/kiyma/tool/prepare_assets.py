@@ -75,19 +75,24 @@ RESIZED = {
     # The grill is drawn now, so this quad is the source and the picture is
     # gone: the top face IS this shape and the four slots are it divided.
     #
-    # The trough runs left to right, square to the room and parallel to the
-    # usta's shoulders. It used to run away from the camera at 32 deg, which
-    # is a different projection from the one the room and the man in front of
-    # it are drawn in, and the two would not sit together.
+    # It is a rectangle lying on the room's own floor. The long edges are
+    # horizontal, which is the counter's slope measured off the art (0.4 deg),
+    # and the two depth edges run at the vanishing point the floorboards
+    # converge on, (510, -75). That is what the shear is: not a stylistic
+    # lean, the same projection everything else in the room is drawn in.
     #
-    # The corners are labelled back-left, FRONT-left, front-right, back-right
-    # rather than clockwise from the top. `Quad.slots` splits along whichever
-    # edge is longer, so this is what makes it cut four bays across the length
-    # instead of four bands down the depth — and skewers laid across a trough
-    # is how they lie on a real mangal anyway.
+    # Corners run back-left, back-right, front-right, front-left, so the
+    # quad's u axis is the length and v is the depth. `slot_yon` then cuts
+    # four bays across the length rather than four bands down the depth --
+    # and the coals and flames scatter along u, which is the trough.
     "mangal_alani": {
-        "x": 54, "y": 414, "w": 204, "h": 110,
-        "quad": [[68, 414], [54, 500], [258, 524], [249, 438]],
+        "x": 36, "y": 438, "w": 243, "h": 86,
+        "quad": [[104, 438], [279, 438], [240, 524], [36, 524]],
+        "category": "sis",
+        "kapasite": 4,
+        "slot_yon": "yatay",
+        "asset": "sis_cig",
+        "asset_fit": "orta",
     },
     "kagit_kaynak": {
         "x": 528, "y": 396, "w": 118, "h": 52,
