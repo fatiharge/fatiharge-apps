@@ -250,49 +250,6 @@ class _Poz {
   Offset? sagEl;
 }
 
-/// The arm, shoulder to hand, as one curve.
-///
-/// A two-bone elbow was tried three times and broke three different ways.
-/// The reason is not tuning: the elbow's swing off the axis goes as the
-/// square root of the slack, so bones 5% longer than the reach throw it seven
-/// units wide, and shorter bones cannot reach the counter at all. There is no
-/// valid range between the two. The bend is now curvature rather than a
-/// break — the closer the target, the more the curve bows out — and it never
-/// corners.
-({List<Offset> orta, Offset el}) _kolEgrisi(
-  Offset omuz,
-  Offset hedef,
-  double yon,
-  double boy, {
-  int n = 18,
-}) {
-  var d = (hedef - omuz).distance;
-  var el = hedef;
-  if (d < 1e-6) d = 1e-6;
-  if (d > boy) {
-    el = omuz + (hedef - omuz) * (boy / d);
-    d = boy;
-  }
-  final u = (el - omuz) / d;
-  final yay = boy * .62 * (1 - d / boy);
-  final k = Offset(
-    (omuz.dx + el.dx) / 2 + u.dy * yay * yon,
-    (omuz.dy + el.dy) / 2 - u.dx * yay * yon,
-  );
-  final orta = <Offset>[];
-  for (var i = 0; i <= n; i++) {
-    final t = i / n;
-    final v = 1 - t;
-    orta.add(
-      Offset(
-        v * v * omuz.dx + 2 * v * t * k.dx + t * t * el.dx,
-        v * v * omuz.dy + 2 * v * t * k.dy + t * t * el.dy,
-      ),
-    );
-  }
-  return (orta: orta, el: el);
-}
-
 /// Draws one customer at [kokta], in the seat's own 102.4-wide space.
 ///
 /// Three groups, each with its own two passes — every outline, then every
@@ -354,7 +311,7 @@ void musteriCiz(
           omuz.dx + yon * math.sin(aci) * K.kolBoyu,
           omuz.dy + math.cos(aci) * K.kolBoyu,
         );
-    final kol = _kolEgrisi(omuz, hedef, yon, K.kolBoyu);
+    final kol = kolEgrisi(omuz, hedef, yon, K.kolBoyu);
     final kes = math.max(3, (kol.orta.length * .46).round());
     // The sleeve starts inside the shirt so its flat end never shows.
     final ic = Offset(cx + yon * (K.omuzYari - 8), K.omuzY + 10);

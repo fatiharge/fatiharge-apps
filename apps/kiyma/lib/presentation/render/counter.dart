@@ -23,6 +23,7 @@ import 'package:kiyma/presentation/render/figure.dart';
 import 'package:kiyma/presentation/render/glyphs.dart';
 import 'package:kiyma/presentation/render/halo.dart';
 import 'package:kiyma/presentation/render/painter.dart';
+import 'package:kiyma/presentation/render/usta_figure.dart';
 
 /// The whole counter: every pixel of the game world and every gesture on it.
 ///
@@ -1291,56 +1292,14 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     }
   }
 
-  /// Whoever is actually cooking.
+  /// The usta, at his grill.
   ///
-  /// A placeholder, like the customers: the characters are the one part of
-  /// the art meant to be animated, so until they are, this is a jacket and a
-  /// hat filling the chef's place. He is drawn from inside the scene pass,
-  /// between the back wall and the grill, so the mangal is painted over his
-  /// waist — which is what puts him behind it instead of standing in it.
-  void _renderSef(Canvas canvas) {
-    final region = scene.maybe('sef');
-    if (region == null) return;
-    final bounds = region.quad.bounds;
-    // Breathing, so a still figure is not a cardboard cut-out.
-    final sway = math.sin(_elapsed * 1.7) * 2.0;
-    final x = bounds.center.dx + sway;
-    const skin = Color(0xFF7A6350);
-    const jacket = Color(0xFFF3EADA);
-
-    canvas
-      ..drawRRect(
-        RRect.fromRectAndRadius(
-          Rect.fromCenter(center: Offset(x, 252), width: 58, height: 36),
-          const Radius.circular(17),
-        ),
-        Paint()..color = jacket,
-      )
-      ..drawRRect(
-        RRect.fromRectAndRadius(
-          Rect.fromCenter(center: Offset(x, 272), width: 64, height: 14),
-          const Radius.circular(6),
-        ),
-        Paint()..color = const Color(0xFFDCCFB8),
-      )
-      ..drawCircle(Offset(x, 296), 26, Paint()..color = skin)
-      ..drawRRect(
-        RRect.fromRectAndRadius(
-          Rect.fromLTRB(x - 62, 320, x + 62, bounds.bottom),
-          const Radius.circular(26),
-        ),
-        Paint()..color = jacket,
-      )
-      // A collar, which is the one line that says jacket rather than sack.
-      ..drawPath(
-        Path()
-          ..moveTo(x - 17, 320)
-          ..lineTo(x, 346)
-          ..lineTo(x + 17, 320)
-          ..close(),
-        Paint()..color = const Color(0xFFDCCFB8),
-      );
-  }
+  /// He was a jacket, a toque and a circle — the placeholder that stood in
+  /// while the characters were unbuilt. He is drawn now, from the same rig as
+  /// the customers, and he is painted second of the fifteen things in a
+  /// frame: the grill goes over him from y ~360 down, which is what puts him
+  /// behind it rather than standing in it.
+  void _renderSef(Canvas canvas) => ustaCiz(canvas, t: _elapsed);
 
   /// The money, chalked on a slate the way a shop actually keeps a tally.
   ///

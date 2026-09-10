@@ -946,10 +946,10 @@
     },
     {
       "name": "duvar_takvimi",
-      "x": 20,
-      "y": 152,
+      "x": 792,
+      "y": 86,
       "w": 92,
-      "h": 128,
+      "h": 130,
       "category": "dekor",
       "asset": "takvim",
       "asset_fit": "orta"

@@ -45,6 +45,10 @@ Sekil sekil(List<Offset> n, String rol, double kalem) =>
     (yol: yoldan(n), rol: rol, kalem: kalem);
 
 Path yoldan(List<Offset> n) {
+  // An empty list is a legitimate result: [hilal] returns one when the arc it
+  // was asked for falls outside the shape. Drawing nothing is the right
+  // answer, and crashing on it took out a whole frame.
+  if (n.isEmpty) return Path();
   final p = Path()..moveTo(n.first.dx, n.first.dy);
   for (var i = 1; i < n.length; i++) {
     p.lineTo(n[i].dx, n[i].dy);
@@ -52,9 +56,13 @@ Path yoldan(List<Offset> n) {
   return p..close();
 }
 
+// The primitives below are public because the usta is built from the same
+// vocabulary in his own file: he is a different person, not a fourteenth
+// customer, but he is drawn with the same hand.
+
 // --- path tools ------------------------------------------------------------
 
-List<Offset> _bez(Offset p0, Offset p1, Offset p2, Offset p3, [int n = 22]) {
+List<Offset> bez(Offset p0, Offset p1, Offset p2, Offset p3, [int n = 22]) {
   final out = <Offset>[];
   for (var i = 1; i <= n; i++) {
     final t = i / n;
@@ -73,19 +81,19 @@ List<Offset> _bez(Offset p0, Offset p1, Offset p2, Offset p3, [int n = 22]) {
   return out;
 }
 
-List<Offset> _yol(Offset bas, List<List<Offset>> segment) {
+List<Offset> yol(Offset bas, List<List<Offset>> segment) {
   final pts = <Offset>[bas];
   var cur = bas;
   for (final s in segment) {
-    pts.addAll(_bez(cur, s[0], s[1], s[2]));
+    pts.addAll(bez(cur, s[0], s[1], s[2]));
     cur = s[2];
   }
   return pts;
 }
 
-List<Offset> _elips(double x, double y, double rx, double ry) {
+List<Offset> elips(double x, double y, double rx, double ry) {
   const k = 0.5523;
-  return _yol(Offset(x, y - ry), [
+  return yol(Offset(x, y - ry), [
     [Offset(x + rx * k, y - ry), Offset(x + rx, y - ry * k), Offset(x + rx, y)],
     [Offset(x + rx, y + ry * k), Offset(x + rx * k, y + ry), Offset(x, y + ry)],
     [Offset(x - rx * k, y + ry), Offset(x - rx, y + ry * k), Offset(x - rx, y)],
@@ -93,7 +101,7 @@ List<Offset> _elips(double x, double y, double rx, double ry) {
   ]);
 }
 
-List<Offset> _ayna(List<Offset> p) => [
+List<Offset> ayna(List<Offset> p) => [
   for (final q in p) Offset(2 * cx - q.dx, q.dy),
 ];
 
@@ -189,14 +197,63 @@ List<Offset> serit(List<Offset> orta, double w0, double w1) {
   return [...sol, ...sag.reversed];
 }
 
+/// The arm, shoulder to hand, as one curve.
+///
+/// A two-bone elbow was tried three times and broke three different ways.
+/// The reason is not tuning: the elbow's swing off the axis goes as the
+/// square root of the slack, so bones 5% longer than the reach throw it seven
+/// units wide, and shorter bones cannot reach the counter at all. There is no
+/// valid range between the two. The bend is now curvature rather than a
+/// break — the closer the target, the more the curve bows out — and it never
+/// corners.
+({List<Offset> orta, Offset el}) kolEgrisi(
+  Offset omuz,
+  Offset hedef,
+  double yon,
+  double boy, {
+  int n = 18,
+}) {
+  var d = (hedef - omuz).distance;
+  var el = hedef;
+  if (d < 1e-6) d = 1e-6;
+  if (d > boy) {
+    el = omuz + (hedef - omuz) * (boy / d);
+    d = boy;
+  }
+  final u = (el - omuz) / d;
+  final yay = boy * .62 * (1 - d / boy);
+  final k = Offset(
+    (omuz.dx + el.dx) / 2 + u.dy * yay * yon,
+    (omuz.dy + el.dy) / 2 - u.dx * yay * yon,
+  );
+  final orta = <Offset>[];
+  for (var i = 0; i <= n; i++) {
+    final t = i / n;
+    final v = 1 - t;
+    orta.add(
+      Offset(
+        v * v * omuz.dx + 2 * v * t * k.dx + t * t * el.dx,
+        v * v * omuz.dy + 2 * v * t * k.dy + t * t * el.dy,
+      ),
+    );
+  }
+  return (orta: orta, el: el);
+}
+
 // --- parts -----------------------------------------------------------------
 
-List<Offset> _kafa(double cy, double rx, double ry, double cene, double yanak) {
+List<Offset> kafaSekli(
+  double cy,
+  double rx,
+  double ry,
+  double cene,
+  double yanak,
+) {
   final ust = cy - ry;
   final alt = cy + ry;
   final yx = rx * yanak;
   final ck = rx * cene;
-  return _yol(Offset(cx, ust), [
+  return yol(Offset(cx, ust), [
     [
       Offset(cx + rx * .66, ust),
       Offset(cx + yx, cy - ry * .52),
@@ -227,9 +284,14 @@ List<Offset> _kafa(double cy, double rx, double ry, double cene, double yanak) {
 
 /// Shoulder to waist. The sides bow out and the shoulder-to-waist turn is a
 /// curve, not a corner: as a plain trapezium it read as cut from card.
-List<Offset> _govde(double oy, double omuzYari, double altYari, double boyun) {
+List<Offset> govdeSekli(
+  double oy,
+  double omuzYari,
+  double altYari,
+  double boyun,
+) {
   const alt = 142.0;
-  final sag = _yol(Offset(cx + boyun, oy - 7.5), [
+  final sag = yol(Offset(cx + boyun, oy - 7.5), [
     [
       Offset(cx + omuzYari * .58, oy - 6.4),
       Offset(cx + omuzYari - 1.4, oy + 1.5),
@@ -241,10 +303,10 @@ List<Offset> _govde(double oy, double omuzYari, double altYari, double boyun) {
       Offset(cx + altYari, alt),
     ],
   ]);
-  return [..._ayna(sag).reversed, ...sag];
+  return [...ayna(sag).reversed, ...sag];
 }
 
-List<Offset> _yaka(double oy, double b, double s) => _yol(
+List<Offset> yakaSekli(double oy, double b, double s) => yol(
   Offset(cx + s * b * .52, oy - 7.5),
   [
     [
@@ -275,7 +337,7 @@ List<Offset> _pat(double oy) => [
 List<Offset> _yelekKanat(double oy, double omuzYari, double altYari, double s) {
   const alt = 142.0;
   return [
-    ..._yol(Offset(cx + s * 7.5, oy - 3), [
+    ...yol(Offset(cx + s * 7.5, oy - 3), [
       [
         Offset(cx + s * 20, oy + 1),
         Offset(cx + s * (omuzYari - 3.5), oy + 7),
@@ -288,7 +350,7 @@ List<Offset> _yelekKanat(double oy, double omuzYari, double altYari, double s) {
       ],
     ]),
     Offset(cx + s * 9.5, alt),
-    ..._bez(
+    ...bez(
       Offset(cx + s * 9.5, alt),
       Offset(cx + s * 10, alt - 30),
       Offset(cx + s * 9.2, oy + 16),
@@ -299,10 +361,10 @@ List<Offset> _yelekKanat(double oy, double omuzYari, double altYari, double s) {
 
 /// One lobe of a handlebar. Drawn as a single path the dip in the middle
 /// disappeared and the whole thing read as a wide bib.
-List<Offset> _biyik(double y, double gen, double sarkma, double s) {
+List<Offset> biyikSekli(double y, double gen, double sarkma, double s) {
   final dip = y + sarkma * 1.02;
   final uc = y - sarkma * .92;
-  return _yol(Offset(cx + s * .45, y - sarkma * .20), [
+  return yol(Offset(cx + s * .45, y - sarkma * .20), [
     [
       Offset(cx + s * gen * .34, y - sarkma * .34),
       Offset(cx + s * gen * .74, y - sarkma * .62),
@@ -328,7 +390,7 @@ List<Offset> _biyik(double y, double gen, double sarkma, double s) {
 
 List<Offset> _fes(double alt, double r, double boy) {
   final tepe = alt - boy;
-  return _yol(Offset(cx - r, alt), [
+  return yol(Offset(cx - r, alt), [
     [
       Offset(cx - r * .99, alt - boy * .42),
       Offset(cx - r * .93, tepe + 5.5),
@@ -362,7 +424,7 @@ List<Offset> _fesBant(double alt, double r) => [
 List<Offset> _kasket(double alt, double r, double boy) {
   final tepe = alt - boy;
   return [
-    ..._yol(Offset(cx - r, alt), [
+    ...yol(Offset(cx - r, alt), [
       [
         Offset(cx - r * 1.02, tepe + 1),
         Offset(cx + r * .62, tepe - 1.5),
@@ -374,7 +436,7 @@ List<Offset> _kasket(double alt, double r, double boy) {
         Offset(cx + r * 1.40, alt + .8),
       ],
     ]),
-    ..._bez(
+    ...bez(
       Offset(cx + r * 1.40, alt + .8),
       Offset(cx + r * 1.30, alt + 3.6),
       Offset(cx + r * .34, alt + 3.9),
@@ -387,7 +449,7 @@ List<Offset> _kasket(double alt, double r, double boy) {
 List<Offset> _bere(double alt, double r, double boy) {
   final tepe = alt - boy;
   return [
-    ..._yol(Offset(cx - r, alt), [
+    ...yol(Offset(cx - r, alt), [
       [
         Offset(cx - r * 1.06, tepe + boy * .30),
         Offset(cx - r * .70, tepe),
@@ -404,7 +466,7 @@ List<Offset> _bere(double alt, double r, double boy) {
   ];
 }
 
-List<Offset> _sac(double cy, double rx, double ry) => _yol(
+List<Offset> _sac(double cy, double rx, double ry) => yol(
   Offset(cx - rx, cy - ry * .26),
   [
     [
@@ -425,7 +487,7 @@ List<Offset> _sac(double cy, double rx, double ry) => _yol(
   ],
 );
 
-List<Offset> _sacParlak(double cy, double rx, double ry) => _yol(
+List<Offset> _sacParlak(double cy, double rx, double ry) => yol(
   Offset(cx - rx * .74, cy - ry * .80),
   [
     [
@@ -453,7 +515,7 @@ List<Offset> _sakal(
 ) {
   final yx = rx * yanak;
   final ck = rx * cene;
-  return _yol(Offset(cx - yx * .96, cy - ry * .04), [
+  return yol(Offset(cx - yx * .96, cy - ry * .04), [
     [
       Offset(cx - yx * 1.02, cy + ry * .68),
       Offset(cx - ck * .86, cy + ry * 1.18),
@@ -479,7 +541,7 @@ List<Offset> _sakal(
 
 /// Hair falling past the shoulders. Drawn before the head, so the face lands
 /// on top of it and only the sides show.
-List<Offset> _uzunSac(double cy, double rx, double ry) => _yol(
+List<Offset> _uzunSac(double cy, double rx, double ry) => yol(
   Offset(cx - rx * 1.22, cy + ry * 1.85),
   [
     [
@@ -507,7 +569,7 @@ List<Offset> _uzunSac(double cy, double rx, double ry) => _yol(
 ///
 /// The opening has to start at the hairline. Set higher it left the crown
 /// bare and the scarf came out as a band round the face.
-List<Offset> _esarp(double cy, double rx, double ry) => _yol(
+List<Offset> _esarp(double cy, double rx, double ry) => yol(
   Offset(cx - rx * 1.14, cy + ry * .72),
   [
     [
@@ -536,7 +598,7 @@ List<Offset> _esarp(double cy, double rx, double ry) => _yol(
 /// A goatee: chin only, where the full beard takes the whole jaw.
 List<Offset> _keciSakal(double cy, double rx, double ry, double cene) {
   final ck = rx * cene;
-  return _yol(Offset(cx - ck * .38, cy + ry * .60), [
+  return yol(Offset(cx - ck * .38, cy + ry * .60), [
     [
       Offset(cx - ck * .46, cy + ry * .94),
       Offset(cx - ck * .36, cy + ry * 1.24),
@@ -556,10 +618,10 @@ List<Offset> _keciSakal(double cy, double rx, double ry, double cene) {
 }
 
 List<Offset> _topuz(double cy, double rx, double ry) =>
-    _elips(cx + rx * .26, cy - ry * 1.20, rx * .36, ry * .32);
+    elips(cx + rx * .26, cy - ry * 1.20, rx * .36, ry * .32);
 
 /// The fold inside the ear. A plain oval read as a button.
-List<Offset> _kulakIci(double ex, double ey) => _yol(
+List<Offset> kulakIciSekli(double ex, double ey) => yol(
   Offset(ex + 3.4, ey - 3.8),
   [
     [
@@ -925,13 +987,13 @@ class FigureParts {
     final oy = spec.omuzY;
     const boyunYari = 11.0;
 
-    final g = _govde(oy, spec.omuzYari, spec.altYari, boyunYari);
+    final g = govdeSekli(oy, spec.omuzYari, spec.altYari, boyunYari);
     govde
       ..add(sekil(g, 'govde', siluet))
       ..add(sekil(hilal(g, a0: -18, a1: 128, kalinlik: .26), 'govdeG', yok));
     // The collar goes under the waistcoat: over it, it read as a scarf.
     for (final s in const [-1.0, 1.0]) {
-      govde.add(sekil(_yaka(oy, boyunYari, s), 'govdeK', ince));
+      govde.add(sekil(yakaSekli(oy, boyunYari, s), 'govdeK', ince));
     }
     if (spec.yelek) {
       for (final s in const [-1.0, 1.0]) {
@@ -946,22 +1008,22 @@ class FigureParts {
     } else {
       govde.add(sekil(_pat(oy), 'govdeG', ince));
       for (var i = 0; i < 3; i++) {
-        govde.add(sekil(_elips(cx, oy + 27 + i * 18, 2, 2), 'govdeK', ince));
+        govde.add(sekil(elips(cx, oy + 27 + i * 18, 2, 2), 'govdeK', ince));
       }
     }
 
     if (spec.uzunSac) kafa.add(sekil(_uzunSac(cy, rx, ry), 'sac', orta));
     final kx = rx * spec.yanak - 1;
     for (final s in const [-1.0, 1.0]) {
-      kafa.add(sekil(_elips(cx + s * kx, cy + 3, 6.4, 7.4), 'ten', orta));
+      kafa.add(sekil(elips(cx + s * kx, cy + 3, 6.4, 7.4), 'ten', orta));
     }
-    final kf = _kafa(cy, rx, ry, spec.cene, spec.yanak);
+    final kf = kafaSekli(cy, rx, ry, spec.cene, spec.yanak);
     kafa
       ..add(sekil(kf, 'ten', siluet))
       ..add(sekil(hilal(kf, a0: -24, a1: 126, kalinlik: .22), 'tenGolge', yok));
-    final ki = _kulakIci(cx + kx, cy + 3.4);
+    final ki = kulakIciSekli(cx + kx, cy + 3.4);
     kafa
-      ..add(sekil(_ayna(ki), 'tenGolge', ince))
+      ..add(sekil(ayna(ki), 'tenGolge', ince))
       ..add(sekil(ki, 'tenGolge', ince));
     // A beard is the same hair as the moustache, so it takes the same role.
     if (spec.sakal) {
@@ -988,7 +1050,7 @@ class FigureParts {
           ..add(sekil(_fesBant(taban, rx * .68), 'sapkaK', ince))
           ..add(
             sekil(
-              _elips(cx + rx * .56, cy - ry - 13, 2.9, 2.9),
+              elips(cx + rx * .56, cy - ry - 13, 2.9, 2.9),
               'sapkaK',
               ince,
             ),
@@ -1011,7 +1073,7 @@ class FigureParts {
     }
     kafa.add(
       sekil(
-        _elips(cx, cy + spec.burunY, spec.burun, spec.burun * spec.burunOran),
+        elips(cx, cy + spec.burunY, spec.burun, spec.burun * spec.burunOran),
         'burunR',
         orta,
       ),
@@ -1019,11 +1081,11 @@ class FigureParts {
     switch (spec.biyik) {
       case 'buyuk':
         for (final s in const [-1.0, 1.0]) {
-          kafa.add(sekil(_biyik(cy + 9.4, 24.5, 9.4, s), 'biyikR', orta));
+          kafa.add(sekil(biyikSekli(cy + 9.4, 24.5, 9.4, s), 'biyikR', orta));
         }
       case 'kucuk':
         for (final s in const [-1.0, 1.0]) {
-          kafa.add(sekil(_biyik(cy + 12.2, 9.5, 3.4, s), 'biyikR', orta));
+          kafa.add(sekil(biyikSekli(cy + 12.2, 9.5, 3.4, s), 'biyikR', orta));
         }
     }
   }

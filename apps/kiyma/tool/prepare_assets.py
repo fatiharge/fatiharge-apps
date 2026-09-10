@@ -110,7 +110,11 @@ DEKOR = [
         "category": "dekor",
         "asset": "takvim_1.png",
         "asset_fit": "orta",
-        "x": 20, "y": 152, "w": 92, "h": 128,
+        # Moved off the left wall to hang beside the clock: the usta stands in
+        # front of where it used to be, and a day number behind a man is not a
+        # day number. This strip is the only clear wall left — the third
+        # ticket ends at x 789 and the clock starts at 886.
+        "x": 792, "y": 86, "w": 92, "h": 130,
     },
 ]
 
