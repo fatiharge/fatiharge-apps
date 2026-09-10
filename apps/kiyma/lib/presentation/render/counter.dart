@@ -873,7 +873,14 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       // instead of switching to a burnt sprite.
       sisCiz(
         canvas,
-        slots[i],
+        // u reversed, so the flat tang lands at the near end. The slots run
+        // back to front and the handle is the end you would reach for.
+        Quad(
+          slots[i].topRight,
+          slots[i].topLeft,
+          slots[i].bottomLeft,
+          slots[i].bottomRight,
+        ),
         kizarma: slot.pismeOrani,
         kavrulma: switch (durum) {
           Doneness.pismis => slot.ilerleme(run.day),

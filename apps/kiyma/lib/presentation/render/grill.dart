@@ -17,7 +17,6 @@ import 'dart:ui';
 
 import 'package:kiyma/domain/quad.dart';
 
-const _celik = Color(0xFF6E6259);
 const _celikUst = Color(0xFF8A7C70);
 const _celikGolge = Color(0xFF4A423C);
 const _celikKoyu = Color(0xFF352F2A);
@@ -243,23 +242,25 @@ void mangalCiz(
   }
 
   // --- the box --------------------------------------------------------
-  // Two visible walls: the near-left and the near-right, extruded straight
-  // down. The two behind are covered by the box itself.
-  final solDuvar = [
-    kenar[3],
-    kenar[2],
-    asagi(kenar[2], _derinlik),
-    asagi(kenar[3], _derinlik),
-  ];
-  final sagDuvar = [
-    kenar[2],
-    kenar[1],
-    asagi(kenar[1], _derinlik),
-    asagi(kenar[2], _derinlik),
-  ];
+  // Which edges face the viewer is read off the screen rather than assumed
+  // from the corner order: the quad gets relabelled to steer how the slots
+  // are cut, and an assumption about which corner is "bottom left" breaks the
+  // moment it does.
+  final merkez = kenar.reduce((a, b) => a + b) / 4;
+  final duvarlar = <List<Offset>>[];
+  for (var i = 0; i < 4; i++) {
+    final a = kenar[i];
+    final b = kenar[(i + 1) % 4];
+    if ((a.dy + b.dy) / 2 <= merkez.dy) continue;
+    duvarlar.add([a, b, asagi(b, _derinlik), asagi(a, _derinlik)]);
+  }
+  for (var i = 0; i < duvarlar.length; i++) {
+    canvas.drawPath(
+      _yol(duvarlar[i]),
+      Paint()..color = i.isEven ? _celikGolge : _celikKoyu,
+    );
+  }
   canvas
-    ..drawPath(_yol(solDuvar), Paint()..color = _celikGolge)
-    ..drawPath(_yol(sagDuvar), Paint()..color = _celikKoyu)
     // The coal bed, ash-dark before any ember lands on it.
     ..drawPath(_yol(kenar), Paint()..color = const Color(0xFF3A231A))
     // A warm floor under the coals: on a cold bed every ember read as a
@@ -279,17 +280,6 @@ void mangalCiz(
   // --- the rim --------------------------------------------------------
   // Its own band rather than a stroke on the bed: a skewer lies ON it, and a
   // line has no top for anything to lie on.
-  for (final (a, b, ic) in [
-    (kenar[3], kenar[2], r(-.02, 1.02)),
-    (kenar[2], kenar[1], r(1.02, 1.02)),
-    (kenar[0], kenar[3], r(-.02, -.03)),
-    (kenar[1], kenar[0], r(1.02, -.03)),
-  ]) {
-    canvas.drawPath(
-      _yol([a, b, Offset(ic.dx, ic.dy), Offset(ic.dx, ic.dy)]),
-      Paint()..color = _celik,
-    );
-  }
   canvas
     ..drawPath(
       _yol([
@@ -300,17 +290,20 @@ void mangalCiz(
       ]),
       ink,
     )
-    ..drawPath(_yol(solDuvar), ink)
-    ..drawPath(_yol(sagDuvar), ink)
-    // A lit top edge on the near rim: it is the one surface the fire under it
-    // actually reaches.
+    // A lit top edge on every wall the viewer can see: it is the one surface
+    // the fire under it actually reaches.
     ..drawPath(
       _yol([
-        kenar[3],
-        kenar[2],
-        asagi(kenar[2], 5),
-        asagi(kenar[3], 5),
+        for (final d in duvarlar) ...[
+          d[0],
+          d[1],
+          asagi(d[1], 5),
+          asagi(d[0], 5),
+        ],
       ]),
       Paint()..color = Color.lerp(_celikUst, _kor, .25 * isi)!,
     );
+  for (final d in duvarlar) {
+    canvas.drawPath(_yol(d), ink);
+  }
 }
