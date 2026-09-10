@@ -37,7 +37,12 @@ const _kafaBoy = 80.0;
 const _cene = 0.60;
 const _yanak = 0.93;
 const _omuzY = 321.0;
-const _omuzYari = 71.0;
+
+/// Shoulder half-width — and the sleeve's outer edge, not the torso's. On a
+/// real figure the widest point of the silhouette is the arm; when this was
+/// the torso's own width the sleeve stood 16 px proud of it and the shoulder
+/// stepped.
+const _omuzYari = 80.0;
 const _altYari = 78.0;
 const _gozAralik = 29.0;
 const _gozR = 18.5;
@@ -79,7 +84,7 @@ const _yakaY = 299.0;
 const _yakaDip = 316.0;
 const _onlukY = 333.0;
 
-const _havluUst = 292.0;
+const _havluUst = 302.0;
 const _havluAlt = 372.0;
 
 /// Ink in screen pixels. Lighter in proportion than a customer's, because he
@@ -451,27 +456,21 @@ List<Offset> _boyun() {
 
 /// One flap of the open collar, shoulder seam to the V.
 ///
-/// The reference's collar is one stroke per side: down off the seam, up over
-/// the point where it stands off the chest, down again into the V. The peak
-/// is the whole tell — without it a collar is a bib, which is what two flat
-/// slabs gave him.
+/// One point per side. The first attempt gave each flap three, chasing the
+/// way the reference's collar stands off the chest, and at his size the pair
+/// read as a lace ruff.
 List<Offset> _yaka(double s) => yol(
-  Offset(cx + s * 30, _yakaY - 3),
+  Offset(cx + s * 26, _yakaY + 2),
   [
     [
-      Offset(cx + s * 27, _yakaY + 9),
-      Offset(cx + s * 23, _yakaY + 11),
-      Offset(cx + s * 18, _yakaY + 4),
+      Offset(cx + s * 24, _yakaY + 12),
+      Offset(cx + s * 17, _yakaY + 18),
+      Offset(cx + s * 3, _yakaDip + 2),
     ],
     [
-      Offset(cx + s * 15, _yakaY + 9),
-      Offset(cx + s * 13, _yakaY + 12),
-      Offset(cx + s * 2, _yakaDip),
-    ],
-    [
-      Offset(cx + s * 6, _yakaY - 6),
-      Offset(cx + s * 18, _yakaY - 8),
-      Offset(cx + s * 30, _yakaY - 3),
+      Offset(cx + s * 9, _yakaY + 10),
+      Offset(cx + s * 16, _yakaY + 1),
+      Offset(cx + s * 26, _yakaY + 2),
     ],
   ],
 );
@@ -784,22 +783,29 @@ void ustaCiz(Canvas canvas, {required double t}) {
   final yenler = <Sekil>[];
   final tenler = <Sekil>[];
   for (final yon in const [-1.0, 1.0]) {
-    final omuz = Offset(cx + yon * (_omuzYari - 4), _omuzY - 2);
+    // The arm hangs from the shirt's own widest point. Anchored above it the
+    // sleeve became a lump outside the shoulder, and the silhouette stepped.
+    final omuz = Offset(cx + yon * (_omuzYari - 19), _omuzY + 12);
     final hedef = yon < 0 ? p.solEl : p.sagEl;
     final kol = kolEgrisi(omuz, hedef, yon, kolBoyu);
     // The sleeve ends just above the grill's edge, which is the last place
     // anything he wears can be seen at all.
     final kes = math.max(3, (kol.orta.length * .34).round());
-    final ic = Offset(cx + yon * (_omuzYari - 20), _omuzY - 6);
+    final ic = Offset(cx + yon * (_omuzYari - 40), _omuzY + 2);
     yenler.add(
-      sekil(serit([ic, ...kol.orta.take(kes)], 23, 19), 'gomlek', _orta),
+      sekil(serit([ic, ...kol.orta.take(kes)], 19, 16), 'gomlek', _orta),
     );
     tenler
       ..add(sekil(serit(kol.orta.sublist(kes - 1), 18, 13), 'ten', _orta))
       ..add(sekil(_el(kol.el.dx, kol.el.dy, yon), 'ten', _orta));
   }
 
-  grup([...parca.govde.take(2), ...yenler, ...parca.govde.skip(2)]);
+  // Sleeves before the shirt, not inside its list: a strip is as wide above
+  // its centre line as below, so its top edge cleared the shoulder and left a
+  // step in the silhouette. Filled first, the shirt swallows whatever rides
+  // too high and its own outline crosses what is left — which is the shoulder
+  // seam, and the reference has one.
+  grup([...yenler, ...parca.govde]);
   grup(tenler);
   grup(parca.sus);
   grup(parca.havlu);
