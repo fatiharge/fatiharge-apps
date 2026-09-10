@@ -85,6 +85,16 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   /// One colour and one glyph per band. Four states are learnable where a
   /// continuous multiplier is not, and a glyph is read faster than a word in
   /// any language.
+  /// The band as a glyph. A word here would need translating and would not
+  /// be read at a glance anyway — this is the one thing the old dial carried
+  /// that a level cannot say on its own.
+  static const Map<TempoBand, IconData> _tempoGlyphs = {
+    TempoBand.soguk: Icons.ac_unit_rounded,
+    TempoBand.normal: Icons.thermostat_rounded,
+    TempoBand.isiniyor: Icons.whatshot_rounded,
+    TempoBand.ates: Icons.local_fire_department_rounded,
+  };
+
   static const Map<TempoBand, Color> _tempoColours = {
     TempoBand.soguk: Color(0xFF6C8AA6),
     TempoBand.normal: Color(0xFFCBA23C),
@@ -1976,6 +1986,12 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     final isi = ((tempo.deger - 60) / 30).clamp(0.0, 1.0);
     final soguk = ((25 - tempo.deger) / 25).clamp(0.0, 1.0);
 
+    // Pinned is a state, not a stop. The dial's needle trembled at the top of
+    // the scale for this reason, and a bar that is simply full says nothing
+    // about being held there.
+    final dayali = tempo.oran > .98;
+    final titreme = dayali ? .10 + .10 * math.sin(_elapsed * 26) : 0.0;
+
     canvas
       // The track: what is still to earn, and dark enough that the fill is
       // the only lit thing along the top of the screen.
@@ -1984,6 +2000,16 @@ class CounterComponent extends PositionComponent with DragCallbacks {
         Rect.fromLTWH(0, _barBoy - 2, w, 2),
         Paint()..color = const Color(0x66000000),
       );
+
+    // Ten marks, so the level is read against something. The dial had them
+    // for the same reason: a needle with no scale behind it is a decoration.
+    for (var i = 1; i < 10; i++) {
+      final x = w * i / 10;
+      canvas.drawRect(
+        Rect.fromLTWH(x - 1, _barBoy * .38, 2, _barBoy * .62),
+        Paint()..color = const Color(0x3AFFF0C8),
+      );
+    }
 
     if (dolu > 1) {
       canvas
@@ -2056,6 +2082,14 @@ class CounterComponent extends PositionComponent with DragCallbacks {
           ),
       );
     }
+    if (titreme > 0) {
+      canvas.drawRect(
+        rect,
+        Paint()
+          ..blendMode = BlendMode.plus
+          ..color = const Color(0xFFFFF0C8).withValues(alpha: titreme),
+      );
+    }
     if (tempo.deger >= 90) _barAlevi(canvas, dolu, (tempo.deger - 90) / 10);
     if (soguk > 0) _barBuzu(canvas, dolu, w, soguk);
 
@@ -2080,6 +2114,15 @@ class CounterComponent extends PositionComponent with DragCallbacks {
             .withValues(alpha: fade),
       );
     }
+    // The band, named. Parked at the left rather than riding the head: it is
+    // a state, not a reading, and it has to be legible when the bar is empty.
+    drawGlyph(
+      canvas,
+      _tempoGlyphs[tempo.hal]!,
+      const Offset(13, _barBoy / 2 + 1),
+      13,
+      Color.lerp(renk, const Color(0xFFFFF4DC), .5)!,
+    );
     _renderSeri(canvas);
   }
 
