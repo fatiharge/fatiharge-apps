@@ -46,7 +46,7 @@ void main() {
           ..clipRect(Rect.fromLTWH(cx, cy, hucreW * olcek, hucreH * olcek))
           ..translate(cx, cy)
           ..scale(olcek)
-          ..translate(-solX, -130);
+          ..translate(-solX, -105);
         ustaCiz(canvas, t: anlar[i]);
         // Where the grill's front edge crosses him: below this nothing of him
         // is ever seen, so nothing he does down there counts.
