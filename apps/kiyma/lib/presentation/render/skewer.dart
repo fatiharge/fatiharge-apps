@@ -48,12 +48,11 @@ Color _etGolge(double kizarma, double kavrulma) {
 /// Adana is pressed on by hand and comes out ridged, so the half-height is a
 /// sine along the length — seven swells, which is what the reference has —
 /// tapered to nothing at both ends. A plain capsule read as a sausage.
-List<Offset> _etHatti(double u0, double u1, double yari, double faz) {
+List<Offset> _profil(double u0, double u1, double yari, double faz, double k) {
   // 44 samples aliased the second beat badly — under three samples per half
   // cycle — and the swells came out as sharp zigzags.
   const n = 84;
-  final ust = <Offset>[];
-  final alt = <Offset>[];
+  final out = <Offset>[];
   for (var i = 0; i <= n; i++) {
     final t = i / n;
     final u = u0 + (u1 - u0) * t;
@@ -72,10 +71,32 @@ List<Offset> _etHatti(double u0, double u1, double yari, double faz) {
         .16 * math.sin(t * math.pi * 7 + faz) +
         .05 * math.sin(t * math.pi * 11 + 1.9);
     final h = yari * uc * tumsek;
-    ust.add(Offset(u, .5 - h));
-    alt.add(Offset(u, .5 + h));
+    out.add(Offset(u, .5 - h * k));
   }
-  return [...ust, ...alt.reversed];
+  return out;
+}
+
+/// The body, and the two bands that give it a round side: a lit crest and a
+/// deeper underside. Two flat tones read as a sticker of meat — the light on
+/// a coal grill comes from under it as well as over it, and the crest is what
+/// says the lump is a lump.
+({List<Offset> govde, List<Offset> isik, List<Offset> golge}) _etHatti(
+  double u0,
+  double u1,
+  double yari,
+  double faz,
+) {
+  List<Offset> p(double k) => _profil(u0, u1, yari, faz, k);
+  final ust = p(1);
+  final alt = [for (final o in p(1)) Offset(o.dx, 1 - o.dy)];
+  return (
+    govde: [...ust, ...alt.reversed],
+    isik: [...p(.94), ...p(.34).reversed],
+    golge: [
+      for (final o in p(-.42)) Offset(o.dx, o.dy),
+      ...[for (final o in p(-.97)) Offset(o.dx, o.dy)].reversed,
+    ],
+  );
 }
 
 Path _yol(Quad q, List<Offset> uv) {
@@ -161,20 +182,19 @@ void sisCiz(
     );
 
   // --- the meat -------------------------------------------------------
-  final govde = _etHatti(.17, .84, yari, 0);
-  final path = _yol(slot, govde);
+  final et = _etHatti(.17, .84, yari, 0);
+  final path = _yol(slot, et.govde);
+  final ten = _et(k, v);
   canvas
-    ..drawPath(path, Paint()..color = _et(k, v))
+    ..drawPath(path, Paint()..color = ten)
+    ..drawPath(_yol(slot, et.golge), Paint()..color = _etGolge(k, v))
+    // Char kills the shine before it kills the colour, so the crest fades out
+    // ahead of everything else.
+    ..drawPath(
+      _yol(slot, et.isik),
+      Paint()..color = Color.lerp(ten, const Color(0xFFFFE7C8), .26 * (1 - v))!,
+    )
     ..drawPath(path, ink);
-
-  // Underside shadow: the same lump, pushed down and cropped to the bottom
-  // half by taking its own lower profile as the top edge.
-  final golge = <Offset>[
-    for (final o in govde.skip(govde.length ~/ 2)) Offset(o.dx, o.dy - .02),
-    for (final o in govde.take(govde.length ~/ 2).toList().reversed)
-      Offset(o.dx, .5 + (o.dy - .5) * -.10),
-  ];
-  canvas.drawPath(_yol(slot, golge), Paint()..color = _etGolge(k, v));
 
   // --- the bars it has been lying on ----------------------------------
   // They arrive with the browning and stay: a grill mark is a burn, and it
@@ -190,6 +210,28 @@ void sisCiz(
       final a = slot.at(u - .022, .5 - yari * .74);
       final b = slot.at(u + .022, .5 + yari * .78);
       canvas.drawLine(a, b, iz);
+    }
+  }
+
+  // --- fat catching the light ------------------------------------------
+  // One speck on the crest of each swell. It arrives with the browning, which
+  // is when the fat renders, and goes as the surface chars over.
+  final parlak = (k - .35).clamp(0.0, 1.0) * (1 - v) * .8;
+  if (parlak > .04) {
+    final yag = Paint()
+      ..color = const Color(0xFFFFF1DC).withValues(alpha: parlak);
+    for (var i = 0; i < 4; i++) {
+      final u = .26 + i * .16;
+      canvas.drawPath(
+        _yol(slot, [
+          for (var j = 0; j <= 8; j++)
+            Offset(
+              u + .020 * math.cos(j / 8 * 2 * math.pi),
+              .5 - yari * .52 + yari * .12 * math.sin(j / 8 * 2 * math.pi),
+            ),
+        ]),
+        yag,
+      );
     }
   }
 
