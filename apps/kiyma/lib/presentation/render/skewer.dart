@@ -140,49 +140,53 @@ void sisCiz(
   // --- the steel ------------------------------------------------------
   // Drawn whole and then buried under the meat: the two ends have to line up
   // across the lump, and a shaft in two pieces never quite does.
+  //
+  // It runs past both rims, which is what a skewer resting on a trough does.
+  // Contained inside the slot it read as floating in the fire, and it forced
+  // the trough to be deep enough to hold it — a box rather than a trough.
   canvas
     ..drawPath(
       _yol(slot, const [
-        Offset(.02, .455),
-        Offset(.99, .455),
-        Offset(.99, .545),
-        Offset(.02, .545),
+        Offset(-.19, .455),
+        Offset(1.11, .455),
+        Offset(1.11, .545),
+        Offset(-.19, .545),
       ]),
       Paint()..color = _celik,
     )
     ..drawPath(
       _yol(slot, const [
-        Offset(.02, .505),
-        Offset(.99, .505),
-        Offset(.99, .545),
-        Offset(.02, .545),
+        Offset(-.19, .505),
+        Offset(1.11, .505),
+        Offset(1.11, .545),
+        Offset(-.19, .545),
       ]),
       Paint()..color = _celikGolge,
     )
     // The flattened tang, which is the end you hold.
     ..drawPath(
       _yol(slot, const [
-        Offset(.005, .50),
-        Offset(.085, .40),
-        Offset(.135, .40),
-        Offset(.135, .60),
-        Offset(.085, .60),
+        Offset(-.205, .50),
+        Offset(-.135, .40),
+        Offset(-.075, .40),
+        Offset(-.075, .60),
+        Offset(-.135, .60),
       ]),
       Paint()..color = _celik,
     )
     ..drawPath(
       _yol(slot, const [
-        Offset(.005, .50),
-        Offset(.085, .40),
-        Offset(.135, .40),
-        Offset(.135, .60),
-        Offset(.085, .60),
+        Offset(-.205, .50),
+        Offset(-.135, .40),
+        Offset(-.075, .40),
+        Offset(-.075, .60),
+        Offset(-.135, .60),
       ]),
       ink,
     );
 
   // --- the meat -------------------------------------------------------
-  final et = _etHatti(.17, .84, yari, 0);
+  final et = _etHatti(.07, .93, yari, 0);
   final path = _yol(slot, et.govde);
   final ten = _et(k, v);
   canvas
@@ -206,7 +210,7 @@ void sisCiz(
       ..strokeCap = StrokeCap.round
       ..strokeWidth = 2.6;
     for (var i = 0; i < 5; i++) {
-      final u = .24 + i * .125;
+      final u = .16 + i * .17;
       final a = slot.at(u - .022, .5 - yari * .74);
       final b = slot.at(u + .022, .5 + yari * .78);
       canvas.drawLine(a, b, iz);
@@ -221,7 +225,7 @@ void sisCiz(
     final yag = Paint()
       ..color = const Color(0xFFFFF1DC).withValues(alpha: parlak);
     for (var i = 0; i < 4; i++) {
-      final u = .26 + i * .16;
+      final u = .18 + i * .21;
       canvas.drawPath(
         _yol(slot, [
           for (var j = 0; j <= 8; j++)
@@ -243,7 +247,7 @@ void sisCiz(
     for (var i = 0; i < 7; i++) {
       // A fixed scatter, so a skewer does not reshuffle its own scorch marks
       // every frame.
-      final u = .21 + i * .092 + (i.isEven ? .014 : -.018);
+      final u = .12 + i * .125 + (i.isEven ? .014 : -.018);
       final w = (.012 + .022 * v) * (i.isEven ? 1.0 : .78);
       final h = yari * (.30 + .34 * v) * (i.isEven ? 1.0 : .82);
       final dy = (i % 3 - 1) * yari * .30;
