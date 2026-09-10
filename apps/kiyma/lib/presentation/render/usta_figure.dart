@@ -79,10 +79,8 @@ const _yakaY = 299.0;
 const _yakaDip = 316.0;
 const _onlukY = 333.0;
 
-const _havluX = 54.0;
-const _havluYari = 15.0;
 const _havluUst = 292.0;
-const _havluAlt = 366.0;
+const _havluAlt = 372.0;
 
 /// Ink in screen pixels. Lighter in proportion than a customer's, because he
 /// is nearly three times the size: the reference keeps its outline at about
@@ -104,15 +102,12 @@ abstract final class UstaPalet {
   static const gomlekK = Color(0xFFC4B9A5);
   static const onluk = Color(0xFFFBF6EC);
   static const onlukG = Color(0xFFE4DACA);
-  static const havlu = Color(0xFFF7EFE0);
-  static const havluG = Color(0xFFE7DCC9);
+  static const havlu = Color(0xFFEFE3CE);
+  static const havluG = Color(0xFFDACDB4);
   static const havluCizgi = Color(0xFFD44B3B);
-  static const sis = Color(0xFFB9BEC4);
   static const agizIc = Color(0xFF6E2317);
   static const dis = Color(0xFFFDF7E6);
   static const dil = Color(0xFFC4574A);
-  static const et = Color(0xFFB9713C);
-  static const etKoyu = Color(0xFF8A4B24);
 
   static Color rol(String ad) => switch (ad) {
     'ten' => ten,
@@ -127,12 +122,9 @@ abstract final class UstaPalet {
     'havlu' => havlu,
     'havluG' => havluG,
     'havluCizgi' => havluCizgi,
-    'sis' => sis,
     'agizIc' => agizIc,
     'dis' => dis,
     'dil' => dil,
-    'et' => et,
-    'etKoyu' => etKoyu,
     _ => const Color(0xFFFFFFFF),
   };
 }
@@ -517,73 +509,67 @@ List<Offset> _onluk() {
   ];
 }
 
-/// The towel over one shoulder — the one prop that says kebab shop without a
-/// word. Two near-parallel edges with a slight inboard drift, not a lozenge:
-/// the taper it had before read as a scarf.
-List<Offset> _havlu(double yon) {
-  final ox = cx + yon * _havluX;
-  final dis = yon * _havluYari;
-  return [
-    Offset(ox + dis, _havluUst),
-    ...bez(
-      Offset(ox + dis, _havluUst),
-      Offset(ox + dis * 1.04, _havluUst + 40),
-      Offset(ox + dis * .90, _havluAlt - 40),
-      Offset(ox + dis * .74, _havluAlt),
-    ),
-    Offset(ox - dis * 1.14, _havluAlt - 8),
-    ...bez(
-      Offset(ox - dis * 1.14, _havluAlt - 8),
-      Offset(ox - dis * 1.08, _havluAlt - 60),
-      Offset(ox - dis * 1.02, _havluUst + 44),
-      Offset(ox - dis, _havluUst),
-    ),
-  ];
-}
-
-/// The fold where the towel doubles over the shoulder. Its own shape rather
-/// than a crease inside the towel's path: a path that doubles back fills as
-/// one blob, which the hair already taught us once.
-List<Offset> _havluKat(double yon) {
-  final ox = cx + yon * _havluX;
-  final dis = yon * _havluYari;
-  return [
-    Offset(ox + dis * 1.22, _havluUst - 4),
-    ...bez(
-      Offset(ox + dis * 1.22, _havluUst - 4),
-      Offset(ox + dis * 1.18, _havluUst + 16),
-      Offset(ox + dis * .96, _havluUst + 30),
-      Offset(ox + dis * .10, _havluUst + 33),
-    ),
-    ...bez(
-      Offset(ox + dis * .10, _havluUst + 33),
-      Offset(ox - dis * .60, _havluUst + 35),
-      Offset(ox - dis * 1.00, _havluUst + 28),
-      Offset(ox - dis * 1.02, _havluUst + 14),
-    ),
-    Offset(ox - dis * 1.02, _havluUst - 4),
-  ];
-}
-
-/// One band of the towel's check.
+/// The towel over his shoulder — the one prop that says kebab shop without
+/// a word.
 ///
-/// A real woven grid was tried — two threads down, six across, both leaning
-/// with the cloth. At the size he is actually seen the towel is thirty pixels
-/// wide and the weave collapses into noise, and the threads that were meant
-/// to run down it escaped past its hem. Three bands laid across the cloth is
-/// what reads as a check from across the room, which is the only place anyone
-/// sees it.
-List<Offset> _havluCizgi(double yon, int i) {
-  final ox = cx + yon * _havluX;
-  final dis = yon * _havluYari;
-  final y = _havluUst + (_havluAlt - _havluUst) * (.20 + i * .24);
+/// A plain hanging parallelogram rather than the two bowed edges it had. The
+/// curves bought nothing at thirty pixels and cost the check its footing: the
+/// threads were placed against a straight-line guess at where the cloth was
+/// and ran out past its hem. Every band is now lerped between these four
+/// corners, so a stripe cannot leave the cloth by construction.
+const _havluSol = Offset(cx - 72, _havluUst);
+const _havluSag = Offset(cx - 46, _havluUst - 5);
+const _havluSolAlt = Offset(cx - 69, _havluAlt + 5);
+const _havluSagAlt = Offset(cx - 43, _havluAlt);
+
+List<Offset> _havlu() => const [
+  _havluSol,
+  _havluSag,
+  _havluSagAlt,
+  _havluSolAlt,
+];
+
+/// The fold where it doubles over the shoulder, and the only reason it reads
+/// as hung rather than pinned.
+List<Offset> _havluKat() => [
+  _havluSol,
+  _havluSag,
+  Offset.lerp(_havluSag, _havluSagAlt, .17)!,
+  Offset.lerp(_havluSol, _havluSolAlt, .17)!,
+];
+
+/// One thread of the check. Four across and two down: at the size he is
+/// actually seen the cloth is thirty pixels wide, and a real weave collapses
+/// into noise — but drop the red altogether and it is a bandage.
+List<Offset> _havluCizgi(int i, {required bool capraz}) {
+  const kal = 2.6;
+  if (capraz) {
+    final t = .18 + i * .21;
+    return serit(
+      [
+        Offset.lerp(_havluSol, _havluSolAlt, t)!,
+        Offset.lerp(_havluSag, _havluSagAlt, t)!,
+      ],
+      kal,
+      kal,
+    );
+  }
+  final u = .32 + i * .34;
   return serit(
     [
-      Offset(ox + dis * .94, y - 3),
-      Offset(ox - dis * 1.00, y + 3),
+      Offset.lerp(
+        Offset.lerp(_havluSol, _havluSag, u),
+        Offset.lerp(_havluSolAlt, _havluSagAlt, u),
+        .10,
+      )!,
+      Offset.lerp(
+        Offset.lerp(_havluSol, _havluSag, u),
+        Offset.lerp(_havluSolAlt, _havluSagAlt, u),
+        .94,
+      )!,
     ],
-    2.7,
-    2.7,
+    kal,
+    kal,
   );
 }
 
@@ -615,32 +601,6 @@ List<Offset> _el(double x, double y, double yon) => yol(
     ],
   ],
 );
-
-/// A skewer with the meat on it, held point-up.
-({List<Sekil> parca, double boy}) _sis(Offset el, double aci) {
-  const boy = 168.0;
-  final u = Offset(math.sin(aci), -math.cos(aci));
-  final n = Offset(-u.dy, u.dx);
-  final uc = el + u * boy;
-  final cubuk = <Offset>[
-    el + n * 3.2 - u * 16,
-    uc + n * 1.4,
-    uc - n * 1.4,
-    el - n * 3.2 - u * 16,
-  ];
-  // The mince sits along the middle of the shaft, not at its tip.
-  final a = el + u * 34;
-  final b = el + u * 132;
-  final et = serit([a, Offset.lerp(a, b, .5)!, b], 15, 11);
-  return (
-    parca: [
-      sekil(cubuk, 'sis', _ince),
-      sekil(et, 'et', _orta),
-      sekil(hilal(et, a0: -80, a1: 100), 'etKoyu', 0),
-    ],
-    boy: boy,
-  );
-}
 
 /// His shirt, from the shoulders down past where the grill cuts him off.
 List<Offset> _govde(double oy) {
@@ -683,14 +643,31 @@ class UstaParcalari {
     final o = _onluk();
     sus
       ..add(sekil(o, 'onluk', _orta))
-      ..add(sekil(hilal(o, a1: 120), 'onlukG', 0));
+      ..add(sekil(hilal(o, a1: 120), 'onlukG', 0))
+      // The waist tie. Without it the apron's top is a straight line across
+      // the chest and reads as a shelf rather than as cloth.
+      ..add(
+        sekil(
+          const [
+            Offset(cx - _altYari * .82, _onlukY - 1),
+            Offset(cx + _altYari * .82, _onlukY - 1),
+            Offset(cx + _altYari * .80, _onlukY + 9),
+            Offset(cx - _altYari * .80, _onlukY + 9),
+          ],
+          'onlukG',
+          _ince,
+        ),
+      );
 
     // The towel crosses the apron, so it needs a group of its own too.
-    havlu.add(sekil(_havlu(-1), 'havlu', _orta));
-    for (var i = 0; i < 3; i++) {
-      havlu.add(sekil(_havluCizgi(-1, i), 'havluCizgi', 0));
+    havlu.add(sekil(_havlu(), 'havlu', _orta));
+    for (var i = 0; i < 4; i++) {
+      havlu.add(sekil(_havluCizgi(i, capraz: true), 'havluCizgi', 0));
     }
-    havlu.add(sekil(_havluKat(-1), 'havluG', _orta));
+    for (var i = 0; i < 2; i++) {
+      havlu.add(sekil(_havluCizgi(i, capraz: false), 'havluCizgi', 0));
+    }
+    havlu.add(sekil(_havluKat(), 'havluG', _orta));
 
     // --- head ---------------------------------------------------------
     const kx = _r * _yanak + 3.5;
@@ -753,10 +730,15 @@ class UstaPoz {
   double agiz = 7;
   double kas = 0;
 
-  /// Where each hand is, in his own space. The right one holds the skewer up
-  /// over the coals — the one piece of business the grill does not hide.
-  Offset get sagEl => Offset(cx + 78, _omuzY + 10 + dy * .6);
-  Offset get solEl => Offset(cx - 60, _omuzY + 66 + dy * .4);
+  /// Where each hand is, in his own space.
+  ///
+  /// Both hang. The grill hides everything below y ~360 and his shoulder is
+  /// at 321, so a hand held anywhere near chest height puts the target within
+  /// a few pixels of its own shoulder — and [kolEgrisi] answers that by
+  /// bowing the arm sixty pixels sideways. Hanging arms leave a clean sleeve
+  /// in the visible band and take the fold out of the maths entirely.
+  Offset get sagEl => Offset(cx + _altYari - 2, _omuzY + 96 + dy * .5);
+  Offset get solEl => Offset(cx - _altYari + 2, _omuzY + 96 + dy * .5);
 }
 
 /// Draws the usta into scene coordinates.
@@ -798,30 +780,27 @@ void ustaCiz(Canvas canvas, {required double t}) {
     ..rotate(p.egim * math.pi / 180)
     ..translate(-cx, -_omuzY);
 
-  const kolBoyu = 118.0;
+  const kolBoyu = 106.0;
   final yenler = <Sekil>[];
   final tenler = <Sekil>[];
-  final sisler = <Sekil>[];
   for (final yon in const [-1.0, 1.0]) {
-    final omuz = Offset(cx + yon * (_omuzYari + 1), _omuzY + 14);
+    final omuz = Offset(cx + yon * (_omuzYari - 4), _omuzY - 2);
     final hedef = yon < 0 ? p.solEl : p.sagEl;
     final kol = kolEgrisi(omuz, hedef, yon, kolBoyu);
-    final kes = math.max(3, (kol.orta.length * .48).round());
-    final ic = Offset(cx + yon * (_omuzYari - 16), _omuzY + 14);
+    // The sleeve ends just above the grill's edge, which is the last place
+    // anything he wears can be seen at all.
+    final kes = math.max(3, (kol.orta.length * .34).round());
+    final ic = Offset(cx + yon * (_omuzYari - 20), _omuzY - 6);
     yenler.add(
-      sekil(serit([ic, ...kol.orta.take(kes)], 21, 18), 'gomlek', _orta),
+      sekil(serit([ic, ...kol.orta.take(kes)], 23, 19), 'gomlek', _orta),
     );
     tenler
-      ..add(sekil(serit(kol.orta.sublist(kes - 1), 17, 12), 'ten', _orta))
+      ..add(sekil(serit(kol.orta.sublist(kes - 1), 18, 13), 'ten', _orta))
       ..add(sekil(_el(kol.el.dx, kol.el.dy, yon), 'ten', _orta));
-    // He holds it up over the coals: the one piece of business the grill
-    // does not hide, and the reason he reads as working at all.
-    if (yon > 0) sisler.addAll(_sis(kol.el, 0.22).parca);
   }
 
   grup([...parca.govde.take(2), ...yenler, ...parca.govde.skip(2)]);
   grup(tenler);
-  grup(sisler);
   grup(parca.sus);
   grup(parca.havlu);
   grup(parca.kafa);
