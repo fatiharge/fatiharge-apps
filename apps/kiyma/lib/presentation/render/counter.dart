@@ -67,7 +67,6 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   /// Above the calendar, and small: it is a tally, not a headline. The wall
   /// already carries a gauge and a calendar, and a third large object on it
   /// was reading as a row of panels.
-  static const _tahta = Rect.fromLTWH(24, 52, 102, 62);
 
   /// The one control that is not a kitchen object, so it is put where no
   /// drag ever goes: the bottom corner, past the end of the counter.
@@ -293,7 +292,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       );
     if (cue.asset == 'altin') {
       // Into the slot, not onto a panel.
-      fx.coins(from: cue.at, to: _tahta.center);
+      fx.coins(from: cue.at, to: _kese.center);
     }
   }
 
@@ -460,7 +459,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     }
     _renderScene(canvas);
     _renderWall(canvas);
-    _renderTahta(canvas);
+    _renderPara(canvas);
     // Somebody still crossing the shop passes behind what is standing on the
     // counter; by the time they are at their place nothing is in front of
     // them anyway, so the two passes never disagree about one customer.
@@ -542,7 +541,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     final dolu = <Rect>[
       if (hedef != null) hedef.quad.bounds,
       Rect.fromLTWH(0, 0, scene.size.width, _barBoy + 34),
-      _tahta,
+      _kese.expandToInclude(_keseCip),
       // The one control on the counter. A bubble over it is a run that
       // cannot be paused until the usta has finished talking.
       _pause,
@@ -1339,111 +1338,64 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   /// behind it rather than standing in it.
   void _renderSef(Canvas canvas) => ustaCiz(canvas, t: _elapsed);
 
-  /// The money, chalked on a slate the way a shop actually keeps a tally.
+  /// The takings, as a bag of money under the clock.
   ///
-  /// It was a wooden cash box with an inset panel, and it read as a sign —
-  /// the most interface-shaped thing left on a wall that already has a
-  /// calendar and a gauge on it. A slate is the same information as an
-  /// object anybody has seen in a kebab shop, and it is drawn rather than
-  /// painted, so it costs no art and never disagrees with the light.
-  void _renderTahta(Canvas canvas) {
-    const ink = Color(0xFF2E2A26);
-    const chalk = Color(0xFFF2EFE6);
-    final frame = RRect.fromRectAndRadius(_tahta, const Radius.circular(7));
-    final face = RRect.fromRectAndRadius(
-      _tahta.deflate(9),
-      const Radius.circular(3),
-    );
+  /// It was a chalk slate on the left wall, and it was two things wrong at
+  /// once. It stood where the usta stands now, and a number on a blackboard
+  /// is not money — it is a number, and the one before it was a wooden cash
+  /// box that read as a sign. A bag of coins needs no reading at all.
+  ///
+  /// It carries what the slate carried: the amount, the pop when it is
+  /// rewritten, the day's progress toward its target as a line under it, and
+  /// the meter's payout floating off the top.
+  /// Where the money lives, and where collected coins fly to. One constant,
+  /// because a coin that lands somewhere other than the bag it goes into is
+  /// the kind of thing nobody notices until it looks wrong.
+  static const _kese = Rect.fromLTWH(890, 130, 100, 53);
+  static const _keseCip = Rect.fromLTWH(892, 172, 96, 28);
 
-    canvas
-      // Hung on a nail, like everything else on this wall.
-      ..drawLine(
-        Offset(_tahta.center.dx, _tahta.top - 13),
-        Offset(_tahta.center.dx, _tahta.top + 3),
-        Paint()
-          ..color = ink
-          ..strokeWidth = 3,
-      )
-      ..drawCircle(
-        Offset(_tahta.center.dx, _tahta.top - 14),
-        4,
-        Paint()..color = const Color(0xFF6E6155),
-      )
-      ..drawRRect(
-        frame.shift(const Offset(3, 6)),
-        Paint()..color = const Color(0x3D000000),
-      )
-      ..drawRRect(frame, Paint()..color = const Color(0xFF6E4A24))
-      ..drawRRect(
-        frame.deflate(1.5),
-        Paint()
-          ..color = ink
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 3,
-      )
-      ..drawRRect(face, Paint()..color = const Color(0xFF262B26));
+  void _renderPara(Canvas canvas) {
+    const kese = _kese;
+    const cip = _keseCip;
 
-    // Old chalk that never quite comes off. Fixed smears, not random ones:
-    // a slate that reshuffles its own grime every frame is a screensaver.
-    for (final smear in const [
-      Rect.fromLTWH(0.12, 0.18, 0.5, 0.1),
-      Rect.fromLTWH(0.45, 0.66, 0.42, 0.09),
-      Rect.fromLTWH(0.08, 0.78, 0.3, 0.07),
-    ]) {
-      canvas.drawRect(
-        Rect.fromLTWH(
-          _tahta.left + 9 + smear.left * (_tahta.width - 18),
-          _tahta.top + 9 + smear.top * (_tahta.height - 18),
-          smear.width * (_tahta.width - 18),
-          smear.height * (_tahta.height - 18),
-        ),
-        Paint()..color = chalk.withValues(alpha: 0.06),
-      );
+    final image = assets['altin_kese'];
+    if (image != null) {
+      drawInQuad(canvas, image, Quad.fromRect(kese), AssetFit.orta);
     }
 
-    // Chalk is rewritten, not rolled: the number snaps and the dust puffs.
+    // Rewritten, not rolled: the number snaps.
     final pop = _yazma <= 0
         ? 0.0
         : Curves.easeOutBack.transform(
             (1 - _yazma / _yazmaSuresi).clamp(0.0, 1.0),
           );
     final scale = _yazma <= 0 ? 1.0 : 1.22 - 0.22 * pop;
-    final centre = Offset(_tahta.center.dx, _tahta.center.dy - 5);
+
+    drawPanel(canvas, cip, fill: const Color(0xFF2E2A26));
     canvas
       ..save()
-      ..translate(centre.dx, centre.dy)
+      ..translate(cip.center.dx, cip.center.dy)
       ..scale(scale)
-      ..translate(-centre.dx, -centre.dy);
-    // Drawn twice, the under-pass wide and faint: chalk has a dusty edge and
-    // a clean glyph on a blackboard reads as a printed label.
-    for (final (alpha, offset) in const [
-      (0.22, Offset(1.4, 1.2)),
-      (1.0, Offset.zero),
-    ]) {
-      drawText(
-        canvas,
-        goldText(run.progress.para),
-        centre + offset,
-        size: 26,
-        weight: 800,
-        family: 'Rubik',
-        center: true,
-        middle: true,
-        color: chalk.withValues(alpha: alpha),
-      );
-    }
+      ..translate(-cip.center.dx, -cip.center.dy);
+    drawText(
+      canvas,
+      goldText(run.progress.para),
+      cip.center,
+      size: 21,
+      weight: 900,
+      family: 'Rubik',
+      center: true,
+      middle: true,
+      color: const Color(0xFFFFC24A),
+    );
     canvas.restore();
 
-    // A chalk line under it, filled as far as the day has come. The box used
-    // to flood with gold to say the same thing.
-    final line = Rect.fromLTWH(
-      _tahta.left + 17,
-      _tahta.bottom - 16,
-      _tahta.width - 34,
-      2.5,
-    );
+    // How far the day has come toward its target. The slate said it with a
+    // chalk line and the box before that flooded with gold; it is the same
+    // reading either way, and it belongs beside the money it is about.
+    final line = Rect.fromLTWH(cip.left + 6, cip.bottom + 4, cip.width - 12, 3);
     canvas
-      ..drawRect(line, Paint()..color = chalk.withValues(alpha: 0.18))
+      ..drawRect(line, Paint()..color = const Color(0x33FFF6E8))
       ..drawRect(
         Rect.fromLTWH(
           line.left,
@@ -1451,16 +1403,18 @@ class CounterComponent extends PositionComponent with DragCallbacks {
           line.width * Balance.ratio(run.progress.xp, run.day),
           line.height,
         ),
-        Paint()..color = chalk.withValues(alpha: 0.8),
+        Paint()..color = const Color(0xFFFFC24A),
       );
 
-    // What a full meter paid out, floating off the slate it went onto.
+    // What a full meter paid out. It rises from under the bag rather than off
+    // the top of it: the clock hangs there, and a number that floats behind a
+    // clock face is a number nobody sees.
     if (run.tempoIkramiyeKalan <= 0) return;
     final fade = (run.tempoIkramiyeKalan / 1.2).clamp(0.0, 1.0);
     drawText(
       canvas,
       '+${run.tempoIkramiye}',
-      Offset(_tahta.right - 12, _tahta.top - 10 - (1 - fade) * 14),
+      Offset(cip.center.dx, cip.bottom + 6 + fade * 14),
       size: 22,
       weight: 900,
       family: 'Rubik',
@@ -2102,7 +2056,9 @@ class CounterComponent extends PositionComponent with DragCallbacks {
         canvas,
         '${delta > 0 ? '+' : ''}${delta.round()}',
         Offset(
-          dolu.clamp(24.0, w - 24),
+          // Clear of the clock: at a full meter the head is the right edge,
+          // and the number landed on the clock face.
+          dolu.clamp(26.0, w - 168),
           _barBoy + 6 + (1 - fade) * 12,
         ),
         size: 20,
