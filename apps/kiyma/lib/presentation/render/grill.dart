@@ -39,8 +39,8 @@ double _rast(int i) {
 /// How deep the box is, down the screen. The painted one measured about this
 /// and the room's skirting sits just under it, which is what made the old
 /// chef look like he was standing in the room rather than on it.
-const _derinlik = 46.0;
-const _ayakBoyu = 62.0;
+const _derinlik = 40.0;
+const _ayakBoyu = 56.0;
 
 Path _yol(List<Offset> p) {
   final path = Path()..moveTo(p.first.dx, p.first.dy);

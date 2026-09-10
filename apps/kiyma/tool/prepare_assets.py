@@ -86,8 +86,8 @@ RESIZED = {
     # instead of four bands down the depth — and skewers laid across a trough
     # is how they lie on a real mangal anyway.
     "mangal_alani": {
-        "x": 40, "y": 372, "w": 232, "h": 126,
-        "quad": [[56, 372], [40, 470], [272, 498], [262, 400]],
+        "x": 54, "y": 398, "w": 204, "h": 110,
+        "quad": [[68, 398], [54, 484], [258, 508], [249, 422]],
     },
     "kagit_kaynak": {
         "x": 528, "y": 396, "w": 118, "h": 52,
