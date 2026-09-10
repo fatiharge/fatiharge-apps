@@ -128,11 +128,37 @@ class Tempo {
   TempoBand get hal => _halFor(_deger);
 
   static TempoBand _halFor(double value) => switch (value) {
-    < 25 => TempoBand.soguk,
-    < 55 => TempoBand.normal,
-    < 80 => TempoBand.isiniyor,
+    < sogukEsigi => TempoBand.soguk,
+    < isiniyorEsigi => TempoBand.normal,
+    < atesEsigi => TempoBand.isiniyor,
     _ => TempoBand.ates,
   };
+
+  /// Where each band starts, going up.
+  static const sogukEsigi = 25.0;
+  static const isiniyorEsigi = 55.0;
+  static const atesEsigi = 80.0;
+
+  /// How far past a threshold the meter has to climb before the band follows
+  /// it up. Without it a value sitting on a boundary — and the meter drains
+  /// continuously, so it sits on one often — flips the band every frame, and
+  /// the icon that names it strobes.
+  static const bantPayi = 3.0;
+
+  /// The band to show next, given the one being shown now.
+  ///
+  /// Pure and outside the drawing on purpose: it is a rule about the run, not
+  /// about a widget, and it is the one part of the meter worth testing.
+  ///
+  /// The slack is asymmetric, and deliberately so. Falling is immediate — a
+  /// burnt skewer should bite the moment it burns. Rising has to clear the
+  /// boundary by [bantPayi] first, so a meter hovering on a threshold does
+  /// not flicker its way up and the band has to be earned.
+  static TempoBand bantGecisi(double value, TempoBand simdiki) {
+    final ham = _halFor(value);
+    if (ham.index <= simdiki.index) return ham;
+    return _halFor(value - bantPayi).index > simdiki.index ? ham : simdiki;
+  }
 
   /// `0..1` across the whole meter, for drawing it.
   double get oran => _deger / 100;

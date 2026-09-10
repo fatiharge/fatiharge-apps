@@ -25,6 +25,7 @@ import 'package:kiyma/presentation/render/grill.dart';
 import 'package:kiyma/presentation/render/halo.dart';
 import 'package:kiyma/presentation/render/painter.dart';
 import 'package:kiyma/presentation/render/skewer.dart';
+import 'package:kiyma/presentation/render/tempo_bar.dart';
 import 'package:kiyma/presentation/render/usta_figure.dart';
 
 /// The whole counter: every pixel of the game world and every gesture on it.
@@ -80,19 +81,6 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   /// torn edge, and no empty room between them.
   static const _ticketBare = 46.0;
   static const _ticketTop = 10.0;
-
-  /// One colour and one glyph per band. Four states are learnable where a
-  /// continuous multiplier is not, and a glyph is read faster than a word in
-  /// any language.
-  /// The band as a glyph. A word here would need translating and would not
-  /// be read at a glance anyway — this is the one thing the old dial carried
-  /// that a level cannot say on its own.
-  static const Map<TempoBand, IconData> _tempoGlyphs = {
-    TempoBand.soguk: Icons.ac_unit_rounded,
-    TempoBand.normal: Icons.thermostat_rounded,
-    TempoBand.isiniyor: Icons.whatshot_rounded,
-    TempoBand.ates: Icons.local_fire_department_rounded,
-  };
 
   static const Map<TempoBand, Color> _tempoColours = {
     TempoBand.soguk: Color(0xFF6C8AA6),
@@ -195,6 +183,15 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       run.tick(dt * 0.12 * Dev.hiz);
     } else {
       run.tick(dt * Dev.hiz);
+    }
+
+    _tempoDurumu.tick(dt, run.tempo);
+    if (run.tempo.degisimKalan > 1.05 && _tempoDurumu.halka <= 0) {
+      _tempoDurumu.darbe(
+        run.tempo.deger,
+        _tempoKasa.left + _tempoKasa.height * .71,
+        _tempoKasa.width - _tempoKasa.height * .85,
+      );
     }
 
     final area = visible?.call();
@@ -459,6 +456,8 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     }
     _renderScene(canvas);
     _renderWall(canvas);
+    // Hung on the wall, so it takes the knock with the room.
+    _renderTempoBar(canvas);
     _renderPara(canvas);
     // Somebody still crossing the shop passes behind what is standing on the
     // counter; by the time they are at their place nothing is in front of
@@ -480,9 +479,6 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     _renderLight(canvas);
     canvas.restore();
 
-    // Welded to the frame, so it is drawn outside the knock: the room jumps,
-    // the edge of the screen does not.
-    _renderTempoBar(canvas);
     fx.render(canvas, EffectLayer.over);
     // Outside the knock, alone: the one thing that has to be in the same
     // place every frame is the button that stops the game.
@@ -540,7 +536,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     // board is not work, and treating it as work leaves the bubble nowhere.
     final dolu = <Rect>[
       if (hedef != null) hedef.quad.bounds,
-      Rect.fromLTWH(0, 0, scene.size.width, _barBoy + 34),
+      _tempoKasa.inflate(_tempoKasa.height * .4),
       _kese.expandToInclude(_keseCip),
       // The one control on the counter. A bubble over it is a run that
       // cannot be paused until the usta has finished talking.
@@ -1926,217 +1922,33 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   ///
   /// Drawn outside the knock, unlike the dial: this is the frame, and a frame
   /// that jumps with the room reads as a broken screen rather than an impact.
-  static const _barBoy = 13.0;
+
+  /// Where the meter hangs. Top left, above the usta's head: the corner the
+  /// dial used to fill, which the usta has since taken the lower half of.
+  static const _tempoKasa = Rect.fromLTWH(52, 26, 252, 46);
+
+  final TempoBarDurumu _tempoDurumu = TempoBarDurumu();
 
   void _renderTempoBar(Canvas canvas) {
-    final tempo = run.tempo;
-    final renk = _tempoColours[tempo.hal]!;
-    final w = size.x;
-    final dolu = w * tempo.oran;
-    final rect = Rect.fromLTWH(0, 0, w, _barBoy);
-
-    // Above sixty it starts to throw light into the room; at ninety it is on
-    // fire. Heat is what the multiplier feels like without being read.
-    final isi = ((tempo.deger - 60) / 30).clamp(0.0, 1.0);
-    final soguk = ((25 - tempo.deger) / 25).clamp(0.0, 1.0);
-
-    // Pinned is a state, not a stop. The dial's needle trembled at the top of
-    // the scale for this reason, and a bar that is simply full says nothing
-    // about being held there.
-    final dayali = tempo.oran > .98;
-    final titreme = dayali ? .10 + .10 * math.sin(_elapsed * 26) : 0.0;
-
-    canvas
-      // The track: what is still to earn, and dark enough that the fill is
-      // the only lit thing along the top of the screen.
-      ..drawRect(rect, Paint()..color = const Color(0xF0221C18))
-      ..drawRect(
-        Rect.fromLTWH(0, _barBoy - 2, w, 2),
-        Paint()..color = const Color(0x66000000),
-      );
-
-    // Ten marks, so the level is read against something. The dial had them
-    // for the same reason: a needle with no scale behind it is a decoration.
-    for (var i = 1; i < 10; i++) {
-      final x = w * i / 10;
-      canvas.drawRect(
-        Rect.fromLTWH(x - 1, _barBoy * .38, 2, _barBoy * .62),
-        Paint()..color = const Color(0x3AFFF0C8),
-      );
-    }
-
-    if (dolu > 1) {
-      canvas
-        ..drawRect(
-          Rect.fromLTWH(0, 0, dolu, _barBoy),
-          Paint()
-            ..shader = Gradient.linear(
-              const Offset(0, _barBoy),
-              Offset.zero,
-              [
-                Color.lerp(renk, const Color(0xFF1A120E), .18)!,
-                renk,
-                Color.lerp(renk, const Color(0xFFFFF0C8), .28 + .34 * isi)!,
-              ],
-              const [0, .55, 1],
-            ),
-        )
-        // A lit line along the whole of the fill, not just its end. In the
-        // cold band the fill is a dark blue against a dark track and the
-        // level could not be read at all — which is the one thing the bar is
-        // for.
-        ..drawRect(
-          Rect.fromLTWH(0, 0, dolu, 2),
-          Paint()..color = Color.lerp(renk, const Color(0xFFFFF4DC), .55)!,
-        )
-        // The head. A bar with a soft end reads as a gradient; a bar with a
-        // bright edge reads as a level.
-        ..drawRect(
-          Rect.fromLTWH(dolu - 2.5, 0, 2.5, _barBoy),
-          Paint()..color = const Color(0xFFFFF4DC),
-        )
-        ..drawRect(
-          Rect.fromLTWH(dolu - 22, 0, 22, _barBoy),
-          Paint()
-            ..blendMode = BlendMode.plus
-            ..shader = Gradient.linear(
-              Offset(dolu - 22, 0),
-              Offset(dolu, 0),
-              [const Color(0x00000000), renk.withValues(alpha: .55)],
-            ),
-        );
-    }
-
-    // Every touch answers here. The meter used to sit still through a whole
-    // build and jump once at the handover, which reads as a meter that is not
-    // listening; this is the same promise the step scoring makes.
-    if (tempo.dokunusKalan > 0) {
-      final can = (tempo.dokunusKalan / 0.3).clamp(0.0, 1.0);
-      canvas.drawRect(
-        Rect.fromLTWH(math.max(0, dolu - 46), 0, 46, _barBoy),
-        Paint()
-          ..blendMode = BlendMode.plus
-          ..color = const Color(0xFFFFF0C8).withValues(alpha: .38 * can),
-      );
-    }
-
-    // The light it throws down into the room, and the fire on it.
-    if (isi > 0) {
-      canvas.drawRect(
-        Rect.fromLTWH(0, _barBoy, dolu, 26 + 34 * isi),
-        Paint()
-          ..blendMode = BlendMode.plus
-          ..shader = Gradient.linear(
-            const Offset(0, _barBoy),
-            Offset(0, _barBoy + 26 + 34 * isi),
-            [
-              renk.withValues(alpha: (.16 + .22 * isi) * _pulse),
-              const Color(0x00000000),
-            ],
-          ),
-      );
-    }
-    if (titreme > 0) {
-      canvas.drawRect(
-        rect,
-        Paint()
-          ..blendMode = BlendMode.plus
-          ..color = const Color(0xFFFFF0C8).withValues(alpha: titreme),
-      );
-    }
-    if (tempo.deger >= 90) _barAlevi(canvas, dolu, (tempo.deger - 90) / 10);
-    if (soguk > 0) _barBuzu(canvas, dolu, w, soguk);
-
-    // The change, floating under the head. Without it the multiplier is
-    // invisible and the player never learns what feeds it.
-    if (tempo.degisimKalan > 0) {
-      final delta = tempo.sonDegisim;
-      final fade = (tempo.degisimKalan / 1.1).clamp(0.0, 1.0);
-      drawText(
-        canvas,
-        '${delta > 0 ? '+' : ''}${delta.round()}',
-        Offset(
-          // Clear of the clock: at a full meter the head is the right edge,
-          // and the number landed on the clock face.
-          dolu.clamp(26.0, w - 168),
-          _barBoy + 6 + (1 - fade) * 12,
-        ),
-        size: 20,
-        weight: 900,
-        family: 'Rubik',
-        center: true,
-        outline: const Color(0xCC221C18),
-        color: (delta > 0 ? const Color(0xFF6FCF7C) : const Color(0xFFE0574A))
-            .withValues(alpha: fade),
-      );
-    }
-    // The band, named. Parked at the left rather than riding the head: it is
-    // a state, not a reading, and it has to be legible when the bar is empty.
-    drawGlyph(
+    // A frame can be drawn before any has been ticked — the goldens do
+    // exactly that — and a meter that shows the wrong level in that frame is
+    // showing the wrong level.
+    _tempoDurumu.kur(run.tempo);
+    tempoBariCiz(
       canvas,
-      _tempoGlyphs[tempo.hal]!,
-      const Offset(13, _barBoy / 2 + 1),
-      13,
-      Color.lerp(renk, const Color(0xFFFFF4DC), .5)!,
+      _tempoKasa,
+      tempo: run.tempo,
+      durum: _tempoDurumu,
+      t: _elapsed,
+      alev: assets['alev'],
     );
     _renderSeri(canvas);
   }
 
-  /// Flame licking along the lit part of the bar. It burns downward into the
-  /// screen, because the bar is the ceiling of the picture and that is the
-  /// only direction there is.
-  void _barAlevi(Canvas canvas, double dolu, double guc) {
-    // Curves, not spikes. Straight lines to a point gave a row of triangles
-    // eighteen pixels tall on a thirteen pixel bar — a paper crown, and the
-    // level underneath it stopped being readable at all.
-    final path = Path()..moveTo(0, _barBoy);
-    const adim = 34.0;
-    for (var x = 0.0; x < dolu; x += adim) {
-      final h =
-          (2.5 + 6 * guc) *
-          (.45 + .55 * (.5 + .5 * math.sin(_elapsed * 6 + x * .075)));
-      final son = math.min(x + adim, dolu);
-      path.quadraticBezierTo((x + son) / 2, _barBoy + h, son, _barBoy);
-    }
-    canvas.drawPath(
-      path
-        ..lineTo(0, _barBoy)
-        ..close(),
-      Paint()
-        ..blendMode = BlendMode.plus
-        ..color = const Color(0xFFFF9426).withValues(alpha: .22 + .26 * guc),
-    );
-  }
-
-  /// Frost creeping in along what is left to earn. A cold counter pays half,
-  /// which was a number nobody read; ice on the bar is not a number.
-  ///
-  /// Only on the empty part, and hanging from the top edge. Across the whole
-  /// track and rising from the bottom it read as a row of teeth, and it was
-  /// the loudest thing on a bar whose job is to show a level.
-  void _barBuzu(Canvas canvas, double dolu, double w, double guc) {
-    final buz = Paint()
-      ..color = const Color(0xFFBFE3F2).withValues(alpha: .18 + .28 * guc);
-    const adim = 26.0;
-    for (var x = dolu + 6; x < w; x += adim) {
-      final h = _barBoy * (.28 + .42 * guc) * (.5 + .5 * math.sin(x * .17));
-      canvas.drawPath(
-        Path()
-          ..moveTo(x - 6, 0)
-          ..lineTo(x, h)
-          ..lineTo(x + 6, 0)
-          ..close(),
-        buz,
-      );
-    }
-  }
-
-  /// How many in a row. Parked at the left under the bar rather than sliding
-  /// with the level: it is not a reading of the level, and a chip that moved
-  /// would cross the order tickets, which are the one thing on that edge that
-  /// must never be covered.
+  /// How many in a row, hung off the meter's bottom right. It is not a
+  /// reading of the level, so it does not ride the fill.
   static const _seriEsigi = 3;
-  static const _seriYeri = Offset(52, 27);
+  static const _seriYeri = Offset(276, 82);
 
   void _renderSeri(Canvas canvas) {
     final seri = run.tempo.seri;

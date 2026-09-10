@@ -63,6 +63,7 @@ import 'package:kiyma/presentation/render/painter.dart';
 import 'package:kiyma/presentation/render/shop_scene.dart';
 import 'package:kiyma/presentation/render/skewer.dart';
 import 'package:kiyma/presentation/render/tag_layout.dart';
+import 'package:kiyma/presentation/render/tempo_bar.dart';
 import 'package:kiyma/presentation/render/usta_figure.dart';
 import 'package:kiyma/presentation/shop_ladder.dart';
 import 'package:kiyma/presentation/shop_list_page.dart';
