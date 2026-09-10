@@ -123,6 +123,29 @@ void drawCentered(
   );
 }
 
+/// How wide [text] lays out, for anything that has to size a box around it
+/// before it is drawn.
+double textWidth(
+  String text, {
+  double size = 11,
+  int weight = 500,
+  String? family = 'Rubik',
+}) => (m.TextPainter(
+  text: m.TextSpan(
+    text: text,
+    style: m.TextStyle(
+      fontSize: size,
+      fontFamily: family,
+      fontVariations: family == null
+          ? null
+          : [FontVariation('wght', weight.toDouble())],
+      fontWeight: FontWeight.values[(weight ~/ 100) - 1],
+      height: 1.1,
+    ),
+  ),
+  textDirection: TextDirection.ltr,
+)..layout()).width;
+
 void drawText(
   Canvas canvas,
   String text,

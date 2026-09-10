@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/animation.dart' show Curve, Curves;
 import 'package:kiyma/infrastructure/assets.dart';
+import 'package:kiyma/presentation/render/notice.dart';
 import 'package:kiyma/presentation/render/painter.dart';
 
 /// Where in the draw order an effect belongs.
@@ -150,6 +151,44 @@ class Effects {
       life: life,
     ),
   );
+
+  /// What the counter has to say, said at the place it is about.
+  ///
+  /// [at] is the thing being talked about; the badge stands above it and, if
+  /// something is already standing there, above that. Stacking rather than
+  /// replacing is the point — a customer walking out and the grill catching
+  /// in the same second are two pieces of news, and the second one used to
+  /// erase the first before it could be read.
+  void notice({
+    required Offset at,
+    required String text,
+    required BildirimTonu tone,
+    required Size scene,
+
+    /// Boxes a badge must not land on: the money and the meter are read at a
+    /// glance mid-rush, and covering either of them for a second and a half
+    /// is worse than whatever the badge had to say.
+    List<Rect> keepClear = const [],
+    double life = 1.6,
+  }) {
+    final asili = bildirimAsili(at, scene);
+    final kasa = bildirimKutusu(at, bildirimEni(text), scene, asili: asili);
+    final kayma = bildirimKaymasi(
+      kasa,
+      [...keepClear, ..._live.whereType<_Notice>().map((n) => n.yeri)],
+      asili: asili,
+    );
+    _add(
+      _Notice(
+        kasa: kasa,
+        text: text,
+        tone: tone,
+        asili: asili,
+        kayma: kayma,
+        life: life,
+      ),
+    );
+  }
 
   /// A thing travelling from where it was picked up to where it landed, so
   /// arrival is the cause of the change rather than 260ms after it.
@@ -369,6 +408,37 @@ class _Floater extends _Effect {
     );
     canvas.restore();
   }
+}
+
+class _Notice extends _Effect {
+  _Notice({
+    required this.kasa,
+    required this.text,
+    required this.tone,
+    required this.asili,
+    required this.kayma,
+    required super.life,
+  }) : super(layer: EffectLayer.over);
+
+  final Rect kasa;
+  final String text;
+  final BildirimTonu tone;
+  final bool asili;
+  final double kayma;
+
+  /// Where it actually stands, for the next badge to stack clear of.
+  Rect get yeri => kasa.shift(Offset(0, (asili ? 1 : -1) * kayma));
+
+  @override
+  void draw(Canvas canvas, Effects pool) => bildirimCiz(
+    canvas,
+    kasa,
+    yazi: text,
+    ton: tone,
+    asili: asili,
+    t: t,
+    kayma: kayma,
+  );
 }
 
 class _Flight extends _Effect {

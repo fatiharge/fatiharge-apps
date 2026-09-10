@@ -438,7 +438,7 @@ class DayRun {
       if (customer.hataKalan > 0) customer.hataKalan -= dt;
       // Nothing runs out mid-lesson: being taught is not being tested.
       if (!ogretiliyor) customer.sabirKalan -= dt / tempo.sabirCarpani;
-      _fikirDegisirMi(customer);
+      _fikirDegisirMi(i, customer);
       if (customer.sabirKalan <= 0) {
         _ayril(i, memnun: false);
       }
@@ -481,6 +481,14 @@ class DayRun {
 
     if (sonSiparisZamani && !_sonSiparisBildirildi) {
       _sonSiparisBildirildi = true;
+      // On the ledge, in the middle of the room. The clock was the obvious
+      // anchor and the wrong one: that corner is already the clock, the
+      // calendar and the purse, and the badge landed on the money. The news
+      // is about the queue anyway — these are the last of them.
+      _cue(
+        DayEvent.sonSiparis,
+        scene['tezgah_ust_kenari'].quad.bounds.topCenter,
+      );
       onEvent(DayEvent.sonSiparis);
     }
 
@@ -565,7 +573,7 @@ class DayRun {
   /// It reuses the refusal marks: the two wells flash and the ticket shakes,
   /// which is already the language for "look at the card again". Silently
   /// editing the order would be the game cheating.
-  void _fikirDegisirMi(Customer customer) {
+  void _fikirDegisirMi(int index, Customer customer) {
     final order = customer.order;
     if (order.musteriTipi != CustomerKind.kararsiz) return;
     if (customer.fikirDegisti || !customer.yerinde) return;
@@ -587,6 +595,7 @@ class DayRun {
     customer
       ..hatali = {cikan, giren}
       ..hataKalan = 1.8;
+    _cue(DayEvent.fikirDegisti, yeri(index));
     onEvent(DayEvent.fikirDegisti);
     onChanged();
   }
@@ -705,6 +714,7 @@ class DayRun {
       // they sit on would flash half the scene red.
       if (region.category == 'yapi') return;
       _flash(region.name, ok: false);
+      _cue(DayEvent.gecersiz, region.quad.bounds.center);
       onEvent(DayEvent.gecersiz);
       return;
     }
@@ -720,6 +730,7 @@ class DayRun {
     // as a lost input — so raw meat has already been answered by now.
     if (held is RawMince || !_tekYer(held)) return;
     _flash(region.name, ok: false);
+    _cue(DayEvent.gecersiz, region.quad.bounds.center);
     onEvent(DayEvent.gecersiz);
   }
 
@@ -801,6 +812,8 @@ class DayRun {
   /// skewer that quietly does not appear reads as a lost input.
   bool _mangalDolu() {
     _flash('mangal_alani', ok: false);
+    // The far edge, so what is said about the grill does not cover it.
+    _cue(DayEvent.mangalDolu, scene['mangal_alani'].quad.at(.5, 0));
     onEvent(DayEvent.mangalDolu);
     return false;
   }
@@ -845,6 +858,7 @@ class DayRun {
       return;
     }
     _flash('durum_hazirlama', ok: false);
+    _cue(DayEvent.gecersiz, scene['durum_hazirlama'].quad.bounds.center);
     onEvent(DayEvent.gecersiz);
   }
 
@@ -880,6 +894,7 @@ class DayRun {
         _mangalDolu();
       } else {
         if (landed != null) _flash(landed.name, ok: false);
+        _cue(DayEvent.gecersiz, landed?.quad.bounds.center ?? point);
         onEvent(DayEvent.gecersiz);
       }
       _putBack(held);

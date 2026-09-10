@@ -238,6 +238,13 @@ class Tempo {
     _uygula(adim, quiet: true);
   }
 
+  /// Whether the run of mis-moves has spent its forgiveness.
+  ///
+  /// The counter says nothing about the first two — the region flashing red
+  /// is the whole answer, and a sentence about a slip that cost nothing is
+  /// nagging. Past that it is not a slip, and it is worth saying so.
+  bool get affedilmez => _ustuste > bagislananSayisi;
+
   /// The third mis-move in a row and every one after it, worth more each
   /// time. The first two are free.
   void gecersizHareket() {

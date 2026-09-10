@@ -23,6 +23,7 @@ import 'package:kiyma/presentation/render/figure.dart';
 import 'package:kiyma/presentation/render/glyphs.dart';
 import 'package:kiyma/presentation/render/grill.dart';
 import 'package:kiyma/presentation/render/halo.dart';
+import 'package:kiyma/presentation/render/notice.dart';
 import 'package:kiyma/presentation/render/painter.dart';
 import 'package:kiyma/presentation/render/skewer.dart';
 import 'package:kiyma/presentation/render/tempo_bar.dart';
@@ -200,6 +201,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     _cop += (wanted - _cop) * (1 - math.exp(-16 * dt));
 
     if (_shake > 0) _shake -= dt;
+    _susan.updateAll((_, kalan) => kalan - dt);
     fx.update(dt);
     _drain();
     _emit(dt);
@@ -215,50 +217,99 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     _held += (target - _held) * (1 - math.exp(-22 * dt));
   }
 
+  /// What each event is called on screen, and in what colour.
+  ///
+  /// The four that are missing are missing on purpose. `kabul` fires once per
+  /// line item — 114 times in a measured day-30 run — `musteriGeldi` and
+  /// `musteriMemnun` once per customer at about one every four seconds, and
+  /// `tempoBonusu` on very nearly every move once the meter is pinned. A
+  /// badge on any of them is a badge that is always on screen, which is a
+  /// badge nobody reads. Each already has its own answer: the coins, the
+  /// ring, the meter, the person walking away happy.
+  static const _soylenen = <DayEvent, (String, BildirimTonu)>{
+    DayEvent.musteriKizgin: ('olay.musteri_kizgin', BildirimTonu.kotu),
+    DayEvent.reddedildi: ('olay.reddedildi', BildirimTonu.kotu),
+    DayEvent.yandi: ('olay.yandi', BildirimTonu.kotu),
+    DayEvent.altinSupuruldu: ('olay.altin_supuruldu', BildirimTonu.kotu),
+    DayEvent.mangalDolu: ('olay.mangal_dolu', BildirimTonu.uyari),
+    DayEvent.fikirDegisti: ('olay.fikir_degisti', BildirimTonu.uyari),
+    DayEvent.sonSiparis: ('olay.son_siparis', BildirimTonu.uyari),
+    DayEvent.gecersiz: ('olay.gecersiz', BildirimTonu.uyari),
+    DayEvent.bahsis: ('olay.bahsis', BildirimTonu.iyi),
+    DayEvent.gunlukHedef: ('olay.gunluk_hedef', BildirimTonu.iyi),
+    DayEvent.seri: ('olay.seri', BildirimTonu.iyi),
+  };
+
+  /// How long a kind stays quiet after it has spoken. Everything gets a beat
+  /// so one event cannot stack two identical badges; the two a frustrated
+  /// thumb can fire four times in two seconds get much longer.
+  static const _sessizlik = <DayEvent, double>{
+    DayEvent.gecersiz: 2.4,
+    DayEvent.mangalDolu: 2.4,
+    DayEvent.seri: 1.8,
+  };
+  static const _sessizlikTaban = 0.45;
+
+  final Map<DayEvent, double> _susan = {};
+
+  /// Says one thing, at the place it is about, unless it has just said it.
+  void _soyle(Cue cue) {
+    final kayit = _soylenen[cue.kind];
+    if (kayit == null) return;
+    // The first two mis-moves in a row are answered by the region flashing
+    // red and by nothing else. A sentence about a slip that cost nothing is
+    // nagging, and this is the one event a moving thumb produces by itself.
+    if (cue.kind == DayEvent.gecersiz && !run.tempo.affedilmez) return;
+    if ((_susan[cue.kind] ?? 0) > 0) return;
+    _susan[cue.kind] = _sessizlik[cue.kind] ?? _sessizlikTaban;
+    // The money goes in the badge rather than beside it. It used to be a
+    // floater at the same anchor, in the same red, and it sat on top of the
+    // sentence and rubbed a letter out of it.
+    final para = cue.amount == 0
+        ? ''
+        : '  ${cue.amount > 0 ? '+' : ''}${cue.amount}';
+    fx.notice(
+      at: cue.at,
+      text: '${ceviri(kayit.$1)}$para',
+      tone: kayit.$2,
+      scene: scene.size,
+      keepClear: const [_kese, _keseCip, _tempoKasa],
+    );
+  }
+
   /// Turns what the rules said happened into something to look at.
   void _drain() {
     for (final cue in run.cues) {
+      _soyle(cue);
       switch (cue.kind) {
         case DayEvent.kabul:
           _serve(cue);
         case DayEvent.yandi:
           _knock(3.4, 0.12);
-          fx
-            ..burst(
-              at: cue.at,
-              colour: const Color(0xFF3A302A),
-              count: 10,
-              speed: 150,
-            )
-            ..floater(
-              at: cue.at,
-              text: '${cue.amount}',
-              colour: const Color(0xFFC4321F),
-            );
+          fx.burst(
+            at: cue.at,
+            colour: const Color(0xFF3A302A),
+            count: 10,
+            speed: 150,
+          );
         case DayEvent.musteriKizgin:
           _knock(6, 0.3);
-          fx.floater(
-            at: cue.at,
-            text: '!',
-            colour: const Color(0xFFC4321F),
-            size: 26,
-          );
         case DayEvent.altinSupuruldu:
+          fx.burst(
+            at: cue.at,
+            colour: const Color(0xFF8E8578),
+            count: 8,
+            speed: 90,
+            up: math.pi / 2,
+            gravity: 120,
+          );
+        // Paid, and until now paid silently: the purse went up and nothing
+        // on screen said where from. They are not a service — no freeze, no
+        // knock — so they get the flight and the ring and nothing else.
+        case DayEvent.bahsis || DayEvent.seri || DayEvent.gunlukHedef:
           fx
-            ..burst(
-              at: cue.at,
-              colour: const Color(0xFF8E8578),
-              count: 8,
-              speed: 90,
-              up: math.pi / 2,
-              gravity: 120,
-            )
-            ..floater(
-              at: cue.at,
-              text: '${cue.amount}',
-              colour: const Color(0xFFC4321F),
-              rise: -20,
-            );
+            ..ring(at: cue.at, colour: const Color(0xFFFFD98A))
+            ..coins(from: cue.at, to: _kese.center);
         case _:
           break;
       }

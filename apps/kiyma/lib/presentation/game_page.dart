@@ -30,24 +30,6 @@ class _GamePageState extends State<GamePage> {
   // back gesture included.
   late final KiymaCubit _cubit = getIt<KiymaCubit>()..startDay();
 
-  /// Scoped to the page, not to the process. As a static it survived the run
-  /// that raised it: a toast fired in the last second of a day was still on
-  /// screen when the next one opened, because the timer that would have
-  /// cleared it was cancelled with the page.
-  final ValueNotifier<String?> _toast = ValueNotifier(null);
-  Timer? _toastTimer;
-
-  void _say(DayEvent event) {
-    final key = _toastKey(event);
-    if (key == null) return;
-    _toast.value = key.tr();
-    _toastTimer?.cancel();
-    _toastTimer = Timer(
-      const Duration(milliseconds: 1100),
-      () => _toast.value = null,
-    );
-  }
-
   /// A phone call must not freeze the counter and hand it back under the
   /// player's finger; it pauses, and they choose when to go on.
   AppLifecycleListener? _lifecycle;
@@ -64,8 +46,6 @@ class _GamePageState extends State<GamePage> {
   @override
   void dispose() {
     _lifecycle?.dispose();
-    _toastTimer?.cancel();
-    _toast.dispose();
     unawaited(_cubit.close());
     super.dispose();
   }
@@ -80,31 +60,13 @@ class _GamePageState extends State<GamePage> {
     },
     child: BlocProvider.value(
       value: _cubit,
-      child: _GameView(toast: _toast, onEvent: _say),
+      child: const _GameView(),
     ),
   );
 }
 
-String? _toastKey(DayEvent event) => switch (event) {
-  DayEvent.reddedildi => 'olay.reddedildi',
-  DayEvent.yandi => 'olay.yandi',
-  DayEvent.mangalDolu => 'olay.mangal_dolu',
-  DayEvent.altinSupuruldu => 'olay.altin_supuruldu',
-  DayEvent.gecersiz => 'olay.gecersiz',
-  DayEvent.musteriKizgin => 'olay.musteri_kizgin',
-  DayEvent.sonSiparis => 'olay.son_siparis',
-  DayEvent.fikirDegisti => 'olay.fikir_degisti',
-  DayEvent.bahsis => 'olay.bahsis',
-  DayEvent.gunlukHedef => 'olay.gunluk_hedef',
-  DayEvent.seri => 'olay.seri',
-  _ => null,
-};
-
 class _GameView extends StatelessWidget {
-  const _GameView({required this.toast, required this.onEvent});
-
-  final ValueNotifier<String?> toast;
-  final void Function(DayEvent event) onEvent;
+  const _GameView();
 
   @override
   Widget build(BuildContext context) {
@@ -116,9 +78,7 @@ class _GameView extends StatelessWidget {
         onEffect: (context, event) {
           if (event == DayEvent.gunBitti) {
             unawaited(context.router.replace(const SummaryRoute()));
-            return;
           }
-          onEvent(event);
         },
         child: BlocBuilder<KiymaCubit, KiymaState>(
           builder: (context, state) {
@@ -134,7 +94,6 @@ class _GameView extends StatelessWidget {
                   ),
                 if (state.duraklatildi)
                   _PauseOverlay(onResume: () => cubit.duraklat(durdur: false)),
-                _Toast(message: toast),
               ],
             );
           },
@@ -280,30 +239,3 @@ class _GameHostState extends State<_GameHost> {
 
 /// A one-line note that fades out. The player is mid-drag; anything louder
 /// would be worse than nothing.
-class _Toast extends StatelessWidget {
-  const _Toast({required this.message});
-
-  final ValueNotifier<String?> message;
-
-  @override
-  Widget build(BuildContext context) => ValueListenableBuilder<String?>(
-    valueListenable: message,
-    builder: (context, shown, _) => IgnorePointer(
-      child: AnimatedOpacity(
-        opacity: shown == null ? 0 : 1,
-        duration: const Duration(milliseconds: 160),
-        child: Align(
-          alignment: const Alignment(0, -0.55),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-            decoration: BoxDecoration(
-              color: KiymaPalette.panel,
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Text(shown ?? '', style: const TextStyle(fontSize: 13)),
-          ),
-        ),
-      ),
-    ),
-  );
-}
