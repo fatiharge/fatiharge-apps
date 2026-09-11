@@ -1821,9 +1821,9 @@ class CounterComponent extends PositionComponent with DragCallbacks {
 
   int _ticketWorth(Customer customer) {
     final order = customer.order;
-    var worth = customer.anaUrunVerildi ? 0 : _urunDegeri(order);
+    var worth = customer.anaUrunVerildi ? 0 : run.siparisDegeri(order);
     if (order.ikinci case final ikinci? when !customer.ikinciVerildi) {
-      worth += _urunDegeri(ikinci);
+      worth += run.siparisDegeri(ikinci);
     }
     final tatli = order.tatli;
     if (tatli != null && !customer.tatliVerildi) {
@@ -1835,17 +1835,6 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     }
     return worth;
   }
-
-  int _urunDegeri(Order order) =>
-      (Balance.income(
-                order.tip == ProductKind.durum
-                    ? Balance.durumBase
-                    : Balance.porsiyonBase,
-                run.day,
-                ingredients: order.ister.length,
-              ) *
-              order.musteriTipi.odemeCarpani)
-          .round();
 
   /// Only what was actually asked for: wanted, then forbidden, in enum order.
   ///

@@ -1175,4 +1175,54 @@ void main() {
       expect(run.durumIstasyonu, isNull);
     });
   });
+  group('what the counter is worth', () {
+    test('the handover that finishes the visit is the one that pays', () {
+      // The multiplier exists for a save at the bottom of the bar, and it
+      // used to be asked a question that had already been answered: the flag
+      // it read was set four lines above it, so it was true on every
+      // handover *except* the one that finished the visit.
+      final run = build();
+      final musteri = waiting(run, wrapFor(const {}));
+      musteri.sabirKalan = musteri.sabirToplam * Balance.kritikSabir * .5;
+      final fiyat = run.siparisDegeri(musteri.order);
+
+      buildWrap(run);
+      run.flickUp(at('durum_hazirlama'));
+      drag(run, at('kagit_kaynak'), at('durum_hazirlama'));
+      expect(drag(run, at('durum_hazirlama'), at('musteri_slot_1')), isTrue);
+
+      expect(run.kritikServis, 1, reason: 'the save was counted');
+      // The gold is on the ledge, not in the till: `odenen` is what the
+      // handover was actually worth.
+      expect(
+        musteri.odenen,
+        greaterThan(fiyat),
+        reason: 'and it paid flat: $fiyat',
+      );
+    });
+
+    test('the ticket quotes the number the till pays', () {
+      // The renderer kept its own copy of this arithmetic and the copy had
+      // lost two terms — the butcher's lift on the base and the day rule's
+      // factor. The card is the thing the whole game is read from.
+      for (final kasap in [0, 3]) {
+        final run = build(
+          unlock: [for (var i = 0; i < kasap; i++) 'kasap_${i + 1}'],
+        );
+        final musteri = waiting(run, wrapFor(const {}));
+        final fiyat = run.siparisDegeri(musteri.order);
+
+        buildWrap(run);
+        run.flickUp(at('durum_hazirlama'));
+        drag(run, at('kagit_kaynak'), at('durum_hazirlama'));
+        expect(drag(run, at('durum_hazirlama'), at('musteri_slot_1')), isTrue);
+
+        expect(
+          musteri.odenen,
+          fiyat,
+          reason: 'butcher $kasap: the ticket said $fiyat',
+        );
+      }
+    });
+  });
 }

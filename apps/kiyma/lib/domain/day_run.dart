@@ -1222,15 +1222,20 @@ class DayRun {
     }
 
     _consume(held);
-    final son = customer.order.ikinci == null
-        ? !customer.anaUrunVerildi
-        : !customer.ikinciVerildi;
+    // The bottom of the bar pays like the top: a handover made with seconds
+    // left is the hardest thing the counter asks for.
+    //
+    // This used to ask a question of its own — "is the finishing line still
+    // outstanding?" — computed *after* the switch above had already ticked
+    // that line off, so it was true on every handover except the one that
+    // finished the visit. A baklava passed to somebody about to walk out paid
+    // half again; the wrap that saved them paid flat. `tamamlandi` is the
+    // same question asked of the customer, and it is the one the badge below
+    // has always used, so the till and the badge now agree by construction.
+    final kritik =
+        customer.tamamlandi && customer.sabirOrani <= Balance.kritikSabir;
     final paid =
-        (kazanc *
-                tempo.paraCarpani *
-                (son && customer.sabirOrani <= Balance.kritikSabir
-                    ? Balance.kritikCarpani
-                    : 1))
+        (kazanc * tempo.paraCarpani * (kritik ? Balance.kritikCarpani : 1))
             .round();
     customer.odenen += paid;
     _cue(
@@ -1240,11 +1245,6 @@ class DayRun {
       amount: paid,
       asset: held.asset,
     );
-    // The bottom of the bar pays like the top: a handover made with seconds
-    // left is the hardest thing the counter asks for, and until now it paid
-    // less than an easy one.
-    final kritik =
-        customer.tamamlandi && customer.sabirOrani <= Balance.kritikSabir;
     if (kritik) kritikServis++;
     tempo.servisEdildi(
       tamami: customer.tamamlandi,
@@ -1273,6 +1273,32 @@ class DayRun {
     customer.odenen += miktar;
     _cue(DayEvent.bahsis, yeri(index), amount: miktar, asset: 'altin');
     onEvent(DayEvent.bahsis);
+  }
+
+  /// What the ticket quotes: the same arithmetic the till runs, asked of the
+  /// order instead of the finished product.
+  ///
+  /// The renderer used to keep its own copy of this and the copy was missing
+  /// two terms — the butcher's lift on the base and the day rule's factor —
+  /// so the number printed on the card read low after any butcher rung and
+  /// was out by anything from 0.85x to 1.5x on every rule day from the fourth
+  /// on. The card is the thing the whole game is read from; it cannot be the
+  /// one number nobody checks.
+  ///
+  /// It counts what was *asked for* rather than what went in, which is the
+  /// one place it may differ from [_anaUrunGeliri]: the bonus an unmentioned
+  /// ingredient earns is not a promise, so a quote must not include it.
+  int siparisDegeri(Order order) {
+    final kasap = Balance.kasapPayi * progress.unlocks.kasapKademesi;
+    final taban = Balance.income(
+      (order.tip == ProductKind.durum
+              ? Balance.durumBase
+              : Balance.porsiyonBase) +
+          kasap,
+      day,
+      ingredients: order.ister.length,
+    );
+    return (taban * order.musteriTipi.odemeCarpani * kural.odeme).round();
   }
 
   int _anaUrunGeliri(Product urun, CustomerKind tipi) {
