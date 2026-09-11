@@ -7,7 +7,9 @@ import 'package:kiyma/domain/scene.dart';
 import 'package:kiyma/domain/unlocks.dart';
 import 'package:kiyma/infrastructure/assets.dart';
 import 'package:kiyma/presentation/gold_text.dart';
+import 'package:kiyma/presentation/render/grill.dart';
 import 'package:kiyma/presentation/render/painter.dart';
+import 'package:kiyma/presentation/render/skewer.dart';
 import 'package:kiyma/presentation/render/tag_layout.dart';
 
 /// The kitchen, drawn with nothing happening in it.
@@ -51,6 +53,17 @@ class ShopScenePainter extends CustomPainter {
       ..scale(size.width / scene.size.width, size.height / scene.size.height);
 
     for (final layer in scene.layers) {
+      // The grill is drawn, here as in the kitchen. This screen used to blit
+      // the painted one the counter stopped using, so a player walked out of
+      // a kitchen with a steel trough and four lit slots into a shop showing
+      // a different grill with a painted raw skewer lying across it — on the
+      // screen that is asking them to pay for a fourth slot on it.
+      if (layer.name == 'mangal_katman') {
+        if (scene.maybe('mangal_alani') case final mangal?) {
+          mangalCiz(canvas, mangal.quad, t: 0, isi: .55);
+        }
+        continue;
+      }
       final image = assets[layer.src];
       if (image == null) continue;
       drawInQuad(
@@ -64,6 +77,36 @@ class ShopScenePainter extends CustomPainter {
     for (final region in scene.regions) {
       if (region.category == 'dekor') continue;
       final acik = unlocks.shows(region.name);
+      // The slots, drawn the way the kitchen draws them: one skewer per slot
+      // the player owns, a dashed outline on the ones they do not. The region
+      // used to blit a single raw-skewer picture across the whole trough,
+      // which showed one skewer on a four-slot grill and said nothing about
+      // which of the four were for sale.
+      if (region.name == 'mangal_alani') {
+        final yuvalar = region.slots;
+        for (var i = 0; i < yuvalar.length; i++) {
+          if (i < unlocks.mangalSlots) {
+            sisCiz(
+              canvas,
+              Quad(
+                yuvalar[i].bottomLeft,
+                yuvalar[i].topLeft,
+                yuvalar[i].topRight,
+                yuvalar[i].bottomRight,
+              ),
+              kizarma: .25 + i * .25,
+              kavrulma: 0,
+            );
+          } else {
+            _kesikli(
+              canvas,
+              yuvalar[i],
+              renk: const Color(0xCCF7EEDF),
+            );
+          }
+        }
+        continue;
+      }
       final asset = region.asset;
       final image = asset == null ? null : assets[asset];
       if (image == null) {
@@ -191,9 +234,12 @@ class ShopScenePainter extends CustomPainter {
   /// A dashed outline round something that is not there yet. Drawn by hand
   /// because a dash pattern is four lines of arithmetic and the alternative
   /// is a package.
-  void _kesikli(Canvas canvas, Quad quad) {
+  /// [renk] is for the one place the ink line has nothing to sit on: the
+  /// grill's own slots are dashed onto a bed of coals, and dark ink at half
+  /// alpha over dark coals is nothing at all.
+  void _kesikli(Canvas canvas, Quad quad, {Color? renk}) {
     final paint = Paint()
-      ..color = const Color(0xFF2E2A26).withValues(alpha: 0.55)
+      ..color = renk ?? const Color(0xFF2E2A26).withValues(alpha: 0.55)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
     final corners = quad.corners;
