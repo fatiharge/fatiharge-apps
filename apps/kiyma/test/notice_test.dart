@@ -58,7 +58,7 @@ void main() {
   });
 
   group('when two of them arrive at once', () {
-    final kasa = const Rect.fromLTWH(300, 200, 180, 30);
+    const kasa = Rect.fromLTWH(300, 200, 180, 30);
 
     test('the second stands clear of the first', () {
       final kayma = bildirimKaymasi(kasa, [kasa], asili: false);

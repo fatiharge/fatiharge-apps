@@ -27,6 +27,7 @@ import 'package:kiyma/presentation/render/notice.dart';
 import 'package:kiyma/presentation/render/painter.dart';
 import 'package:kiyma/presentation/render/skewer.dart';
 import 'package:kiyma/presentation/render/tempo_bar.dart';
+import 'package:kiyma/presentation/render/usta_acting.dart';
 import 'package:kiyma/presentation/render/usta_figure.dart';
 
 /// The whole counter: every pixel of the game world and every gesture on it.
@@ -202,6 +203,16 @@ class CounterComponent extends PositionComponent with DragCallbacks {
 
     if (_shake > 0) _shake -= dt;
     _susan.updateAll((_, kalan) => kalan - dt);
+    _usta
+      ..konusma(acik: run.ogretmen?.adim != null && !run.ogretmen!.bitti)
+      ..tick(
+        dt,
+        // Nobody waiting and nothing cooking. It is the only thing he is told
+        // about the counter, and it buys one beat: the yawn.
+        bosTezgah:
+            run.musteriler.every((c) => c == null) &&
+            run.mangal.every((s) => s.bos),
+      );
     fx.update(dt);
     _drain();
     _emit(dt);
@@ -252,6 +263,10 @@ class CounterComponent extends PositionComponent with DragCallbacks {
 
   final Map<DayEvent, double> _susan = {};
 
+  /// What he is doing. His own clock and his own state — the rules never see
+  /// him, and nothing he does reaches them.
+  final UstaYonetmeni _usta = UstaYonetmeni();
+
   /// Says one thing, at the place it is about, unless it has just said it.
   void _soyle(Cue cue) {
     final kayit = _soylenen[cue.kind];
@@ -281,6 +296,7 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   void _drain() {
     for (final cue in run.cues) {
       _soyle(cue);
+      _usta.olay(cue.kind);
       switch (cue.kind) {
         case DayEvent.kabul:
           _serve(cue);
@@ -1383,9 +1399,9 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   /// He was a jacket, a toque and a circle — the placeholder that stood in
   /// while the characters were unbuilt. He is drawn now, from the same rig as
   /// the customers, and he is painted second of the fifteen things in a
-  /// frame: the grill goes over him from y ~360 down, which is what puts him
+  /// frame: the grill goes over him from y ~430 down, which is what puts him
   /// behind it rather than standing in it.
-  void _renderSef(Canvas canvas) => ustaCiz(canvas, t: _elapsed);
+  void _renderSef(Canvas canvas) => ustaCiz(canvas, _usta.poz(_elapsed));
 
   /// The takings, as a bag of money under the clock.
   ///

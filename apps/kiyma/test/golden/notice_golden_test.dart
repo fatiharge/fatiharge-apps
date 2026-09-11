@@ -9,7 +9,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kiyma/domain/day_run.dart';
 import 'package:kiyma/domain/model/items.dart';
 import 'package:kiyma/domain/model/order.dart';
-import 'package:kiyma/domain/model/products.dart';
 import 'package:kiyma/domain/progress.dart';
 import 'package:kiyma/domain/scene.dart';
 import 'package:kiyma/domain/unlocks.dart';

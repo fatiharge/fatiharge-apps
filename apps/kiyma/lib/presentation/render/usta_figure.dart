@@ -17,6 +17,7 @@ library;
 import 'dart:math' as math;
 import 'dart:ui';
 
+import 'package:flutter/animation.dart' show Curves;
 import 'package:kiyma/presentation/render/figure.dart';
 
 /// Where he stands and how big he is, chosen against the real frame rather
@@ -310,6 +311,7 @@ List<Offset> _kas(
   double yon, {
   required double kalk,
   required double ic,
+  double icDus = 0,
 }) {
   final tepe = ey - _gozBoy - kalk;
   // The higher it rides, the further it has to dive to meet the temple.
@@ -320,10 +322,12 @@ List<Offset> _kas(
       Offset(ex + yon * _kasDis * .16, tepe),
       Offset(ex - yon * ic * .38, tepe),
     ],
+    // The inner end alone carries the anger: it drops toward the nose while
+    // the temple stays where it is. Lowering the whole brow reads as tired.
     [
-      Offset(ex - yon * ic * .72, tepe),
-      Offset(ex - yon * ic, tepe + dalis * .22),
-      Offset(ex - yon * ic, tepe + dalis * .35),
+      Offset(ex - yon * ic * .72, tepe + icDus * .45),
+      Offset(ex - yon * ic, tepe + dalis * .22 + icDus * .88),
+      Offset(ex - yon * ic, tepe + dalis * .35 + icDus),
     ],
   ]);
   return serit(orta, _kasUc, _kasKalin * .5);
@@ -362,8 +366,8 @@ List<Offset> _burunSekli(double x, double y) {
 }
 
 /// The opening of the mouth, widest low down: an open laugh, not an O.
-List<Offset> _agizSekli(double x, double y, double h) {
-  const w = _agizYari;
+List<Offset> _agizSekli(double x, double y, double h, double en) {
+  final w = _agizYari * en;
   final sag = yol(Offset(0, -h), [
     [
       Offset(w * .62, -h * 1.00),
@@ -381,8 +385,8 @@ List<Offset> _agizSekli(double x, double y, double h) {
 /// The upper teeth as one unbroken band. Drawn as separate teeth at this size
 /// they collapse into a row of grey lines, and the reference does not draw
 /// them either.
-List<Offset> _disSekli(double x, double y, double h) {
-  const w = _agizYari;
+List<Offset> _disSekli(double x, double y, double h, double en) {
+  final w = _agizYari * en;
   final ust = y - h * .80;
   final alt = y - h * .26;
   return yol(Offset(x - w * .40, ust + 2.5), [
@@ -411,8 +415,8 @@ List<Offset> _disSekli(double x, double y, double h) {
 
 /// The tongue on the floor of the mouth. It is the warm note in the face and
 /// the reason an open mouth reads as a laugh rather than as a hole.
-List<Offset> _dilSekli(double x, double y, double h) {
-  const w = _agizYari;
+List<Offset> _dilSekli(double x, double y, double h, double en) {
+  final w = _agizYari * en;
   final ust = y + h * .26;
   final alt = y + h * .92;
   return yol(Offset(x - w * .54, ust + 2), [
@@ -707,16 +711,19 @@ class UstaParcalari {
   final List<Sekil> kafa = [];
 }
 
-/// One frame of him. Only breathing for now — the repertoire comes next, and
-/// the channels are already the ones it will drive.
+/// One frame of him: every channel his acting can move, and nothing else.
+///
+/// Built by [UstaPoz.durgun] as a man standing still and breathing, then
+/// overwritten by whatever he is in the middle of doing. It stays a plain
+/// struct on purpose — that is what lets `UstaYonetmeni` be a state machine
+/// over numbers instead of a second copy of the drawing.
 class UstaPoz {
-  UstaPoz(double t) {
+  UstaPoz.durgun(double t) {
     final nefes = math.sin(t * 1.55);
     dy = nefes * 1.9;
     egim = math.sin(t * .62) * .9;
     hx = math.sin(t * .48 + 1.2) * 2.2;
     hy = nefes * 1.1;
-    agiz = 7;
     final kirp = (math.sin(t * 1.07) + 1) / 2;
     if (kirp > .987) goz = .1;
   }
@@ -725,19 +732,47 @@ class UstaPoz {
   double egim = 0;
   double hx = 0;
   double hy = 0;
+
+  /// Eyes open, 0…1.
   double goz = 1;
+
+  /// How far the mouth is open, past the gap it rests at.
   double agiz = 7;
+
+  /// How wide it is. A grin spreads and a shout does not, and without this
+  /// every expression was the same oval at a different height.
+  double agizEn = 1;
+
+  /// Corners up, in pixels of lift at the widest point.
+  double gulus = 0;
+
+  /// Both brows up together — surprise, delight, an idea.
   double kas = 0;
 
-  /// Where each hand is, in his own space.
+  /// Brows down and in. Its own channel rather than a negative [kas]: only
+  /// the inner ends move, and a brow lowered whole reads as tired.
+  double ofke = 0;
+
+  /// Where he is looking, on top of the resting gaze.
+  double bakisX = 0;
+  double bakisY = 0;
+
+  /// The bulb over his head, 0…1.
+  double fikir = 0;
+
+  /// Hands, where something has taken them. Null hangs.
   ///
-  /// Both hang. The grill hides everything below y ~360 and his shoulder is
-  /// at 321, so a hand held anywhere near chest height puts the target within
-  /// a few pixels of its own shoulder — and [kolEgrisi] answers that by
-  /// bowing the arm sixty pixels sideways. Hanging arms leave a clean sleeve
-  /// in the visible band and take the fold out of the maths entirely.
-  Offset get sagEl => Offset(cx + _altYari - 2, _omuzY + 96 + dy * .5);
-  Offset get solEl => Offset(cx - _altYari + 2, _omuzY + 96 + dy * .5);
+  /// Hanging is the default for a reason: the apron is drawn over the arms,
+  /// so a hand anywhere inside `cx ± 78` below y 333 is behind cloth. Every
+  /// gesture here either comes up over the chest or reaches out past the
+  /// apron's edge, and one that does neither is a gesture nobody sees.
+  Offset? solHedef;
+  Offset? sagHedef;
+
+  Offset get sagEl =>
+      sagHedef ?? Offset(cx + _altYari - 2, _omuzY + 96 + dy * .5);
+  Offset get solEl =>
+      solHedef ?? Offset(cx - _altYari + 2, _omuzY + 96 + dy * .5);
 }
 
 /// Draws the usta into scene coordinates.
@@ -746,8 +781,7 @@ class UstaPoz {
 /// drawn: body, then the bare arms, then the head. The arms carry their own
 /// ink over the shirt or they read as lumps rather than limbs — the same trap
 /// the customer rig fell into.
-void ustaCiz(Canvas canvas, {required double t}) {
-  final p = UstaPoz(t);
+void ustaCiz(Canvas canvas, UstaPoz p) {
   final parca = UstaParcalari.tek;
 
   final ink = Paint()
@@ -779,25 +813,48 @@ void ustaCiz(Canvas canvas, {required double t}) {
     ..rotate(p.egim * math.pi / 180)
     ..translate(-cx, -_omuzY);
 
-  const kolBoyu = 106.0;
+  const kolBoyu = ustaKolBoyu;
   final yenler = <Sekil>[];
   final tenler = <Sekil>[];
+  // An arm raised to the face or above the chest has to be painted after the
+  // head, not before it. Everything behind it — shirt, apron, skull — is
+  // drawn in one sweep, so a hand held at eye level went behind his own face
+  // and the whole gesture was a shoulder twitch. This is the exception, and
+  // the whole arm moves with it: a forearm in front of a sleeve that is still
+  // behind the apron is a limb in two pieces.
+  final onde = <Sekil>[];
   for (final yon in const [-1.0, 1.0]) {
     // The arm hangs from the shirt's own widest point. Anchored above it the
     // sleeve became a lump outside the shoulder, and the silhouette stepped.
-    final omuz = Offset(cx + yon * (_omuzYari - 19), _omuzY + 12);
-    final hedef = yon < 0 ? p.solEl : p.sagEl;
+    final omuz = ustaOmuz(yon);
+    // Pulled back inside the arm's own length. He is a cartoon — a head 142
+    // wide on shoulders 160 wide — so his own forehead is 160 px from his
+    // shoulder and his arm is 106. A target past that does not fail, it
+    // stretches, and a stretched arm is a thin rubber tube with a mitten on
+    // the end of it. The gesture ends where the arm ends.
+    final ham = yon < 0 ? p.solEl : p.sagEl;
+    final uzanim = ham - omuz;
+    final hedef = uzanim.distance <= kolBoyu
+        ? ham
+        : omuz + uzanim / uzanim.distance * kolBoyu;
     final kol = kolEgrisi(omuz, hedef, yon, kolBoyu);
     // The sleeve ends just above the grill's edge, which is the last place
     // anything he wears can be seen at all.
     final kes = math.max(3, (kol.orta.length * .34).round());
     final ic = Offset(cx + yon * (_omuzYari - 40), _omuzY + 2);
-    yenler.add(
-      sekil(serit([ic, ...kol.orta.take(kes)], 19, 16), 'gomlek', _orta),
+    final yen = sekil(
+      serit([ic, ...kol.orta.take(kes)], 19, 16),
+      'gomlek',
+      _orta,
     );
-    tenler
-      ..add(sekil(serit(kol.orta.sublist(kes - 1), 18, 13), 'ten', _orta))
-      ..add(sekil(_el(kol.el.dx, kol.el.dy, yon), 'ten', _orta));
+    final ten = sekil(serit(kol.orta.sublist(kes - 1), 18, 13), 'ten', _orta);
+    final el = sekil(_el(kol.el.dx, kol.el.dy, yon), 'ten', _orta);
+    if (hedef.dy < ustaKaldirikEsigi) {
+      onde.addAll([yen, ten, el]);
+    } else {
+      yenler.add(yen);
+      tenler.addAll([ten, el]);
+    }
   }
 
   // Sleeves before the shirt, not inside its list: a strip is as wide above
@@ -811,7 +868,36 @@ void ustaCiz(Canvas canvas, {required double t}) {
   grup(parca.havlu);
   grup(parca.kafa);
   _yuz(canvas, p);
+  if (onde.isNotEmpty) grup(onde);
+  if (p.fikir > .01) _ampul(canvas, p);
   canvas.restore();
+}
+
+/// Above this, a hand is drawn in front of him instead of behind. It is the
+/// chest: at the collar the hand is already crossing cloth it should cover,
+/// and below it nothing is in the way to begin with.
+const ustaKaldirikEsigi = 296.0;
+
+/// How far his hand reaches from his shoulder. Public because it is a rule
+/// every gesture has to obey and the rule is not obvious from the drawing:
+/// his head is 142 px wide and his arm is this, so he cannot touch his own
+/// forehead. A target past it is pulled back rather than honoured.
+const ustaKolBoyu = 106.0;
+
+/// The shoulder a gesture on [yon] hangs from. -1 is his right on screen.
+Offset ustaOmuz(double yon) => Offset(cx + yon * (_omuzYari - 19), _omuzY + 12);
+
+/// Half the apron's width at height [y], and 0 above its waist.
+///
+/// The apron is painted after the arms, so this is the line a hand has to be
+/// outside of to exist at all — unless it is above [ustaKaldirikEsigi], where
+/// the arm is painted in front of everything instead.
+double ustaOnlukYari(double y) {
+  if (y < _onlukY) return 0;
+  // It flares from .80 of the hem at the waist to the full width 130 px down,
+  // which is the curve `_onluk` is built from.
+  final t = ((y - _onlukY) / 130).clamp(0.0, 1.0);
+  return _altYari * (.80 + .20 * t);
 }
 
 /// The face, redrawn every frame because it is what carries him.
@@ -876,7 +962,7 @@ void _yuz(Canvas canvas, UstaPoz p) {
     if (acik > .22) {
       // One gaze for both eyes. Mirroring the offset is what made him look
       // through the player rather than at anything.
-      const bakis = Offset(_bakisX, _bakisY);
+      final bakis = Offset(_bakisX + p.bakisX, _bakisY + p.bakisY);
       canvas
         ..drawOval(
           Rect.fromCenter(
@@ -899,7 +985,7 @@ void _yuz(Canvas canvas, UstaPoz p) {
 
   // He grins and both brows ride up, but the lead never closes — the lead is
   // the expression, not the height.
-  final kalkOrtak = p.kas * 5 + (p.agiz - 7) * .35;
+  final kalkOrtak = p.kas * 9 + (p.agiz - 7) * .35 - p.ofke * 6;
   for (final yon in const [-1.0, 1.0]) {
     final kalkti = yon < 0;
     canvas.drawPath(
@@ -910,6 +996,7 @@ void _yuz(Canvas canvas, UstaPoz p) {
           yon,
           kalk: (kalkti ? _kasBoy : _kasBas) + kalkOrtak,
           ic: kalkti ? _kasIc : _kasIcBas,
+          icDus: p.ofke * 17,
         ),
       ),
       Paint()..color = UstaPalet.sac,
@@ -920,16 +1007,118 @@ void _yuz(Canvas canvas, UstaPoz p) {
   // it read: the old dark oval sat on black hair and differed from it by
   // twenty levels of red, so at any real size there was no mouth there.
   final gy = uy + _agizY;
-  final gh = _agizBoy + p.agiz;
-  final agiz = yoldan(_agizSekli(ux, gy, gh));
+  final gh = math.max(1.2, _agizBoy + p.agiz);
+  final en = p.agizEn;
+  List<Path> bukle(List<List<Offset>> hepsi) => [
+    for (final o in hepsi) yoldan(_gulumse(o, ux, _agizYari * en, p.gulus)),
+  ];
+  final agizlar = bukle([
+    _agizSekli(ux, gy, gh, en),
+    _disSekli(ux, gy, gh, en),
+    _dilSekli(ux, gy, gh, en),
+  ]);
   canvas
-    ..drawPath(agiz, Paint()..color = UstaPalet.agizIc)
-    ..drawPath(yoldan(_disSekli(ux, gy, gh)), Paint()..color = UstaPalet.dis)
-    ..drawPath(yoldan(_dilSekli(ux, gy, gh)), Paint()..color = UstaPalet.dil)
+    ..drawPath(agizlar[0], Paint()..color = UstaPalet.agizIc)
+    // Teeth and tongue only exist inside an open mouth; at a slit they are
+    // two slivers wider than the gap they are in.
     ..drawPath(
-      agiz,
+      agizlar[1],
+      Paint()
+        ..color = UstaPalet.dis.withValues(alpha: (gh / 9).clamp(0.0, 1.0)),
+    )
+    ..drawPath(
+      agizlar[2],
+      Paint()
+        ..color = UstaPalet.dil.withValues(alpha: (gh / 9).clamp(0.0, 1.0)),
+    )
+    ..drawPath(
+      agizlar[0],
       kalem
         ..color = const Color(0xFF2E2A26)
         ..strokeWidth = _orta,
+    );
+
+  // Cheeks brighten with the grin. They are already painted into the head;
+  // this is the same pair, bigger and warmer, so the change is a change of
+  // degree rather than a second set of marks appearing on his face.
+  if (p.gulus > .5) {
+    final guc = ((p.gulus - .5) / 8).clamp(0.0, 1.0);
+    for (final yon in const [-1.0, 1.0]) {
+      canvas.drawPath(
+        yoldan(
+          elips(
+            ux + yon * _gozAralik * 1.62,
+            uy + 14,
+            15 + 4 * guc,
+            10 + 3 * guc,
+          ),
+        ),
+        Paint()..color = UstaPalet.yanak.withValues(alpha: .55 * guc),
+      );
+    }
+  }
+}
+
+/// Lifts a mouth's corners, in place. The lift is proportional to how far a
+/// point is from the centre, so the middle stays put and only the ends rise —
+/// which is the difference between a smile and a mouth slid upward.
+List<Offset> _gulumse(List<Offset> p, double x, double w, double kalk) {
+  if (kalk == 0 || w <= 0) return p;
+  return [
+    for (final o in p)
+      Offset(o.dx, o.dy - kalk * ((o.dx - x).abs() / w).clamp(0.0, 1.0)),
+  ];
+}
+
+/// The bulb, for when something occurs to him.
+///
+/// Over the head rather than in a bubble: a speech bubble at this size needs
+/// a tail and a tail needs somewhere to point, and the one thing on screen
+/// that has room above it is him.
+void _ampul(Canvas canvas, UstaPoz p) {
+  final g = Curves.easeOutBack.transform(math.min(1, p.fikir * 1.6));
+  final at = Offset(cx + p.hx + 50, ustaTepe - 2 + p.hy - 12 * g);
+  final r = 15.0 * g;
+  if (r < .5) return;
+  final ink = Paint()
+    ..color = const Color(0xFF2E2A26)
+    ..style = PaintingStyle.stroke
+    ..strokeCap = StrokeCap.round
+    ..strokeWidth = 3;
+  // Three rays, the middle one longest: two read as a pair of horns.
+  for (var i = -1; i <= 1; i++) {
+    final a = -math.pi / 2 + i * .68;
+    final boy = i == 0 ? 15.0 : 11.0;
+    canvas.drawLine(
+      at + Offset(math.cos(a), math.sin(a)) * (r + 5),
+      at + Offset(math.cos(a), math.sin(a)) * (r + 5 + boy * g),
+      ink..color = const Color(0xFFF6C44A),
+    );
+  }
+  canvas
+    ..drawCircle(at, r, Paint()..color = const Color(0xFFFFE49A))
+    ..drawCircle(at, r, ink..color = const Color(0xFF2E2A26))
+    // The screw base, which is the whole of what says bulb rather than sun.
+    ..drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: at + Offset(0, r + 4 * g),
+          width: 15 * g,
+          height: 10 * g,
+        ),
+        Radius.circular(3 * g),
+      ),
+      Paint()..color = const Color(0xFFBFA88A),
+    )
+    ..drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: at + Offset(0, r + 4 * g),
+          width: 15 * g,
+          height: 10 * g,
+        ),
+        Radius.circular(3 * g),
+      ),
+      ink..strokeWidth = 2.4,
     );
 }

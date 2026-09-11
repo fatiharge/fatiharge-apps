@@ -4,11 +4,13 @@ library;
 import 'dart:ui';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kiyma/domain/day_run.dart';
 import 'package:kiyma/domain/model/order.dart';
 import 'package:kiyma/domain/quad.dart';
 import 'package:kiyma/presentation/render/customer_figure.dart';
 import 'package:kiyma/presentation/render/figure.dart';
 import 'package:kiyma/presentation/render/skewer.dart';
+import 'package:kiyma/presentation/render/usta_acting.dart';
 import 'package:kiyma/presentation/render/usta_figure.dart';
 
 /// What the drawn parts of the scene cost to record, per frame.
@@ -63,7 +65,12 @@ void main() {
         sisCiz(c, yuvalar[i], kizarma: .2 + i * .25, kavrulma: i * .3);
       }
     });
-    final usta = olc('usta', 1000, (c) => ustaCiz(c, t: 1.4));
+    // The costliest pose, not the cheapest: an arm raised past the chest is a
+    // second group with its own two passes, and the bulb is eight more draws.
+    final poz = UstaYonetmeni()
+      ..olay(DayEvent.fikirDegisti)
+      ..tick(.9);
+    final usta = olc('usta', 1000, (c) => ustaCiz(c, poz.poz(1.4)));
     final musteri = olc('musteri', 1000, (c) {
       for (var i = 0; i < 3; i++) {
         musteriCiz(

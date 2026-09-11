@@ -47,7 +47,7 @@ void main() {
           ..translate(cx, cy)
           ..scale(olcek)
           ..translate(-solX, -105);
-        ustaCiz(canvas, t: anlar[i]);
+        ustaCiz(canvas, UstaPoz.durgun(anlar[i]));
         // Where the grill's front edge crosses him: below this nothing of him
         // is ever seen, so nothing he does down there counts.
         canvas
