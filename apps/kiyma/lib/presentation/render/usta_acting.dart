@@ -242,10 +242,16 @@ class UstaYonetmeni {
     // gesture the player cannot see is a gesture that did not happen. Out to
     // the side says "over there" just as well and stays in the picture.
     var birim = yon / uzunluk;
-    if (birim.dy > .34) {
-      birim = Offset(birim.dx, .34);
-      birim = birim / birim.distance;
-    }
+    if (birim.dy > .34) birim = Offset(birim.dx, .34);
+    // And pushed outward, away from his own middle. Half these targets are
+    // almost underneath him — the grill is — and the honest direction from
+    // either shoulder to something under his chest points *across* his body,
+    // which puts the hand behind the apron. Out to the side and down is what
+    // a man pointing at his own feet actually does with his arm, and it is
+    // the only version of it anyone can see.
+    final disa = sag ? 1.0 : -1.0;
+    if (birim.dx * disa < .52) birim = Offset(disa * .52, birim.dy);
+    birim = birim / birim.distance;
     // A little life in it, so the arm is held rather than pinned.
     final salinim = 1 + math.sin(t * 1.9) * .035;
     final el = omuz + birim * ustaKolBoyu * .94 * salinim;

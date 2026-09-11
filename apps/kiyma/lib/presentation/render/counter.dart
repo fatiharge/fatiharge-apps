@@ -686,12 +686,13 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     // Out of the bubble and into the corner furthest from it: inside, it was
     // a button in the middle of a sentence, and the sentence had to be short
     // enough to leave room for it.
-    // Bottom corner, on the side the bubble is not: the top corners are the
-    // meter and the clock, and a skip button over either of them is a skip
-    // button the player hits while trying to read the time.
-    _atlaKutusu = kasa.center.dx > size.x / 2
-        ? Rect.fromLTWH(20, size.y - 54, 76, 34)
-        : Rect.fromLTWH(size.x - 96, size.y - 54, 76, 34);
+    // Bottom corner, on the side the bubble is not. The top corners are the
+    // meter and the clock; the bottom right is the pause button, which this
+    // landed exactly on top of on the device — two buttons in one place, and
+    // the one underneath ends the run.
+    _atlaKutusu = kasa.center.dx < size.x * .62
+        ? Rect.fromLTWH(size.x - 96, _pause.top - 46, 76, 34)
+        : Rect.fromLTWH(20, size.y - 54, 76, 34);
     drawKey(canvas, _atlaKutusu, const Color(0xFF6E6155));
     drawText(
       canvas,

@@ -74,6 +74,44 @@ void main() {
     }
   });
 
+  group('pointing at a lesson target', () {
+    // Every region a lesson can point at, driven through the same path the
+    // game drives. The grill is the one that caught it: it is almost under
+    // him, so the honest direction from either shoulder runs across his own
+    // chest, and the hand went behind the apron.
+    const hedefler = [
+      Offset(157, 460), // the grill, below him
+      Offset(380, 160), // a customer, up and right
+      Offset(465, 470), // the wrap board, down and right
+      Offset(700, 250), // the far ledge
+      Offset(60, 300), // his own side of the room
+    ];
+    for (final hedef in hedefler) {
+      test('at $hedef', () {
+        final yonetmen = UstaYonetmeni(random: _Hileli(UstaIsi.bekle))
+          ..isaret = hedef;
+        for (var kare = 0; kare < 120; kare++) {
+          yonetmen.tick(1 / 60);
+          final p = yonetmen.poz(kare / 60);
+          for (final (yon, el) in [(-1.0, p.solEl), (1.0, p.sagEl)]) {
+            expect(
+              (el - ustaOmuz(yon)).distance,
+              lessThanOrEqualTo(ustaKolBoyu + .5),
+              reason: 'pointing at $hedef reaches past the arm',
+            );
+            expect(
+              el.dy < ustaKaldirikEsigi ||
+                  (el.dx - cx).abs() > ustaOnlukYari(el.dy),
+              isTrue,
+              reason: 'pointing at $hedef hides the hand behind the apron',
+            );
+            expect(el.dy, lessThan(_suHatti));
+          }
+        }
+      });
+    }
+  });
+
   group('what he notices', () {
     test('the counter chatter moves nothing', () {
       // Measured per busy run: 114 accepted items, 65 arrivals, 66 tempo
