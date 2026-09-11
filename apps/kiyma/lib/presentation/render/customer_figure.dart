@@ -484,29 +484,40 @@ void _yuz(
   // Glasses go over the eyes and under everything the anger adds, so they
   // are drawn here rather than with the still parts of the head.
   if (K.gozluk) {
-    final r = gr * 1.34;
+    // Heavier than they were, and square on the face that wears them for
+    // work. Two thin wire rings at this size were a smudge, and the same
+    // smudge on both of them.
+    final r = gr * (K.kareGozluk ? 1.5 : 1.42);
     final cam = kalem
       ..color = const Color(0xFF3A322C)
-      ..strokeWidth = 1.9;
+      ..strokeWidth = K.kareGozluk ? 2.4 : 2.1;
+    final dolgu = Paint()..color = const Color(0x18FFFFFF);
     for (final yon in const [-1.0, 1.0]) {
       final ex = cx + yon * ar;
-      canvas
-        ..drawCircle(
-          Offset(ex, cy - 4),
-          r,
-          Paint()..color = const Color(0x14FFFFFF),
-        )
-        ..drawCircle(Offset(ex, cy - 4), r, cam)
-        // The temple, off to the ear.
-        ..drawLine(
-          Offset(ex + yon * r, cy - 5),
-          Offset(cx + yon * (K.kafaGen * K.yanak - 1), cy - 2),
-          cam,
+      final merkez = Offset(ex, cy - 4);
+      if (K.kareGozluk) {
+        final kasa = RRect.fromRectAndRadius(
+          Rect.fromCenter(center: merkez, width: r * 2.3, height: r * 1.75),
+          const Radius.circular(2.4),
         );
+        canvas
+          ..drawRRect(kasa, dolgu)
+          ..drawRRect(kasa, cam);
+      } else {
+        canvas
+          ..drawCircle(merkez, r, dolgu)
+          ..drawCircle(merkez, r, cam);
+      }
+      // The temple, off to the ear.
+      canvas.drawLine(
+        Offset(ex + yon * r * (K.kareGozluk ? 1.15 : 1), cy - 5),
+        Offset(cx + yon * (K.kafaGen * K.yanak - 1), cy - 2),
+        cam,
+      );
     }
     canvas.drawLine(
-      Offset(cx - ar + r, cy - 5.5),
-      Offset(cx + ar - r, cy - 5.5),
+      Offset(cx - ar + r * (K.kareGozluk ? 1.15 : 1), cy - 5.5),
+      Offset(cx + ar - r * (K.kareGozluk ? 1.15 : 1), cy - 5.5),
       cam,
     );
   }
