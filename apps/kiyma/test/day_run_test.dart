@@ -1231,27 +1231,35 @@ void main() {
       // used to be asked before the scene was. The drop was refused *and*
       // the glass was consumed, so the counter reported a success and the
       // player had to pour another.
-      final run = build(unlock: ['icecek_hatti', 'icecek_ayran']);
-      final raf = scene['bardak_bekletme'];
-      expect(
-        raf.quad.bounds.overlaps(run.copKoseleri.last),
-        isTrue,
-        reason: 'the corner has moved; this test is about the overlap',
+      // Every glass slot open: the corner covers the right-hand two and the
+      // shop only sells the first one to begin with.
+      final run = build(
+        unlock: ['icecek_hatti', 'icecek_ayran', 'bardak_2', 'bardak_3'],
       );
+      // Whichever slot the corner actually sits on: the shelf is three
+      // glasses wide and the corner covers the right-hand two.
+      final yuvalar = scene['bardak_bekletme'].slots;
+      final kose = run.copKoseleri.last;
+      final i = yuvalar.indexWhere((y) => kose.contains(y.center));
+      expect(i, isNot(-1), reason: 'the corner no longer sits on the shelf');
 
-      run.tap(at('bardak_kaynak'));
-      expect(drag(run, at('surahi_ayran'), slot('bardak_bekletme', 0)), isTrue);
-      final bardak = run.bardakBekletme[0]!..tick(Balance.pourSeconds);
+      // The tap fills the first empty slot, so it takes i+1 of them to put
+      // a glass in the one the corner is over.
+      for (var k = 0; k <= i; k++) {
+        run.tap(at('bardak_kaynak'));
+      }
+      expect(drag(run, at('surahi_ayran'), yuvalar[i].center), isTrue);
+      final bardak = run.bardakBekletme[i]!..tick(Balance.pourSeconds);
       expect(bardak.hazir, isTrue, reason: 'the glass never filled');
 
       // Picked up and put straight back down where it came from.
-      final yer = slot('bardak_bekletme', 0);
+      final yer = yuvalar[i].center;
       expect(run.beginDrag(yer), isTrue);
       run
         ..carriedAt = yer
         ..endDrag(yer);
       expect(
-        run.bardakBekletme[0],
+        run.bardakBekletme[i],
         isNotNull,
         reason: 'the shelf ate its own glass',
       );
