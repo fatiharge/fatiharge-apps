@@ -1,3 +1,4 @@
+import 'package:kiyma/domain/model/items.dart';
 import 'package:kiyma/domain/progress.dart';
 import 'package:kiyma/domain/shop_map.dart';
 import 'package:kiyma/domain/unlocks.dart';
@@ -129,15 +130,44 @@ class Lesson {
     LessonStep('bitti'),
   ], kilit: 'porsiyon_hatti');
 
-  static const icecek = Lesson('icecek', [
-    LessonStep(
-      'bardak',
-      hedef: 'bardak_kaynak',
-      bekler: Milestone.bardakAlindi,
-    ),
-    LessonStep('dok', hedef: 'surahi_ayran', bekler: Milestone.bardakDoldu),
-    LessonStep('bitti'),
-  ], kilit: 'icecek_hatti');
+  /// Pouring, taught at whichever jug the player actually owns.
+  ///
+  /// It used to be a const gated on `icecek_hatti` and pointed at
+  /// `surahi_ayran`, and that was a soft lock with nothing behind it. The
+  /// line is thirty gold and the cheapest drink is four hundred and seventy,
+  /// so the ordinary path is to buy the line alone — and with no drink, no
+  /// jug is shown, no jug can be touched, and `bardakDoldu` cannot be
+  /// reached. A lesson stops the clock, so the day never ended either; the
+  /// run could only be left by skipping, which spends the lesson forever, and
+  /// no run could be finished to earn the four hundred and seventy that
+  /// would have fixed it.
+  ///
+  /// So it is owed by the jug rather than by the line, and it points at that
+  /// jug. A player who has only bought bottled cola is never shown it, which
+  /// is right: there is nothing to pour.
+  static Lesson? icecekDersi(Unlocks unlocks) {
+    Drink? surahi;
+    for (final icecek in Drink.values) {
+      if (icecek.poured && unlocks.icecekler.contains(icecek)) {
+        surahi = icecek;
+        break;
+      }
+    }
+    if (surahi == null) return null;
+    return Lesson('icecek', [
+      const LessonStep(
+        'bardak',
+        hedef: 'bardak_kaynak',
+        bekler: Milestone.bardakAlindi,
+      ),
+      LessonStep(
+        'dok',
+        hedef: surahi.sourceRegion,
+        bekler: Milestone.bardakDoldu,
+      ),
+      const LessonStep('bitti'),
+    ]);
+  }
 
   /// One line for each thing bought since it was last explained.
   ///
@@ -149,6 +179,10 @@ class Lesson {
     final dersli = {
       for (final ders in katalog)
         if (ders.kilit != null) ders.kilit,
+      // The drinks lesson is generated rather than listed, so its rung has
+      // to be named here or the line would be explained twice: once as a
+      // purchase and once as a lesson.
+      'icecek_hatti',
     };
     final yeni = [
       for (final unlock in Unlocks.catalogue)
@@ -180,16 +214,18 @@ class Lesson {
       if (ders.kilit != null && !progress.unlocks.has(ders.kilit!)) continue;
       return ders;
     }
+    // Built rather than listed, because what it points at depends on what
+    // was bought. It goes last for the same reason the catalogue is ordered:
+    // a written lesson is owed before a generated one.
+    if (!progress.gordu('icecek')) {
+      if (icecekDersi(progress.unlocks) case final ders?) return ders;
+    }
     return null;
   }
 
-  static const List<Lesson> katalog = [
-    ilkGun,
-    olculer,
-    gidis,
-    porsiyon,
-    icecek,
-  ];
+  /// The written ones, in the order they are owed. The drinks lesson is not
+  /// here: it is generated from the jug the player owns.
+  static const List<Lesson> katalog = [ilkGun, olculer, gidis, porsiyon];
 }
 
 /// A lesson in progress.

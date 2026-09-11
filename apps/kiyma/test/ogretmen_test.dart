@@ -2,6 +2,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kiyma/domain/progress.dart';
 import 'package:kiyma/domain/shop_map.dart';
 import 'package:kiyma/domain/tutor.dart';
+import 'package:kiyma/domain/unlocks.dart';
+
+import 'support/scene_from_disk.dart';
 
 void main() {
   test('the first run is the one that gets taught', () {
@@ -94,5 +97,87 @@ void main() {
       ..unlocks.open('porsiyon_hatti');
     expect(Lesson.alimlar(progress), isNull);
     expect(Lesson.bekleyen(progress)?.id, 'porsiyon');
+  });
+  group('a lesson can always be finished', () {
+    // The drinks lesson was owed by the line, which is thirty gold, and asked
+    // for a pour at a jug that costs four hundred and seventy. With the line
+    // alone no jug is shown, no jug can be touched, and the step it waits on
+    // cannot happen — and a lesson stops the clock, so the day never ended
+    // either. The only way out was to skip, which spends the lesson forever,
+    // on a run that could never earn what would have fixed it.
+    //
+    // Nothing checked that a lesson's own steps were possible, so this is
+    // that check: every region an owed lesson points at has to be a region
+    // the player can see.
+
+    /// Every set of unlocks a player can actually be holding, taken one rung
+    /// at a time down every ladder.
+    Iterable<Progress> yollar() sync* {
+      for (final unlock in Unlocks.catalogue) {
+        final progress = Progress()..gun = 30;
+        progress.unlocks.open(unlock.id);
+        yield progress;
+        // And with each of its own prerequisites, which is how a ladder is
+        // really bought.
+        for (final ikinci in Unlocks.catalogue) {
+          if (ikinci.id == unlock.id) continue;
+          final iki = Progress()..gun = 30;
+          iki.unlocks
+            ..open(unlock.id)
+            ..open(ikinci.id);
+          yield iki;
+        }
+      }
+    }
+
+    test('every step it points at is somewhere the player can see', () {
+      final scene = sceneFromDisk();
+      var denendi = 0;
+      for (final progress in yollar()) {
+        final ders = Lesson.bekleyen(progress);
+        if (ders == null) continue;
+        denendi++;
+        for (final adim in ders.adimlar) {
+          final hedef = adim.hedef;
+          if (hedef == null) continue;
+          expect(
+            scene.maybe(hedef),
+            isNotNull,
+            reason:
+                '${ders.id}/${adim.id} points at $hedef, which is not a '
+                'region at all',
+          );
+          expect(
+            progress.unlocks.shows(hedef),
+            isTrue,
+            reason:
+                '${ders.id}/${adim.id} points at $hedef, which is hidden '
+                'from a player holding what owes this lesson',
+          );
+        }
+      }
+      expect(denendi, greaterThan(0));
+    });
+
+    test('the drinks lesson waits for a jug, not for the line', () {
+      final hat = Progress()
+        ..gun = 30
+        ..gordum(Lesson.katalog.map((d) => d.id));
+      hat.unlocks.open('icecek_hatti');
+      expect(
+        Lesson.bekleyen(hat),
+        isNull,
+        reason: 'the line alone owes a lesson with nothing to pour',
+      );
+
+      hat.unlocks.open('icecek_salgam');
+      final ders = Lesson.bekleyen(hat);
+      expect(ders?.id, 'icecek');
+      expect(
+        ders!.adimlar.map((a) => a.hedef),
+        contains('surahi_salgam'),
+        reason: 'it points at a jug the player does not own',
+      );
+    });
   });
 }
