@@ -977,17 +977,36 @@ class DayRun {
     return null;
   }
 
+  /// The bin is the last taker, not the first.
+  ///
+  /// It used to be checked before the scene, and the corners are 176 x 124 in
+  /// a 1024 x 576 room: the right-hand one covers four fifths of the glass
+  /// shelf and the left-hand one half the grill. A poured drink set back down
+  /// on its own shelf was therefore thrown away — and `_drop` returned true,
+  /// so the counter reported it as a successful drop and the player was left
+  /// pouring another.
+  ///
+  /// Everything the bin is for still reaches it: a burnt skewer dropped on
+  /// the grill is refused by the grill first, a finished wrap dropped on
+  /// anything that will not take it likewise. The only drops it no longer
+  /// swallows are the ones that worked.
   bool _drop(Carried held, Offset point) {
-    // The bin takes everything, always open. Without it burnt meat would hold
-    // a grill slot for the rest of the day. Checked before the scene: the
-    // corners sit over whatever the counter has there, and while something is
-    // in the hand they win.
-    if (copeGider(held) && _copKoselerindeDusen(point)) {
-      _consume(held);
-      _flash(copAdi);
-      return true;
+    if (_sahneyeBirak(held, point)) return true;
+    if (!copeGider(held) || !_copKoselerindeDusen(point)) return false;
+    // And never the thing's own home. The shelf refuses a poured glass —
+    // there is no putting one back, it is picked up to be handed over — so
+    // without this the refusal fell straight into the bin underneath it.
+    final bolge = regionAt(point)?.name;
+    if (held is FinishedProduct &&
+        (bolge == held.urun.beklemeBolgesi || bolge == held.urun.evi)) {
+      return false;
     }
+    _consume(held);
+    _flash(copAdi);
+    return true;
+  }
 
+  bool _sahneyeBirak(Carried held, Offset point) {
     final region = regionAt(point);
     if (region == null) return false;
 

@@ -65,7 +65,15 @@ class OrderMaker {
     final acik = [
       for (final tip in CustomerKind.values)
         if (day >= tip.gun && (tip.kilit == null || unlocks.has(tip.kilit!)))
-          tip,
+          // A big order is two different lines, and a wraps-only day has one
+          // line. It used to ask for the second anyway: `_urun` drops a
+          // pinned kind on such a day without saying so, and the customer
+          // came out holding two wraps. The ticket rail leans on the two
+          // lines drawing from different pools, so an ingredient one wrap
+          // wanted and the other forbade was printed as a green well with a
+          // red cross through it — on day seven, which is both the first day
+          // a big order can appear and a wraps-only day.
+          if (!(kural.sadeDurum && tip == CustomerKind.kalabalik)) tip,
     ];
     var pick = _random.nextInt(
       acik.fold(0, (sum, tip) => sum + tip.agirlik),

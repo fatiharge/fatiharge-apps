@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kiyma/domain/balance.dart';
+import 'package:kiyma/domain/day_rule.dart';
 import 'package:kiyma/domain/model/customer_kind.dart';
 import 'package:kiyma/domain/model/items.dart';
 import 'package:kiyma/domain/model/order.dart';
@@ -40,18 +41,28 @@ void main() {
     final open = Unlocks()
       ..open('porsiyon_hatti')
       ..open('bilesen_ezme');
-    final maker = OrderMaker(open, day: 9, random: math.Random(3));
+    // Under every rule, not just the neutral one. It only ever ran without a
+    // rule, and the one rule that breaks it — the wraps-only day — falls on
+    // day 7, which is also the first day a big order can appear.
     var seen = 0;
-    for (var i = 0; i < 500; i++) {
-      final order = maker.make();
-      if (order.musteriTipi != CustomerKind.kalabalik) continue;
-      seen++;
-      expect(order.ikinci, isNotNull);
-      expect(order.ikinci!.tip, isNot(order.tip));
-      // One ticket, one dessert, one drink.
-      expect(order.ikinci!.ikinci, isNull);
-      expect(order.ikinci!.tatli, isNull);
-      expect(order.ikinci!.icecek, isNull);
+    for (final kural in [DayRule.yok, ...DayRule.dongu]) {
+      final maker = OrderMaker(
+        open,
+        day: 9,
+        kural: kural,
+        random: math.Random(3),
+      );
+      for (var i = 0; i < 500; i++) {
+        final order = maker.make();
+        if (order.musteriTipi != CustomerKind.kalabalik) continue;
+        seen++;
+        expect(order.ikinci, isNotNull, reason: kural.id);
+        expect(order.ikinci!.tip, isNot(order.tip), reason: kural.id);
+        // One ticket, one dessert, one drink.
+        expect(order.ikinci!.ikinci, isNull);
+        expect(order.ikinci!.tatli, isNull);
+        expect(order.ikinci!.icecek, isNull);
+      }
     }
     expect(seen, greaterThan(0));
   });

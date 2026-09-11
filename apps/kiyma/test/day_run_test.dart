@@ -1225,4 +1225,51 @@ void main() {
       }
     });
   });
+  group('the bin corners', () {
+    test('a poured glass set back on its own shelf is not thrown away', () {
+      // The right corner covers four fifths of the glass shelf, and the bin
+      // used to be asked before the scene was. The drop was refused *and*
+      // the glass was consumed, so the counter reported a success and the
+      // player had to pour another.
+      final run = build(unlock: ['icecek_hatti', 'icecek_ayran']);
+      final raf = scene['bardak_bekletme'];
+      expect(
+        raf.quad.bounds.overlaps(run.copKoseleri.last),
+        isTrue,
+        reason: 'the corner has moved; this test is about the overlap',
+      );
+
+      run.tap(at('bardak_kaynak'));
+      expect(drag(run, at('surahi_ayran'), slot('bardak_bekletme', 0)), isTrue);
+      final bardak = run.bardakBekletme[0]!..tick(Balance.pourSeconds);
+      expect(bardak.hazir, isTrue, reason: 'the glass never filled');
+
+      // Picked up and put straight back down where it came from.
+      final yer = slot('bardak_bekletme', 0);
+      expect(run.beginDrag(yer), isTrue);
+      run
+        ..carriedAt = yer
+        ..endDrag(yer);
+      expect(
+        run.bardakBekletme[0],
+        isNotNull,
+        reason: 'the shelf ate its own glass',
+      );
+    });
+
+    test('a burnt skewer dropped on the grill still reaches the bin', () {
+      // The grill is under half the left corner and refuses burnt meat, so
+      // the bin has to be what catches it — that is the whole reason the
+      // corners exist.
+      final run = build();
+      drag(run, at('malzeme_kiyma'), slot('mangal_alani', 0));
+      cook(run, burnsAt);
+      expect(run.mangal[0].yanmis, isTrue);
+
+      final yer = run.copKoseleri.first.center;
+      expect(scene['mangal_alani'].quad.contains(yer), isTrue);
+      expect(drag(run, slot('mangal_alani', 0), yer), isTrue);
+      expect(run.mangal[0].bos, isTrue, reason: 'the skewer is still there');
+    });
+  });
 }
