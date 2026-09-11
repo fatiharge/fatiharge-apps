@@ -123,6 +123,34 @@ void drawCentered(
   );
 }
 
+/// How big [text] lays out inside [maxWidth], wrapping included. A bubble has
+/// to be the size of what is in it, and what is in it is a translated
+/// sentence whose length nobody here knows.
+Size textBox(
+  String text, {
+  double size = 11,
+  int weight = 500,
+  String? family = 'Rubik',
+  double maxWidth = double.infinity,
+}) {
+  final painter = m.TextPainter(
+    text: m.TextSpan(
+      text: text,
+      style: m.TextStyle(
+        fontSize: size,
+        fontFamily: family,
+        fontVariations: family == null
+            ? null
+            : [FontVariation('wght', weight.toDouble())],
+        fontWeight: FontWeight.values[(weight ~/ 100) - 1],
+        height: 1.25,
+      ),
+    ),
+    textDirection: TextDirection.ltr,
+  )..layout(maxWidth: maxWidth);
+  return Size(painter.width, painter.height);
+}
+
 /// How wide [text] lays out, for anything that has to size a box around it
 /// before it is drawn.
 double textWidth(

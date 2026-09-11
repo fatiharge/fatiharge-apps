@@ -17,6 +17,7 @@ import 'package:kiyma/domain/scene.dart';
 import 'package:kiyma/domain/tempo.dart';
 import 'package:kiyma/infrastructure/assets.dart';
 import 'package:kiyma/presentation/gold_text.dart';
+import 'package:kiyma/presentation/render/bubble.dart';
 import 'package:kiyma/presentation/render/customer_figure.dart';
 import 'package:kiyma/presentation/render/effects.dart';
 import 'package:kiyma/presentation/render/figure.dart';
@@ -203,7 +204,15 @@ class CounterComponent extends PositionComponent with DragCallbacks {
 
     if (_shake > 0) _shake -= dt;
     _susan.updateAll((_, kalan) => kalan - dt);
+    // Set here rather than while drawing: the usta is painted eight passes
+    // before the lesson is, so a target handed over during the lesson's own
+    // render arrives a frame late — and on a still frame it never arrives.
+    final ders = run.ogretmen;
+    final dersHedefi = ders == null || ders.bitti || ders.adim?.hedef == null
+        ? null
+        : scene.maybe(ders.adim!.hedef!)?.quad.bounds.center;
     _usta
+      ..isaret = dersHedefi
       ..konusma(acik: run.ogretmen?.adim != null && !run.ogretmen!.bitti)
       ..tick(
         dt,
@@ -589,14 +598,8 @@ class CounterComponent extends PositionComponent with DragCallbacks {
         );
       });
     }
-
-    // A corner, chosen for what it hides least.
-    //
-    // It was a full-width band that flipped top to bottom with the target,
-    // so "hand it over" — a target at the customers — laid the bubble across
-    // the prep area, over the wrap the player was being told to pick up.
     // Everything the player has to be able to see while the usta talks. The
-    // gauge and the slate are on the list because they are drawn here rather
+    // gauge and the money are on the list because they are drawn here rather
     // than in the scene, so nothing else knows they are in the way; the wall
     // pair is on it because a step with nothing to touch has no target to
     // avoid. The prep areas count only while they hold something — an empty
@@ -608,6 +611,15 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       // The one control on the counter. A bubble over it is a run that
       // cannot be paused until the usta has finished talking.
       _pause,
+      // And the man himself: a bubble over the face that is speaking is the
+      // one placement worse than all the others.
+      const Rect.fromLTRB(40, 140, 300, 300),
+      // The working surface. Every one of these steps ends in a drag across
+      // it, and the empty corners of the room are all on it — which is how
+      // the first pass put "pick up the flatbread" on top of the flatbread.
+      if (scene.maybe('mangal_alani') case final bolge?)
+        bolge.quad.bounds.inflate(24),
+      Rect.fromLTRB(250, 386, size.x, size.y),
       for (final ad in const ['duvar_saati', 'duvar_takvimi'])
         if (scene.maybe(ad) case final bolge?) bolge.quad.bounds,
       if (run.durumIstasyonu != null)
@@ -617,73 +629,75 @@ class CounterComponent extends PositionComponent with DragCallbacks {
       if (run.bekleme.any((urun) => urun != null))
         if (scene.maybe('bekleme_alani') case final bolge?) bolge.quad.bounds,
       for (var i = 0; i < run.musteriler.length; i++)
-        if (run.musteriler[i] != null)
+        if (run.musteriler[i] != null) ...[
           if (scene.maybe('musteri_slot_${i + 1}') case final bolge?)
             bolge.quad.bounds,
+          // The ticket over their head, which is the thing being read.
+          Rect.fromLTWH(
+            math.max(
+              306,
+              scene['musteri_slot_${i + 1}'].quad.bounds.center.dx -
+                  _ticket.width / 2,
+            ),
+            _ticketTop,
+            _ticket.width,
+            _ticket.height,
+          ),
+        ],
     ];
-    const genislik = 500.0;
-    const yukseklik = 92.0;
-    var rect = Rect.zero;
+
+    final metin = ceviri(adim.metin ?? 'ders.${ogretmen.ders.id}.${adim.id}');
+    final boyut = balonBoyu(metin);
+    // His mouth, breathing with him.
+    final agiz = Offset(ustaMerkez + 6, 262 + _usta.poz(_elapsed).dy);
+    final cerceve = Rect.fromLTWH(0, 0, size.x, size.y);
+    var kasa = Rect.zero;
     var enAz = double.infinity;
-    for (final aday in [
-      for (final x in [20.0, size.x - genislik - 20])
-        // The portrait leans past the panel top and bottom, so the lower
-        // row sits high enough to keep the usta's feet on the picture.
-        for (final y in [18.0, size.y - yukseklik - 30])
-          Rect.fromLTWH(x, y, genislik, yukseklik),
-    ]) {
-      var ortusme = 0.0;
+    for (final aday in balonYerleri(Size(size.x, size.y), boyut)) {
+      var ceza = 0.0;
       for (final bolge in dolu) {
         final kesisim = aday.intersect(bolge);
-        if (!kesisim.isEmpty) ortusme += kesisim.width * kesisim.height;
+        if (!kesisim.isEmpty) ceza += kesisim.width * kesisim.height;
       }
-      if (ortusme < enAz) {
-        enAz = ortusme;
-        rect = aday;
+      // Off the edge counts as covered, three times over: a sentence half
+      // past the frame is not a sentence, and on a tall phone the design box
+      // does not reach the glass.
+      final ic = aday.intersect(cerceve);
+      ceza += (aday.width * aday.height - ic.width * ic.height) * 3;
+      // And it wants to be beside him. Without this the empty corner always
+      // won — nothing overlaps nothing — and the man doing the talking stood
+      // at one end of the room with his words at the other.
+      ceza += (aday.center - agiz).distance * 34;
+      if (ceza < enAz) {
+        enAz = ceza;
+        kasa = aday;
       }
     }
-    drawPanel(canvas, rect, fill: const Color(0xFFF7EEDF));
 
-    final usta = assets['usta'];
-    if (usta != null) {
-      drawCentered(
-        canvas,
-        usta,
-        Offset(rect.left + 2, rect.center.dy + 4),
-        88,
-      );
-    }
-
-    // Wrapped, and clear of both the portrait and the skip button: a
-    // sentence long enough to say something ran off the end of the panel.
-    drawText(
+    balonCiz(
       canvas,
-      ceviri(adim.metin ?? 'ders.${ogretmen.ders.id}.${adim.id}'),
-      Offset(rect.left + 68, rect.center.dy - 6),
-      size: 17,
-      weight: 800,
-      family: 'Rubik',
-      middle: true,
-      maxWidth: genislik - 68 - 96,
-      color: const Color(0xFF2E2A26),
-    );
-    drawText(
-      canvas,
-      '${ogretmen.sira + 1}/${ogretmen.toplam}',
-      Offset(rect.left + 68, rect.bottom - 22),
-      size: 12,
-      weight: 700,
-      family: 'Rubik',
-      color: const Color(0x992E2A26),
+      kasa,
+      yazi: metin,
+      agiz: agiz,
+      adim: ogretmen.sira,
+      toplam: ogretmen.toplam,
     );
 
-    _atlaKutusu = Rect.fromLTWH(rect.right - 92, rect.center.dy - 18, 76, 36);
+    // Out of the bubble and into the corner furthest from it: inside, it was
+    // a button in the middle of a sentence, and the sentence had to be short
+    // enough to leave room for it.
+    // Bottom corner, on the side the bubble is not: the top corners are the
+    // meter and the clock, and a skip button over either of them is a skip
+    // button the player hits while trying to read the time.
+    _atlaKutusu = kasa.center.dx > size.x / 2
+        ? Rect.fromLTWH(20, size.y - 54, 76, 34)
+        : Rect.fromLTWH(size.x - 96, size.y - 54, 76, 34);
     drawKey(canvas, _atlaKutusu, const Color(0xFF6E6155));
     drawText(
       canvas,
       ceviri('tanitim.atla'),
       _atlaKutusu.center,
-      size: 16,
+      size: 15,
       weight: 800,
       family: 'Rubik',
       center: true,
@@ -697,8 +711,8 @@ class CounterComponent extends PositionComponent with DragCallbacks {
     drawGlyph(
       canvas,
       Icons.touch_app_rounded,
-      Offset(rect.right - 132, rect.center.dy),
-      26,
+      Offset(kasa.right - 26, kasa.bottom - 20),
+      24,
       const Color(0x662E2A26),
     );
   }

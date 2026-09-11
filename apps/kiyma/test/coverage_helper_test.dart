@@ -51,6 +51,7 @@ import 'package:kiyma/presentation/level_bar.dart';
 import 'package:kiyma/presentation/menu_page.dart';
 import 'package:kiyma/presentation/palette.dart';
 import 'package:kiyma/presentation/render/backdrop.dart';
+import 'package:kiyma/presentation/render/bubble.dart';
 import 'package:kiyma/presentation/render/confetti.dart';
 import 'package:kiyma/presentation/render/counter.dart';
 import 'package:kiyma/presentation/render/customer_figure.dart';

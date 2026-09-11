@@ -127,6 +127,14 @@ class UstaYonetmeni {
 
   UstaIsi get isi => _is;
 
+  /// Where the lesson is pointing, in scene coordinates, or null.
+  ///
+  /// He cannot reach it — his arm is 106 px and the counter is a room wide —
+  /// so this is a direction, not a destination: the hand goes as far that way
+  /// as the arm goes and the head turns after it. Pointing at a thing you
+  /// cannot touch is what pointing is.
+  Offset? isaret;
+
   /// The lesson is speaking, so he should be.
   void konusma({required bool acik}) {
     if (acik == _konusuyor) return;
@@ -182,6 +190,7 @@ class UstaYonetmeni {
   /// The pose for this frame.
   UstaPoz poz(double t) {
     final p = UstaPoz.durgun(t);
+    _isaretEt(p, t);
     final u = _boyu <= 0 ? 0.0 : (_gecen / _boyu).clamp(0.0, 1.0);
     switch (_is) {
       case UstaIsi.bekle:
@@ -208,6 +217,47 @@ class UstaYonetmeni {
         _konus(p, _saat);
     }
     return p;
+  }
+
+  /// The pointing hand, laid under whatever else he is doing.
+  ///
+  /// Under, not instead of: a lesson runs for a minute and a man who holds
+  /// one arm out for a minute without blinking is a signpost. He still
+  /// breathes, still talks, still reacts — the arm is simply out.
+  void _isaretEt(UstaPoz p, double t) {
+    final hedef = isaret;
+    if (hedef == null) return;
+    // From the shoulder on the side the target is, so he never points across
+    // his own chest.
+    final sag = hedef.dx > ustaMerkez;
+    final omuz = ustaOmuz(sag ? 1 : -1);
+    // In scene coordinates the figure stands at `ustaMerkez`; the rig works
+    // in its own space, so the direction has to be carried across.
+    final yon = Offset(hedef.dx - ustaMerkez + cx, hedef.dy) - omuz;
+    final uzunluk = yon.distance;
+    if (uzunluk < 1) return;
+    // Flattened, never steeper than about twenty degrees below horizontal.
+    // Half these targets are on the counter below him, and an arm pointed
+    // down at one goes behind the apron and then under the grill's rim — a
+    // gesture the player cannot see is a gesture that did not happen. Out to
+    // the side says "over there" just as well and stays in the picture.
+    var birim = yon / uzunluk;
+    if (birim.dy > .34) {
+      birim = Offset(birim.dx, .34);
+      birim = birim / birim.distance;
+    }
+    // A little life in it, so the arm is held rather than pinned.
+    final salinim = 1 + math.sin(t * 1.9) * .035;
+    final el = omuz + birim * ustaKolBoyu * .94 * salinim;
+    if (sag) {
+      p.sagHedef = el;
+    } else {
+      p.solHedef = el;
+    }
+    p
+      ..hx += (sag ? 4.5 : -4.5)
+      ..bakisX += sag ? 6 : -6
+      ..bakisY += 1.5;
   }
 
   /// Standing there. Not nothing: the eyes drift, because a gaze nailed to
