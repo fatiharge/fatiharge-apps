@@ -44,6 +44,7 @@ class CustomerPalette {
     required this.sapkaR,
     required this.sapkaG,
     required this.sapkaK,
+    required this.dudak,
   });
 
   /// Every field gets its own multiplier off the seed. One multiplier and the
@@ -73,6 +74,12 @@ class CustomerPalette {
       sapkaR: sapka[0],
       sapkaG: _karis(sapka[0], _mure, .22),
       sapkaK: sapka[1],
+      // Derived, never fixed. A painted-on red is nearly the skin value on
+      // two of the six complexions and the mouth disappears on those rolls;
+      // mixed from the skin toward the flush colour it is warmer and darker
+      // than every one of them by construction, and it stays that way when
+      // anger pulls the whole face the same way.
+      dudak: _karis(ten, _tenKizil, .62),
     );
   }
 
@@ -133,6 +140,12 @@ class CustomerPalette {
   final Color sapkaR;
   final Color sapkaG;
   final Color sapkaK;
+  final Color dudak;
+
+  /// Gold, and gold is gold. The one fixed colour in here, for the one thing
+  /// on anybody that is a material rather than a dye.
+  static const altin = Color(0xFFE3B23C);
+  static const altinG = Color(0xFFA97C1E);
 
   /// Only skin flushes. A shirt does not go red because its owner is waiting.
   Color rol(String ad, double kizgin) {
@@ -149,10 +162,16 @@ class CustomerPalette {
       'sapkaR' => sapkaR,
       'sapkaG' => sapkaG,
       'sapkaK' => sapkaK,
+      'dudak' => dudak,
+      'altin' => altin,
+      'altinG' => altinG,
       _ => const Color(0xFFFFFFFF),
     };
     return switch (ad) {
       'ten' || 'tenGolge' || 'burunR' => _karis(c, _tenKizil, kizgin * .34),
+      // The lip rides the flush with the face it is on, or it separates from
+      // the skin by less and less as the skin comes to meet it.
+      'dudak' => _karis(c, _tenKizil, kizgin * .34),
       _ => c,
     };
   }
@@ -504,6 +523,43 @@ void _yuz(
     }
   }
 
+  // The lash: a filled crescent lying along the eye's top rim, thickest at
+  // the outer corner and tapering to a point at the inner one, with a flick
+  // past the outer edge. Three thin strokes fanning off the rim were the
+  // first answer and at fifty pixels they were a smudge; this widens the eye
+  // instead, which is the only thing that separates two faces of this size.
+  if (K.kirpik) {
+    final kirpik = Paint()..color = _mure;
+    for (final yon in const [-1.0, 1.0]) {
+      final ex = cx + yon * ar;
+      final ey = cy - 4;
+      final ry = .9 + (gr - .5) * math.min(acik, 1.4);
+      canvas.drawPath(
+        Path()
+          ..moveTo(ex - yon * gr * .96, ey - ry * .28)
+          ..cubicTo(
+            ex - yon * gr * .62,
+            ey - ry * 1.04,
+            ex + yon * gr * .46,
+            ey - ry * 1.16,
+            ex + yon * gr * 1.16,
+            ey - ry * .92,
+          )
+          // The flick, and then back along the rim.
+          ..cubicTo(
+            ex + yon * gr * .92,
+            ey - ry * .64,
+            ex + yon * gr * .30,
+            ey - ry * .94,
+            ex - yon * gr * .96,
+            ey - ry * .28,
+          )
+          ..close(),
+        kirpik,
+      );
+    }
+  }
+
   // Glasses go over the eyes and under everything the anger adds, so they
   // are drawn here rather than with the still parts of the head.
   if (K.gozluk) {
@@ -579,8 +635,8 @@ void _yuz(
       ..drawPath(
         agiz,
         kalem
-          ..color = _mure
-          ..strokeWidth = 2.4,
+          ..color = K.dudak ? palet.rol('dudak', kz) : _mure
+          ..strokeWidth = K.dudak ? 3.2 : 2.4,
       );
   } else if (K.biyik != 'buyuk') {
     // A big handlebar already covers the mouth; a line under it says nothing.
@@ -596,8 +652,8 @@ void _yuz(
           cy + 17,
         ),
       kalem
-        ..color = _mure
-        ..strokeWidth = 3,
+        ..color = K.dudak ? palet.rol('dudak', kz) : _mure
+        ..strokeWidth = K.dudak ? 4.4 : 3,
     );
   }
 

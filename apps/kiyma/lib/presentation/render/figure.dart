@@ -804,6 +804,172 @@ List<Offset> _atKuyrugu(double cy, double rx, double ry) => yol(
   ],
 );
 
+/// Backcombed, and drawn before the head so the face lands on top of it.
+///
+/// Lumpy on purpose. A smooth oval of hair is a swimming cap; the read is the
+/// irregular outline, and the outline is the entire character — she is a dark
+/// cloud with a small face in it from the other side of the room.
+List<Offset> _perma(double cy, double rx, double ry) {
+  // Half again as wide as the head and standing most of a head above it. The
+  // first pass was rx*1.34 and came out a bob: seven pixels of hair either
+  // side of a face is a haircut, and the character is the cloud.
+  final w = rx * 1.52;
+  final h = ry * 1.72;
+  return yol(Offset(cx - w * .80, cy + ry * .96), [
+    [
+      Offset(cx - w * 1.10, cy + ry * .30),
+      Offset(cx - w * 1.02, cy - h * .46),
+      Offset(cx - w * .78, cy - h * .74),
+    ],
+    // Lumps, uneven on purpose. A smooth oval of hair is a swimming cap.
+    [
+      Offset(cx - w * .74, cy - h * .96),
+      Offset(cx - w * .42, cy - h * .92),
+      Offset(cx - w * .30, cy - h * 1.02),
+    ],
+    [
+      Offset(cx - w * .18, cy - h * 1.16),
+      Offset(cx + w * .14, cy - h * 1.14),
+      Offset(cx + w * .26, cy - h * 1.00),
+    ],
+    [
+      Offset(cx + w * .42, cy - h * 1.08),
+      Offset(cx + w * .74, cy - h * .90),
+      Offset(cx + w * .82, cy - h * .66),
+    ],
+    [
+      Offset(cx + w * 1.04, cy - h * .38),
+      Offset(cx + w * 1.10, cy + ry * .34),
+      Offset(cx + w * .80, cy + ry * .96),
+    ],
+    // Back in round the face, the other way, so the opening is a hole.
+    [
+      Offset(cx + w * .70, cy + ry * .70),
+      Offset(cx + w * .62, cy + ry * .18),
+      Offset(cx + w * .60, cy - ry * .34),
+    ],
+    [
+      Offset(cx + w * .34, cy - ry * .86),
+      Offset(cx - w * .34, cy - ry * .86),
+      Offset(cx - w * .60, cy - ry * .34),
+    ],
+    [
+      Offset(cx - w * .62, cy + ry * .18),
+      Offset(cx - w * .70, cy + ry * .70),
+      Offset(cx - w * .80, cy + ry * .96),
+    ],
+  ]);
+}
+
+/// A hoop at the ear. Two shapes: the ring is the outer minus the inner, and
+/// the inner is traversed the other way so the hole is a hole.
+List<Offset> _kupe(double ex, double ey, double s) {
+  final dis = elips(ex + s * 1.5, ey + 9.5, 4.6, 5.4);
+  final ic = elips(ex + s * 1.5, ey + 9.5, 2.6, 3.2);
+  return [...dis, ...ic.reversed];
+}
+
+/// An open-face helmet, worn indoors because he is double-parked.
+///
+/// Open-face on purpose: a full visor would cover the mouth, and the mouth is
+/// how a customer says what they think on the way out. This covers the crown,
+/// the ears and the back of the head and stops at the brow — which is also
+/// the only version of a helmet whose wearer still has a face.
+List<Offset> _kask(double cy, double rx, double ry) {
+  // It sits ON the head, it is not wrapped round it. The first pass carried
+  // the shell down past the ears and it read as a hood — covering the ear is
+  // what a real open-face helmet does and what a drawing of one cannot, so
+  // the shell stops just above it and the ear shows underneath. That gap is
+  // the whole difference between an object on a head and a piece of cloth.
+  final w = rx * 1.32;
+  return yol(Offset(cx - w, cy - ry * .06), [
+    [
+      Offset(cx - w * 1.04, cy - ry * .62),
+      Offset(cx - w * .78, cy - ry * 1.34),
+      Offset(cx, cy - ry * 1.44),
+    ],
+    [
+      Offset(cx + w * .78, cy - ry * 1.34),
+      Offset(cx + w * 1.04, cy - ry * .62),
+      Offset(cx + w, cy - ry * .06),
+    ],
+    // Back in along the brow, and straight. Every other head covering in the
+    // set is a curve; a hard horizontal is the whole of what says helmet.
+    [
+      Offset(cx + w * .96, cy - ry * .24),
+      Offset(cx + w * .90, cy - ry * .36),
+      Offset(cx + w * .82, cy - ry * .44),
+    ],
+    [
+      Offset(cx + w * .38, cy - ry * .54),
+      Offset(cx - w * .38, cy - ry * .54),
+      Offset(cx - w * .82, cy - ry * .44),
+    ],
+    [
+      Offset(cx - w * .90, cy - ry * .36),
+      Offset(cx - w * .96, cy - ry * .24),
+      Offset(cx - w, cy - ry * .06),
+    ],
+  ]);
+}
+
+/// The peak, standing off the front of the shell and wider than it. Without
+/// it the shell is a bowl, and a bowl is a haircut.
+List<Offset> _kaskSiper(double cy, double rx, double ry) {
+  final w = rx * 1.42;
+  return yol(Offset(cx - w, cy - ry * .30), [
+    [
+      Offset(cx - w * .58, cy - ry * .66),
+      Offset(cx + w * .58, cy - ry * .66),
+      Offset(cx + w, cy - ry * .30),
+    ],
+    [
+      Offset(cx + w * .82, cy - ry * .14),
+      Offset(cx + w * .46, cy - ry * .30),
+      Offset(cx, cy - ry * .32),
+    ],
+    [
+      Offset(cx - w * .46, cy - ry * .30),
+      Offset(cx - w * .82, cy - ry * .14),
+      Offset(cx - w, cy - ry * .30),
+    ],
+  ]);
+}
+
+/// The chin strap. Two straps converging on a buckle under the jaw — the
+/// shell alone can be argued with, a beanie or a bad haircut, and two straps
+/// meeting at a buckle cannot be anything else.
+List<Offset> _kaskKayis(
+  double cy,
+  double rx,
+  double ry,
+  double cene,
+  double s,
+) {
+  final w = rx * 1.30;
+  final ck = rx * cene;
+  return serit(
+    [
+      Offset(cx + s * w * .96, cy - ry * .16),
+      Offset(cx + s * w * .86, cy + ry * .52),
+      Offset(cx + s * ck * .74, cy + ry * 1.06),
+      Offset(cx + s * ck * .30, cy + ry * 1.26),
+    ],
+    4.6,
+    3.4,
+  );
+}
+
+List<Offset> _kaskToka(double cy, double rx, double ry, double cene) {
+  final ck = rx * cene;
+  return [
+    Offset(cx - ck * .30, cy + ry * 1.20),
+    Offset(cx + ck * .30, cy + ry * 1.20),
+    Offset(cx + ck * .26, cy + ry * 1.38),
+    Offset(cx - ck * .26, cy + ry * 1.38),
+  ];
+}
+
 List<Offset> _topuz(double cy, double rx, double ry) =>
     elips(cx + rx * .26, cy - ry * 1.20, rx * .36, ry * .32);
 
@@ -864,6 +1030,10 @@ class FigureSpec {
     this.sakalGolge = false,
     this.atkuyrugu = false,
     this.kulaklik = false,
+    this.perma = false,
+    this.kupe = false,
+    this.kirpik = false,
+    this.dudak = false,
     this.kiyafet = Kiyafet.gomlek,
     this.desen = Desen.yok,
     this.biyik,
@@ -919,6 +1089,22 @@ class FigureSpec {
   /// Headphones round the neck.
   final bool kulaklik;
 
+  /// Backcombed hair: a dark cloud wider than its owner's shoulders, and the
+  /// only head in the fourteen that beats its own body for width.
+  final bool perma;
+
+  /// Hoops at the ears.
+  final bool kupe;
+
+  /// Lashes and a painted lip.
+  ///
+  /// Neither existed anywhere in the game, and between them they are why two
+  /// of the fourteen read as a blank oval with hair on it. At fifty pixels a
+  /// face is two eyes, a nose and a mouth; these are the only two marks that
+  /// change what kind of person that face is without adding an object to it.
+  final bool kirpik;
+  final bool dudak;
+
   /// The cut and the print. The loudest axis there is at this size: fourteen
   /// silhouettes in one shirt read as one person in fourteen colours.
   final Kiyafet kiyafet;
@@ -941,6 +1127,9 @@ class FigureSpec {
   double get tepe =>
       kafaY -
       kafaBoy -
+      // Hair can stand taller than a hat, and this is the clamp that keeps a
+      // head inside its seat.
+      (perma ? 24.0 : 0.0) -
       switch (sapka) {
         'fes' => 19.0,
         'bere' => 17.0,
@@ -1058,22 +1247,32 @@ const figurler = <String, FigureSpec>{
     biyik: 'kucuk',
     desen: Desen.ekose,
   ),
-  'kadin': FigureSpec(
+  // Was a bun on a blank oval, and it was rejected twice. The diagnosis every
+  // one of the three judges arrived at separately: the game had no lips and
+  // no lashes anywhere in it, and at fifty pixels those are the whole of what
+  // makes a face a particular person rather than a demographic. She has both,
+  // and a head of hair three times the width of her own face — the only
+  // silhouette here wider than its owner's shoulders, 67 px against 56.
+  'abla': FigureSpec(
     kafaGen: 24,
     kafaBoy: 25,
-    cene: .72,
-    yanak: 1.06,
+    cene: .74,
+    yanak: 1.04,
     omuzY: 78,
-    omuzYari: 27,
-    altYari: 33,
-    gozR: 5.6,
+    omuzYari: 28,
+    altYari: 34,
+    gozR: 5.4,
     gozAralik: 10.4,
     burun: 4.4,
     burunY: 6.2,
-    kasKalin: 2.6,
+    kasKalin: 2.4,
+    kasBoy: 4.2,
     sac: true,
-    topuz: true,
-    kiyafet: Kiyafet.bluz,
+    perma: true,
+    kupe: true,
+    kirpik: true,
+    dudak: true,
+    kiyafet: Kiyafet.hirka,
   ),
   'cocuk': FigureSpec(
     kafaY: 53,
@@ -1160,22 +1359,38 @@ const figurler = <String, FigureSpec>{
   // The hair was two brown slabs down the sides of a blank oval. It has a
   // parting and a fringe now, and it is gathered on one side, so the head is
   // not symmetrical — which is the whole of why the old one read as a wig.
-  'genckiz': FigureSpec(
+  // Was long hair on a blank oval. Four of six designers, working without
+  // sight of each other, replaced it with this: the courier who will not take
+  // the helmet off because the engine is still running outside. The shell is
+  // the only hard-edged thing above anybody's shoulders in the whole set —
+  // everything else in the shop is drawn round — and the strap and buckle are
+  // what stop it being argued with as a beanie or a bad haircut.
+  //
+  // Narrow head on purpose: the shell stands five pixels proud of the skull
+  // on each side, and on a 26-wide head that shell touches the next seat.
+  'kurye': FigureSpec(
     kafaGen: 23,
     kafaBoy: 25,
-    cene: .70,
-    yanak: 1.02,
-    omuzY: 78,
-    omuzYari: 26,
-    altYari: 32,
-    gozR: 6.2,
-    gozAralik: 10.6,
-    burun: 4.2,
-    burunY: 6,
-    kasKalin: 2.4,
-    kasBoy: 4.6,
+    cene: .74,
+    yanak: 1,
+    omuzY: 76,
+    omuzYari: 28,
+    altYari: 34,
+    gozR: 5.4,
+    gozAralik: 10,
+    burun: 4.6,
+    burunY: 6.4,
+    kasKalin: 2.6,
+    kasBoy: 3.8,
+    sapka: 'kask',
     sac: true,
+    // Out of the back of the shell, which stops above the ear. It is what
+    // keeps her from being read as a man in a helmet — and it is the last
+    // user of `_atKuyrugu`, which the figure it was written for no longer
+    // exists to need.
     atkuyrugu: true,
+    kirpik: true,
+    dudak: true,
     kiyafet: Kiyafet.ceket,
   ),
   'keci': FigureSpec(
@@ -1271,6 +1486,14 @@ class FigureParts {
       ..addAll(giysi.on);
 
     if (spec.uzunSac) kafa.add(sekil(_uzunSac(cy, rx, ry), 'sac', orta));
+    // Before the head, like the long hair: the face lands on top and only
+    // the cloud round it shows.
+    if (spec.perma) {
+      final pr = _perma(cy, rx, ry);
+      kafa
+        ..add(sekil(pr, 'sac', siluet))
+        ..add(sekil(hilal(pr, a0: -30, a1: 120, kalinlik: .20), 'sacG', yok));
+    }
     final kx = rx * spec.yanak - 1;
     for (final s in const [-1.0, 1.0]) {
       kafa.add(sekil(elips(cx + s * kx, cy + 3, 6.4, 7.4), 'ten', orta));
@@ -1336,7 +1559,27 @@ class FigureParts {
           );
       }
     }
+    if (spec.kupe) {
+      for (final s in const [-1.0, 1.0]) {
+        kafa.add(sekil(_kupe(cx + s * kx, cy + 3, s), 'altin', ince));
+      }
+    }
     switch (spec.sapka) {
+      case 'kask':
+        final k = _kask(cy, rx, ry);
+        kafa
+          ..add(sekil(k, 'sapkaR', siluet))
+          ..add(sekil(hilal(k, a0: -58, a1: 44, kalinlik: .24), 'sapkaG', yok))
+          ..add(sekil(_kaskSiper(cy, rx, ry), 'sapkaK', orta));
+        // After the shell, not before it: the group paints every outline and
+        // only then every fill, so straps listed first were painted out by
+        // the shell that is supposed to be holding them on.
+        for (final s in const [-1.0, 1.0]) {
+          kafa.add(
+            sekil(_kaskKayis(cy, rx, ry, spec.cene, s), 'sapkaK', ince),
+          );
+        }
+        kafa.add(sekil(_kaskToka(cy, rx, ry, spec.cene), 'sapkaG', ince));
       case 'fes':
         final taban = cy - ry + 4;
         final f = _fes(taban, rx * .68, 19);
@@ -1409,12 +1652,12 @@ const figurAdlari = [
   'tombul',
   'dede',
   'sakalli',
-  'kadin',
+  'abla',
   'cocuk',
   'memur',
   'kel',
   'teyze',
-  'genckiz',
+  'kurye',
   'keci',
   'uzunBoylu',
   'kisa',

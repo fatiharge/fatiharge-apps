@@ -52,6 +52,9 @@ void main() {
         'sapkaR',
         'sapkaG',
         'sapkaK',
+        'dudak',
+        'altin',
+        'altinG',
         'biyikR',
       };
       for (final ad in figurAdlari) {
