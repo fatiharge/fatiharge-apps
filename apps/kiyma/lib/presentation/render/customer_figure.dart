@@ -210,16 +210,22 @@ class _Poz {
         kas = 3.4;
         solEl = Offset(12 + tremor, ray);
         sagEl = Offset(90 + tremor, ray);
+      // The three leaving states all talk on the way out. A customer who
+      // turns and walks off in silence tells the player nothing; the same
+      // customer saying something tells them everything, and which of the
+      // three it is comes off how hard the mouth is working.
       case CustomerMood.gidiyorMutlu:
         dy = -1.8 * math.sin(t * 9 + faz).abs();
         goz = 1.1;
         agiz = 6;
+        agizAcik = _hece(t, faz, 7.5) * .45;
         solAci = 8 + 20 * math.sin(t * 4.5 + faz);
         sagAci = 8 - 20 * math.sin(t * 4.5 + faz);
       case CustomerMood.gidiyorStabil:
         dy = -1.2 * math.sin(t * 8 + faz).abs();
         egim = 1.6;
         agiz = -1;
+        agizAcik = _hece(t, faz, 6.5) * .30;
         solAci = 8 + 14 * math.sin(t * 4 + faz);
         sagAci = 8 - 14 * math.sin(t * 4 + faz);
       case CustomerMood.gidiyorKizgin:
@@ -227,6 +233,9 @@ class _Poz {
         egim = -7;
         goz = .2;
         agiz = -6;
+        // Wide and fast, and it never quite shuts: this is the one the
+        // player has to read from the other side of the counter.
+        agizAcik = .34 + _hece(t, faz, 12) * .66;
         kas = 3.4;
         solAci = 8 + 34 * math.sin(t * 5 + faz);
         sagAci = 8 - 34 * math.sin(t * 5 + faz);
@@ -236,6 +245,15 @@ class _Poz {
     if (kirp > .985) goz *= .12;
   }
 
+  /// Syllables. Two frequencies rather than one, because a mouth on a single
+  /// sine is a fish; [faz] is the customer's own, so three of them leaving at
+  /// once are not a chorus.
+  static double _hece(double t, double faz, double hiz) =>
+      (.5 +
+              .34 * math.sin(t * hiz + faz * 2.7) +
+              .16 * math.sin(t * hiz * .41 + faz))
+          .clamp(0.0, 1.0);
+
   double dx = 0;
   double dy = 0;
   double egim = 0;
@@ -243,6 +261,11 @@ class _Poz {
   double hy = 0;
   double goz = 1;
   double agiz = 4;
+
+  /// How far the mouth is open, 0…1. Separate from [agiz], which only bends
+  /// the line between a smile and a scowl: a scowl and a shout are not the
+  /// same face, and they were the same shape.
+  double agizAcik = 0;
   double kas = 0;
   double solAci = 8;
   double sagAci = 8;
@@ -522,8 +545,45 @@ void _yuz(
     );
   }
 
-  // A big handlebar already covers the mouth; a line under it says nothing.
-  if (K.biyik != 'buyuk') {
+  // An open mouth, when there is something to say.
+  //
+  // Drawn for everybody including the handlebars: the moustache sits four
+  // pixels higher and covers the top lip, which is exactly what a moustache
+  // does — the opening below it still reads. The closed line below is the one
+  // a handlebar genuinely swallows, and that one is still skipped.
+  if (p.agizAcik > .04) {
+    final h = 1.6 + 7.4 * p.agizAcik;
+    final w = 7.4 + 2.2 * p.agizAcik;
+    final agiz = Path()
+      ..addOval(
+        Rect.fromCenter(
+          center: Offset(cx, cy + 18 + h * .35),
+          width: w * 2,
+          height: h * 2,
+        ),
+      );
+    canvas
+      ..drawPath(agiz, Paint()..color = const Color(0xFF6E2317))
+      // The tongue. It is the whole difference between a mouth and a hole,
+      // and at this size it is one shape.
+      ..drawPath(
+        Path()..addOval(
+          Rect.fromCenter(
+            center: Offset(cx, cy + 18 + h * .95),
+            width: w * 1.25,
+            height: h * .78,
+          ),
+        ),
+        Paint()..color = const Color(0xFFC4574A),
+      )
+      ..drawPath(
+        agiz,
+        kalem
+          ..color = _mure
+          ..strokeWidth = 2.4,
+      );
+  } else if (K.biyik != 'buyuk') {
+    // A big handlebar already covers the mouth; a line under it says nothing.
     canvas.drawPath(
       Path()
         ..moveTo(cx - 8, cy + 17)
