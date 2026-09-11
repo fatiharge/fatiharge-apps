@@ -125,7 +125,14 @@ DEKOR = [
         # Square, and the only clock there is: the hairline timer that used
         # to run across the top of the screen went with the HUD panel, so
         # the run now drains around this bezel instead.
-        "x": 886, "y": 6, "w": 116, "h": 116,
+        #
+        # Fourteen pixels lower and a little smaller than it was, to make
+        # room above it for the nail and the cord it hangs from. At y 6 both
+        # of those were drawn entirely above the stage's own clip and had
+        # never once been seen, which left the clock reading as a dial pasted
+        # onto the tiles — the exact thing the code that draws them says they
+        # are there to prevent.
+        "x": 886, "y": 20, "w": 106, "h": 106,
     },
     {
         "name": "duvar_takvimi",

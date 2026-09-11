@@ -938,9 +938,9 @@
     {
       "name": "duvar_saati",
       "x": 886,
-      "y": 6,
-      "w": 116,
-      "h": 116,
+      "y": 20,
+      "w": 106,
+      "h": 106,
       "category": "dekor",
       "asset": "duvar_saati",
       "asset_fit": "orta"

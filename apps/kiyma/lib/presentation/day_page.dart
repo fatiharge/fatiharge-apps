@@ -325,9 +325,17 @@ class _Start extends StatelessWidget {
   /// Cheapest thing the till can already cover. Naming it here is the only
   /// moment the player can act on it: the shop is one tap away and the run
   /// has not started.
-  Unlock? get _affordable {
+  ///
+  /// Read off the cubit this page already provides, never off the container.
+  /// `KiymaCubit` is registered as a factory and its constructor subscribes
+  /// to the `Progress` singleton, so every `getIt<KiymaCubit>()` built a
+  /// cubit nobody would ever close and left two listeners on a shared object
+  /// for the life of the process. This getter runs inside `build`, so the
+  /// count grew with every repaint of the day card and every one of them
+  /// then wrote the save file on every gold the player picked up.
+  Unlock? _affordable(BuildContext context) {
     Unlock? best;
-    for (final unlock in getIt<KiymaCubit>().progress.unlocks.forSale) {
+    for (final unlock in context.read<KiymaCubit>().progress.unlocks.forSale) {
       if (unlock.price > state.para) continue;
       if (best == null || unlock.price < best.price) best = unlock;
     }
@@ -340,7 +348,7 @@ class _Start extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final buy = _affordable;
+    final buy = _affordable(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,

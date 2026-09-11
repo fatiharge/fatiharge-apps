@@ -187,9 +187,14 @@ void tempoBariCiz(
   if (alev != null && ham >= 90) {
     final guc = ((ham - 90) / 10).clamp(0.0, 1.0);
     final olcek = .6 + guc * .6;
+    // However tall a tongue wants to be, it stops two pixels short of the
+    // top of the stage. The case's own position is what keeps this from ever
+    // biting, and this is what keeps a moved case from cutting the fire off
+    // flat the way the last one did.
+    final tavan = kasa.top + h * .18 - 2;
     for (var i = 0; i < 6; i++) {
       final lick = .55 + .45 * math.sin(t * _alevHizi[i] * 5 + _alevFazi[i]);
-      final boy = h * olcek * (.55 + .45 * lick);
+      final boy = math.min(h * olcek * (.55 + .45 * lick), tavan);
       // Taller means narrower: a flame stretches, it does not inflate.
       final en = h * olcek * .46 / (.7 + .3 * lick);
       final x = kasa.left + kasa.width * _alevYeri[i];

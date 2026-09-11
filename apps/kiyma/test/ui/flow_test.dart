@@ -123,6 +123,27 @@ void main() {
       expect(find.byType(ShopPage), findsOneWidget);
     });
 
+    testWidgets('does not collect a listener every time it repaints', (
+      tester,
+    ) async {
+      // `KiymaCubit` is a factory and its constructor subscribes to the
+      // `Progress` singleton, so anything that pulls one out of the container
+      // during `build` leaves two listeners behind that nobody will ever
+      // close — and every one of them writes the save file on every change.
+      // The day card did, from the getter that names the cheapest rung.
+      await open(tester, const DayRoute());
+      final ilk = getIt<Progress>().dinleyiciSayisi;
+      for (var i = 0; i < 12; i++) {
+        earn(10);
+        await tester.pump();
+      }
+      expect(
+        getIt<Progress>().dinleyiciSayisi,
+        ilk,
+        reason: 'the day card grew the listener list by repainting',
+      );
+    });
+
     testWidgets('opening the counter starts a run', (
       tester,
     ) async {
@@ -150,6 +171,36 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 400));
       expect(find.byType(SummaryPage), findsOneWidget);
+    });
+
+    testWidgets('"yeni oyun" leaves the menu underneath it', (tester) async {
+      // It used to replace the whole stack with the day card alone, so the
+      // back arrow on that card had nothing to pop and the menu, the notebook
+      // and the language screen were gone for the rest of the session.
+      await open(tester, const DayRoute());
+      await tester.tap(find.text('Tezgahı aç'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+      shownCubit(tester).run!.tick(
+        Balance.runLength(1).inSeconds.toDouble() + 1,
+      );
+      await tester.pump();
+      // Pumped rather than settled: the summary breathes and shines on a
+      // loop, so it never comes to rest.
+      await tester.pump(const Duration(milliseconds: 900));
+
+      await tester.tap(find.text('Yeni oyun'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+      expect(find.byType(DayPage), findsOneWidget);
+
+      await tester.tap(find.byIcon(Icons.arrow_back_rounded));
+      await tester.pumpAndSettle();
+      expect(
+        find.byType(MenuPage),
+        findsOneWidget,
+        reason: 'the back arrow on the day card was dead',
+      );
     });
   });
 

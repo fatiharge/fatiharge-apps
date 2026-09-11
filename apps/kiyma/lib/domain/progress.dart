@@ -58,6 +58,13 @@ class Progress {
 
   void listen(void Function() onChanged) => _listeners.add(onChanged);
 
+  /// How many things are listening. Exposed for one reason: this is a
+  /// singleton and its subscribers are cubits built by a factory, so a widget
+  /// that reaches into the container during `build` grows this list on every
+  /// repaint and nothing ever shrinks it. The count is the only place that
+  /// mistake is visible, and it is cheap to assert.
+  int get dinleyiciSayisi => _listeners.length;
+
   void unlisten(void Function() onChanged) => _listeners.remove(onChanged);
 
   void _duyur() {

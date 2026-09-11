@@ -8,6 +8,7 @@ import 'package:flutter/services.dart' show FontLoader, rootBundle;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kiyma/domain/balance.dart';
 import 'package:kiyma/domain/day_run.dart';
+import 'package:kiyma/domain/model/customer_kind.dart';
 import 'package:kiyma/domain/model/items.dart';
 import 'package:kiyma/domain/model/order.dart';
 import 'package:kiyma/domain/model/products.dart';
@@ -65,33 +66,48 @@ void main() {
             onChanged: () {},
             random: math.Random(11),
           )
-          ..musteriler[0] = (Customer(
-            order: Order(
-              tip: ProductKind.durum,
-              ister: {Ingredient.domates.id, Ingredient.biber.id},
-              istemez: {Ingredient.sogan.id},
-              tatli: Dessert.baklava,
-              icecek: Drink.ayran,
-            ),
-            day: 1,
-          )..varis = 1)
-          ..musteriler[1] = (Customer(
-            order: Order(
-              tip: ProductKind.durum,
-              ister: {Ingredient.tursu.id},
-              istemez: const {},
-              icecek: Drink.kola,
-            ),
-            day: 1,
-          )..varis = 1)
-          ..musteriler[2] = (Customer(
-            order: Order(
-              tip: ProductKind.porsiyon,
-              ister: {PlateItem.ezme.id},
-              istemez: const {},
-            ),
-            day: 1,
-          )..varis = 1);
+          // Three kinds, not three anonymous customers: the tab in the
+          // corner of a ticket is the one mark that says who is asking, and
+          // for a year the sheet had nobody on it who carried one.
+          ..musteriler[0] =
+              (Customer(
+                  order: Order(
+                    tip: ProductKind.durum,
+                    ister: {Ingredient.domates.id, Ingredient.biber.id},
+                    istemez: {Ingredient.sogan.id},
+                    tatli: Dessert.baklava,
+                    icecek: Drink.ayran,
+                    musteriTipi: CustomerKind.aceleci,
+                  ),
+                  day: 1,
+                )
+                ..varis = 1
+                ..yerindeSure = 1)
+          ..musteriler[1] =
+              (Customer(
+                  order: Order(
+                    tip: ProductKind.durum,
+                    ister: {Ingredient.tursu.id},
+                    istemez: const {},
+                    icecek: Drink.kola,
+                    musteriTipi: CustomerKind.titiz,
+                  ),
+                  day: 1,
+                )
+                ..varis = 1
+                ..yerindeSure = 1)
+          ..musteriler[2] =
+              (Customer(
+                  order: Order(
+                    tip: ProductKind.porsiyon,
+                    ister: {PlateItem.ezme.id},
+                    istemez: const {},
+                    musteriTipi: CustomerKind.comert,
+                  ),
+                  day: 1,
+                )
+                ..varis = 1
+                ..yerindeSure = 1);
 
     // One skewer in each cooking state.
     for (final slot in run.mangal) {
@@ -183,7 +199,9 @@ void main() {
             onChanged: () {},
             random: math.Random(11),
           )
-          ..musteriler[0] = (Customer(order: wrapOrder, day: 1)..varis = 1)
+          ..musteriler[0] = (Customer(order: wrapOrder, day: 1)
+            ..varis = 1
+            ..yerindeSure = 1)
           // An idle counter: the two sources that unblock it are asking.
           ..bosMangal = Balance.idleGrill
           ..bosDurum = Balance.idleWrap;

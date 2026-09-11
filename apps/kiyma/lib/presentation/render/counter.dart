@@ -1648,8 +1648,26 @@ class CounterComponent extends PositionComponent with DragCallbacks {
 
     // Arrives rather than appears, and leans a little so a row of them reads
     // as three pieces of paper.
-    final settle = (customer.yerindeSure / 0.35).clamp(0.0, 1.0);
-    final drop = (1 - Curves.easeOutBack.transform(settle)) * 22;
+    //
+    // The walk drives it before the seat does. Driven by `yerindeSure` alone
+    // the early ticket — the whole point of which is that it is readable on
+    // the way in — sat frozen at frame zero the entire walk: 70 % size, 22 px
+    // high, and the tab that says who is asking lifted clean out of the
+    // frame. It now settles as they come, and is already down when they
+    // arrive.
+    final settle = customer.yerinde
+        ? (customer.yerindeSure / 0.35).clamp(0.0, 1.0)
+        : ((customer.varis - _erkenBilet) / (1 - _erkenBilet) * 1.6).clamp(
+            0.0,
+            1.0,
+          );
+    // Up from behind the head, not down from above it. The card's own top
+    // edge is ten pixels from the top of the stage, so an arrival that
+    // started twenty-two pixels higher spent its whole animation drawing into
+    // a region that does not exist — and took the tab in its corner with it.
+    // Raised from below it also reads as the customer producing the order
+    // rather than as paper falling on them.
+    final drop = -(1 - Curves.easeOutBack.transform(settle)) * 20;
     // Leaning out from the middle, so three of them read as three pieces
     // of paper rather than one sprite repeated.
     final tilt = (slot - 1) * 0.042;
@@ -1680,8 +1698,11 @@ class CounterComponent extends PositionComponent with DragCallbacks {
           : const Color(0xFFF7EEDF),
     );
 
-    _ticketTab(canvas, rect, customer.order.musteriTipi);
+    // After the header, not before it: the band is drawn over the paper and
+    // it was drawn over this too, so the tab shipped as a two-pixel crescent
+    // peeping out of the top of a card.
     _ticketHeader(canvas, rect, customer);
+    _ticketTab(canvas, rect, customer.order.musteriTipi);
     _ticketRail(canvas, rect, customer);
 
     // Patience, printed along the torn edge.
@@ -1727,7 +1748,13 @@ class CounterComponent extends PositionComponent with DragCallbacks {
   void _ticketTab(Canvas canvas, Rect rect, CustomerKind tipi) {
     final rozet = _tipRozeti[tipi];
     if (rozet == null) return;
-    final at = Offset(rect.left + 15, rect.top - 3);
+    // On the left edge, level with the header band, rather than hanging off
+    // the top corner. The card's own top is ten pixels from a stage clipped
+    // at zero and this disc is fourteen across, so off the top it shipped
+    // with a flat top — and with no top at all while the ticket was still
+    // arriving. Here it clears the frame by twelve and the product mark
+    // beside it by four.
+    final at = Offset(rect.left + 4, rect.top + 16);
     canvas
       ..drawCircle(
         at + const Offset(1, 2),
@@ -1998,7 +2025,11 @@ class CounterComponent extends PositionComponent with DragCallbacks {
 
   /// Where the meter hangs. Top left, above the usta's head: the corner the
   /// dial used to fill, which the usta has since taken the lower half of.
-  static const _tempoKasa = Rect.fromLTWH(52, 26, 252, 46);
+  /// Low enough for its own fire. The tongues rise from behind the case to
+  /// about 1.2 x its height, and at y 26 that put their tips twenty pixels
+  /// above a stage clipped at zero: the reward for reaching Ateş shipped as a
+  /// flame with a straight line across the top of it.
+  static const _tempoKasa = Rect.fromLTWH(52, 48, 252, 46);
 
   final TempoBarDurumu _tempoDurumu = TempoBarDurumu();
 

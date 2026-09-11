@@ -864,8 +864,18 @@ class _Choices extends StatelessWidget {
                 icon: Icons.play_arrow_rounded,
                 big: true,
                 color: KiymaPalette.krema,
-                onPressed: () =>
-                    unawaited(context.router.replaceAll([const DayRoute()])),
+                // The menu goes back under it, not away. `replaceAll` with
+                // the day card alone left a stack one deep: the back arrow on
+                // that card had nothing to pop, and the menu, the notebook
+                // and the language screen were gone for the rest of the
+                // session. This is the stack a player coming from the menu
+                // already has.
+                onPressed: () => unawaited(
+                  context.router.replaceAll([
+                    const MenuRoute(),
+                    const DayRoute(),
+                  ]),
+                ),
               ),
             ),
           ),
