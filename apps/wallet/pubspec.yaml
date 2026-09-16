@@ -44,7 +44,7 @@ dependencies:
 
   # Local storage & charts.
   fl_chart: ^1.2.0
-  hive_ce: ^2.19.3
+  hive_ce: ^2.20.0
   hive_ce_flutter: ^2.3.1
   shared_preferences: ^2.5.5
   font_awesome_flutter: ^11.0.0
