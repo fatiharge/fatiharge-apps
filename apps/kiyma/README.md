@@ -57,8 +57,8 @@ than guessed at, because it will not read on the next launch either. The
 payload carries a version and an older shape is dropped.
 
 Nothing survived a cold start before this, and the arithmetic says how much
-that mattered: the catalogue runs to about nine thousand gold and day one
-takes twenty-four.
+that mattered: forty-seven rungs run to about three billion gold, and day one
+takes twenty.
 
 ## The frame
 
@@ -90,10 +90,10 @@ past a green suite again.
 
 ## One coordinate space
 
-Every position in the game — the painted layers, all 35 regions, the recipe
-offsets — was measured in one **1024×576** space. `KiymaGame` fits that space
-to the screen with a single fixed-resolution viewport, so nothing below it
-ever asks how big the phone is.
+Every position in the game — the painted layers, all 31 regions, the recipe
+offsets — was measured in one **1024×576** space. `KiymaGame` sets one camera
+zoom from the safe rectangle and nothing below it ever asks how big the phone
+is.
 
 Regions are **quads, not rectangles**. The kitchen is painted with a wide lens
 and the counter leans, so a bounding box catches taps meant for the area next
@@ -110,26 +110,27 @@ and everything else comes out of the container, because
 before it can depend on it. `StartupPage` is the initial route and the only
 place that container is built.
 
-The four jobs are `display`, `dependencies`, `scene`, `art`, in that order;
-the last three are under the `restart` policy. There is no reduced game to
-fall back to, and a scene file that will not parse is not something a retry
-fixes. They are separate jobs rather than one so a failure names the step.
+The five jobs are `display`, `dependencies`, `kayit`, `scene`, `art`, in that
+order; `dependencies`, `scene` and `art` are under the `restart` policy. There
+is no reduced game to fall back to, and a scene file that will not parse is not
+something a retry fixes. They are separate jobs rather than one so a failure
+names the step.
 
-`art` does more than load. All four together take about 60 ms and the brand
+`art` does more than load. All five together take about 60 ms and the brand
 screen is held for three seconds, so the window is free, and two things that
 would otherwise land on the first frame of a day are done in it: the hint
-glows are blurred once (`game/halo.dart`), and every image is drawn once
+glows are blurred once (`render/halo.dart`), and every image is drawn once
 offscreen to force its texture upload. Decoding happens when the file is
-read; the upload does not, and without this it arrives all at once — 54
-images, 38 MB, including a 2048x1152 background — on the frame the counter
-first appears.
+read; the upload does not, and without this it arrives all at once — 61
+images, about 50 MB decoded, including two backgrounds over 2000 px wide — on
+the frame the counter first appears.
 
 The splash bar shows the **lower** of the two things the screen is waiting on
 — how far the jobs have got, and how much of the three-second brand hold has
 passed. Everything loads in under 100 ms, so taking the higher of the two
 filled the bar in the first few frames and then left it sitting at 100 % for
-most of the time it was on screen. Four jobs is also four steps, and one of
-them (`art`, 54 images) is most of the work; the bar is honest about the wait
+most of the time it was on screen. Five jobs is also five steps, and one of
+them (`art`, 61 images) is most of the work; the bar is honest about the wait
 rather than pretending to be a byte counter.
 
 The hold is **1.8 s**, not the three it started at. Startup is about 60 ms,
@@ -158,23 +159,28 @@ entries and not five; the shell screens of stage 7 are what it grows for.
 ```
 Startup ─ no language stored? ─ Language ─┐
         └─ otherwise ──────────────────────┴─ Menu ─ Play ─ Day ─ Open ─ Game
-                                              └─ Upgrade ─ Shop         ↓ time up
-                                                     Summary ─ new run / menu
+                                              ├─ Upgrade ─ Shop ─ List  ↓ time up
+                                              └─ Notebook    Summary ─ new run / menu
 ```
 
-Seven routes, one game. `KiymaCubit` is `@injectable` — **one per screen**,
-because a run ends when its page goes away and a closed cubit is no use to the
-next screen. What outlives a screen is `Progress`, the `@lazySingleton` they
-all read. Progress therefore publishes its own changes to plain callbacks:
+Nine routes, one game. The shop is two of them: the room, where a rung is
+bought by touching the object it would change, and a list for the fourteen
+rungs that have no object to point at. The notebook is where a rule the usta
+explained once can be read again. `KiymaCubit` is `@injectable` — **one per
+screen**, because a run ends when its page goes away and a closed cubit is no
+use to the next screen. What outlives a screen is `Progress`, the
+`@lazySingleton` they all read. Progress therefore publishes its own changes
+to plain callbacks:
 buying in the shop, which is pushed over a still-mounted menu, otherwise left
 the menu's money chip showing the balance from before the purchase.
 
-A run is a **clock**: `120s + day * 5s`, with customers arriving as seats
+A run is a **clock**: `60s + day * 6s`, with customers arriving as seats
 free until it stops. What it pays feeds **XP**, and XP is what turns the day
 over — the two are the same number underneath and are never shown together,
 so progress reads as levelling rather than as a bank balance. The counter
-itself shows only the till and the clock; the level belongs to the screens
-either side of it.
+shows the till, in the coin bag, and never the level: under the bag is a
+hairline of how far the day has come toward its target, which is the same
+reading without the number.
 
 Ingredients go on **before or after the meat**, on both lines. Requiring the
 meat first made the grill a lock on everything else: with nothing to do but
@@ -187,20 +193,20 @@ order card shows well and more than a player scans mid-rush; parsley came off
 the wrap and aubergine off the plate, and the two wells they left are empty
 steel.
 
-The HUD is **one plate**, not three panels: the pause key, the till and the
-tempo meter share a housing because they are one instrument — the tempo is
-what the till is multiplied by. Cream on charcoal with a hard offset shadow,
-the same language as every screen; a dark wooden version was tried and it
-aged the whole counter, which the HUD is in a position to do because it is
-the one thing on screen at all times. The run's clock is also a hairline
-across the very top of the scene, above everything, so it is seen without
-being looked at — the wall clock is for reading, the thread is for noticing.
+**The counter has almost no HUD.** Nearly everything it says is said by an
+object in the room: the time by the clock on the wall, the day by the calendar
+hung beside it, the tempo by a segmented gauge on the wall over the grill it
+measures, and the money by a bag of coins under the clock. What is left is the
+pause key. A floating plate is the single loudest thing on a screen that is
+otherwise a painted kitchen, and it read as an app drawn on top of a game. The
+cost is that the numbers take a fraction longer to find; what is bought is that
+the scene is the whole screen.
 
 The run has a **tempo**, 0 to 100, opening at 50. Serving people pushes it
 up, burning meat and losing customers pull it down, and it drains while
-somebody is waiting — faster the longer since anybody was served. It is worth
-half the takings either way (×0.5 at nothing, ×1.5 at full) and, above the
-halfway mark only, a wider cooked window and slower patience.
+somebody is waiting — faster the longer since anybody was served. It swings
+the takings by more than half either way (×0.4 at nothing, ×1.6 at full)
+and, above the halfway mark only, a wider cooked window and slower patience.
 
 That asymmetry is the whole design. A meter that makes meat burn faster *and*
 is pushed down by burnt meat is a spiral: one bad stretch compounds into a run
@@ -231,14 +237,15 @@ glass. Dragging is still the vocabulary and still the only way to say *who*
 something is for, but requiring it where there is no choice is friction with
 no decision behind it.
 
-**The clock and the calendar are furniture, not HUD.** The countdown burns
-on the glass of a digital clock hung on the tiled wall, and the day number
+**The clock and the calendar are furniture, not HUD.** The countdown drains
+round the bezel of a round clock hung on the tiled wall, and the day number
 sits on a calendar nailed up beside the grill. Both are `dekor` regions —
 they scale and lean with the scene, and nothing can be dropped on them. The
-cases are art; only the digits are drawn in code. What is left of the HUD is
-the pause button and the till, both moved to the top left because the right
-wall is the clock's, and both sized for a phone at arm's length rather than
-for the 1024-wide space they are measured in.
+calendar's case is art with its day number drawn over it; the clock is
+circles, an arc and twelve ticks, all code. The one control that is not a
+kitchen object is the pause key, and it is in the bottom right corner past the
+end of the counter, where no drag ever goes. The gauge has the top left, the
+clock and the coin bag the top right.
 
 **Three** customers at most, and each one **walks in from the right** before
 they order and back out the same way when they are done — until they are
@@ -250,11 +257,15 @@ their patience runs up a bar on the left, so neither has to be found inside
 the other. A fourth place did not fit that layout on the same stretch of
 counter.
 
-A customer is drawn as **one colour**, from a nine-value state: walking,
-five degrees of waiting from calm to angry, and three ways of leaving —
-served in full, in part, or not at all. The characters were never drawn, so
-until they are the state is the art; when a model arrives it hangs off the
-same enum.
+A customer's whole visit is **one nine-value state**: walking, five degrees
+of waiting from calm to angry, and three ways of leaving — served in full, in
+part, or not at all. It drives the pose and the flush together, because the
+two say the same thing at different distances — the body reads across the
+screen, the colour reads up close. The figure itself is geometry, not a
+picture: `render/figure.dart` deforms flattened point lists every frame,
+because a finished drawing cannot be squashed or leaned and that is the whole
+language here. Fourteen of them, each with its own head and garment, coloured
+per customer off a seed, so three people at the counter are three people.
 
 Customers pay in **gold, onto the ledge they stood at**, in one of three
 random piles, and it only reaches the till when the player touches it. After
@@ -264,7 +275,7 @@ seconds. The counter also points at a step being skipped: the thing that unblock
 breathes inside an orange halo of **its own silhouette**, not of its region
 box — a region is a hit target, and a lit rectangle around a tray of parsley
 reads as an overlay where a halo reads as the object asking. The silhouettes
-are blurred **once, during the art bootstrap job** (`game/halo.dart`) and the
+are blurred **once, during the art bootstrap job** (`render/halo.dart`) and the
 frame only blits one: doing the mask blur live cost three blurred draws per
 lit hint per frame, up to six hints at once, and every one of them is on at
 the moment the player has stalled. Three seconds
@@ -274,7 +285,7 @@ and reaching for a rolled wrap with no paper on it makes the paper answer for
 two and a half. A gold pile flashes the same way for its last three seconds.
 None of it changes a rule. The pause button stops everything — asked for, so not the free breather that
 walking out would have been. In a debug build, holding the menu's language
-button for three seconds grants ₺1000; XP is untouched, so the level stays
+button for three seconds grants 1000 gold; XP is untouched, so the level stays
 whatever was actually played.
 
 **Locked is not dimmed, it is absent.** A tray, an area or a place at the
@@ -326,7 +337,7 @@ Leaving the counter **ends** the run rather than suspending it. Off screen the
 clocks stop, so a run you can step out of and back into is a pause button the
 design does not have (10.4). Nothing is lost: money banks as it is earned.
 
-**A touch is classified in `game/gesture.dart`**, not in the Flame callback.
+**A touch is classified in `domain/gesture.dart`**, not in the Flame callback.
 That callback needs a live game loop and a real pointer, so nothing could test
 it, and two bugs lived there: a finger held still past 350 ms fell through to
 the drop path — which killed the pause button and answered a tap on a tray
@@ -335,6 +346,40 @@ the notification shade coming down mid-touch ran the whole classification on
 wherever the finger was. `classifyTouch` is arithmetic over a start, an end
 and the furthest the finger ever got; net displacement alone would read a
 drag out and back as a tap.
+
+**The usta teaches on the counter, not on a card.** A lesson
+(`domain/tutor.dart`) is a list of steps, and a step is a milestone the run
+announces plus the region to point at until it happens — so the run waits for
+the thing to be done rather than for a sentence to be read, which a card
+between days cannot do. Four are written (the first wrap, the two instruments
+on the wall, what a walkout costs, the plate line) and two are generated: the
+drinks lesson from whichever jug the player actually owns, and one line per
+purchase out of the sentence the shop already prints. The teacher watches for
+milestones rather than reading the run, or every lesson would be coupled to
+every rule. The bubble goes to whichever corner covers least of what matters
+— a tutorial that covers what it is pointing at is worse than none — and
+every lesson can be walked out of once.
+
+**No two days are the same day.** `domain/trade_shape.dart` gives every day
+after the first a fixed run of rushes and lulls instead of a flat arrival rate
+— a metronome leaves the counter either always ahead of it or always behind,
+and the lull is the part that matters because it is where a player catches up.
+From day four `domain/day_rule.dart` names one of seven things that is
+different: an inspection forgives nothing and pays half again, a cool grill
+takes a slot and widens the window, a wraps-only day closes the plate line, a
+race day trades two thirds of the patience for half again the pay. Every field
+of a rule is neutral by default and `yok` is the identity, so the run
+multiplies unconditionally and never learns a single rule's name. Both are
+fixed per day rather than drawn, which is what lets the day card promise them.
+
+**The bin is two corners of the screen**, not an object in the room. A
+painted bin has to stand somewhere and the only free floor was in front of
+the grill, which put it behind the grill in depth and half a counter from the
+shelf. The corners open only while something binnable is in hand — a finished
+wrap, a finished plate, a burnt skewer, and nothing else, because a handful of
+onion goes back to its tray on its own — so they cost no space the rest of the
+time, and they are measured against what is actually on screen rather than
+against the design box.
 
 ## The order ticket
 
@@ -356,6 +401,17 @@ It drops in and settles when its customer arrives, reddens and jitters below
 30 % patience, and shakes with the wrong wells lit when an order is refused —
 `Order.ihlal` names them, because "the game said no" and "you forgot the
 pepper" are different sentences and only one teaches anything.
+
+**Five kinds of customer on top of the ordinary one**, each carrying the day
+it first becomes possible and its weight against the others
+(`model/customer_kind.dart`). Hurried gives less time and pays more; fussy
+names two things they will not have; generous tips if the bar is still high
+when it lands; indecisive swaps one wanted ingredient for another once,
+halfway through waiting; and from day seven, once the plate line is open, one
+of them puts **two products on one ticket** — held back until then because
+two wraps is the same job twice where a wrap and a plate is a different job.
+They change how a visit *plays* rather than what the counter has to make,
+which is why they need nothing but the ticket.
 
 ## Effects
 
@@ -402,14 +458,25 @@ whole ramp was invisible: the game tightened five screws a day and never said
 so. Each row carries the change since yesterday, green or red, and a dial that
 has hit its floor stops showing one.
 
-Beside it: the cheapest thing the till can already cover, named on its own
-button, because this is the only moment the player can act on it — the shop is
-one tap away and the run has not started. And one rule worth remembering,
-turning over with the day rather than at random so it is stable within a day.
+Above the dials: chips naming the shape of today's trade and, from day four,
+today's rule. Under them: a sentence saying what that rule does, and how many
+happy customers the day is asking for. Beside it: the cheapest thing the till
+can already cover, named on its own button, because this is the only moment
+the player can act on it — the shop is one tap away and the run has not
+started. And one of six tips, turning over with the day rather than at random
+so it is stable within a day.
 
 **No currency symbol anywhere.** The game pays in gold, and `₺` was a leftover
 from before that decision — it also came out as an empty box, because Rubik
 has no lira glyph.
+
+**The day asks for a number of happy customers**, printed on the card and
+paid as a share of the day's own level step when it is met — a share rather
+than a figure, so it keeps its worth forever without a second table to
+maintain. It saturates instead of climbing: a fully bought counter tops out
+near nine customers a minute whoever is holding the phone, because the grill
+and the three places are the ceiling and not the hands, so a goal that kept
+climbing would stop being a goal and start being a wall.
 
 ## The summary
 
@@ -419,7 +486,12 @@ is the telling. A screen that appears complete has nothing to say about how
 the run went.
 
 **Stars** are three, and the criterion is the target table's own meaning: a
-day cleared in one run is three. **The peak tempo** is reported as its band,
+day cleared in one run is three. **Badges** are eight and the card shows
+four — derived from the finished run rather than awarded during it, so
+nothing has to be remembered mid-run and the summary is the only place that
+knows they exist. The first three are exclusive on purpose: a flawless day
+used to earn all three, which made two of them decoration on the one that
+mattered. **The peak tempo** is reported as its band,
 because a meter that only went down would be a poor thing to end on. **The
 primary button breathes** and never settles; a button that blinks on and off
 reads as an error.
@@ -436,26 +508,29 @@ fvm flutter test test/economy_test.dart
 
 `DayRun` has no engine in it, so a whole run plays out in a loop with no
 canvas and no clock. `test/support/counter_bot.dart` is a scripted player —
-one thing at a time, wraps only — so what it takes is a floor, not a ceiling.
+one decision a tick and no planning past the neediest customer, but it works
+every line there is — so what it takes is a floor, not a ceiling.
 It prints a table on every pass, because that table is how `Balance` gets set:
 
 ```
-day  plodding  skilled  step
-  1       363      346   350
- 10       940     2427  1450
+day  plodding  skilled  step  runs
+  1        20       23           18   0.90
+ 10      6447     7194         9720   1.51
 ```
 
 Day one is one unhurried run, and the numbers **run away**: the day
-multiplier compounds at 1.55 rather than adding 8 %, so a plodding player
-takes 24 on day one, 97 on day three, 310 on day five and 2,497 on day ten,
-while a good one takes 7,384. The old curve added 8 % a day with the level
+multiplier compounds at 1.62 rather than adding 8 %, so a plodding player
+takes 20 on day one, 87 on day three, 298 on day five and 6,447 on day ten,
+while a good one takes 7,194. The last column is how many runs a day's step
+is worth at the plodding rate. The old curve added 8 % a day with the level
 targets fitted to cancel it out — a treadmill by construction, where day ten
 paid 2.6× day one and nothing ever felt like progress. The bases came down to
 1 and 2 to make room for it, so the first sale is worth 2 gold and watching
 that become four figures is the progression.
 
-The shop ladder compounds with the income: the first rung fits inside a
-day-one run and the last is most of a day-ten one.
+The shop ladder compounds with the income: forty-seven rungs from fourteen
+gold to eight hundred and thirty million, one or two a day across the thirty,
+and each heavy day carries exactly one.
 
 ## The art pipeline
 
@@ -506,10 +581,12 @@ fvm flutter test --exclude-tags golden
 fvm flutter test --tags golden               # add --update-goldens to rewrite
 ```
 
-The golden is one frame of a fully open counter. Placement is arithmetic on
-measured quads and a wrong sign is invisible to every rule test, so it is
-worth the 900 KB. It is excluded from CI with the rest of the goldens: the
-baseline is rendered by the host, and macOS does not match Linux.
+Thirteen goldens, 14 MB: the counter open and on day one, the frame on two
+screen shapes, the customers, the usta standing and acting, a lesson, the
+shop, the day card, the summary, a skewer and the refusals. Placement is
+arithmetic on measured quads and a wrong sign is invisible to every rule
+test, which is what they are worth their size for. They are excluded from
+CI: the baseline is rendered by the host, and macOS does not match Linux.
 
 ## Not built yet
 
@@ -525,9 +602,10 @@ Stages 6 to 8 of the plan. Named so nobody has to rediscover them:
   `FlutterError.dumpErrorToConsole` on the fatal branch of `runGuarded`, which
   belongs in the kit so wallet and motto get it too, so it is a separate PR
   against `packages/` rather than app work.
-- **The chef and the customers were never drawn.** They are meant to be
-  animated, so for now a customer is a coloured silhouette — see the nine
-  states above — and the chef is not drawn at all.
+- **No sound at all.** There is no audio package in `pubspec.yaml` and not one
+  sound file in `assets/` — sixty-one images, one font and three JSON files is
+  the whole of it. Every cue the game has — the flash, the freeze, the shake,
+  the halo — is visual because that is all there is.
 - **The numbers are measured, not played.** `test/economy_test.dart` plays
   whole runs with a scripted player and prints what they take; the target
   table and the shop ladder were set from that, and the test asserts the
