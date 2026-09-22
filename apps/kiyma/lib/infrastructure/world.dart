@@ -1,0 +1,45 @@
+import 'dart:ui';
+
+import 'package:injectable/injectable.dart';
+import 'package:kiyma/domain/scene.dart';
+import 'package:kiyma/infrastructure/assets.dart';
+import 'package:kiyma/infrastructure/scene_loader.dart';
+import 'package:kiyma/presentation/render/halo.dart';
+
+/// What the counter is drawn from, loaded once at startup.
+///
+/// The one place infrastructure reaches into presentation: [Halos] is a
+/// pre-rendered drawing, and this is the holder for everything bootstrap
+/// produces, decoded images included.
+/// The getters throw rather than return null: no screen exists before
+/// bootstrap has filled them, so a null is a wiring mistake.
+@lazySingleton
+class GameWorld {
+  SceneData? _scene;
+  GameAssets? _art;
+  Halos? _halos;
+  Image? _backdrop;
+
+  SceneData get scene => _scene ?? _missing('scene');
+  GameAssets get art => _art ?? _missing('art');
+  Halos get halos => _halos ?? _missing('halos');
+
+  /// The blurred plate the margin around the counter is painted with. Null
+  /// only if the scene painting itself failed to load.
+  Image? get backdrop => _backdrop;
+
+  Future<void> loadScene() async => _scene = await loadSceneAsset();
+
+  /// Baking the hint glows belongs here rather than at first use: it needs
+  /// both the art and the scene, and a blur is not something to pay for on
+  /// the frame a hint first lights up.
+  Future<void> loadArt() async {
+    final art = _art = await GameAssets.load();
+    _halos = await Halos.bake(scene, art);
+    _backdrop = await art.bakeBackdrop();
+    await art.warm();
+  }
+
+  Never _missing(String what) =>
+      throw StateError('GameWorld.$what read before bootstrap loaded it');
+}

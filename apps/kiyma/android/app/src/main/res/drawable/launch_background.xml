@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The window under the app while it starts. Cream, because the first
+     Flutter frame is the cream brand screen: a default white or black here
+     is a flash of somebody else's app before ours. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/brand_ground" />
+</layer-list>

@@ -33,6 +33,65 @@ void main() {
       expect((cubit.state as BootstrapRunning).progress, 1.0);
     });
 
+    test('holds the running state for the minimum, then finishes', () async {
+      final port = _FakePort([BootstrapJob('a', () async {})]);
+      final cubit = BootstrapCubit(
+        port,
+        minDuration: const Duration(milliseconds: 400),
+      );
+      addTearDown(cubit.close);
+
+      final elapsed = Stopwatch()..start();
+      await cubit.start();
+      elapsed.stop();
+
+      expect(port.finished, isTrue);
+      expect(elapsed.elapsed, greaterThan(const Duration(milliseconds: 300)));
+    });
+
+    test('waits out only what is left of the minimum', () async {
+      final port = _FakePort([
+        BootstrapJob(
+          'slow',
+          () => Future<void>.delayed(const Duration(milliseconds: 400)),
+        ),
+      ]);
+      final cubit = BootstrapCubit(
+        port,
+        minDuration: const Duration(milliseconds: 400),
+      );
+      addTearDown(cubit.close);
+
+      final elapsed = Stopwatch()..start();
+      await cubit.start();
+      elapsed.stop();
+
+      // The job already outlasted the floor, so nothing is added on top.
+      expect(elapsed.elapsed, lessThan(const Duration(milliseconds: 700)));
+    });
+
+    test('a failure is not padded: it is shown at once', () async {
+      final port = _FakePort([
+        BootstrapJob(
+          'doomed',
+          () async => throw Exception('boom'),
+          errorPolicy: BootstrapErrorPolicy.restart,
+        ),
+      ]);
+      final cubit = BootstrapCubit(
+        port,
+        minDuration: const Duration(seconds: 5),
+      );
+      addTearDown(cubit.close);
+
+      final elapsed = Stopwatch()..start();
+      await cubit.start();
+      elapsed.stop();
+
+      expect(cubit.state, isA<BootstrapFailed>());
+      expect(elapsed.elapsed, lessThan(const Duration(seconds: 1)));
+    });
+
     test('stops on a retry-policy failure, then resumes', () async {
       var attempts = 0;
       final port = _FakePort([

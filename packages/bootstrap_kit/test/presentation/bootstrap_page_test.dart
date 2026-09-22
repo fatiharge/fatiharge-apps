@@ -25,6 +25,28 @@ class _Splash extends StatelessWidget {
 
 void main() {
   group('BootstrapPage', () {
+    testWidgets('holds the splash for the duration it was given', (
+      tester,
+    ) async {
+      final port = _FakePort([BootstrapJob('a', () async {})]);
+      await tester.pumpWidget(
+        MaterialApp(
+          home: BootstrapPage(
+            port: port,
+            splash: const _Splash(),
+            minDuration: const Duration(seconds: 3),
+          ),
+        ),
+      );
+
+      await tester.pump(const Duration(seconds: 2));
+      expect(find.text('splash'), findsOneWidget);
+      expect(port.finished, isFalse, reason: 'the floor has not passed yet');
+
+      await tester.pump(const Duration(seconds: 2));
+      expect(port.finished, isTrue);
+    });
+
     testWidgets('shows the port view while jobs run, then finishes', (
       tester,
     ) async {

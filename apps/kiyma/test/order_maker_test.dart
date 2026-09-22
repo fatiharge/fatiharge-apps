@@ -1,0 +1,130 @@
+import 'dart:math' as math;
+
+import 'package:flutter_test/flutter_test.dart';
+import 'package:kiyma/domain/model/items.dart';
+import 'package:kiyma/domain/order_maker.dart';
+import 'package:kiyma/domain/unlocks.dart';
+
+void main() {
+  group('OrderMaker', () {
+    test('never asks for anything the counter cannot make', () {
+      final unlocks = Unlocks();
+      final maker = OrderMaker(unlocks, day: 1, random: math.Random(1));
+      final open = unlocks.malzemeler.map((m) => m.id).toSet();
+
+      for (var i = 0; i < 300; i++) {
+        final order = maker.make();
+        expect(
+          order.tip,
+          ProductKind.durum,
+          reason: 'the plate line is locked',
+        );
+        expect(order.ister.union(order.istemez).difference(open), isEmpty);
+        expect(order.tatli, isNull);
+        expect(order.icecek, isNull);
+      }
+    });
+
+    test('wants and avoids never overlap, and it always wants something', () {
+      final unlocks = Unlocks();
+      for (final unlock in Unlocks.catalogue) {
+        unlocks.open(unlock.id);
+      }
+      final maker = OrderMaker(unlocks, day: 1, random: math.Random(2));
+
+      for (var i = 0; i < 300; i++) {
+        final order = maker.make();
+        expect(order.ister.intersection(order.istemez), isEmpty);
+        expect(order.ister, isNotEmpty);
+        // Four, not three: an order names as much of the counter as it
+        // holds, so that what is on the shelf is what gets asked for.
+        expect(order.ister.length + order.istemez.length, lessThanOrEqualTo(4));
+      }
+    });
+
+    test('asks for both lines once both are open', () {
+      final unlocks = Unlocks()..open('porsiyon_hatti');
+      final maker = OrderMaker(unlocks, day: 1, random: math.Random(3));
+      final tipler = {for (var i = 0; i < 40; i++) maker.make().tip};
+      expect(tipler, ProductKind.values.toSet());
+    });
+
+    test('a plate order only ever names plate components', () {
+      final unlocks = Unlocks()
+        ..open('porsiyon_hatti')
+        ..open('bilesen_ezme')
+        ..open('bilesen_pilav');
+      final maker = OrderMaker(unlocks, day: 1, random: math.Random(4));
+      final plate = {PlateItem.ezme.id, PlateItem.pilav.id};
+
+      for (var i = 0; i < 200; i++) {
+        final order = maker.make();
+        if (order.tip != ProductKind.porsiyon) continue;
+        expect(order.ister.union(order.istemez).difference(plate), isEmpty);
+      }
+    });
+  });
+
+  group('Unlocks', () {
+    test('day one opens one line, two ingredients and two of everything', () {
+      final unlocks = Unlocks();
+      expect(unlocks.mangalSlots, 2);
+      expect(unlocks.musteriSlots, 2);
+      expect(unlocks.bekleme, 1, reason: 'one shelf slot to start');
+      expect(unlocks.malzemeler, {Ingredient.domates, Ingredient.sogan});
+      expect(unlocks.porsiyonHatti, isFalse);
+      expect(unlocks.icecekHatti, isFalse);
+    });
+
+    test('a fourth slot is not for sale before the third', () {
+      final unlocks = Unlocks();
+      expect(unlocks.forSale.map((u) => u.id), isNot(contains('mangal_4')));
+      unlocks.open('mangal_3');
+      expect(unlocks.forSale.map((u) => u.id), contains('mangal_4'));
+    });
+
+    test('a line has to be bought before anything on it', () {
+      final unlocks = Unlocks();
+      final locked = unlocks.forSale.map((u) => u.id);
+      expect(locked, isNot(contains('bilesen_ezme')));
+      expect(locked, isNot(contains('icecek_ayran')));
+      unlocks
+        ..open('porsiyon_hatti')
+        ..open('icecek_hatti');
+      // The line gates the rest, and after that they are separate goods:
+      // ezme is not a better içli köfte, so both are offered at once and the
+      // prices decide which comes first.
+      final open = unlocks.forSale.map((u) => u.id);
+      expect(open, contains('bilesen_icli_kofte'));
+      expect(open, contains('bilesen_ezme'));
+      expect(open, contains('icecek_salgam'));
+      // The ladders that really are tiers still open one rung at a time.
+      expect(open, contains('komur_1'));
+      expect(open, isNot(contains('komur_2')));
+    });
+
+    test('the catalogue and the counter agree on what exists', () {
+      final unlocks = Unlocks();
+      final ids = Unlocks.catalogue.map((u) => u.id).toList();
+      expect(ids.toSet(), hasLength(ids.length), reason: 'no lock twice');
+
+      // Every item is either open on day one or somewhere in the catalogue,
+      // and nothing that no longer exists is still for sale — a lock with no
+      // item behind it would sit in the shop taking money for nothing.
+      final byPrefix = {
+        'malzeme_': Ingredient.values.map((m) => m.id),
+        'bilesen_': PlateItem.values.map((b) => b.id),
+        'tatli_': Dessert.values.map((t) => t.id),
+        'icecek_': Drink.values.map((i) => i.id),
+      };
+      for (final entry in byPrefix.entries) {
+        final expected = entry.value.map((id) => entry.key + id).toSet();
+        final actual = {
+          ...ids.where((id) => id.startsWith(entry.key)),
+          ...expected.where(unlocks.has),
+        }..remove('icecek_hatti');
+        expect(actual, expected, reason: entry.key);
+      }
+    });
+  });
+}
