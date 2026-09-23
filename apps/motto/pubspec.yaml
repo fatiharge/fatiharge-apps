@@ -28,7 +28,7 @@ dependencies:
   auto_route: ^11.1.0
   bloc: ^9.0.0
   flutter_bloc: ^9.1.1
-  get_it: ^9.2.1
+  get_it: ^9.3.0
   injectable: ^3.0.0
   easy_localization: ^3.0.8
 
