@@ -24,7 +24,7 @@
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.version>3.39.1</quarkus.platform.version>
 
-    <compiler-plugin.version>3.15.0</compiler-plugin.version>
+    <compiler-plugin.version>3.16.0</compiler-plugin.version>
     <surefire-plugin.version>3.5.6</surefire-plugin.version>
     <failsafe-plugin.version>3.5.6</failsafe-plugin.version>
     <jandex-plugin.version>3.6.0</jandex-plugin.version>
